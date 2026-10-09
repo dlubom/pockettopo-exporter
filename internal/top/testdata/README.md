@@ -581,3 +581,76 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 
 The frozen output is protected from text normalization. Compare future native
 stdout with this evidence; never regenerate its expected values using Go.
+
+## P04c4 first Polygon color and original scalar probe, 2026-10-09
+
+The separate [color probe](../../../scripts/reference-plan-polygon-color-probe.cs)
+extends the scalar approach by exactly one byte after the points. Original
+`Trip.ReadList`, `Station.Read`, `Reference.Read` and two `Mapping.Read` calls
+locate marker 1, count 3 and the three pinned raw X/Y pairs. The `BinaryReader`
+held by original `FileReader` then reads the color. It never invokes
+`Drawing.Read`/`Polygon.Read`, derives a pen or rectangle, opens the GUI, writes
+TOP bytes or uses Go output. Every earlier probe and frozen stdout is unchanged.
+
+The unchanged pinned helper's first plan Polygon uses `MainForm.black`.
+`Polygon.Write` writes byte 1 for that pen after the ordered points. Fresh
+original scalar readback confirms color 1 at `[175,176)`, consumed 176 and
+full-file tail 504. Exact color-only prefixes agree in native pixel modes 5/10.
+Missing color throws `EndOfStreamException` at position 175 without advancing.
+
+Literal scalar streams with zero, one and three points verify all 256 colors,
+each with no tail and arbitrary `FF 80` tails. They consume exactly one byte
+at positions 5, 13 and 29 respectively; missing color at each position fails
+without advancing. Point bytes are the independent signed/endian literals from
+the earlier probe. These 1,536 successful literal cases, three missing-color
+cases, six fixture cases and three environment lines give **1,548 exact CRLF
+stdout lines**. They establish scalar reads/stops, not full native Polygon
+acceptance or rendering. All rows and line endings were independently checked.
+
+C#/IL `Polygon.Read` (RVA `0xc4b8`) reads UInt8 color at `IL_00f0`, after
+points and derived bounds, even for zero points. Its branches select 1 black,
+2 gray, 3 brown, 4 blue, 5 red, 7 orange, and default green (including 6 and
+all unknown codes). `Polygon.Write` (RVA `0xc350`) writes those named codes
+and default 6. That native rendering/write normalization is documented from
+C#/IL; this probe does not execute it, and the Go source preserves every byte.
+Earlier JKTZ parser blob `74965043ebb9600ad71089bb079e76eaad1268f3` was fetched
+and hash-verified; its `1..7` color restriction was checked against native
+branches and deliberately not adopted.
+
+Environment: macOS arm64, Wine `wine-11.7 (Staging)`, original assembly
+`1.3.7.0`, Microsoft .NET x86 runtime `2.0.50727.42`. Original EXE/runtime,
+C#/IL, pinned helper, TOP fixtures and all earlier probes/stdout were
+hash-checked before and after and remain unchanged. Final native probe exit
+was 0 with empty stderr. The sandbox attempt could not bind Wine's server;
+the permitted host invocation compiled and ran the probe. Only the two
+identified lingering compiler/start processes created for this compilation
+were stopped. These optional evidence commands are not CI gates.
+
+| New evidence | SHA-256 |
+| --- | --- |
+| `scripts/reference-plan-polygon-color-probe.cs` | `d5cf8ab377feea0f136ed8bc5bd02c5dcb10c8898844437e5d0e8cf2ae98d39e` |
+| `native-plan-polygon-color-read.txt` | `405c76eb6d14025a2110e259d8db53e2b16cf0c9a190261a2c53cc3ae424e693` |
+| Optional compiled probe (`build/reference-plan-polygon-color-probe.exe`) | `2bbb441248f59bc1f6fff89302b2e21c5387b0d18fae85383105b9ca07a61b8c` |
+
+The unchanged Polygon C# hash is
+`63d57a5200116e9a4acaadddecec5a1381ca8173544eddafdc14d07e29237fe2`;
+IL remains `ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76`.
+The helper remains `ae1f32a1034bbd95a59e97db47e887fabb30b06eabe55a960c9c5ebf9090d005`.
+Original EXE/runtime and copied fixture hashes are recorded above.
+
+Actual optional commands run from the repository root:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-plan-polygon-color-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-plan-polygon-color-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-plan-polygon-color-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-plan-polygon-color-read.txt 2>build/native-plan-polygon-color-read.err
+```
+
+The frozen stdout is protected from text normalization. Compare future native
+output with this evidence; never regenerate expected values using Go.
