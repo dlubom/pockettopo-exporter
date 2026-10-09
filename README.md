@@ -1735,6 +1735,46 @@ and hosted CI are verified in the chat handoff; README is in that delivered
 commit. P04b stops before the first element marker and makes no element,
 complete-file or exporter compatibility claim.
 
+### P04b revalidation on the completed checkout (2026-10-09)
+
+Revalidation baseline: `a9702baeb309ff0d1199392d8aa04069176c4c2b`.
+P04b was already implemented in `3ff9b56c940feddc976ee1170861175104533ad2`,
+and the separate P04c1 reader was already present. The P04b reader, model,
+tests, native probe and explicit mutation script are byte-identical to their
+P04b implementation revision. This handoff updates documentation only;
+all earlier contracts and the existing P04c1 implementation remain unchanged.
+
+Rechecked the analysis map, `DataSet.Read`, `Drawing.Read`, `Mapping.Read`/
+`Write`, pixel defaults and matching IL. They confirm that the plan mapping
+occupies the next 12 bytes and precedes the first marker. Original EXE,
+Mapping/Drawing/DataSet C#, IL, all three TOP fixtures, the P04b probe source
+and its frozen native stdout hashes still match the recorded provenance.
+The existing JKTZ parser's scale restriction and complete-drawing policy
+were reviewed against this reference and remain outside the source-prefix
+contract. The native Wine probe was not rerun in this revalidation.
+
+With Go 1.26.3 darwin/arm64, Staticcheck v0.8.1 and Gremlins v0.6.0:
+
+- `bash scripts/check.sh` passed all checks, uncached race tests and CLI smoke;
+  statement coverage remains **100%** in each implemented package.
+- `bash scripts/mutation.sh` passed the complete current-checkout campaign:
+  **173/173 Gremlins mutants killed**, with no other statuses, plus **6/6
+  station, 19/19 trip, 35/35 measurement, 33/33 reference, 29/29 overview,
+  32/32 plan mapping and 25/25 existing marker explicit mutants killed**.
+  Every explicit mutant compiled and failed a named behavioral assertion.
+- `bash scripts/mutation-trial.sh` passed: both weak-test CLI mutants lived,
+  the gate rejected them with exit 1, and compiler/setup controls returned
+  NOT VIABLE exit 2. Gates and mutation scopes were unchanged.
+- The documented 10-second `FuzzReadV3PlanMappingPrefix` command passed with
+  **451,267 executions**, preserving input, raw fields, mappings, spans,
+  deterministic errors, empty failures and consumed/tail accounting.
+- Independent read-only P04b review found no Critical, Important or Minor
+  issues; its targeted uncached race tests and bounded fuzzing also passed.
+
+Reports regenerate in the existing ignored output paths. The final handoff
+verifies the pushed SHA and its three-platform CI; the next unfinished PBI
+is **P04c2**, whose contract below remains a separate implementation request.
+
 ## Completed PBI: P04c1 — first v3 plan element marker
 
 **Outcome/dependencies:** a separate immutable source prefix extends P04b by
