@@ -1,0 +1,14 @@
+assembly=1.3.7.0 runtime=2.0.50727.42
+DateTime_ticks_range=0..3155378975999999999
+ticks-min ACCEPT position=15 trip[0] ticks=0 auto=False declCorr=0 comment_base64=
+ticks-max-auto ACCEPT position=15 trip[0] ticks=3155378975999999999 auto=True declCorr=0 comment_base64=
+ticks-negative REJECT System.ArgumentOutOfRangeException position=12
+ticks-max-plus-one REJECT System.ArgumentOutOfRangeException position=12
+utf8-invalid-interior ACCEPT position=18 trip[0] ticks=0 auto=False declCorr=-1 comment_base64=QUI=
+utf8-incomplete ACCEPT position=17 trip[0] ticks=0 auto=False declCorr=0 comment_base64=
+length-nonminimal-zero ACCEPT position=19 trip[0] ticks=0 auto=False declCorr=0 comment_base64=
+length-fifth-byte-16 ACCEPT position=19 trip[0] ticks=0 auto=False declCorr=0 comment_base64=
+length-negative REJECT System.IO.IOException position=17
+length-six-bytes REJECT System.FormatException position=17
+negative-count ACCEPT position=4
+native-fixture ACCEPT position=167 trip[0] ticks=630822816000000007 auto=False declCorr=910 comment_base64=U3ludGhldGljIHJlc2V0LWxvb2tpbmcgZGF0ZSwgbm90IGZpZWxkIGV2aWRlbmNl trip[1] ticks=639259776000000009 auto=False declCorr=-637 comment_base64=VW5pY29kZSB0cmlwOiBaYcW8w7PFgsSHIGfEmcWbbMSFIGphxbrFhA== trip[2] ticks=639260640000000001 auto=True declCorr=0 comment_base64=QXV0byBkZWNsaW5hdGlvbiBzZW50aW5lbDsgbm8gQ1JTIGFzc2VydGVk

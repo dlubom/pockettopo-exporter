@@ -26,3 +26,4 @@ cd "$trial"
 # Gremlins' built-in efficacy excludes several of those statuses.
 jq -e -f "$root/scripts/mutation-gate.jq" "$root/mutation.json"
 bash "$root/scripts/mutation-station.sh"
+bash "$root/scripts/mutation-prefix.sh"

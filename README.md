@@ -5,9 +5,9 @@ formats, based on the PocketTopo 1.372 decompilation.
 
 ## Status
 
-Implementation authorized on 2026-10-09. **P02 and P03a are complete**: minimal
-Go CLI and checks, followed by the immutable source station-ID helper, verified
-C#/IL decoding, display and internal equality, and expanded mutation checks.
+Implementation authorized on 2026-10-09. **P02, P03a and P03b are complete**: minimal
+Go CLI and checks, immutable station IDs, and a bounded v3 header/trip prefix
+reader with source offsets, copied records and explicit malformed-input errors.
 Native export support is not yet implemented or validated.
 
 Confirmed priorities:
@@ -41,8 +41,9 @@ Confirmed priorities:
   push were subsequently authorized for `dlubom/pockettopo-exporter`; releases
   remain out of scope. P02 adds no exporter framework.
 
-**Next ready implementation PBI: P03b — bounded v3 header and trips.** See the
-bounded acceptance contract below. Stop after P03a in this chat.
+**Next ready implementation PBI: P03c1 — bounded v3 measurements.** See the
+bounded acceptance contract below. P03b stops after the trip table; P03c is
+split into measurements (P03c1) and references (P03c2).
 
 ## Reference material
 
@@ -402,7 +403,7 @@ From the repository root:
 bash scripts/tools.sh                 # download/build pinned development tools
 bash scripts/check.sh                 # format check, vet, Staticcheck, race tests,
                                       # >=95% behavior coverage, build, CLI smoke
-bash scripts/mutation.sh              # >=90% Gremlins killed; six station faults;
+bash scripts/mutation.sh              # >=90% Gremlins killed; station/prefix faults;
                                       # reject incomplete/empty/invalid runs
 bash scripts/mutation-trial.sh        # weak-test, build/setup-error controls,
                                       # macOS/Linux
@@ -580,7 +581,7 @@ Conversation history must not be required to reconstruct a critical decision.
 
 ### Proposed sequence
 
-P00 decisions needed to start, P02 and P03a are complete. P03 is split below so
+P00 decisions needed to start, P02, P03a and P03b are complete. P03 is split below so
 the next chat can deliver one small implementation increment. Remaining rows are
 planned, not completed; refine each contract when its dependencies are ready.
 IDs describe this project only. R01–R07 are not scheduled for this handoff.
@@ -591,11 +592,12 @@ IDs describe this project only. R01–R07 are not scheduled for this handoff.
 | P01 | Deferred full exporter/options inventory; capture the reference contract needed by each implementation slice within that slice | Required before each corresponding exporter; optional research only when necessary |
 | P02 | Done: public Git repository, Go skeleton, pinned tools, passing three-platform CI and positive/negative mutation trial | Explicit implementation request, P00 |
 | P03a | **Done:** source station ID decoding and display, retaining raw bits and internal identity; contract and evidence below | P02; ID-specific C#/IL contract inside the slice |
-| P03b | **Next / ready:** bounded v3 header/trip prefix reading, offsets and malformed-input errors; bounded contract below | P03a; relevant P01 reader contract |
-| P03c | Planned: references/measurements and partial source inspection; explicitly account for unparsed drawing tail | P03b; relevant P01 record contract |
-| P04 | Read mappings, polylines and XSections; account for the complete file and unsupported content | P03c |
-| P05 | Reproduce isolated-input native text export; native golden cases for units, flags, comments and record order | P03c, P04; required native update behavior understood |
-| P06 | Reproduce fixed-point angles, grouping and average directions with original-program evidence | P03c |
+| P03b | **Done:** bounded v3 header/trip prefix, immutable source fields, offsets, limits and structured errors | P03a; reader C#/IL and native evidence below |
+| P03c1 | **Next / ready:** extend the prefix through the measurement table only; bounded contract below | P03b; Station/Survey reader contract |
+| P03c2 | Planned: extend through references and identify the unparsed drawing tail; refine after P03c1 | P03c1; Reference/Survey reader contract |
+| P04 | Read mappings, polylines and XSections; account for the complete file and unsupported content | P03c2 |
+| P05 | Reproduce isolated-input native text export; native golden cases for units, flags, comments and record order | P03c2, P04; required native update behavior understood |
+| P06 | Reproduce fixed-point angles, grouping and average directions with original-program evidence | P03c2 |
 | P07 | Reproduce reference placement and plan geometry, then extended projection and closure as separately reviewed slices | P06 |
 | P08 | Support explicit template context with deterministic inventory/order; prove isolation and native multi-file cases | P07 |
 | P09 | Reproduce Therion DATA and drawing sections, including XSections; separate data and drawing slices if needed | P04, P07, P08 |
@@ -794,7 +796,7 @@ macOS reruns ordinary checks, with both mutation commands on Linux. The exact
 pushed SHA and its run are verified in the chat handoff; this README is included
 in that commit. P03a does not establish full TOP or exporter compatibility.
 
-## Next ready PBI: P03b — bounded v3 header and trips
+## Completed PBI: P03b — bounded v3 header and trips
 
 **Outcome:** a binary prefix reader takes explicit input bytes, validates the
 v3 header and trip table, and returns immutable source records with byte offsets,
@@ -851,17 +853,219 @@ needed for new packages/fixtures. Update README with native versus stricter
 behavior, source evidence and results, commit and push, verify CI for the exact
 SHA, refine P03c and stop after P03b.
 
+### Implemented prefix API and error policy (2026-10-09)
+
+`internal/top.ReadV3TripPrefix(data)` uses `DefaultLimits()`;
+`ReadV3TripPrefixWithLimits(data, limits)` accepts explicit lower limits.
+`Limits` fields are `MaxInputBytes`, `MaxTrips` and `MaxCommentBytes`. Zero is
+an actual bound; negative values or values above a default return
+`invalid_limit`. Defaults are returned by value, not mutable global state.
+The input limit includes the unparsed tail. No file or directory is opened.
+
+The result is `source.TripPrefix`: `Header`, `Version`, `TripCountRaw`,
+`Trips`, `Bytes`, `Offsets`, `ConsumedOffset` and `UnparsedTailSize`.
+`Bytes` contains only the consumed prefix. `source.Trip` exposes `Ticks`,
+`Comment`, `CommentBytes`, `DeclinationRaw`, `AutoDeclination` and `Offsets`.
+Private fields, string-backed exact comment bytes, copied byte slices and
+copied trip slices prevent mutable input/output aliases. Constructors also copy
+collections. `Span` uses zero-based `Start` and exclusive `End`; offset structs
+are returned by value. Fixed spans: header `[0,4)`, magic `[0,3)`, version
+`[3,4)`, trip count `[4,8)`. Every trip records its full span and spans for
+ticks, encoded comment length, comment bytes and raw declination.
+
+`ParseError` has stable `Code`, `Field`, `Offset` and a readable diagnostic.
+Failures return an empty result, never a successful partial table. Validation
+order is limits, input size, header, count, minimum table bytes, then ordered
+trip fields. Before allocating trips, `count <= remaining_bytes / 11` is
+required; division avoids multiplication overflow. A failed preflight reports
+the trip-count field, even when a later field would also be truncated.
+Subsequent reads check remaining bytes before advancing; a comment is bounded
+and checked before conversion/copying. With capped limits, all lengths and
+offset additions fit `int` on both 32- and 64-bit targets.
+
+| Code | Field and offset |
+| --- | --- |
+| `invalid_limit` | `limits.max_input_bytes`, `limits.max_trips` or `limits.max_comment_bytes`, offset 0 |
+| `resource_limit` | `input` at 0, `trip_count` at 4, or `trips[i].comment.length` at its first encoded byte |
+| `bad_magic` | `header.magic`, offset 0 |
+| `unsupported_version` | `header.version`, offset 3; every byte except 3 is rejected |
+| `negative_count` | `trip_count`, offset 4 |
+| `truncated` | Required field start; preflight uses `trip_count` at 4; a missing length byte uses that byte's offset |
+| `ticks_out_of_range` | `trips[i].ticks`, its first byte; valid inclusive range `0..3155378975999999999` |
+| `string_length_overflow` | `trips[i].comment.length`, first encoded byte; byte five must be at most 7 |
+| `invalid_utf8` | `trips[i].comment`, the comment field start, rather than an inferred replacement position |
+
+Nonminimal length encodings are accepted and preserved, including a five-byte
+encoding of zero. Strings count UTF-8 bytes, not characters. NUL, BOM, valid
+U+FFFD and supplementary characters are retained without normalization.
+Ticks retain all 100 ns bits without conversion to floats or dates. Auto is
+derived only from raw `-32768`; the raw signed value remains unchanged.
+Neither embedded dates nor fixture labels establish a field survey date.
+
+### C#/IL and native evidence
+
+After the analysis map, inspected `DataSet.Read` (RVA `0x219c0`), the initial
+`Survey.Read` call (`0x744c`), `Trip.ReadList` (`0x12abc`), `Trip.Read`
+(`0x12c1c`) and `FileReader` constructor (`0x2174d`) in both C# and IL.
+IL confirms signed Int32 count, signed Int64 passed to `DateTime(long)`,
+`BinaryReader.ReadString`, signed Int16, the Auto equality test and native
+reset of derived `declCorr` to zero. Reference hashes:
+
+| File | SHA-256 |
+| --- | --- |
+| `DataSet.cs` | `18dc45a572a7fcd53c18eef93d5195ab3778a755485674237c07d7923a5d9940` |
+| `Survey.cs` | `e164752db9560a455d5c441bf0bebf133b19a0c25cfc3428bd5f09fdae45d48f` |
+| `Trip.cs` | `7c452162180db0407a46058695219660222f47d405632386ce407d42d43beddd` |
+| `FileReader.cs` | `d34ab119d81c9ff0d14a4f3a74a385cafcf394eebd9fc8baa3303cd114a71e17` |
+| `PocketTopo.il` | `ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76` |
+
+The original EXE was verified against the reference hash above. The checked-in
+[native probe](scripts/reference-trip-probe.cs) called the original private
+`Trip.ReadList`/`Trip.Read` methods through reflection on 2026-10-09, under
+Wine Staging 11.7, Microsoft .NET 2.0.50727.42 x86, macOS arm64. No GUI,
+native file writer or Go reader was used by this probe. Native stdout and
+the optional reproduction commands are retained with
+[fixture provenance](internal/top/testdata/README.md).
+
+Native behavior differs from this strict contract:
+
+- Native header checking uses signed `header >> 24` and `version <= 3`;
+  this reader requires exactly v3 and does not claim older-version support.
+- Native `Trip.ReadList` treats a negative count as an empty loop. This reader
+  rejects it. Native has none of the explicit operational limits above.
+- `DateTime(long)` rejected -1 and max+1; inclusive min/max succeeded. Native
+  Auto set `automatic=true` and `declCorr=0`; the source model retains -32768.
+- In the observed .NET 2.0 reader, encoded `A FF B` became `AB`, and an
+  incomplete `E2 82` became empty. Thus these probes **omit** bad bytes rather
+  than substituting U+FFFD. This reader rejects all malformed UTF-8. The later
+  [Microsoft BinaryReader reference source](https://github.com/microsoft/referencesource/blob/main/mscorlib/system/io/binaryreader.cs)
+  and [DateTime source](https://github.com/microsoft/referencesource/blob/main/mscorlib/system/datetime.cs)
+  supplement the evidence; they do not override this observed .NET 2.0 behavior.
+- Native accepted nonminimal zero and also `80 80 80 80 10` as zero, rejected
+  the negative length from `80 80 80 80 08`, and rejected six-byte encoding.
+  This reader rejects any fifth byte greater than 7 to enforce nonnegative
+  Int32 lengths without discarded high bits.
+
+The 542-byte `api-trips-ids.top` was copied unchanged from JKTZ's frozen
+native fixtures. SHA-256:
+`adb83280b6d5a70f383b5542727f675b3ff8a5740058b601d3d49ed27b14895b`.
+The original native API helper's literal inputs and frozen expectations are
+independent of this Go reader. This pass also read all three trips through
+the original EXE: ticks, comments, declination and Auto matched; native
+position 167 excludes the four header bytes, so prefix consumption is 171
+and the unparsed tail is 371 bytes. Only header/trips are compared here.
+Neither the Go test nor the native trip probe validates that tail.
+
+JKTZ's strict parser/immutable records were reviewed locally. Resource bounds,
+field-context errors and immutable source records are useful ideas. The Go
+reader additionally validates native DateTime range and preserves the exact
+prefix, encoded-length spans and comment bytes. No JKTZ processing policy,
+full-file/tail rule, UTF-8 leniency or station identity mapping was imported.
+Reference artifacts and original archives were not modified.
+
+### P03b checks and mutation scope
+
+Go 1.26.3 darwin/arm64, Staticcheck v0.8.1 and Gremlins v0.6.0:
+
+- `bash scripts/check.sh`: passed formatting, vet, Staticcheck, uncached race
+  tests, build and CLI smoke; **100% statement coverage** in `internal/cli`,
+  `internal/source` and `internal/top`. Tests cover every required-byte
+  truncation, all unsupported versions, length/count/sign/tick boundaries,
+  default and lower bounds, exact comments and immutable-copy behavior.
+- `bash scripts/mutation.sh`: **73/73 Gremlins mutants killed**, no lived,
+  uncovered, invalid, skipped or timed-out cases. Assignment and bitwise
+  operators exercise count/length arithmetic, signs, shifts and masking.
+  The same command kills **6/6** station faults and **19/19** additional
+  prefix faults in disposable copies. Prefix faults cover retained fields,
+  source/input/output aliases, header/count offsets, consumed/tail reporting,
+  endian order and error codes. Each must compile and fail a named assertion;
+  stale targets, survivors, compiler errors and timeouts fail the run.
+- `bash scripts/mutation-trial.sh`: weak ordinary tests pass and both CLI
+  mutants survive; the shared gate rejects the result. Compiler/setup errors
+  return NOT VIABLE rather than a behavioral kill.
+- `GOCACHE="$PWD/.cache/go-build" GOTOOLCHAIN=local go test ./internal/top
+  -run '^$' -fuzz '^FuzzReadV3TripPrefix$' -fuzztime=10s -parallel=2`: passed,
+  464,022 executions. Fuzz limits are 4096 input bytes, 32 trips and 256 comment
+  bytes; assertions check deterministic structured results, input preservation
+  and exact consumed/tail accounting. Normal checks also run the seed corpus.
+
+The initial expanded campaign correctly failed on three noncompiling mutants:
+untyped `-32768` negation/subtraction outside Int16 and pointer-creation `&`
+inversion. Widening the Auto comparison to Int32 and using `new(ParseError)`
+produce valid faults without exclusions. Two Auto faults then survived because
+Gremlins runs a mutated package's own tests, and true Auto was asserted only by
+the reader package. A model-level sentinel test closed that gap. The final
+campaign has no exemptions; gates remain 95% coverage and 90% killed mutants.
+
+Reports regenerate in `coverage.out`, `mutation.json`,
+`build/station-mutation.json` and `build/prefix-mutation.json`. The source-only
+mutation copy includes `internal/top/testdata`; the station-only copy needs no
+TOP fixtures. Three-platform CI repeats ordinary checks, and Linux repeats
+both mutation commands. This README is part of the delivered commit; exact
+pushed SHA and hosted CI are verified in the chat handoff. There is no claim
+of complete TOP parsing or exporter compatibility. P03b ends here.
+
+## Next ready PBI: P03c1 — bounded v3 measurements
+
+P03c is split to keep one independently verified table per chat. P03c1 extends
+the source prefix through the measurement table only. P03c2 will read references
+and account for the remaining drawing tail; refine that contract after P03c1.
+
+**Dependencies/reference:** P03b; begin with `analysis/ANALYSIS.txt`, then the
+measurement portion of `Survey.Read`, `Station.Read`, `Station.Flags`, `ID.Read`,
+and their IL. Inspect native trip-index behavior before choosing stricter
+validation. Earlier JKTZ's restriction to flag bits 1/2 is not a native oracle:
+the decompilation declares other flags and `Station.Read` retains a whole byte.
+
+**Bounded acceptance contract:**
+
+- Add a separate reader entry point that reads v3 header/trips followed by the
+  signed Int32 measurement count. Keep P03b's trip-only API and behavior intact.
+  Preserve an immutable consumed prefix, ordered raw records and all field spans.
+- Preserve raw From/To UInt32 patterns through `source.StationID`; signed Int32
+  distance in mm; signed Int16 azimuth/inclination; UInt8 flags and roll;
+  signed Int16 trip index. Comment presence follows `flags & 2`, and present
+  comments retain encoded length and exact UTF-8 bytes. Distinguish absent
+  comment from present empty comment. No derived geometry/angles or grouping.
+- Verify the native meanings of every flag, negative distance and trip-index
+  boundaries against C#/IL and original-program evidence. Retain all raw bits;
+  document any stricter rejection separately instead of silently masking or
+  applying JKTZ's policy. Preserve reserved IDs and aliases without inferring
+  identity from displayed text. Do not rewrite source trip indices.
+- Bound count and minimum bytes before allocating; use the current 64 MiB input,
+  1 MiB comment and 1,000,000-record default ceilings with lower nonnegative
+  caller limits. Reuse the verified length/UTF-8 error rules. Reject negative
+  count, overflow, truncation and resource violations with stable field/offset
+  errors. Stop after measurements; do not require or interpret reference count.
+- Add small literal cases for zero/multiple records, flag/comment presence,
+  signed/endian boundaries, ID aliases/reserved values and trip-index cases.
+  Test every required-byte truncation, exact bounds, immutable copies and
+  bounded fuzzing. Use the existing native fixture's independent measurement
+  expectations and native reader probes where necessary; no Go-generated oracle.
+
+**Non-goals:** references, drawings, CLI inspect/export, full-file validation,
+directory context, measurement correction, grouping, geometry and exporters.
+Do not implement P03c2 or P04 in the same chat.
+
+**Required checks/handoff:** current check/mutation/negative-control commands,
+at least 95% coverage and 90% killed mutants, every survivor reviewed and no
+incomplete/error campaign accepted. Expand explicit mutations for raw fields,
+comment presence, flags and trip-index semantics as needed. Update README with
+native versus strict behavior, provenance and results; refine P03c2, commit,
+push and confirm CI for the exact SHA; stop after P03c1.
+
 ## Open issues and deferred work
 
-- The project has no TOP reader or native exporter; P03a validates only the
-  station-ID helper under the contract above.
+- The TOP reader validates only the v3 header/trip prefix. Measurements,
+  references, drawings, complete-file validation and native exporters remain
+  unimplemented; the CLI still accepts only help/version.
 - Native measurement arithmetic/export formatting fidelity remains unproven in Go.
 - Gremlins is accepted only for the measured small scope; expand and reassess
   operator coverage as native logic arrives. CI rejects invalid/uncovered/time-out
   mutants rather than silently excluding them.
 - The full P01 capability/fixture matrix, older TOP versions, corpus runs,
   release packaging and optional R01–R07 work remain deferred.
-- Future full compatibility claims still require native evidence; the P02/P03a
+- Future full compatibility claims still require native evidence; the P02/P03a/P03b
   checks validate only implemented behavior and their recorded reference cases.
 
 ## Research references
