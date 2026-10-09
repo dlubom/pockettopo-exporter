@@ -654,3 +654,67 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 
 The frozen stdout is protected from text normalization. Compare future native
 output with this evidence; never regenerate expected values using Go.
+
+## P04c5 next plan marker and original scalar probe, 2026-10-09
+
+The separate [next-marker probe](../../../scripts/reference-plan-next-marker-probe.cs)
+extends the scalar approach through exactly one byte after the first Polygon
+color. Original table/Mapping.Read methods locate the first Polygon; the
+BinaryReader held by original FileReader reads its pinned count, signed points,
+color 1, and next marker 1 at `[176,177)`. Full-file tail is 503; exact prefix
+has no tail. Missing marker throws EndOfStreamException at 176 without advancing.
+Fixture streams agree in native PixPerMm 5/10. No Drawing.Read/Polygon.Read,
+GUI, TOP write or Go-generated expectations are used.
+
+The hash-verified pinned helper appends the gray Polygon immediately after the
+black Polygon. The earlier helper/probe/stdout and TOP bytes are unchanged.
+Independent zero/one/three-point literal streams each verify all 256 marker bytes
+with complementary colors `255-marker`, exact prefixes and arbitrary `FF 80`
+tails. Missing marker is checked for each point-count case. The 1,536 successful
+literal cases, three missing cases, six fixture cases and three environment
+lines produce **1,548 exact CRLF rows**. Every row and line ending was checked
+independently. They establish scalar preservation and stops, not native dispatch,
+complete drawing acceptance or exporter compatibility.
+
+C#/IL Drawing.Read (RVA `0x10a30`) calls next ReadByte at IL_00c3 after the
+element read at IL_007f. The loop terminates on 0; 1 selects Polygon, 3 XSection,
+and unknown nonzero markers skip ReadBytes(0) then read the next marker.
+The Go prefix preserves every byte without executing that dispatch. The verified
+JKTZ parser blob `74965043ebb9600ad71089bb079e76eaad1268f3` rejects unknown
+markers and reads full drawings; those policies were not adopted.
+
+Environment: macOS arm64, installed Wine Staging 11.7, original assembly 1.3.7.0,
+Microsoft .NET x86 runtime 2.0.50727.42. Final probe exited 0, stderr empty.
+The permitted host compilation produced a usable executable; only its two
+identified lingering compiler/start processes were stopped afterwards. Native
+commands are optional evidence tools, not application/CI dependencies. All
+original EXE/runtime, C#/IL, helper, TOP and earlier probe/output hashes were
+checked before and after and remain unchanged.
+
+| New evidence | SHA-256 |
+| --- | --- |
+| `scripts/reference-plan-next-marker-probe.cs` | `bfe6bcdfb917adb8b00df390db135059d0806bd9e60f629f7c4b0d4ceecfe9f1` |
+| `native-plan-next-marker-read.txt` | `aecf642cfcf85405e2855d827bff67a5b79ead82e0dcc3d71f8a72b3944a15d3` |
+| Optional compiled probe (`build/reference-plan-next-marker-probe.exe`) | `f1583022973fc8167400a8fadd570c005a92aca35111e9f1f096a2b013c968fc` |
+
+Drawing C# remains `c07a9f255cf372cbcc2a3ecd2a31b0f1c959325749fd9155d8fd9a5649f817e7`;
+IL remains `ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76`.
+The helper remains `ae1f32a1034bbd95a59e97db47e887fabb30b06eabe55a960c9c5ebf9090d005`.
+Original EXE/runtime and fixture hashes remain as recorded above.
+
+Actual optional commands run from the repository root:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-plan-next-marker-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-plan-next-marker-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-plan-next-marker-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-plan-next-marker-read.txt 2>build/native-plan-next-marker-read.err
+```
+
+Frozen stdout is protected from text normalization. Compare future native
+stdout to this evidence; never regenerate expectations from Go.
