@@ -5,9 +5,10 @@ formats, based on the PocketTopo 1.372 decompilation.
 
 ## Status
 
-Implementation authorized on 2026-10-09. **P02, P03a and P03b are complete**: minimal
-Go CLI and checks, immutable station IDs, and a bounded v3 header/trip prefix
-reader with source offsets, copied records and explicit malformed-input errors.
+Implementation authorized on 2026-10-09. **P02, P03a, P03b and P03c1 are complete**:
+minimal Go CLI and checks, immutable station IDs, and bounded v3 trip and
+measurement prefix readers with raw fields, source offsets, copied records and
+explicit malformed-input errors. P03b's trip-only contract remains intact.
 Native export support is not yet implemented or validated.
 
 Confirmed priorities:
@@ -41,9 +42,9 @@ Confirmed priorities:
   push were subsequently authorized for `dlubom/pockettopo-exporter`; releases
   remain out of scope. P02 adds no exporter framework.
 
-**Next ready implementation PBI: P03c1 — bounded v3 measurements.** See the
-bounded acceptance contract below. P03b stops after the trip table; P03c is
-split into measurements (P03c1) and references (P03c2).
+**Next ready implementation PBI: P03c2 — bounded v3 references.** See the
+bounded acceptance contract below. P03b stops after trips and P03c1 after
+measurements; neither requires or interprets a reference count.
 
 ## Reference material
 
@@ -403,7 +404,7 @@ From the repository root:
 bash scripts/tools.sh                 # download/build pinned development tools
 bash scripts/check.sh                 # format check, vet, Staticcheck, race tests,
                                       # >=95% behavior coverage, build, CLI smoke
-bash scripts/mutation.sh              # >=90% Gremlins killed; station/prefix faults;
+bash scripts/mutation.sh              # >=90% Gremlins killed; station/trip/measurement faults;
                                       # reject incomplete/empty/invalid runs
 bash scripts/mutation-trial.sh        # weak-test, build/setup-error controls,
                                       # macOS/Linux
@@ -581,7 +582,7 @@ Conversation history must not be required to reconstruct a critical decision.
 
 ### Proposed sequence
 
-P00 decisions needed to start, P02, P03a and P03b are complete. P03 is split below so
+P00 decisions needed to start, P02, P03a, P03b and P03c1 are complete. P03 is split below so
 the next chat can deliver one small implementation increment. Remaining rows are
 planned, not completed; refine each contract when its dependencies are ready.
 IDs describe this project only. R01–R07 are not scheduled for this handoff.
@@ -593,8 +594,8 @@ IDs describe this project only. R01–R07 are not scheduled for this handoff.
 | P02 | Done: public Git repository, Go skeleton, pinned tools, passing three-platform CI and positive/negative mutation trial | Explicit implementation request, P00 |
 | P03a | **Done:** source station ID decoding and display, retaining raw bits and internal identity; contract and evidence below | P02; ID-specific C#/IL contract inside the slice |
 | P03b | **Done:** bounded v3 header/trip prefix, immutable source fields, offsets, limits and structured errors | P03a; reader C#/IL and native evidence below |
-| P03c1 | **Next / ready:** extend the prefix through the measurement table only; bounded contract below | P03b; Station/Survey reader contract |
-| P03c2 | Planned: extend through references and identify the unparsed drawing tail; refine after P03c1 | P03c1; Reference/Survey reader contract |
+| P03c1 | **Done:** bounded measurement prefix, immutable raw fields, optional comments, offsets and native acceptance evidence | P03b; Station/Survey reader contract below |
+| P03c2 | **Next / ready:** bounded reference prefix, raw coordinates/comments and explicit unparsed tail; contract below | P03c1; Reference/Survey reader contract |
 | P04 | Read mappings, polylines and XSections; account for the complete file and unsupported content | P03c2 |
 | P05 | Reproduce isolated-input native text export; native golden cases for units, flags, comments and record order | P03c2, P04; required native update behavior understood |
 | P06 | Reproduce fixed-point angles, grouping and average directions with original-program evidence | P03c2 |
@@ -1005,7 +1006,7 @@ both mutation commands. This README is part of the delivered commit; exact
 pushed SHA and hosted CI are verified in the chat handoff. There is no claim
 of complete TOP parsing or exporter compatibility. P03b ends here.
 
-## Next ready PBI: P03c1 — bounded v3 measurements
+## Completed PBI: P03c1 — bounded v3 measurements
 
 P03c is split to keep one independently verified table per chat. P03c1 extends
 the source prefix through the measurement table only. P03c2 will read references
@@ -1054,10 +1055,223 @@ comment presence, flags and trip-index semantics as needed. Update README with
 native versus strict behavior, provenance and results; refine P03c2, commit,
 push and confirm CI for the exact SHA; stop after P03c1.
 
+### Implemented measurement API and source policy (2026-10-09)
+
+`internal/top.ReadV3MeasurementPrefix(data)` and
+`ReadV3MeasurementPrefixWithLimits(data, limits)` read header, trips and
+measurements only. `MeasurementLimits` embeds the unchanged P03b `Limits` and
+adds `MaxMeasurements`; `DefaultMeasurementLimits()` uses the existing defaults
+plus 1,000,000 measurements. Zero is a real bound; negative or above-default
+values return `invalid_limit`. No CLI, processing or exporter code changed.
+
+The result is `source.MeasurementPrefix`, with `Header`, `Version`,
+`TripCountRaw`, `Trips`, `MeasurementCountRaw`, `Measurements`, `Bytes`,
+`Offsets`, `ConsumedOffset` and `UnparsedTailSize`. It reuses immutable trip
+records and copies measurement collections and consumed bytes on construction
+and access. `MeasurementPrefixOffsets` includes P03b's fixed spans and the
+actual `MeasurementCount` span following the variable-length trip table.
+
+`source.Measurement` exposes `From`/`To` as raw-preserving `StationID` values,
+`DistanceMM` (Int32), `AzimuthRaw`/`InclinationRaw` (Int16),
+`FlagsRaw`/`RollRaw` (bytes), `TripIndexRaw` (Int16), `HasComment`, `Comment`,
+`CommentBytes` and `Offsets`. Field order is exactly From, To, distance,
+azimuth, inclination, flags, roll, trip index, optional string. Fixed fields
+occupy 20 bytes; little-endian signed conversions preserve every stored bit.
+No angular conversion, grouping, distance correction or trip-index adjustment
+is performed. Negative and out-of-table indices are retained, including
+-32768 and 32767, even with zero trips; they are not validated links.
+
+Comment presence follows only `flags & 2`. An absent comment has zero
+`CommentLength`/`Comment` spans and `HasComment=false`; a present empty comment
+has an encoded-length span, a zero-length byte span at its source position and
+`HasComment=true`. Comments retain exact UTF-8 bytes and nonminimal encoded
+lengths in the copied prefix. All record/field spans use zero-based starts and
+exclusive ends. There are no mutable input/output collection aliases.
+
+The new measurement limit is validated first, then P03b's limit/input/header/
+trip validation runs unchanged. Before measurement allocation,
+`count <= remaining_bytes / 20` is required, avoiding count multiplication
+overflow. Errors return an empty result, including when trips or earlier
+measurements were read successfully. Existing `ParseError` codes are reused:
+
+| Code | New field/offset contexts |
+| --- | --- |
+| `invalid_limit` | `limits.max_measurements`, offset 0 |
+| `negative_count` | `measurement_count`, at its actual start after trips |
+| `resource_limit` | `measurement_count`, or `measurements[i].comment.length` at its first encoded byte |
+| `truncated` | Required field start; minimum-byte preflight uses `measurement_count`; missing length bytes use their own position |
+| `string_length_overflow` | `measurements[i].comment.length`, at its first encoded byte |
+| `invalid_utf8` | `measurements[i].comment`, at the comment byte start |
+
+Fixed field names are `measurements[i].from_id`, `.to_id`, `.distance_mm`,
+`.azimuth_raw`, `.inclination_raw`, `.flags_raw`, `.roll_raw`, `.trip_index_raw`.
+All P03b codes, offsets, defaults and strict string rules remain in force.
+An exact 12-byte zero-trip/zero-measurement prefix succeeds without a reference
+count. Arbitrary, malformed or missing tail bytes stay uninterpreted. The
+P03b eight-byte zero-trip prefix still succeeds through its original entry point.
+
+### Measurement C#/IL and original-program evidence
+
+Inspected the analysis map, `Survey.Read` (RVA `0x744c`), `Station.Read`
+(`0x1669c`), `Station.Flags`, `ID.Read` and their IL. Native `Survey.Read`
+reads a signed Int32 count and loops while `i < count`; negative counts would
+skip the loop. This tool rejects negative counts and applies operational bounds.
+Native `Station.Read` retains all flags and signed fields without distance or
+trip-membership validation. `Station.GetDist`/`WriteDist` treat Int32.MinValue
+as a blank distance; source reading retains that sentinel and other negatives.
+
+| Flag | Native declaration/use; P03c1 preserves the stored bit |
+| --- | --- |
+| `0x01` | `flipped`, native extended-view flip/`<` text marker |
+| `0x02` | `hasComment`, controls the following string |
+| `0x04` | `invisible`, suppresses native drawing lines/`~` text marker |
+| `0x08` | `special`, native special drawing style/`.` text marker |
+| `0x10` | `projected`, native projected-view state/`=` text marker |
+| `0x20` | `mark`, temporary loop traversal state in `Loop.Setup` |
+| `0x40` | Undeclared in the inspected enum; accepted and retained by `Station.Read` |
+| `0x80` | `readOnly`, subsequently set or cleared by `Survey.Read` according to load context |
+
+Native nonnegative trip indices add `(short)tripOffs` and wrap through IL
+`conv.i2`; negative indices are unchanged. That offset is the prior native trip
+list size, not source data. `Trip.ByIndex` returns null and `DeclCorrByIndex`
+returns zero outside the list. P03c1 stores the raw index and raw flags before
+these context/processing changes. This is deliberate source preservation,
+not an implementation of template loading or native derived state.
+
+Reference hashes supplement the previously recorded Survey/ID/IL provenance:
+`Station.cs` SHA-256
+`44726d9b81881474147865a629365b9e02f0cc3e42dcec0b921613e36826c1cb`;
+the unchanged `PocketTopo.il` SHA-256 is
+`ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76`.
+
+The new [native measurement probe](scripts/reference-measurement-probe.cs)
+invokes original `Station.Read` through reflection, without GUI, native TOP
+writing, references or drawings. On 2026-10-09, the hash-verified original EXE
+under Wine Staging 11.7 / Microsoft .NET 2.0.50727.42 x86 confirmed all 256 flag
+bytes, five distance boundaries, seven signed trip-index cases at offsets 0/3,
+absent/present-empty comments, strict-policy string differences and all four
+fixture measurements. Its CRLF stdout and reproduction details are in
+[fixture provenance](internal/top/testdata/README.md). The probe exited 0;
+native compilation produced a usable executable but its Wine compiler processes
+remained open and were stopped after the probe completed. This optional compiler
+invocation is not an automated gate.
+
+The unchanged native `api-trips-ids.top` and independently frozen helper
+expectations establish four ordered record spans `[175,226)`, `[226,419)`,
+`[419,460)`, `[460,496)`. Measurement count is `[171,175)`; consumed bytes are
+496 and the unparsed tail is 46. Only header/trips/measurements are validated.
+Native UTF-8 `A FF B` becomes `AB` and fifth length byte 16 is discarded;
+this reader reuses P03b's strict rejection rather than losing source bytes.
+
+Earlier JKTZ immutable records and bounded reading were reviewed locally and
+against its GitHub `master` parser (blob `74965043ebb9600ad71089bb079e76eaad1268f3`).
+Its `flags & ~3` rejection and `-1..trip_count-1` index restriction are not
+adopted: they disagree with native source reading. No original archives or
+generated decompilation artifacts were edited.
+
+### P03c1 checks and mutation scope
+
+Go 1.26.3 darwin/arm64, Staticcheck v0.8.1, Gremlins v0.6.0:
+
+- `bash scripts/check.sh`: passed formatting, vet, Staticcheck, uncached race
+  tests, build and executable smoke. **100% statement coverage** in each of
+  `internal/cli`, `internal/source` and `internal/top`, including the unchanged
+  P03b behavior. Tests cover literal signed/endian fields, reserved/alias IDs,
+  all 256 flag bytes, absent/empty comments, raw trip boundaries, every required
+  byte truncation, exact input/count/comment limits and immutable copies.
+- `bash scripts/mutation-measurements.sh`: **35/35 valid additional mutants
+  killed**. Each compiled and failed a named measurement assertion; build errors
+  and timeouts are rejected. Faults discard raw fields/spans, hide empty-comment
+  presence, alias collections/bytes, reverse endian order, swap flag/roll fields,
+  select the wrong comment bit, reject native-accepted fields, or rewrite indices.
+- `bash scripts/mutation.sh`: the complete integrated command passed:
+  **119/119 Gremlins mutants killed** (43 measurement reader, 3 measurement model,
+  52 trip reader, 3 trip model, 16 station-ID, 2 CLI). No lived, uncovered,
+  invalid, skipped or timed-out mutants. The same run killed **6/6 station-ID,
+  19/19 trip-prefix and 35/35 measurement explicit mutants**. No exclusions.
+- `bash scripts/mutation-trial.sh`: ordinary weak tests passed, both CLI mutants
+  survived and the shared gate rejected the run with exit 1. Deliberate compiler
+  and setup errors returned NOT VIABLE exit 2, never a behavioral kill.
+- `GOCACHE="$PWD/.cache/go-build" GOTOOLCHAIN=local go test ./internal/top
+  -run '^$' -fuzz '^FuzzReadV3MeasurementPrefix$' -fuzztime=10s -parallel=2`:
+  passed, 763,135 executions. The same command with `FuzzReadV3TripPrefix`
+  passed, 180,003 executions. Bounded inputs, deterministic structured results,
+  immutable input and exact consumed/tail accounting are asserted; ordinary
+  checks also execute both seed corpora.
+
+The initial expanded run correctly rejected insufficient direct model coverage
+and two uncovered `HasComment` mutants; source-contract tests resolved them.
+The new explicit-fault script also rejected mutation-target and compiler errors
+while its literal Bash replacement was being corrected. None of these incomplete
+campaigns counts as passed; no survivor exemption or lowered gate was added.
+
+Measured Git blobs: `9d6a98a589ba305f601431bb82cfd490349f7ced` (measurement model),
+`027a209e345227af20a108419156e34b4e92a204` (model tests),
+`fedbc10a433ec91c8b6f90e2e075f8e9d7b8e62f` (reader),
+`4607d31b19719b68ba4a1520b313b6741b4c147c` (reader tests).
+Reports regenerate in `coverage.out`, `mutation.json`,
+`build/measurement-mutation.json` and the existing station/trip reports. All
+source packages and fixtures remain in the explicit disposable mutation copy.
+An independent read-only review found no Critical or Important issues.
+CI repeats ordinary checks on Linux, Windows and macOS and both mutation
+commands on Linux. The exact delivered SHA
+and hosted run are verified in the chat handoff; README belongs to that commit.
+P03c1 ends here and makes no complete-file or exporter compatibility claim.
+
+## Next ready PBI: P03c2 — bounded v3 references
+
+**Outcome:** a separate source reader extends the validated measurement prefix
+through the reference table, records the start/size of the uninterpreted tail,
+and still reports a prefix rather than a complete TOP parse. Keep the P03b and
+P03c1 entry points, source semantics, limits and errors intact.
+
+**Dependencies/reference:** P03c1; start with `analysis/ANALYSIS.txt`, then
+the reference portion of `Survey.Read`, `Reference.Read` (RVA `0x17764`),
+`MetricLocation`, `MetricGrid`, `ID.Read` and their IL. Confirm field order,
+units, signed boundaries and native empty-comment handling through the original
+assembly before claiming native evidence. No CRS or geographic tie inference.
+
+**Bounded acceptance contract:**
+
+- Read the signed little-endian Int32 reference count following measurements.
+  Preserve ordered immutable references, the copied consumed prefix and all
+  record/field spans. Reject negative counts; validate count/resource/minimum
+  bytes before allocation. Minimum record size is 25 bytes: ID 4, east 8,
+  north 8, altitude 4, at least one string-length byte.
+- Retain station UInt32 bits through `StationID`, signed Int64 east/north and
+  signed Int32 altitude as source mm without float conversion or coordinate
+  interpretation. Preserve the always-encoded UTF-8 comment, including empty
+  bytes and its length span; native `Reference.Read` converts empty text to null,
+  but the source model must retain what was stored. No flag byte is present.
+- Reuse the current 64 MiB input / 1 MiB comment ceilings, add a 1,000,000
+  reference ceiling with lower nonnegative caller limits, and reuse strict
+  7-bit/UTF-8 rules and structured field/offset errors. On failure return no
+  partial successful table. Do not normalize source fields.
+- Stop immediately after references. Report consumed offset and tail size;
+  accept no drawing bytes and an arbitrary tail. Do not require/read mappings,
+  drawing element markers or a trailer; do not label that tail fully validated.
+- Test zero/multiple references, Int64/Int32 signed and endian boundaries,
+  station aliases/reserved IDs, empty/Unicode/nonminimal comments, every required
+  byte truncation, exact limits, immutable copies and bounded fuzzing. Reuse the
+  existing zero-reference fixture plus an independently captured native case
+  with nonempty references and native boundary probes; no Go-generated oracle.
+
+**Non-goals:** mappings, polylines, XSections, drawings, complete-file validation,
+CLI inspect/export, directory context, geometry, correction and exporters.
+Do not implement P04 in the same chat.
+
+**Required checks/handoff:** current check, mutation and negative-control
+commands; at least 95% statement coverage and 90% killed mutants, every survivor
+reviewed, no empty/incomplete/error run accepted. Add explicit raw-coordinate,
+comment and copy mutations where token operators are insufficient. Update README
+with native/strict distinctions, provenance and actual results; refine P04 into
+one small ready slice if necessary; commit, push, confirm CI for the exact SHA,
+then stop after P03c2 and provide the next prompt.
+
 ## Open issues and deferred work
 
-- The TOP reader validates only the v3 header/trip prefix. Measurements,
-  references, drawings, complete-file validation and native exporters remain
+- The TOP readers validate only the v3 trip/measurement prefixes. References,
+  drawings, complete-file validation and native exporters remain
   unimplemented; the CLI still accepts only help/version.
 - Native measurement arithmetic/export formatting fidelity remains unproven in Go.
 - Gremlins is accepted only for the measured small scope; expand and reassess
@@ -1065,7 +1279,7 @@ push and confirm CI for the exact SHA; stop after P03c1.
   mutants rather than silently excluding them.
 - The full P01 capability/fixture matrix, older TOP versions, corpus runs,
   release packaging and optional R01–R07 work remain deferred.
-- Future full compatibility claims still require native evidence; the P02/P03a/P03b
+- Future full compatibility claims still require native evidence; the P02/P03a/P03b/P03c1
   checks validate only implemented behavior and their recorded reference cases.
 
 ## Research references
