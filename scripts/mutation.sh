@@ -11,10 +11,18 @@ trap 'rm -rf "$trial"' EXIT
 cp go.mod "$trial/"
 if [[ -f go.sum ]]; then cp go.sum "$trial/"; fi
 cp -R cmd internal "$trial/"
+mkdir "$trial/mutation-bin"
+cp scripts/mutation-go.sh "$trial/mutation-bin/go"
+chmod +x "$trial/mutation-bin/go"
+export POCKETTOPO_MUTATION_REAL_GO
+POCKETTOPO_MUTATION_REAL_GO=$(command -v go)
+export PATH="$trial/mutation-bin:$PATH"
 rm -f mutation.json
 cd "$trial"
 "$root/.tools/bin/gremlins" unleash --workers 2 --exclude-files 'cmd/' \
+  --invert-assignments --invert-bitwise \
   --output "$root/mutation.json"
 # Fail closed on empty/incomplete runs, timeouts, invalid or unknown statuses.
 # Gremlins' built-in efficacy excludes several of those statuses.
 jq -e -f "$root/scripts/mutation-gate.jq" "$root/mutation.json"
+bash "$root/scripts/mutation-station.sh"

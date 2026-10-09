@@ -5,8 +5,9 @@ formats, based on the PocketTopo 1.372 decompilation.
 
 ## Status
 
-Implementation authorized on 2026-10-09. **P02 is complete**: minimal Go CLI,
-formatting/static checks, tests, coverage gate and a verified mutation trial.
+Implementation authorized on 2026-10-09. **P02 and P03a are complete**: minimal
+Go CLI and checks, followed by the immutable source station-ID helper, verified
+C#/IL decoding, display and internal equality, and expanded mutation checks.
 Native export support is not yet implemented or validated.
 
 Confirmed priorities:
@@ -40,8 +41,8 @@ Confirmed priorities:
   push were subsequently authorized for `dlubom/pockettopo-exporter`; releases
   remain out of scope. P02 adds no exporter framework.
 
-**Next ready implementation PBI: P03a — source station identifiers.** See the
-bounded acceptance contract below. Stop after P02 in this chat.
+**Next ready implementation PBI: P03b — bounded v3 header and trips.** See the
+bounded acceptance contract below. Stop after P03a in this chat.
 
 ## Reference material
 
@@ -179,8 +180,8 @@ have explicit boundaries and acceptance criteria in the research backlog.
 
 ### Scope and decision status
 
-Scope priority and implementation authorization are separate. P02 was authorized
-on 2026-10-09; later increments require their own implementation request. A successful third-party
+Scope priority and implementation authorization are separate. P02 and P03a were
+authorized on 2026-10-09; later increments require their own implementation request. A successful third-party
 import does not automatically promote an optional feature into required scope.
 
 | Item | Scope status | Remaining decision/evidence |
@@ -401,8 +402,10 @@ From the repository root:
 bash scripts/tools.sh                 # download/build pinned development tools
 bash scripts/check.sh                 # format check, vet, Staticcheck, race tests,
                                       # >=95% behavior coverage, build, CLI smoke
-bash scripts/mutation.sh              # >=90% killed; reject incomplete/empty runs
-bash scripts/mutation-trial.sh        # negative control, macOS/Linux
+bash scripts/mutation.sh              # >=90% Gremlins killed; six station faults;
+                                      # reject incomplete/empty/invalid runs
+bash scripts/mutation-trial.sh        # weak-test, build/setup-error controls,
+                                      # macOS/Linux
 
 gofmt -w cmd internal                 # apply formatting
 go run ./cmd/pockettopo-exporter --help
@@ -577,8 +580,8 @@ Conversation history must not be required to reconstruct a critical decision.
 
 ### Proposed sequence
 
-P00 decisions needed to start and P02 are complete. P03 is split below so the
-next chat can deliver one small implementation increment. Remaining rows are
+P00 decisions needed to start, P02 and P03a are complete. P03 is split below so
+the next chat can deliver one small implementation increment. Remaining rows are
 planned, not completed; refine each contract when its dependencies are ready.
 IDs describe this project only. R01–R07 are not scheduled for this handoff.
 
@@ -587,8 +590,8 @@ IDs describe this project only. R01–R07 are not scheduled for this handoff.
 | P00 | Done for startup: Go, native-first scope, isolation, byte compatibility, platforms and gates selected above | This draft |
 | P01 | Deferred full exporter/options inventory; capture the reference contract needed by each implementation slice within that slice | Required before each corresponding exporter; optional research only when necessary |
 | P02 | Done: public Git repository, Go skeleton, pinned tools, passing three-platform CI and positive/negative mutation trial | Explicit implementation request, P00 |
-| P03a | **Next / ready:** source station ID decoding and display, retaining raw bits and internal identity; bounded contract below | P02; ID-specific C#/IL contract inside the slice |
-| P03b | Planned: bounded v3 header/trip reading, offsets and malformed-input errors; refine before implementation | P03a; relevant P01 reader contract |
+| P03a | **Done:** source station ID decoding and display, retaining raw bits and internal identity; contract and evidence below | P02; ID-specific C#/IL contract inside the slice |
+| P03b | **Next / ready:** bounded v3 header/trip prefix reading, offsets and malformed-input errors; bounded contract below | P03a; relevant P01 reader contract |
 | P03c | Planned: references/measurements and partial source inspection; explicitly account for unparsed drawing tail | P03b; relevant P01 record contract |
 | P04 | Read mappings, polylines and XSections; account for the complete file and unsupported content | P03c |
 | P05 | Reproduce isolated-input native text export; native golden cases for units, flags, comments and record order | P03c, P04; required native update behavior understood |
@@ -654,7 +657,7 @@ required checks passed for the delivered revision; discrepancies documented;
 the code and handoff are understandable without the originating chat. Test count
 and coverage alone do not establish compatibility.
 
-## Next ready PBI: P03a — source station identifiers
+## Completed PBI: P03a — source station identifiers
 
 **Outcome:** the source model can preserve a raw 32-bit station identifier,
 expose its native internal value and display name, and compare internal identity
@@ -697,17 +700,169 @@ by convention/API; no processing or exporter abstraction is needed here.
 **Handoff:** update this README with implemented contract, reference locations,
 actual commands/results and one refined next PBI (P03b if ready), then stop.
 
+### Implemented contract and provenance (2026-10-09)
+
+`internal/source.StationID` stores only a private `uint32` raw bit pattern.
+`NewStationID` and `Raw` preserve it; `NativeValue` and `String` derive values
+without changing the record. `SameIdentity` compares internal values, including
+reserved IDs. Go struct `==` compares the raw records; it must not be used for
+native station identity. The zero value represents raw `0`, displayed as `0.0`.
+There are no setters, file access, CLI changes, processing or exporter packages.
+
+Given signed `r = int32(raw)`, `NativeValue` returns `-1` for raw `0x80000000`,
+`r + 2146435071` for other negative `r`, and `r` otherwise. These additions fit
+Int32. Given internal `v`, display is decimal `v >> 16`.`v & 0xffff` when
+`v >= 0`, decimal `v + 1048576` when `v < -256`, and empty otherwise.
+The equivalent native subtraction of `LIMIT = -1048576` is preserved as addition
+in Go. Decimal ASCII formatting has no locale setting in this helper.
+
+Raw `0x80000001` is plain `0`, distinct from raw `0` (`0.0`). The complete
+reserved range `0x800fff01..0x80100000` covers internal `-256..-1`.
+`0x80000000` and `0x80100000` are aliases for `-1`; `0x800fffff` is distinct
+internal `-2`. Nonnegative aliases include raw `1` and `0x80100002` (both `0.1`),
+and raw `0x7feffffe` and `0xffffffff` (both `32751.65534`). Source records retain
+different raw bits even when `SameIdentity` returns true.
+
+Reference: `../pockettopo-decompilation/decompiled/csharp/PocketTopo/ID.cs`,
+`Read`, `ToString`, `op_Equality`, `Equals`; IL methods at RVA `0x22348`,
+`0x22070`, `0x21f20`, `0x220f4`, respectively. The inspected IL uses signed
+comparisons, `add`, arithmetic `shr` and `and`, and compares the private internal
+value directly. Reference SHA-256 values:
+
+| File | SHA-256 |
+| --- | --- |
+| `ID.cs` | `8737d23529d5c27bc7d7be7a9563b73cd76ed8738d95639dde64eef113790fe6` |
+| `PocketTopo.il` | `ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76` |
+
+The reference manifest identifies the original EXE hash in the compatibility
+section above. The tests separate the C#/IL-derived boundary table from five
+historical observations recorded by reflection against original PocketTopo 1.372
+on 2026-10-08 in [JKTZ issue #135](https://github.com/dlubom/Jaskiniowy-Kataster-Tatr-Zachodnich/issues/135).
+Those observations cover raw `0x80000000`, `0x80000001`, `0x800fff00`,
+`0x800fffff`, and `0x00010009`, including internal values and text. The issue
+does not record the probe's assembly hash/runtime; it is supporting historical
+evidence, not a fresh native run or a fully captured boundary campaign.
+
+Earlier JKTZ `model.py`, station tests and format contract were inspected at
+[PR #136 head `67d3c98`](https://github.com/dlubom/Jaskiniowy-Kataster-Tatr-Zachodnich/tree/67d3c98fe3b1e627eb975ab5f65aba6748424bb7/src/jktz/pockettopo).
+Its immutable raw records are useful. Its export policy suppresses identities
+for unnamed endpoints; that is not native `ID.Equals` and is not adopted here.
+The local older JKTZ mapping was also inspected and is insufficient for reserved
+IDs/aliases. No JKTZ or decompilation files were modified.
+
+### P03a verification and mutation scope
+
+Local Go 1.26.3 darwin/arm64, Staticcheck v0.8.1, Gremlins v0.6.0:
+
+- `bash scripts/check.sh`: passed formatting, vet, Staticcheck, uncached race
+  tests, build and CLI smoke. Both `internal/cli` and `internal/source` have
+  **100% statement coverage**. Station tests cover 22 boundary patterns,
+  ten identity pairs, all 256 reserved values, the zero value and the five
+  historical native observations. Raw bits are checked after derived operations.
+- `bash scripts/mutation.sh`: **18/18 Gremlins mutants killed** (16 source-ID,
+  2 CLI), no lived, uncovered, invalid, skipped or timed-out mutants. In addition
+  to default operators, `--invert-assignments --invert-bitwise` test offset sign,
+  shift direction and masking. No exclusions or survivor exemptions were added.
+- The same command runs `scripts/mutation-station.sh`: **6/6 additional valid
+  source mutations killed**. These discard/hide raw bits, compare raw records
+  instead of aliases, compare empty display names instead of internal IDs,
+  expose reserved names, and omit the major/minor separator. They cover return,
+  constructor and string changes Gremlins does not generate. Each must compile
+  and fail a named station test; errors and timeouts are rejected. Reports are
+  regenerated in `mutation.json` and `build/station-mutation.json`.
+- `bash scripts/mutation-trial.sh`: weak ordinary tests pass, both CLI mutants
+  survive and the shared gate exits 1. A deliberate type error and a missing
+  temporary directory also prove the test adapter returns 2 (NOT VIABLE),
+  not a behavioral kill.
+
+Gremlins' executor maps `go test` exit 1 to KILLED even for compiler errors.
+`scripts/mutation-go.sh` is therefore installed only in the disposable mutation
+PATH: a failed run must contain a named test failure in `go test -json`; other
+errors, including setup/output failures, return 2 and fail the existing JSON
+gate. The early expanded trial also
+found two uncovered mutants on a package-level negative constant. The final
+helper uses the equivalent direct addition, with every generated mutant covered.
+Positive formatting uses `fmt.Sprintf` to avoid invalid string-subtraction
+mutants; a valid separator fault is tested explicitly. The gates remain 95%
+coverage and 90% killed; the additional six faults require all six killed.
+
+Measured Git blobs: `eb326a668a23a4bd268191e846f823069f60abab` for
+`internal/source/station_id.go` and `4f72e44bed5b5b9324ec5eac73200a3e45c9ad41`
+for its tests. Reproduce with `git hash-object` and the commands above. The P03a
+commit is identified by `git log --oneline`; hosted CI on Linux, Windows and
+macOS reruns ordinary checks, with both mutation commands on Linux. The exact
+pushed SHA and its run are verified in the chat handoff; this README is included
+in that commit. P03a does not establish full TOP or exporter compatibility.
+
+## Next ready PBI: P03b — bounded v3 header and trips
+
+**Outcome:** a binary prefix reader takes explicit input bytes, validates the
+v3 header and trip table, and returns immutable source records with byte offsets,
+the consumed offset and the unparsed tail size. It explicitly reports a prefix,
+not a complete TOP parse. It leaves the caller's bytes unchanged and never
+opens neighboring files. **Dependencies:** P03a and the reader-specific P01
+contract inspected within P03b.
+
+**Reference:** begin with `analysis/ANALYSIS.txt`, then `DataSet.Read`,
+`Survey.Read` (the initial `Trip.ReadList` call only), `Trip.ReadList`,
+`Trip.Read`, `FileReader`, and their IL. Native header and trip behavior must
+be distinguished from the stricter documented resource/error policy.
+
+**Bounded contract:**
+
+- Accept only `54 6f 70 03`; reject bad magic and every other version explicitly.
+  Preserve the header/version and signed little-endian Int32 trip count.
+- Read ordered trips: signed Int64 ticks, .NET 7-bit byte-length UTF-8 comment,
+  signed Int16 declination. Preserve ticks without float/date inference,
+  original comment bytes and raw declination. Expose Auto for `-32768`
+  separately; never replace the source value with native derived zero.
+- Preserve a copy of the consumed prefix and record/field offsets; do not expose
+  mutable aliases of caller bytes or model collections. Stop immediately after
+  the trip table. Do not require or interpret a shot count or the remaining tail.
+- Errors have a stable code, field context and zero-based byte offset. Reject
+  truncation at every field, negative counts, overflowing 7-bit lengths,
+  malformed UTF-8 and ticks outside the native DateTime range. Verify the exact
+  native date/string behavior before fixing expected cases; document strict
+  UTF-8 rejection if the native decoder substitutes invalid bytes.
+- Explicit default operational bounds: 64 MiB input, 1,000,000 trips,
+  1 MiB per comment; allow lower caller-supplied nonnegative limits. Check
+  bounds and available minimum bytes before allocating, including arithmetic
+  overflow. These are tool limits, not native format limits.
+
+**Fixtures/acceptance:** small hand-authored prefix bytes for zero trips,
+multiple ordered trips, empty/Unicode comments, 127/128-byte length boundary,
+signed declination boundaries and Auto; expected offsets recorded beside cases.
+The eight-byte header/count prefix with zero trips succeeds as a prefix even
+without a tail. An arbitrary tail stays unparsed with its size recorded.
+Truncating any required byte fails at the documented field/offset; exact limit
+values pass and the next value fails. Include immutable-copy assertions and a
+bounded fuzz test. Locate one existing native v3 fixture, verify its provenance
+and hash, and compare only its independently established header/trips; do not
+derive a native oracle from the new Go reader.
+
+**Non-goals:** measurements/references, drawings, full-file validation, source
+rewriting, CLI inspect/export, directory context, geometry, timestamp correction
+and exporters. Do not start P03c in the same chat.
+
+**Required checks/handoff:** P02/P03a commands, at least 95% behavior coverage,
+focused count/length/sign/boundary mutations with every survivor reviewed and
+no incomplete/error runs accepted. Expand disposable mutation copies only as
+needed for new packages/fixtures. Update README with native versus stricter
+behavior, source evidence and results, commit and push, verify CI for the exact
+SHA, refine P03c and stop after P03b.
+
 ## Open issues and deferred work
 
-- P02 has no TOP reader, native exporter or compatibility evidence.
-- Native arithmetic/formatting fidelity remains unproven in Go.
+- The project has no TOP reader or native exporter; P03a validates only the
+  station-ID helper under the contract above.
+- Native measurement arithmetic/export formatting fidelity remains unproven in Go.
 - Gremlins is accepted only for the measured small scope; expand and reassess
   operator coverage as native logic arrives. CI rejects invalid/uncovered/time-out
   mutants rather than silently excluding them.
 - The full P01 capability/fixture matrix, older TOP versions, corpus runs,
   release packaging and optional R01–R07 work remain deferred.
-- Future compatibility claims still require native evidence; the successful P02
-  CI run above validates only the skeleton and tooling.
+- Future full compatibility claims still require native evidence; the P02/P03a
+  checks validate only implemented behavior and their recorded reference cases.
 
 ## Research references
 
