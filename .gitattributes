@@ -6,3 +6,4 @@ internal/top/testdata/native-reference-read.txt -text whitespace=cr-at-eol
 internal/top/testdata/native-mapping-read.txt -text whitespace=cr-at-eol
 internal/top/testdata/native-plan-mapping-read.txt -text whitespace=cr-at-eol
 internal/top/testdata/native-plan-marker-read.txt -text whitespace=cr-at-eol
+internal/top/testdata/native-plan-polygon-count-read.txt -text whitespace=cr-at-eol

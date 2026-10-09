@@ -440,3 +440,73 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 Compare a fresh stdout to frozen evidence; do not adjust it to match Go.
 One-byte prefix acceptance does not validate payloads, complete TOP files or
 exporters. Wine/.NET/PocketTopo remain optional evidence tools only.
+
+## P04c2 first Polygon point count and original reader probe, 2026-10-09
+
+The unchanged `api-drawings.top` and pinned helper's `Drawings`/`Append` methods
+establish a first three-point Polygon independently of Go. Fresh original
+reader readback confirms marker `[146,147)` = 1, signed little-endian count
+`[147,151)` = 3, consumed 151 and full-file tail 529. Full fixture and exact
+count-only memory streams agree in native `PixPerMm=5` and `SetVga` mode 10.
+No TOP fixture is rewritten to produce bounded streams.
+
+The separate `scripts/reference-plan-polygon-count-probe.cs` uses original
+`Trip.ReadList`, `Station.Read`, `Reference.Read` and two `Mapping.Read` calls
+before reading the marker and one `ReadInt32` through the .NET `BinaryReader`
+held by original `FileReader`. It never invokes `Drawing.Read`/`Polygon.Read`,
+allocates points, reads coordinates/color, runs a GUI, writes a TOP, or uses
+Go-generated expectations. Its literal four-byte cases confirm 0, 1, 3, 66051,
+1,000,000, 1,000,001, Int32.MaxValue, -1 and Int32.MinValue, with exact-prefix
+and arbitrary-tail streams. These are scalar-reader observations, not acceptance
+by the complete native Polygon reader. No large native arrays were allocated.
+
+Truncations with 0/1/2/3 count bytes throw `EndOfStreamException`. Native stream
+positions become 147/148/149/150 respectively; the failed scalar read can consume
+available bytes. The Go API instead returns an empty result with `truncated`
+at the stable count start 147 and leaves caller bytes unchanged.
+
+C#/IL `Polygon.Read` (RVA `0xc4b8`) reads signed Int32 at `IL_0007`, then
+`newarr System.Drawing.Point` at `IL_000f`, followed by signed X/Y pairs and
+a color byte even for zero points. Negative allocation behavior and the absence
+of a native operational ceiling are documented from this control flow; the
+probe deliberately stops before it. Go rejects negatives and counts above its
+explicit bound, and stops before all point/color bytes including for zero.
+The earlier JKTZ parser's signed count/resource checks were reviewed against
+C#/IL; its minimum-point-byte preflight and full Polygon/color reading are
+outside this count-only contract. GitHub master parser blob remains
+`74965043ebb9600ad71089bb079e76eaad1268f3`.
+
+Environment: macOS arm64, Wine `wine-11.7 (Staging)`, Microsoft .NET x86 runtime
+`2.0.50727.42`, original assembly `1.3.7.0`. Final native probe exit was 0 with
+empty stderr. Its 33-line CRLF stdout is frozen as
+`native-plan-polygon-count-read.txt`, protected from Git text normalization.
+The host compiler produced a usable executable; its two verified lingering
+compiler/start processes were stopped afterwards. Sandbox Wine server binding
+required a permitted host invocation. Compilation completion is not a CI gate.
+Original EXE/runtime, C#/IL, all earlier native fixtures/probes/stdout and the
+pinned helper remain unchanged; hashes were verified before and after.
+
+| New evidence | SHA-256 |
+| --- | --- |
+| `Polygon.cs` | `63d57a5200116e9a4acaadddecec5a1381ca8173544eddafdc14d07e29237fe2` |
+| `scripts/reference-plan-polygon-count-probe.cs` | `5c8ab4d740cb080fafdc7ecff5ea07006f44a53d252e37d485fc8e185d7d7cb7` |
+| `native-plan-polygon-count-read.txt` | `d6d76594d0958707672909c3ab2aa7a407f83f647887a8699ea8b6a9d78d9d6b` |
+
+Actual optional commands run from this repository on the recorded host:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-plan-polygon-count-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-plan-polygon-count-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-plan-polygon-count-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-plan-polygon-count-read.txt 2>build/native-plan-polygon-count-read.err
+```
+
+Compare fresh stdout to the frozen evidence; do not overwrite it to match Go.
+Only the first Polygon count is verified. Point/color payloads, complete files,
+side mappings and native exports remain outside P04c2. Wine/.NET/PocketTopo are
+optional evidence tools, not application or CI dependencies.

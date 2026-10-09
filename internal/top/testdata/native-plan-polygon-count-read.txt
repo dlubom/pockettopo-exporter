@@ -1,0 +1,33 @@
+assembly=1.3.7.0 runtime=2.0.50727.42
+PixPerMm=5
+drawings-fixture count_start=147 count=3 consumed=151 tail=529
+drawings-prefix count_start=147 count=3 consumed=151 tail=0
+drawings-truncated count_start=147 available=0 error=EndOfStreamException consumed=147 tail=0
+drawings-truncated count_start=147 available=1 error=EndOfStreamException consumed=148 tail=0
+drawings-truncated count_start=147 available=2 error=EndOfStreamException consumed=149 tail=0
+drawings-truncated count_start=147 available=3 error=EndOfStreamException consumed=150 tail=0
+PixPerMm=10
+drawings-fixture count_start=147 count=3 consumed=151 tail=529
+drawings-prefix count_start=147 count=3 consumed=151 tail=0
+drawings-truncated count_start=147 available=0 error=EndOfStreamException consumed=147 tail=0
+drawings-truncated count_start=147 available=1 error=EndOfStreamException consumed=148 tail=0
+drawings-truncated count_start=147 available=2 error=EndOfStreamException consumed=149 tail=0
+drawings-truncated count_start=147 available=3 error=EndOfStreamException consumed=150 tail=0
+literal bytes=00-00-00-00 count=0 consumed=5 tail=0
+literal bytes=00-00-00-00 count=0 consumed=5 tail=2
+literal bytes=01-00-00-00 count=1 consumed=5 tail=0
+literal bytes=01-00-00-00 count=1 consumed=5 tail=2
+literal bytes=03-00-00-00 count=3 consumed=5 tail=0
+literal bytes=03-00-00-00 count=3 consumed=5 tail=2
+literal bytes=03-02-01-00 count=66051 consumed=5 tail=0
+literal bytes=03-02-01-00 count=66051 consumed=5 tail=2
+literal bytes=40-42-0F-00 count=1000000 consumed=5 tail=0
+literal bytes=40-42-0F-00 count=1000000 consumed=5 tail=2
+literal bytes=41-42-0F-00 count=1000001 consumed=5 tail=0
+literal bytes=41-42-0F-00 count=1000001 consumed=5 tail=2
+literal bytes=FF-FF-FF-7F count=2147483647 consumed=5 tail=0
+literal bytes=FF-FF-FF-7F count=2147483647 consumed=5 tail=2
+literal bytes=FF-FF-FF-FF count=-1 consumed=5 tail=0
+literal bytes=FF-FF-FF-FF count=-1 consumed=5 tail=2
+literal bytes=00-00-00-80 count=-2147483648 consumed=5 tail=0
+literal bytes=00-00-00-80 count=-2147483648 consumed=5 tail=2
