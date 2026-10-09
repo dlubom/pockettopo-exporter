@@ -1,0 +1,61 @@
+assembly=1.3.7.0 runtime=2.0.50727.42
+PixPerMm=5
+drawings-fixture points=-6000,-2000;-5500,-1000;-4500,-1500 start=151 consumed=175 tail=505
+drawings-prefix points=-6000,-2000;-5500,-1000;-4500,-1500 start=151 consumed=175 tail=0
+drawings-truncated start=151 available=0 error=EndOfStreamException consumed=151 tail=0
+drawings-truncated start=151 available=1 error=EndOfStreamException consumed=152 tail=0
+drawings-truncated start=151 available=2 error=EndOfStreamException consumed=153 tail=0
+drawings-truncated start=151 available=3 error=EndOfStreamException consumed=154 tail=0
+drawings-truncated start=151 available=4 error=EndOfStreamException consumed=155 tail=0
+drawings-truncated start=151 available=5 error=EndOfStreamException consumed=156 tail=0
+drawings-truncated start=151 available=6 error=EndOfStreamException consumed=157 tail=0
+drawings-truncated start=151 available=7 error=EndOfStreamException consumed=158 tail=0
+drawings-truncated start=151 available=8 error=EndOfStreamException consumed=159 tail=0
+drawings-truncated start=151 available=9 error=EndOfStreamException consumed=160 tail=0
+drawings-truncated start=151 available=10 error=EndOfStreamException consumed=161 tail=0
+drawings-truncated start=151 available=11 error=EndOfStreamException consumed=162 tail=0
+drawings-truncated start=151 available=12 error=EndOfStreamException consumed=163 tail=0
+drawings-truncated start=151 available=13 error=EndOfStreamException consumed=164 tail=0
+drawings-truncated start=151 available=14 error=EndOfStreamException consumed=165 tail=0
+drawings-truncated start=151 available=15 error=EndOfStreamException consumed=166 tail=0
+drawings-truncated start=151 available=16 error=EndOfStreamException consumed=167 tail=0
+drawings-truncated start=151 available=17 error=EndOfStreamException consumed=168 tail=0
+drawings-truncated start=151 available=18 error=EndOfStreamException consumed=169 tail=0
+drawings-truncated start=151 available=19 error=EndOfStreamException consumed=170 tail=0
+drawings-truncated start=151 available=20 error=EndOfStreamException consumed=171 tail=0
+drawings-truncated start=151 available=21 error=EndOfStreamException consumed=172 tail=0
+drawings-truncated start=151 available=22 error=EndOfStreamException consumed=173 tail=0
+drawings-truncated start=151 available=23 error=EndOfStreamException consumed=174 tail=0
+PixPerMm=10
+drawings-fixture points=-6000,-2000;-5500,-1000;-4500,-1500 start=151 consumed=175 tail=505
+drawings-prefix points=-6000,-2000;-5500,-1000;-4500,-1500 start=151 consumed=175 tail=0
+drawings-truncated start=151 available=0 error=EndOfStreamException consumed=151 tail=0
+drawings-truncated start=151 available=1 error=EndOfStreamException consumed=152 tail=0
+drawings-truncated start=151 available=2 error=EndOfStreamException consumed=153 tail=0
+drawings-truncated start=151 available=3 error=EndOfStreamException consumed=154 tail=0
+drawings-truncated start=151 available=4 error=EndOfStreamException consumed=155 tail=0
+drawings-truncated start=151 available=5 error=EndOfStreamException consumed=156 tail=0
+drawings-truncated start=151 available=6 error=EndOfStreamException consumed=157 tail=0
+drawings-truncated start=151 available=7 error=EndOfStreamException consumed=158 tail=0
+drawings-truncated start=151 available=8 error=EndOfStreamException consumed=159 tail=0
+drawings-truncated start=151 available=9 error=EndOfStreamException consumed=160 tail=0
+drawings-truncated start=151 available=10 error=EndOfStreamException consumed=161 tail=0
+drawings-truncated start=151 available=11 error=EndOfStreamException consumed=162 tail=0
+drawings-truncated start=151 available=12 error=EndOfStreamException consumed=163 tail=0
+drawings-truncated start=151 available=13 error=EndOfStreamException consumed=164 tail=0
+drawings-truncated start=151 available=14 error=EndOfStreamException consumed=165 tail=0
+drawings-truncated start=151 available=15 error=EndOfStreamException consumed=166 tail=0
+drawings-truncated start=151 available=16 error=EndOfStreamException consumed=167 tail=0
+drawings-truncated start=151 available=17 error=EndOfStreamException consumed=168 tail=0
+drawings-truncated start=151 available=18 error=EndOfStreamException consumed=169 tail=0
+drawings-truncated start=151 available=19 error=EndOfStreamException consumed=170 tail=0
+drawings-truncated start=151 available=20 error=EndOfStreamException consumed=171 tail=0
+drawings-truncated start=151 available=21 error=EndOfStreamException consumed=172 tail=0
+drawings-truncated start=151 available=22 error=EndOfStreamException consumed=173 tail=0
+drawings-truncated start=151 available=23 error=EndOfStreamException consumed=174 tail=0
+literal points= start=5 consumed=5 tail=0
+literal points=66051,-66051 start=5 consumed=13 tail=0
+literal points=-2147483648,2147483647;-1,0;16777217,-16777217 start=5 consumed=29 tail=0
+literal points= start=5 consumed=5 tail=2
+literal points=66051,-66051 start=5 consumed=13 tail=2
+literal points=-2147483648,2147483647;-1,0;16777217,-16777217 start=5 consumed=29 tail=2

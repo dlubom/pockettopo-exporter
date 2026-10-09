@@ -510,3 +510,74 @@ Compare fresh stdout to the frozen evidence; do not overwrite it to match Go.
 Only the first Polygon count is verified. Point/color payloads, complete files,
 side mappings and native exports remain outside P04c2. Wine/.NET/PocketTopo are
 optional evidence tools, not application or CI dependencies.
+
+## P04c3 first Polygon vertices and original scalar probe, 2026-10-09
+
+The separate [points probe](../../../scripts/reference-plan-polygon-points-probe.cs)
+extends the P04c2 approach without modifying earlier probes or captured outputs.
+Original `Trip.ReadList`, `Station.Read`, `Reference.Read` and two `Mapping.Read`
+calls locate the first marker. The `BinaryReader` held by original `FileReader`
+then reads marker 1, count 3, and three signed Int32 X/Y pairs. It stops before
+color and never invokes `Polygon.Read`, allocates a native point table, writes
+TOP bytes, runs the GUI or derives expectations from Go.
+
+The pinned helper remains SHA-256
+`ae1f32a1034bbd95a59e97db47e887fabb30b06eabe55a960c9c5ebf9090d005`.
+Its literal `Drawings` inputs and ordered `Append` independently establish
+`(-6000,-2000)`, `(-5500,-1000)`, `(-4500,-1500)`. Fresh readback confirms
+point records `[151,159)`, `[159,167)`, `[167,175)`, X first and Y second.
+Full-file tail is 505 bytes; the exact point-only stream has no tail. Both
+native pixel modes 5/10 agree. All 24 shorter point tables throw
+`EndOfStreamException`, consuming their available bytes. Go instead preflights
+the whole point table and returns an empty result with `truncated` at
+`plan.elements[0].points`, offset 151.
+
+Six additional literal streams cover zero/one/three points, exact prefixes and
+arbitrary two-byte tails, asymmetric endian values +/-66051, Int32 min/max,
+-1/0 and +/-16777217. Zero succeeds immediately at count end (position 5 in
+these marker-only scalar streams), without reading a color byte. These are
+bounded scalar-reader observations, not full native Polygon acceptance.
+
+C#/IL `Polygon.Read` at RVA `0xc4b8` reads X at `IL_0041`, Y at `IL_004e`,
+assigns them at `IL_0064`/`IL_0079`, and advances in stored order. It then
+calculates a bounding rectangle and reads color at `IL_00f0`, even for zero
+points. `Polygon.Write` emits X then Y as Int32 at `IL_003e`/`IL_005b`.
+P04c3 preserves only the stored pairs and omits derived bounds and color.
+The unchanged Polygon C# hash is
+`63d57a5200116e9a4acaadddecec5a1381ca8173544eddafdc14d07e29237fe2`;
+IL remains `ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76`.
+Earlier JKTZ parser blob `74965043ebb9600ad71089bb079e76eaad1268f3` was verified
+on GitHub and its local point/count methods inspected: signed pairs and
+minimum-byte preflight are useful, while its color bounds, whole drawing
+loop and aggregate 2,000,000-point budget are not this prefix contract.
+
+Environment: macOS arm64, installed Wine Staging 11.7, original assembly
+1.3.7.0 and Microsoft .NET x86 runtime 2.0.50727.42. Final probe exit was 0,
+stderr empty, stdout 61 exact CRLF lines. The first sandbox invocation could
+not bind Wine's server; the permitted host invocation compiled and ran the
+probe. The two identified lingering compiler/start processes were stopped
+after successful execution. These optional native commands are not CI gates.
+Original EXE/runtime, C#/IL, TOP fixtures, pinned helper and all earlier probe
+sources/stdout were hash-checked before and after and remain unchanged.
+
+| New evidence | SHA-256 |
+| --- | --- |
+| `scripts/reference-plan-polygon-points-probe.cs` | `e6782e81cb8fceeb0f31768ebd8bbe34b20393c17499897ed3dff9a3afe0394a` |
+| `native-plan-polygon-points-read.txt` | `c87da2871b7252c7d66271ae248ade9a857aaa61db8ea6ecb585e7e9c00359c9` |
+
+Actual optional commands run from the repository root:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-plan-polygon-points-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-plan-polygon-points-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-plan-polygon-points-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-plan-polygon-points-read.txt 2>build/native-plan-polygon-points-read.err
+```
+
+The frozen output is protected from text normalization. Compare future native
+stdout with this evidence; never regenerate its expected values using Go.
