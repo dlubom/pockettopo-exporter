@@ -2,9 +2,9 @@
 
 ## Current scope
 
-This project currently contains only `README.md` and `AGENTS.md`.
-Wait for an explicit implementation request before adding code, dependencies,
-tests, tooling, or further project structure.
+Implementation was authorized on 2026-10-09. P02 establishes the minimal Go
+skeleton and checks. Read README.md for completed scope and the next ready PBI.
+Deliver one small, verified PBI per chat; split larger items before implementing.
 
 ## References
 
@@ -16,7 +16,7 @@ tests, tooling, or further project structure.
 - Keep experiments and new implementation in this project. Do not edit original
   archives or generated decompilation artifacts in the reference repository.
 
-## Future implementation
+## Implementation
 
 - Use English for project-authored documentation, code, comments, and messages.
 - Preserve input `.top` bytes and raw field values; keep derived values separate.
@@ -27,5 +27,5 @@ tests, tooling, or further project structure.
   data. Preserve embedded dates without assuming they prove the survey date.
 - Test meaningful behavior with small fixtures and native PocketTopo exports
   where available. Successful decompilation alone does not prove compatibility.
-- Select the language, target formats, and development commands when
-  implementation is requested; do not invent working commands in documentation.
+- Use the selected Go toolchain and actual development commands in README.md.
+  Native PocketTopo 1.372 exports take priority; do not invent working commands.

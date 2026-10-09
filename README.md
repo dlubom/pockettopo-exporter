@@ -5,9 +5,9 @@ formats, based on the PocketTopo 1.372 decompilation.
 
 ## Status
 
-Planning draft, 2026-10-09. No implementation has been requested. This document
-records the proposed scope, acceptance criteria, and delivery order; it is not a
-claim of implemented support. No code, dependencies, tests, or workflows exist.
+Implementation authorized on 2026-10-09. **P02 is complete locally**: minimal Go CLI,
+formatting/static checks, tests, coverage gate and a verified mutation trial.
+Native export support is not yet implemented or validated.
 
 Confirmed priorities:
 
@@ -18,12 +18,29 @@ Confirmed priorities:
   this tool's outputs. Do not build a comparison engine in this project.
 - Keep the implementation and development process small and understandable.
 
-Go is the current recommendation, not a selected implementation language.
-The language, supported first-release formats, and executable commands remain
-decisions for an explicit implementation request.
+### P00 decisions required for P02
 
-**Next handoff: R01, native Therion interchange → Caveink.** Start the bounded
-research item below in a fresh chat. Do not start P02 or exporter implementation.
+- **Language/toolchain:** Go 1.26.3 (the installed and selected baseline), standard
+  library runtime, gofmt, go vet, Staticcheck v0.8.1. Gremlins v0.6.0 is accepted for the bounded mutation scope validated below. Tool upgrades are explicit changes.
+- **First useful export:** isolated-input native text, followed by native Therion
+  interchange and graphics DXF. Full native 1.372 export coverage remains the
+  milestone; optional R01–R07 work is not a P02 prerequisite.
+- **Context/compatibility:** explicit single input by default; native directory
+  context is a later explicit option. Target exact native bytes under recorded
+  settings. Preserve embedded XSections in full views; separate section files
+  remain optional. No compatibility claim from toolchain checks.
+- **Platforms:** initial CI targets Linux amd64, Windows amd64 and macOS arm64.
+  Other architectures and release packaging are deferred.
+- **Gates:** at least 95% statement coverage of implemented behavior (exclude only
+  the process entry-point wiring); at least 90% killed mutants in the selected
+  scope, with every survivor reviewed and critical survivors fixed. Empty runs,
+  errors and timeouts are not success. No parser/corpus gate before a parser exists.
+- **Repository:** module path `pockettopo-exporter`. Public GitHub creation and
+  push were subsequently authorized for `dlubom/pockettopo-exporter`; releases
+  remain out of scope. P02 adds no exporter framework.
+
+**Next ready implementation PBI: P03a — source station identifiers.** See the
+bounded acceptance contract below. Stop after P02 in this chat.
 
 ## Reference material
 
@@ -161,8 +178,8 @@ have explicit boundaries and acceptance criteria in the research backlog.
 
 ### Scope and decision status
 
-Scope priority and implementation authorization are separate. Confirmed scope
-still requires an explicit implementation request. A successful third-party
+Scope priority and implementation authorization are separate. P02 was authorized
+on 2026-10-09; later increments require their own implementation request. A successful third-party
 import does not automatically promote an optional feature into required scope.
 
 | Item | Scope status | Remaining decision/evidence |
@@ -177,7 +194,7 @@ import does not automatically promote an optional feature into required scope.
 | Separate files for individual cross sections | Optional selection feature | R06; not required to preserve embedded native XSections |
 | PNG/PDF | Optional renderer outputs | R07; no new geometry engine |
 | Cucumber runner | Deferred optional tooling | Revisit only if normal tests plus PBI scenarios are insufficient |
-| Go, mutation tooling and numeric quality gates | Recommendation/proposals | P00 decision and P02 validation after implementation is requested |
+| Go, mutation tooling and numeric quality gates | Selected and locally verified | P00/P02 decisions and evidence below |
 
 Research outcomes are **recommend**, **defer**, or **reject**, with evidence and
 the precise supported subset. An environmental blocker means **not validated**;
@@ -368,32 +385,85 @@ operation. These are interface proposals, not existing runnable commands.
   describe native compatibility, source information loss, and validation status.
   Unexpected loss must not be hidden behind exit 0.
 
-## Language decision
+## Language and development commands
 
-**Recommendation: Go for the standalone CLI**, conditional on proving numeric
-compatibility and a usable mutation-testing workflow in the first implementation
-slice. This is a distribution/maintenance choice, not a claim that Go inherently
-produces more correct exporters. Do not build two production implementations.
+Go is selected. The runtime has no external dependencies; tools are installed
+at exact versions by `scripts/tools.sh` and are not application dependencies.
+`go.mod` pins Go 1.26.3. Install that toolchain before running these commands;
+all scripts use `GOTOOLCHAIN=local`, so they do not silently download a compiler.
+Bash is required (Git Bash on Windows); mutation scripts also require jq 1.6+.
+GitHub's Linux runner provides jq. No Python, Make or Cucumber runner is required.
 
-| Consideration | Go | Python |
-| --- | --- | --- |
-| Distribution | A platform-specific executable is a natural delivery unit; aim for a pure-Go core | Requires an interpreter/environment or an additional packaging step |
-| Native arithmetic | Fixed-width types help, but .NET rounding, shifts and float operations still need deliberate treatment | Binary reading is straightforward; unbounded integers and negative floor division require deliberate emulation |
-| Testing | Standard testing, fuzzing and coverage tools; evaluate mutation tooling early | pytest, Hypothesis, coverage.py and mutmut form a strong testing option |
-| Existing work | Rewrite verified behavior with a compact design | Existing JKTZ ideas can accelerate work, but its policy is not native compatibility |
-| Drawing outputs | Text-based DXF/SVG do not require a GUI; defer rasterization | Broad analysis/rendering ecosystem; avoid making it a runtime requirement unnecessarily |
+From the repository root:
 
-For Go, start with gofmt, go vet, Staticcheck and standard tests. Evaluate
-go-mutesting or another maintained candidate against the selected Go version;
-do not claim the mutation gate works until it detects seeded behavioral defects.
-For Python, the alternative is Ruff formatting/linting, one strict type checker,
-pytest, Hypothesis, coverage.py, and mutmut on Linux. Pin the selected tools when
-implementation begins. Do not select both stacks or add a custom quality platform.
+```sh
+bash scripts/tools.sh                 # download/build pinned development tools
+bash scripts/check.sh                 # format check, vet, Staticcheck, race tests,
+                                      # >=95% behavior coverage, build, CLI smoke
+bash scripts/mutation.sh              # >=90% killed; reject incomplete/empty runs
+bash scripts/mutation-trial.sh        # negative control, macOS/Linux
 
-C# would reduce some semantic translation, but the recovered application is tied
-to its old UI/runtime and is not a ready-made portable core. It remains an option
-if numeric compatibility proves disproportionately difficult; no parallel port
-is proposed now.
+gofmt -w cmd internal                 # apply formatting
+go run ./cmd/pockettopo-exporter --help
+go run ./cmd/pockettopo-exporter --version
+```
+
+The built executable is `build/pockettopo-exporter` (`.exe` on Windows). It accepts exactly one of
+`--help`, `-h`, or `--version`. Success writes to stdout and exits 0. Missing,
+extra or unsupported arguments and output errors exit 1; diagnostics use stderr.
+`inspect` and `export` are not implemented. The development version is `dev`,
+not a release number. No file input is opened by this skeleton.
+
+Go/Staticcheck caches and tool binaries stay in ignored `.cache/` and `.tools/`.
+The application can build offline once Go is installed; installing development
+tools requires network access. `coverage.out`, `mutation.json` and `build/` are
+regenerated outputs. There is no `go.sum` because there are no module dependencies.
+
+### P02 verification and tool limits (2026-10-09)
+
+Local environment: Go 1.26.3, darwin/arm64; Staticcheck 2026.2.1 (v0.8.1);
+Gremlins v0.6.0. `scripts/check.sh` passed gofmt, go vet, Staticcheck, uncached
+race tests, ordinary coverage, build and actual executable smoke checks.
+There are 12 CLI cases (10 argument cases and two writer-error cases).
+Statement coverage is **100% of `internal/cli`**. The one-line `main` wiring is
+excluded from the numeric coverage gate and exercised by the executable smoke.
+No PocketTopo behavior, native fixture or corpus has been tested by P02.
+
+The mutation run generated **2 mutants, both killed**, with 0 lived, uncovered,
+timed-out, invalid or skipped mutants. They negate argument-count validation
+and output-error handling in `internal/cli/run.go`. The negative-control script
+runs the same source with a test that calls the CLI without asserting its result:
+ordinary tests pass, **both mutants live**, and Gremlins exits **10**, correctly
+rejecting the 90% gate. The original checkout is untouched by both trials.
+Reproduce with the two mutation commands above; inspect their per-mutant JSON
+in `mutation.json` and `build/mutation-weak.json`.
+
+The measured source Git blob is `021ec158f91731db52906e5e834597d918308572`
+(`internal/cli/run.go`); the strong tests blob is
+`cbcfed532b607dfb984b1930082211fb59ea0974` (`internal/cli/run_test.go`).
+Use `git hash-object` to verify these independently of README/CI-only edits.
+The planning baseline is local commit `6b53351`; the P02 implementation commit
+is identified by `git log --oneline` (this file is part of that commit).
+
+Gremlins initially panicked while copying the complete module with local tool
+caches. Inspection of its `internal/engine/workdir/workdir.go` showed that it
+copies ignored files too. `scripts/mutation.sh` therefore copies `go.mod`,
+optional `go.sum`, `cmd/` and `internal/` into a disposable source-only directory.
+Keep that explicit scope current when adding real packages/fixtures. The script
+rejects empty reports and any status other than KILLED/LIVED, then checks the
+actual killed fraction; it does not rely only on Gremlins' efficacy percentage.
+No equivalent or invalid mutants have been exempted in P02.
+
+This trial establishes usefulness for conditional defects only. Gremlins' default
+operators do not mutate every return value, string or switch case. Expand the
+mutation scope/operators and re-evaluate on native arithmetic in P03a/P06;
+2/2 on this skeleton is not evidence for a future parser or exporter.
+
+One GitHub Actions workflow runs formatting, vet, Staticcheck, tests/coverage and
+build/CLI smoke on Linux amd64, Windows amd64 and macOS arm64. Linux also runs
+mutation testing and its negative control. Action revisions and tool versions are pinned. Remote CI is
+not yet verified at this point; record actual run/commit evidence after push.
+No release workflow or exporter packages were added.
 
 ## Validation strategy
 
@@ -446,11 +516,10 @@ Validate synthetic files with the native reader before using them as references.
 | Corpus regression | Every pinned input is accounted for as supported, unsupported or failed; no silent skipping |
 | Mutation tests | ID comparisons, flags, signs, units, grouping, rounding, record selection and omission paths are exercised by meaningful assertions |
 
-Proposed initial numeric gates: at least 95% statement coverage for a Go core, or
-95% line/90% branch coverage for a Python core. These metrics are not interchangeable.
-Use 90% killed mutants in the agreed core scope as an initial proposal, with every
-survivor reviewed and every critical behavioral survivor resolved. Confirm this
-policy after a real baseline; do not weaken it simply to turn a failing run green.
+Selected initial numeric gates: at least 95% Go statement coverage for implemented
+behavior and 90% killed mutants in the explicitly selected scope, with every
+survivor reviewed and every critical behavioral survivor resolved. P02 records
+the first small baseline above; do not weaken gates to turn a failing run green.
 Exclude provably equivalent/invalid mutants only with recorded reasoning. Missing
 runs, crashes and timeouts are not killed mutants. Record scope, tool version,
 denominator and commit SHA; do not combine evidence from different code revisions.
@@ -490,19 +559,22 @@ Conversation history must not be required to reconstruct a critical decision.
 
 ### Proposed sequence
 
-Only planning/refinement is active. Every implementation item below is proposed,
-not authorized. Later rows may be split further after their reference contract
-is understood. IDs describe this project only.
+P00 decisions needed to start and P02 are complete. P03 is split below so the
+next chat can deliver one small implementation increment. Remaining rows are
+planned, not completed; refine each contract when its dependencies are ready.
+IDs describe this project only. R01–R07 are not scheduled for this handoff.
 
 | ID | Outcome and acceptance | Depends on |
 | --- | --- | --- |
-| P00 | Agree language, first release subset, context model and compatibility criteria; resolve the open decisions below | This draft |
-| P01 | Specify the complete exporter/options inventory and fixture matrix from C#/IL; identify native capture cases and version gaps | Can be researched before P00; incorporate relevant R01/R02 evidence |
-| P02 | Establish Git/remote if needed, minimal selected toolchain, CI and a verified mutation-tool trial; no exporter framework | Explicit implementation request, P00 |
-| P03 | Implement bounded v3 reading and inspect for trips, IDs, references and measurements; raw values/offsets and malformed-input behavior verified | P01, P02 |
-| P04 | Read mappings, polylines and XSections; account for the complete file and unsupported content | P03 |
-| P05 | Reproduce isolated-input native text export; native golden cases for units, flags, comments and record order | P03, P04; required native update behavior understood |
-| P06 | Reproduce fixed-point angles, grouping and average directions with original-program evidence | P03 |
+| P00 | Done for startup: Go, native-first scope, isolation, byte compatibility, platforms and gates selected above | This draft |
+| P01 | Deferred full exporter/options inventory; capture the reference contract needed by each implementation slice within that slice | Required before each corresponding exporter; optional research only when necessary |
+| P02 | Done locally: Git, Go skeleton, pinned tools, checks, CI definition and positive/negative mutation trial | Explicit implementation request, P00 |
+| P03a | **Next / ready:** source station ID decoding and display, retaining raw bits and internal identity; bounded contract below | P02; ID-specific C#/IL contract inside the slice |
+| P03b | Planned: bounded v3 header/trip reading, offsets and malformed-input errors; refine before implementation | P03a; relevant P01 reader contract |
+| P03c | Planned: references/measurements and partial source inspection; explicitly account for unparsed drawing tail | P03b; relevant P01 record contract |
+| P04 | Read mappings, polylines and XSections; account for the complete file and unsupported content | P03c |
+| P05 | Reproduce isolated-input native text export; native golden cases for units, flags, comments and record order | P03c, P04; required native update behavior understood |
+| P06 | Reproduce fixed-point angles, grouping and average directions with original-program evidence | P03c |
 | P07 | Reproduce reference placement and plan geometry, then extended projection and closure as separately reviewed slices | P06 |
 | P08 | Support explicit template context with deterministic inventory/order; prove isolation and native multi-file cases | P07 |
 | P09 | Reproduce Therion DATA and drawing sections, including XSections; separate data and drawing slices if needed | P04, P07, P08 |
@@ -564,17 +636,59 @@ required checks passed for the delivered revision; discrepancies documented;
 the code and handoff are understandable without the originating chat. Test count
 and coverage alone do not establish compatibility.
 
-## Open decisions for the next discussion
+## Next ready PBI: P03a — source station identifiers
 
-- Confirm Go or choose Python; keep one production language.
-- Confirm TXT as the first narrow deliverable, followed by Therion and graphics
-  DXF, while the complete native export set remains the milestone goal.
-- Decide whether cross sections initially mean faithful placement within full
-  views (recommended) or also separate user-selected section files.
-- Select supported operating systems/architectures and the initial coverage and
-  mutation gates before adding tool configuration.
-- Decide where the Git repository/remote will live. The current directory had
-  only README.md and AGENTS.md and no `.git` during this planning pass.
+**Outcome:** the source model can preserve a raw 32-bit station identifier,
+expose its native internal value and display name, and compare internal identity
+without conflating different reserved IDs that display as empty text. This is
+an independently testable prerequisite for trustworthy source inspection.
+
+**Dependencies:** P02; inspect the bounded ID portion of P01 in this slice.
+The complete exporter/options inventory is not a prerequisite for this helper.
+Reference `ID.cs`: `Read`, `ToString`, `op_Equality`, `Equals`, and their IL in
+`decompiled/PocketTopo.il`. Begin again with `analysis/ANALYSIS.txt`; do not adopt
+JKTZ's current station-name mapping without checking those native methods.
+
+**Non-goals:** TOP file parsing, CLI inspect/export, station-name input parsing,
+ID generation, grouping/geometry, drawings, optional formats, archive comparison,
+and source rewriting. Do not start P03b in the same chat.
+
+**Fixtures/settings:** small table-driven raw bit patterns; no file/directory
+context or locale-dependent native exporter options needed for the core helper.
+Check C# and IL constants/branches and record provenance beside test cases.
+Locate existing independently captured native ID evidence if available; label
+source-derived cases as such and do not manufacture native output using Go.
+
+**Acceptance examples:**
+
+- Raw `0x80000000` maps to internal `-1`; raw `0x800fffff` maps to `-2`.
+  Both display as empty, remain distinct identities, and retain original bits.
+- Exercise raw/internal boundaries around `int.MinValue`, `LIMIT = -1048576`,
+  `RESVD = -256`, zero, and the positive major/minor representation. Determine
+  expected values from `ID.Read` and its IL, including raw aliases; equality
+  follows the internal value while raw source records remain distinct.
+- Formatting must not mutate raw values. Negative/reserved branches and positive
+  major/minor formatting are tested separately; display is never an identity key.
+
+**Required checks:** the P02 checks; focused mutation runs for boundary/sign
+changes, raw preservation, reserved-value distinction and identity assertions.
+Review each survivor and report any operator limitation. Add only the smallest
+source-model package needed by actual code. Keep all source records immutable
+by convention/API; no processing or exporter abstraction is needed here.
+
+**Handoff:** update this README with implemented contract, reference locations,
+actual commands/results and one refined next PBI (P03b if ready), then stop.
+
+## Open issues and deferred work
+
+- P02 has no TOP reader, native exporter or compatibility evidence.
+- Native arithmetic/formatting fidelity remains unproven in Go.
+- Gremlins is accepted only for the measured small scope; expand and reassess
+  operator coverage as native logic arrives. CI rejects invalid/uncovered/time-out
+  mutants rather than silently excluding them.
+- The full P01 capability/fixture matrix, older TOP versions, corpus runs,
+  release packaging and optional R01–R07 work remain deferred.
+- Remote CI results must be tied to the actual pushed commit, not this local run.
 
 ## Research references
 
@@ -590,7 +704,5 @@ External documentation consulted for the proposed workflow:
 [Go fuzzing](https://go.dev/doc/security/fuzz/),
 [Go toolchain](https://pkg.go.dev/cmd/go),
 [Staticcheck](https://staticcheck.dev/docs/),
-[go-mutesting](https://github.com/zimmski/go-mutesting),
-[Ruff](https://docs.astral.sh/ruff/formatter/),
-[mutmut](https://mutmut.readthedocs.io/en/latest/), and
+[Gremlins v0.6.0](https://github.com/go-gremlins/gremlins/releases/tag/v0.6.0), and
 [Gherkin reference](https://cucumber.io/docs/gherkin/reference/).
