@@ -4,3 +4,4 @@ internal/top/testdata/native-trip-read.txt -text whitespace=cr-at-eol
 internal/top/testdata/native-measurement-read.txt -text whitespace=cr-at-eol
 internal/top/testdata/native-reference-read.txt -text whitespace=cr-at-eol
 internal/top/testdata/native-mapping-read.txt -text whitespace=cr-at-eol
+internal/top/testdata/native-plan-mapping-read.txt -text whitespace=cr-at-eol

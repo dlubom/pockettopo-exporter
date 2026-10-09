@@ -1,0 +1,25 @@
+assembly=1.3.7.0 runtime=2.0.50727.42
+references-fixture-overview start=206 consumed=218 raw_x0=0 raw_y0=0 stored_scale=500 native_x0=0 native_y0=0 PixPerMm=5 native_scaleFact=100
+references-fixture-plan start=218 consumed=230 raw_x0=0 raw_y0=0 stored_scale=500 native_x0=0 native_y0=0 PixPerMm=5 native_scaleFact=100
+references-fixture tail=18
+drawings-fixture-overview start=122 consumed=134 raw_x0=-1234 raw_y0=5678 stored_scale=500 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=100
+drawings-fixture-plan start=134 consumed=146 raw_x0=-100 raw_y0=200 stored_scale=500 native_x0=-100 native_y0=200 PixPerMm=5 native_scaleFact=100
+drawings-fixture tail=534
+references-prefix-overview start=206 consumed=218 raw_x0=0 raw_y0=0 stored_scale=500 native_x0=0 native_y0=0 PixPerMm=5 native_scaleFact=100
+references-prefix-plan start=218 consumed=230 raw_x0=0 raw_y0=0 stored_scale=500 native_x0=0 native_y0=0 PixPerMm=5 native_scaleFact=100
+references-prefix tail=0
+drawings-prefix-overview start=122 consumed=134 raw_x0=-1234 raw_y0=5678 stored_scale=500 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=100
+drawings-prefix-plan start=134 consumed=146 raw_x0=-100 raw_y0=200 stored_scale=500 native_x0=-100 native_y0=200 PixPerMm=5 native_scaleFact=100
+drawings-prefix tail=0
+references-fixture-overview start=206 consumed=218 raw_x0=0 raw_y0=0 stored_scale=500 native_x0=0 native_y0=0 PixPerMm=10 native_scaleFact=50
+references-fixture-plan start=218 consumed=230 raw_x0=0 raw_y0=0 stored_scale=500 native_x0=0 native_y0=0 PixPerMm=10 native_scaleFact=50
+references-fixture tail=18
+drawings-fixture-overview start=122 consumed=134 raw_x0=-1234 raw_y0=5678 stored_scale=500 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=50
+drawings-fixture-plan start=134 consumed=146 raw_x0=-100 raw_y0=200 stored_scale=500 native_x0=-100 native_y0=200 PixPerMm=10 native_scaleFact=50
+drawings-fixture tail=534
+references-prefix-overview start=206 consumed=218 raw_x0=0 raw_y0=0 stored_scale=500 native_x0=0 native_y0=0 PixPerMm=10 native_scaleFact=50
+references-prefix-plan start=218 consumed=230 raw_x0=0 raw_y0=0 stored_scale=500 native_x0=0 native_y0=0 PixPerMm=10 native_scaleFact=50
+references-prefix tail=0
+drawings-prefix-overview start=122 consumed=134 raw_x0=-1234 raw_y0=5678 stored_scale=500 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=50
+drawings-prefix-plan start=134 consumed=146 raw_x0=-100 raw_y0=200 stored_scale=500 native_x0=-100 native_y0=200 PixPerMm=10 native_scaleFact=50
+drawings-prefix tail=0

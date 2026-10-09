@@ -309,3 +309,66 @@ Compare fresh stdout to the frozen evidence; do not overwrite expectations to
 match Go. Both source TOP hashes remained unchanged after native probing.
 The C#/IL reference files remain unchanged. Drawing/export compatibility is
 outside P04a; Wine/.NET/PocketTopo remain optional evidence tools only.
+
+## P04b plan mapping and original reader probe, 2026-10-09
+
+The same unchanged native fixtures and pinned JKTZ helper establish the plan
+mapping immediately after the overview. `Drawings` sets the plan origin to
+-100 / 200 separately from overview -1234 / 5678 and side 300 / -400. The
+`References` case retains native default origins 0 / 0. Stored scale is 500
+in both. Original `DataSet.Read` and the v3 `Drawing.Read` branch confirm the
+order; the side mapping is after variable-length plan elements, not adjacent.
+
+| Fixture | Plan record / x0 / y0 / scale spans | Raw values | Consumed / tail |
+| --- | --- | --- | --- |
+| `api-references.top` | `[218,230)` / `[218,222)` / `[222,226)` / `[226,230)` | `0 / 0 / 500` | `230 / 18` |
+| `api-drawings.top` | `[134,146)` / `[134,138)` / `[138,142)` / `[142,146)` | `-100 / 200 / 500` | `146 / 534` |
+
+Fresh `native-plan-mapping-read.txt` is the exact 25-line CRLF stdout of the
+separate `scripts/reference-plan-mapping-probe.cs`. Native `Trip.ReadList`,
+`Station.Read` and `Reference.Read` establish the overview boundary; two
+original `Mapping.Read` calls read overview then plan. The probe asserts the
+independently pinned plan start/end, without Go-generated expectations.
+No drawing reader, element marker/payload, side mapping, GUI or writer is used.
+
+Both full fixtures and in-memory copies ending at the plan end succeed, in
+default `PixPerMm=5` and native `SetVga` mode 10. Origins remain unchanged;
+native derived scale is 100 / 50 from stored 500. Prefix-only tails are zero;
+full-fixture tails are 18 / 534. Go retains the stored scale. The previous
+literal signed/endian/scale evidence in P04a remains unchanged and applies to
+the same original Mapping method; P04b adds plan-position/separation evidence.
+
+Environment: macOS arm64, Wine `wine-11.7 (Staging)`, Microsoft .NET 2.0 x86,
+reported runtime `2.0.50727.42`, assembly `1.3.7.0`. The original EXE, runtime,
+C#/IL and all three TOP fixtures were hash-verified against the earlier values.
+Final native probe exit was 0 with empty stderr. The sandboxed compiler launch
+could not connect to the existing Wine server; the permitted host launch
+produced the executable. Its two verified compiler/start processes remained
+open and were stopped after successful readback. Compilation process completion
+is not a CI gate. No original/archive/decompilation bytes were changed.
+
+| New evidence | SHA-256 |
+| --- | --- |
+| `Drawing.cs` | `c07a9f255cf372cbcc2a3ecd2a31b0f1c959325749fd9155d8fd9a5649f817e7` |
+| `scripts/reference-plan-mapping-probe.cs` | `c146071808f42d61e5974bd69a40e058679e14dd90e3278ee0aa4e9818f2ab2e` |
+| `native-plan-mapping-read.txt` | `65f167bd0252be67f5cc925c7a57d28f99e79302cb86555a6eda025ea5f0e472` |
+
+Actual optional commands run from this repository on the recorded host:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-plan-mapping-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-plan-mapping-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-plan-mapping-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-references.top' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-plan-mapping-read.txt 2>build/native-plan-mapping-read.err
+```
+
+Compare fresh stdout to the frozen evidence; do not change expectations to match
+Go. Neither prefix acceptance nor native scalar readback validates elements,
+complete TOP files or exporters. Wine/.NET/PocketTopo remain evidence tools,
+not application or CI dependencies.
