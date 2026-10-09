@@ -22,7 +22,8 @@ The frozen expected JSON SHA-256 is
 `df6e0ca6ba56ca426e7ef44a62802f4af899b5b8fad97c7b9ab10253446cc2a6`.
 P03b reproduces only header/trip values as literal test expectations;
 measurements, references and drawings are outside that slice. P03c1 adds the
-independent measurement expectations below; references and drawings stay unparsed.
+independent measurement expectations below; P03c2 adds references below.
+Drawings remain unparsed.
 
 | Trip | Record span | Ticks | Comment bytes | Declination raw | Auto |
 | --- | --- | --- | --- | --- | --- |
@@ -146,3 +147,80 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 
 Compare fresh output to the frozen stdout; do not regenerate expectations from
 Go output. Original TOP bytes and decompilation artifacts remain unchanged.
+
+## P03c2 native references and original reader probe, 2026-10-09
+
+`api-references.top` is the unchanged 248-byte native fixture copied from
+JKTZ `tests/fixtures/pockettopo/p01/cases/api-references/api-references.top`.
+Attribution and CC BY-SA 4.0 terms above apply to this copied fixture too.
+Pinned evidence revision remains `3e3daa4156c6e6e79dce5203d8bb8e36122d571f`:
+
+- [Original native fixture](https://github.com/dlubom/Jaskiniowy-Kataster-Tatr-Zachodnich/blob/3e3daa4156c6e6e79dce5203d8bb8e36122d571f/doc/pockettopo/evidence/p01/cases/api-references/api-references.top).
+- [Independent expectations](https://github.com/dlubom/Jaskiniowy-Kataster-Tatr-Zachodnich/blob/3e3daa4156c6e6e79dce5203d8bb8e36122d571f/doc/pockettopo/evidence/p01/cases/api-references/expected.json).
+- [Native helper](https://github.com/dlubom/Jaskiniowy-Kataster-Tatr-Zachodnich/blob/3e3daa4156c6e6e79dce5203d8bb8e36122d571f/doc/pockettopo/helpers/pockettopo_fixtures.cs), `References`: original `DataSet.Write`, then successful native readback and exports.
+
+Git blob `ce1c957f50f6f3e25d1471f159436c5e258e7205` was also checked through
+GitHub's pinned contents API. The fixture and expected JSON SHA-256 values are
+`9034cf5e52f92a8713c7823bd9be52bdb50b294966a9e9713c538b937b7feb5f` and
+`93d8bb70baf630b2be35d6ec0268435c999cc4882b8ea1f143b228b2cc0c7d9f`.
+Source inputs are synthetic and preserve two references at the same raw station
+`0x80000001`. This does not establish a CRS, entrance or geographic tie.
+
+| Index | Record span | East mm | North mm | Altitude mm | Comment |
+| --- | --- | --- | --- | --- | --- |
+| 0 | `[87,150)` | -4000000001 | -5000000002 | -1250 | `ujemne E/N/Z; żadnego przypisania CRS` (38 UTF-8 bytes) |
+| 1 | `[150,206)` | 6000000003 | 7000000004 | 1500250 | `positive int64 E/N beyond int32` (31 UTF-8 bytes) |
+
+Count span `[83,87)`; fixed fields are ID 4 / east 8 / north 8 / altitude 4
+bytes. Comment-length spans `[111,112)` and `[174,175)`; comments `[112,150)`
+and `[175,206)`. These offsets follow independent helper fields/encoded lengths
+and were confirmed by fresh native stream positions, not inferred from Go.
+Prefix consumption is 206, leaving 42 bytes uninterpreted. The existing
+`api-trips-ids.top` has zero references at `[496,500)` and also leaves 42 bytes.
+No drawing or complete-file validation was added.
+
+`native-reference-read.txt` is the exact 31-line CRLF stdout of
+`scripts/reference-reference-probe.cs`, protected from Git newline normalization.
+Original `Reference.Read` runs on literal in-memory bytes; native `Trip.ReadList`
+and `Station.Read` establish each fixture's reference-table boundary. There is
+no Go reader, native writer, GUI or drawing read in this probe. Environment,
+original assembly hash and .NET runtime hash are identical to the verified
+P03b/P03c1 evidence above. The probe exited 0. Native compilation produced a
+usable executable, but its two compiler/start processes remained open and were
+stopped after successful readback; compiler completion is not a CI gate.
+
+| New evidence | SHA-256 |
+| --- | --- |
+| `scripts/reference-reference-probe.cs` | `55ebd0dd9bbc06a6c8942fe1f1ce31c9a9e0e968d846ded20aa066e190fc8f1e` |
+| `native-reference-read.txt` | `dc313a5a82f0987b1ce1dcaa47a19206dd94bd1d8838807510821e13985f178f` |
+
+The original reader retains seven tested Int64 cases (min, -2^53-1, -1, 0,
+1, 2^53+1, max), five Int32 boundaries and ID aliases/reserved values.
+The literal endian case retains east -8644934341102468607, north
+72623859790382856, altitude -2 and Unicode `Aą`. Native empty comments become
+null, including nonminimal zero encodings. Nonminimal one yields `A`.
+Native malformed `A FF B` becomes `AB`; fifth length byte 16 yields null;
+negative/six-byte lengths fail. Go retains empty encodings/spans and keeps
+strict P03b/P03c1 rejection of malformed UTF-8 and fifth bytes above 7.
+The negative-reference-count loop behavior is C#/IL evidence, not a runtime
+probe of `Survey.Read`. Raw sentinel units/blank display behavior are documented
+from `MetricLocation`/`MetricGrid` C#/IL; the probe verifies raw numeric reading.
+
+Actual optional commands run from this repository on the recorded host:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-reference-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-reference-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all \
+  wine build/reference-reference-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-trips-ids.top' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-references.top' \
+  >build/native-reference-read.txt
+```
+
+Compare fresh stdout against frozen evidence; do not overwrite expected fields
+to match Go results. Both source TOP hashes were unchanged after native probing.
+Wine/.NET/PocketTopo remain optional evidence tools, never runtime or CI dependencies.

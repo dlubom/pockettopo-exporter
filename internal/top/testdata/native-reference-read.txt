@@ -1,0 +1,31 @@
+assembly=1.3.7.0 runtime=2.0.50727.42
+coordinates--9223372036854775808 ACCEPT position=25 id=-2 east=-9223372036854775808 north=-9223372036854775808 altitude=-1 comment_base64=NULL
+coordinates--9007199254740993 ACCEPT position=25 id=-2 east=-9007199254740993 north=-9007199254740993 altitude=-1 comment_base64=NULL
+coordinates--1 ACCEPT position=25 id=-2 east=-1 north=-1 altitude=-1 comment_base64=NULL
+coordinates-0 ACCEPT position=25 id=-2 east=0 north=0 altitude=-1 comment_base64=NULL
+coordinates-1 ACCEPT position=25 id=-2 east=1 north=1 altitude=-1 comment_base64=NULL
+coordinates-9007199254740993 ACCEPT position=25 id=-2 east=9007199254740993 north=9007199254740993 altitude=-1 comment_base64=NULL
+coordinates-9223372036854775807 ACCEPT position=25 id=-2 east=9223372036854775807 north=9223372036854775807 altitude=-1 comment_base64=NULL
+altitude--2147483648 ACCEPT position=25 id=-1 east=-1 north=1 altitude=-2147483648 comment_base64=NULL
+altitude--1 ACCEPT position=25 id=-1 east=-1 north=1 altitude=-1 comment_base64=NULL
+altitude-0 ACCEPT position=25 id=-1 east=-1 north=1 altitude=0 comment_base64=NULL
+altitude-1 ACCEPT position=25 id=-1 east=-1 north=1 altitude=1 comment_base64=NULL
+altitude-2147483647 ACCEPT position=25 id=-1 east=-1 north=1 altitude=2147483647 comment_base64=NULL
+id-00000001 ACCEPT position=25 id=1 east=1 north=-1 altitude=1 comment_base64=NULL
+id-80100002 ACCEPT position=25 id=1 east=1 north=-1 altitude=1 comment_base64=NULL
+id-800fffff ACCEPT position=25 id=-2 east=1 north=-1 altitude=1 comment_base64=NULL
+id-80000000 ACCEPT position=25 id=-1 east=1 north=-1 altitude=1 comment_base64=NULL
+id-80100000 ACCEPT position=25 id=-1 east=1 north=-1 altitude=1 comment_base64=NULL
+signed-endian ACCEPT position=28 id=-2 east=-8644934341102468607 north=72623859790382856 altitude=-2 comment_base64=QcSF
+length-nonminimal-zero ACCEPT position=29 id=1 east=1 north=-1 altitude=1 comment_base64=NULL
+length-nonminimal-one ACCEPT position=27 id=1 east=1 north=-1 altitude=1 comment_base64=QQ==
+utf8-invalid ACCEPT position=28 id=1 east=1 north=-1 altitude=1 comment_base64=QUI=
+length-fifth-byte-16 ACCEPT position=29 id=1 east=1 north=-1 altitude=1 comment_base64=NULL
+length-negative REJECT System.IO.IOException position=29
+length-six-bytes REJECT System.FormatException position=29
+zero-fixture count=0 countStart=496 start=500
+zero-fixture consumed=500 tail=42
+references-fixture count=2 countStart=83 start=87
+references-fixture[0] ACCEPT position=150 id=-1048576 east=-4000000001 north=-5000000002 altitude=-1250 comment_base64=dWplbW5lIEUvTi9aOyDFvGFkbmVnbyBwcnp5cGlzYW5pYSBDUlM=
+references-fixture[1] ACCEPT position=206 id=-1048576 east=6000000003 north=7000000004 altitude=1500250 comment_base64=cG9zaXRpdmUgaW50NjQgRS9OIGJleW9uZCBpbnQzMg==
+references-fixture consumed=206 tail=42
