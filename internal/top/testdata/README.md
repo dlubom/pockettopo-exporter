@@ -224,3 +224,88 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 Compare fresh stdout against frozen evidence; do not overwrite expected fields
 to match Go results. Both source TOP hashes were unchanged after native probing.
 Wine/.NET/PocketTopo remain optional evidence tools, never runtime or CI dependencies.
+
+## P04a overview mapping and original reader probe, 2026-10-09
+
+`api-drawings.top` is the unchanged 680-byte native fixture copied from JKTZ
+revision `3e3daa4156c6e6e79dce5203d8bb8e36122d571f`. Attribution and CC BY-SA
+4.0 terms above apply to this copied fixture too. The pinned bytes were read
+directly from the original Git object and compared with the local regression
+fixture; no native writer was run to recreate the TOP file.
+
+- [Original fixture](https://github.com/dlubom/Jaskiniowy-Kataster-Tatr-Zachodnich/blob/3e3daa4156c6e6e79dce5203d8bb8e36122d571f/doc/pockettopo/evidence/p01/cases/api-drawings/api-drawings.top).
+- [Independent expected fields](https://github.com/dlubom/Jaskiniowy-Kataster-Tatr-Zachodnich/blob/3e3daa4156c6e6e79dce5203d8bb8e36122d571f/doc/pockettopo/evidence/p01/cases/api-drawings/expected.json).
+- [Native helper](https://github.com/dlubom/Jaskiniowy-Kataster-Tatr-Zachodnich/blob/3e3daa4156c6e6e79dce5203d8bb8e36122d571f/doc/pockettopo/helpers/pockettopo_fixtures.cs), `Drawings`: literal overview origin -1234 / 5678 and native default stored scale 500. Original `DataSet.Write` produced this preserved fixture.
+
+| Pinned evidence | Git blob | SHA-256 |
+| --- | --- | --- |
+| `api-drawings.top` | `07f805f0438dd2f48e9bd18d6771bf125713e8fe` | `4a494ead03cade750f670d50aa38661abda9b3e1f131d67f27a252982752c2a5` |
+| Drawing `expected.json` | `5dab73dbb55a4597902973b15592705686e69efc` | `93e3c3de6f8c899d76e9e0f284df5ae3e0a2b51995ecfbc9619cafe4f5c968d3` |
+| Native `pockettopo_fixtures.cs` helper | `4967b25e04a58a431a8626bd5f5b0a9acff31664` | `ae1f32a1034bbd95a59e97db47e887fabb30b06eabe55a960c9c5ebf9090d005` |
+
+Independent trip fields give span `[8,49)` (30-byte comment), measurement count
+`[49,53)`, records `[53,73)` and `[73,118)` (24-byte second comment), and zero
+reference count `[118,122)`. The overview is `[122,134)`: x0 `[122,126)` = -1234,
+y0 `[126,130)` = 5678, stored scale `[130,134)` = 500. Consumed 134, unparsed
+tail `680 - 134 = 546`. These follow native helper fields/encoded lengths and
+fresh native stream positions, independently of the Go parser.
+
+The existing `api-references.top` overview is `[206,218)`: x0 `[206,210)` = 0,
+y0 `[210,214)` = 0 and stored scale `[214,218)` = 500. Consumed 218, tail 30.
+Both tails remain uninterpreted. No plan/side mapping or drawing element is read.
+
+`native-mapping-read.txt` is exact 61-line CRLF stdout from
+`scripts/reference-mapping-probe.cs`, protected from Git newline normalization.
+It calls original `Mapping.Read` on literal bytes, plus both fixtures after
+native `Trip.ReadList`, `Station.Read` and `Reference.Read` establish the
+overview boundary. An uninitialized native Mapping avoids its UI constructor;
+`Read`/`Write` access only scalar fields. Native `Mapping.Write` targets a
+separate memory stream containing one record, never a TOP file or source archive.
+No Go reader, drawing read or GUI interaction participates.
+
+The original assembly/runtime and their hashes are the same as the verified
+earlier evidence: Wine `wine-11.7 (Staging)`, .NET `2.0.50727.42` x86, assembly
+`1.3.7.0` on macOS arm64. The final probe exited 0 with empty stderr.
+An initial helper lookup hit the inherited `Reference.Read` overload; explicit
+method signatures fixed it. Incomplete runs were not used as passed evidence.
+Compiler/start processes remained open after producing usable executables;
+only processes verified as created by these compilations were stopped.
+The compilation launch is an optional evidence command, not a clean-exit CI gate.
+
+| New evidence | SHA-256 |
+| --- | --- |
+| `scripts/reference-mapping-probe.cs` | `b6dd9a25dd330fa9003c6127c285b7eb69d31c5bf6de87abf53b0878c3b785ab` |
+| `native-mapping-read.txt` | `ee9b96c71d2422c130d45cd86008c7aaee7a432d3e1db09d697dd0a7b252d4da` |
+
+For each native pixel mode the probe tests 20 scales (Int32 min/max, -501,
+-11, -10, -6, -5, -4, -1, 0, 1, 4, 5, 6, 9, 10, 11, 499, 500, 501), five
+origin boundaries (min, -1, 0, 1, max), asymmetric signed/endian bytes and
+both fixtures. Default `PixPerMm=5`; original `SetVga` sets 10. Stored -501
+reads as derived -100 / -50 and rewrites as -500 in either mode. Stored -1
+reads/rewrites as zero. Int32 min/max and negative/zero scales all read
+successfully; no positivity check or JKTZ parser's 10..50000 bound is applied.
+
+The literal endian record is x0 -2080177663, y0 84281096 and stored scale
+-67305986. Native derived scale is -13461197 / -6730598 and rewrites as
+-67305985 / -67305980. Go assertions preserve all three original Int32 values;
+no derived native quotient or rewritten value is substituted into the source.
+
+Actual optional commands run from this repository on the recorded host:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-mapping-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-mapping-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-mapping-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-references.top' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-mapping-read.txt 2>build/native-mapping-read.err
+```
+
+Compare fresh stdout to the frozen evidence; do not overwrite expectations to
+match Go. Both source TOP hashes remained unchanged after native probing.
+The C#/IL reference files remain unchanged. Drawing/export compatibility is
+outside P04a; Wine/.NET/PocketTopo remain optional evidence tools only.

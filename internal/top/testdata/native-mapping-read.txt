@@ -1,0 +1,61 @@
+assembly=1.3.7.0 runtime=2.0.50727.42
+scale--2147483648 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=-2147483648 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=-429496729 rewritten_scale=-2147483645
+scale--501 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=-501 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=-100 rewritten_scale=-500
+scale--11 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=-11 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=-2 rewritten_scale=-10
+scale--10 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=-10 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=-2 rewritten_scale=-10
+scale--6 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=-6 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=-1 rewritten_scale=-5
+scale--5 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=-5 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=-1 rewritten_scale=-5
+scale--4 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=-4 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=0 rewritten_scale=0
+scale--1 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=-1 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=0 rewritten_scale=0
+scale-0 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=0 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=0 rewritten_scale=0
+scale-1 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=1 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=0 rewritten_scale=0
+scale-4 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=4 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=0 rewritten_scale=0
+scale-5 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=5 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=1 rewritten_scale=5
+scale-6 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=6 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=1 rewritten_scale=5
+scale-9 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=9 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=1 rewritten_scale=5
+scale-10 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=10 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=2 rewritten_scale=10
+scale-11 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=11 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=2 rewritten_scale=10
+scale-499 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=499 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=99 rewritten_scale=495
+scale-500 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=500 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=100 rewritten_scale=500
+scale-501 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=501 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=100 rewritten_scale=500
+scale-2147483647 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=2147483647 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=429496729 rewritten_scale=2147483645
+origin--2147483648 start=0 consumed=12 raw_x0=-2147483648 raw_y0=-2147483648 stored_scale=501 native_x0=-2147483648 native_y0=-2147483648 PixPerMm=5 native_scaleFact=100 rewritten_scale=500
+origin--1 start=0 consumed=12 raw_x0=-1 raw_y0=-1 stored_scale=501 native_x0=-1 native_y0=-1 PixPerMm=5 native_scaleFact=100 rewritten_scale=500
+origin-0 start=0 consumed=12 raw_x0=0 raw_y0=0 stored_scale=501 native_x0=0 native_y0=0 PixPerMm=5 native_scaleFact=100 rewritten_scale=500
+origin-1 start=0 consumed=12 raw_x0=1 raw_y0=1 stored_scale=501 native_x0=1 native_y0=1 PixPerMm=5 native_scaleFact=100 rewritten_scale=500
+origin-2147483647 start=0 consumed=12 raw_x0=2147483647 raw_y0=2147483647 stored_scale=501 native_x0=2147483647 native_y0=2147483647 PixPerMm=5 native_scaleFact=100 rewritten_scale=500
+signed-endian start=0 consumed=12 raw_x0=-2080177663 raw_y0=84281096 stored_scale=-67305986 native_x0=-2080177663 native_y0=84281096 PixPerMm=5 native_scaleFact=-13461197 rewritten_scale=-67305985
+references-fixture start=206 consumed=218 raw_x0=0 raw_y0=0 stored_scale=500 native_x0=0 native_y0=0 PixPerMm=5 native_scaleFact=100 rewritten_scale=500
+references-fixture tail=30
+drawings-fixture start=122 consumed=134 raw_x0=-1234 raw_y0=5678 stored_scale=500 native_x0=-1234 native_y0=5678 PixPerMm=5 native_scaleFact=100 rewritten_scale=500
+drawings-fixture tail=546
+scale--2147483648 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=-2147483648 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=-214748364 rewritten_scale=-2147483640
+scale--501 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=-501 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=-50 rewritten_scale=-500
+scale--11 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=-11 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=-1 rewritten_scale=-10
+scale--10 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=-10 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=-1 rewritten_scale=-10
+scale--6 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=-6 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=0 rewritten_scale=0
+scale--5 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=-5 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=0 rewritten_scale=0
+scale--4 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=-4 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=0 rewritten_scale=0
+scale--1 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=-1 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=0 rewritten_scale=0
+scale-0 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=0 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=0 rewritten_scale=0
+scale-1 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=1 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=0 rewritten_scale=0
+scale-4 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=4 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=0 rewritten_scale=0
+scale-5 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=5 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=0 rewritten_scale=0
+scale-6 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=6 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=0 rewritten_scale=0
+scale-9 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=9 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=0 rewritten_scale=0
+scale-10 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=10 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=1 rewritten_scale=10
+scale-11 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=11 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=1 rewritten_scale=10
+scale-499 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=499 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=49 rewritten_scale=490
+scale-500 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=500 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=50 rewritten_scale=500
+scale-501 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=501 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=50 rewritten_scale=500
+scale-2147483647 start=0 consumed=12 raw_x0=-1234 raw_y0=5678 stored_scale=2147483647 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=214748364 rewritten_scale=2147483640
+origin--2147483648 start=0 consumed=12 raw_x0=-2147483648 raw_y0=-2147483648 stored_scale=501 native_x0=-2147483648 native_y0=-2147483648 PixPerMm=10 native_scaleFact=50 rewritten_scale=500
+origin--1 start=0 consumed=12 raw_x0=-1 raw_y0=-1 stored_scale=501 native_x0=-1 native_y0=-1 PixPerMm=10 native_scaleFact=50 rewritten_scale=500
+origin-0 start=0 consumed=12 raw_x0=0 raw_y0=0 stored_scale=501 native_x0=0 native_y0=0 PixPerMm=10 native_scaleFact=50 rewritten_scale=500
+origin-1 start=0 consumed=12 raw_x0=1 raw_y0=1 stored_scale=501 native_x0=1 native_y0=1 PixPerMm=10 native_scaleFact=50 rewritten_scale=500
+origin-2147483647 start=0 consumed=12 raw_x0=2147483647 raw_y0=2147483647 stored_scale=501 native_x0=2147483647 native_y0=2147483647 PixPerMm=10 native_scaleFact=50 rewritten_scale=500
+signed-endian start=0 consumed=12 raw_x0=-2080177663 raw_y0=84281096 stored_scale=-67305986 native_x0=-2080177663 native_y0=84281096 PixPerMm=10 native_scaleFact=-6730598 rewritten_scale=-67305980
+references-fixture start=206 consumed=218 raw_x0=0 raw_y0=0 stored_scale=500 native_x0=0 native_y0=0 PixPerMm=10 native_scaleFact=50 rewritten_scale=500
+references-fixture tail=30
+drawings-fixture start=122 consumed=134 raw_x0=-1234 raw_y0=5678 stored_scale=500 native_x0=-1234 native_y0=5678 PixPerMm=10 native_scaleFact=50 rewritten_scale=500
+drawings-fixture tail=546

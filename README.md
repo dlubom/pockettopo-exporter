@@ -5,10 +5,10 @@ formats, based on the PocketTopo 1.372 decompilation.
 
 ## Status
 
-Implementation authorized on 2026-10-09. **P02, P03a, P03b, P03c1 and P03c2 are complete**:
+Implementation authorized on 2026-10-09. **P02, P03a, P03b, P03c1, P03c2 and P04a are complete**:
 minimal Go CLI and checks, immutable station IDs, and bounded v3 trip and
-measurement/reference prefix readers with raw fields, source offsets, copied
-records and explicit malformed-input errors. P03b and P03c1 remain intact.
+measurement/reference/overview prefix readers with raw fields, source offsets,
+copied records and explicit malformed-input errors. P03b, P03c1 and P03c2 remain intact.
 Native export support is not yet implemented or validated.
 
 Confirmed priorities:
@@ -42,9 +42,10 @@ Confirmed priorities:
   push were subsequently authorized for `dlubom/pockettopo-exporter`; releases
   remain out of scope. P02 adds no exporter framework.
 
-**Next ready implementation PBI: P04a — bounded v3 overview mapping.** See the
+**Next ready implementation PBI: P04b — bounded v3 plan drawing mapping.** See the
 bounded acceptance contract below. P03b stops after trips, P03c1 after
-measurements and P03c2 after references; each leaves the remaining tail unparsed.
+measurements, P03c2 after references and P04a after the overview mapping;
+each leaves the remaining tail unparsed.
 
 ## Reference material
 
@@ -404,7 +405,7 @@ From the repository root:
 bash scripts/tools.sh                 # download/build pinned development tools
 bash scripts/check.sh                 # format check, vet, Staticcheck, race tests,
                                       # >=95% behavior coverage, build, CLI smoke
-bash scripts/mutation.sh              # >=90% Gremlins killed; station/trip/measurement/reference faults;
+bash scripts/mutation.sh              # >=90% Gremlins killed; station/trip/measurement/reference/overview faults;
                                       # reject incomplete/empty/invalid runs
 bash scripts/mutation-trial.sh        # weak-test, build/setup-error controls,
                                       # macOS/Linux
@@ -582,7 +583,7 @@ Conversation history must not be required to reconstruct a critical decision.
 
 ### Proposed sequence
 
-P00 decisions needed to start, P02 and P03a–P03c2 are complete. P04 is split below so
+P00 decisions needed to start, P02, P03a–P03c2 and P04a are complete. P04 is split below so
 the next chat can deliver one small implementation increment. Remaining rows are
 planned, not completed; refine each contract when its dependencies are ready.
 IDs describe this project only. R01–R07 are not scheduled for this handoff.
@@ -596,8 +597,9 @@ IDs describe this project only. R01–R07 are not scheduled for this handoff.
 | P03b | **Done:** bounded v3 header/trip prefix, immutable source fields, offsets, limits and structured errors | P03a; reader C#/IL and native evidence below |
 | P03c1 | **Done:** bounded measurement prefix, immutable raw fields, optional comments, offsets and native acceptance evidence | P03b; Station/Survey reader contract below |
 | P03c2 | **Done:** bounded reference prefix, raw coordinates/comments and explicit unparsed tail; native evidence below | P03c1; Reference/Survey reader contract |
-| P04a | **Next / ready:** read only the v3 overview mapping, preserving its three raw Int32 fields; stop before drawings | P03c2 |
-| P04b+ | Later small slices: drawing mappings, polylines, XSections, then complete-file/unsupported-content accounting; refine separately | P04a |
+| P04a | **Done:** bounded v3 overview mapping, three raw Int32 fields and explicit unparsed drawing tail; native evidence below | P03c2 |
+| P04b | **Next / ready:** read only the first (plan/outline) drawing mapping, preserving three raw Int32 fields; stop before any element marker | P04a |
+| P04c+ | Later small slices: bounded plan elements, side mapping/elements, then complete-file/unsupported-content accounting; refine separately | P04b |
 | P05 | Reproduce isolated-input native text export; native golden cases for units, flags, comments and record order | P03c2, P04; required native update behavior understood |
 | P06 | Reproduce fixed-point angles, grouping and average directions with original-program evidence | P03c2 |
 | P07 | Reproduce reference placement and plan geometry, then extended projection and closure as separately reviewed slices | P06 |
@@ -1405,7 +1407,7 @@ mutation and negative-control commands on Linux. README belongs to the delivered
 commit; exact pushed SHA and hosted CI are verified in the chat handoff.
 P03c2 ends here, with no complete-file or exporter compatibility claim.
 
-## Next ready PBI: P04a — bounded v3 overview mapping
+## Completed PBI: P04a — bounded v3 overview mapping
 
 P04 is split before implementation. P04a reads exactly one fixed-size record:
 the overview mapping immediately after references. Drawing mappings, elements
@@ -1449,13 +1451,181 @@ commands; at least 95% statement coverage and 90% killed mutants, every survivor
 reviewed and no incomplete/error campaign accepted. Add explicit raw-field,
 scale and copy faults as needed. Update README with native/strict distinctions,
 provenance and actual results, refine the next single P04 slice, commit, push,
-confirm CI for the exact SHA and stop after P04a. Implementation requires its
-own request; no P04 code is part of P03c2.
+confirm CI for the exact SHA and stop after P04a. P04a implementation was
+explicitly authorized on 2026-10-09; no further P04 slice is included here.
+
+### Implemented overview API and source policy (2026-10-09)
+
+`internal/top.ReadV3OverviewPrefix` and `ReadV3OverviewPrefixWithLimits`
+extend the unchanged P03c2 reader by exactly 12 bytes. The latter takes the
+existing `ReferenceLimits`; there is no new limit type or table allocation.
+All earlier validation, bounds, error precedence and stopping positions remain
+unchanged. The 64 MiB input ceiling includes the entire uninterpreted tail.
+Lower caller bounds and zero bounds retain their earlier meaning.
+
+`source.Mapping` exposes `X0Raw`, `Y0Raw`, `ScaleRaw` and `Offsets`. All three
+values are signed Int32 decoded little-endian, with no unit conversion, scale
+division, float conversion, sign normalization or geographic interpretation.
+`MappingOffsets` records the whole 12-byte record plus `X0`, `Y0` and `Scale`.
+Zero/negative scales and all Int32 bit patterns are accepted as source fields.
+
+`source.OverviewPrefix` retains all previous header/trip/measurement/reference
+accessors and adds `OverviewMapping`. Its `Bytes`, `ConsumedOffset`,
+`UnparsedTailSize` and `Offsets` describe this longer prefix only.
+`OverviewPrefixOffsets` embeds the reference offsets and adds `Overview`, a
+`MappingOffsets` value. Constructors/accessors retain the immutable earlier
+models, copy consumed bytes and return mapping/offset structs by value.
+Spans are zero-based with exclusive ends. No drawing mapping or marker is read.
+
+Every incomplete overview field returns `truncated` at its field start:
+`overview.x0` at the reference-prefix end, `overview.y0` four bytes later and
+`overview.scale` eight bytes later. All failures return the empty
+`OverviewPrefix`, including failures after successful earlier tables or fields.
+A 28-byte all-zero-table prefix succeeds without any drawing bytes or trailer;
+an arbitrary remaining tail also succeeds without being validated. P03b's
+8-byte, P03c1's 12-byte and P03c2's 16-byte contracts are unchanged.
+
+### Mapping C#/IL and original-program evidence
+
+After the analysis map, inspected `DataSet.Read`'s v3 active-input branch,
+`Mapping.Read` (RVA `0x14479`), `Mapping.Write` (`0x1443a`), the static
+initializer and `SetVga`, with matching IL. `DataSet.Read` calls `mapMap.Read`
+after the survey and before `outline.Read`/`sideview.Read`; template inputs
+skip these mappings/drawings. P04a reads a single active-input source prefix
+and introduces no template-directory behavior.
+
+| Reference file | SHA-256 |
+| --- | --- |
+| `DataSet.cs` | `18dc45a572a7fcd53c18eef93d5195ab3778a755485674237c07d7923a5d9940` |
+| `Mapping.cs` | `364d6d34cab642863ea92be7210afe652147ff509d9eba0cd35e319837d04e65` |
+| `PocketTopo.il` | `ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76` |
+
+The [native mapping probe](scripts/reference-mapping-probe.cs) invokes the
+hash-verified original 1.372 assembly under Wine Staging 11.7 / Microsoft .NET
+2.0.50727.42 x86. It calls native `Mapping.Read` on literal records and on the
+two pinned fixtures, stopping before drawing bytes. `Mapping.Write` writes
+only that scalar record to a separate memory stream to expose quantization;
+it never writes a TOP archive. No Go reader generates native expectations.
+
+The final probe exited 0 with 61 lines of frozen CRLF stdout. Both `PixPerMm=5`
+(static default) and `PixPerMm=10` (native `SetVga`) were tested: 20 scales
+including Int32 min/max, negative/zero and division boundaries, five origin
+boundaries, an asymmetric endian case and both fixtures per mode.
+Native signed division truncates toward zero: stored -501 becomes -100 or -50,
+and a native rewrite stores -500; stored -1 becomes zero. Native min/max scale
+reads also succeed. Go preserves the stored Int32, never the derived quotient.
+JKTZ's earlier parser bounds scale to 10..50000; that restriction was reviewed
+and deliberately not adopted because C#/IL and native probes accept wider values.
+
+Native fixture readback confirms:
+
+| Fixture | Overview span | Raw x0 / y0 / scale | Consumed / unparsed tail |
+| --- | --- | --- | --- |
+| `api-references.top` (248 bytes) | `[206,218)` | `0 / 0 / 500` | `218 / 30` |
+| `api-drawings.top` (680 bytes) | `[122,134)` | `-1234 / 5678 / 500` | `134 / 546` |
+
+The new fixture is copied byte-for-byte from pinned JKTZ revision
+`3e3daa4156c6e6e79dce5203d8bb8e36122d571f`, Git blob
+`07f805f0438dd2f48e9bd18d6771bf125713e8fe`, SHA-256
+`4a494ead03cade750f670d50aa38661abda9b3e1f131d67f27a252982752c2a5`.
+The helper's literal nonzero origin and independent expected JSON were verified
+against that revision. Attribution, hashes, actual optional commands and frozen
+stdout are in [fixture provenance](internal/top/testdata/README.md).
+Source TOP and C#/IL bytes remain unchanged; no drawings, screen transforms,
+rendering or export compatibility were implemented or claimed.
+
+### P04a checks and mutation scope
+
+Go 1.26.3 darwin/arm64, Staticcheck v0.8.1, Gremlins v0.6.0:
+
+- `bash scripts/check.sh`: passed formatting, vet, Staticcheck, uncached race
+  tests, build and unchanged CLI smoke; **100% statement coverage** in
+  `internal/cli`, `internal/source` and `internal/top`. New assertions cover
+  raw signed/endian boundaries, native fixtures, every required mapping byte,
+  field offsets after variable earlier tables, unchanged errors/limits,
+  absent/arbitrary drawing tails, no partial results and immutable copies.
+- `bash scripts/mutation.sh`: the complete integrated command passed with
+  Gremlins **161/161 killed** (8 new overview-reader mutants and the unchanged
+  153 earlier mutants), no lived, uncovered, invalid, skipped or timed-out
+  mutants. The same command killed **6/6 station-ID, 19/19 trip, 35/35
+  measurement, 33/33 reference and 29/29 overview explicit mutants**. New
+  faults discard/swap raw fields or spans, use big-endian decoding, divide or
+  multiply the stored scale, convert through Float32, normalize/reject source
+  scales, hardcode the mapping position, alias bytes, consume the drawing tail
+  or alter input. Every explicit mutant compiled and failed a named assertion;
+  stale targets, compiler errors and timeouts are rejected. No exemptions or
+  lowered gates were added.
+- `bash scripts/mutation-trial.sh`: ordinary weak tests passed, both CLI
+  mutants survived and the shared gate rejected the run with exit 1. Deliberate
+  compiler/setup faults returned NOT VIABLE exit 2, never behavioral kills.
+- `GOCACHE="$PWD/.cache/go-build" GOTOOLCHAIN=local go test ./internal/top
+  -run '^$' -fuzz '^FuzzReadV3OverviewPrefix$' -fuzztime=10s -parallel=2`:
+  passed, **1,153,103 executions**. Bounded inputs, deterministic values/errors,
+  unchanged input, empty failures and exact mapping spans/prefix/tail accounting
+  are asserted. Ordinary tests also execute all earlier fuzz seed corpora.
+
+Measured Git blobs: `0129f1562827b4603087da12d0d2ab64434b28c6` (mapping/prefix model),
+`9d90e79436f0647ebfe55b8c561c2344367767bf` (model tests),
+`6a0aa60b3469551defa6f8dc9f695a2d684126ae` (reader),
+`e7db918f68e506b7d5dcae987be7592766f193da` (reader tests).
+
+Reports regenerate in `coverage.out`, `mutation.json`,
+`build/overview-mutation.json` and the unchanged earlier explicit reports.
+The disposable mutation copy includes all source packages and native fixtures.
+CI repeats ordinary checks on Linux, Windows and macOS, with the complete
+mutation and negative-control commands on Linux. README belongs to the delivered
+commit; exact pushed SHA and hosted CI are verified in the chat handoff.
+P04a ends here with no complete-file or exporter compatibility claim.
+
+## Next ready PBI: P04b — bounded v3 plan drawing mapping
+
+**Outcome/dependencies:** a separate immutable prefix reader extends P04a by
+exactly the next 12 bytes, the first drawing's plan/outline mapping, and stops
+before any element marker. Preserve all P03/P04a APIs, source semantics,
+limits, errors and stopping positions. Implementation requires a separate request.
+
+**References:** analysis map, `DataSet.Read`'s `outline.Read`/`sideview.Read`
+sequence, the v3 mapping-before-elements branch in `Drawing.Read`,
+`Mapping.Read`/`Write`, `PixPerMm` and matching IL. The side mapping follows
+variable-length plan elements, so it cannot be read as another adjacent mapping.
+
+**Bounded acceptance contract:**
+
+- Reuse `source.Mapping` and P03c2's existing limits. Preserve the plan mapping's
+  three raw signed little-endian Int32 fields, every field/record span, copied
+  consumed bytes and tail accounting; retain the overview mapping separately.
+  No derived scale, transform, coordinate normalization or drawing semantics.
+- Reject every required-byte truncation with stable `plan.mapping.x0`,
+  `plan.mapping.y0` and `plan.mapping.scale` field/start-offset errors; return
+  an empty result on every failure. Retain all inherited strict rules.
+- Accept a prefix ending immediately after the plan mapping, including no
+  element marker. Accept arbitrary remaining bytes without validation; read
+  neither plan elements nor the side mapping, terminators or trailer.
+- Verify original native `Mapping.Read` at the independently established plan
+  offsets using the pinned helper and fixtures: `api-references.top` mapping
+  `[218,230)` with origin `0 / 0`, and `api-drawings.top` mapping `[134,146)`
+  with helper origin `-100 / 200`; stored scale 500 in both. These plan values
+  are pinned helper/format evidence pending a fresh P04b native reader probe.
+- Test literal endian/min/max/negative/zero values, mapping separation, offsets
+  after variable earlier tables, immutable copies, P03/P04a regressions, exact
+  inherited limits, every required byte and bounded fuzzing. Add native evidence
+  without deriving expectations from the Go implementation.
+
+**Non-goals:** plan elements/markers, polylines, XSections, side mapping/elements,
+drawing ownership, geometry/rendering, full-file/trailer validation, directory
+context, CLI inspect/export and exporters. No later P04 slice in the same chat.
+
+**Required checks/handoff:** current check, complete mutation and negative-control
+commands; at least 95% statement coverage and 90% killed mutants, every survivor
+reviewed, no incomplete/error campaign accepted. Extend explicit raw-field,
+mapping-separation and copy faults as needed. Update README with actual native
+evidence/results, refine one next small P04 slice, commit, push, confirm CI for
+the exact SHA, then stop after P04b and provide its successor prompt.
 
 ## Open issues and deferred work
 
-- The TOP readers validate only the v3 trip/measurement/reference prefixes.
-  Mappings, drawings, complete-file validation and native exporters remain
+- The TOP readers validate only the v3 trip/measurement/reference/overview prefixes.
+  Drawing mappings/elements, complete-file validation and native exporters remain
   unimplemented; the CLI still accepts only help/version.
 - Native measurement arithmetic/export formatting fidelity remains unproven in Go.
 - Gremlins is accepted only for the measured small scope; expand and reassess
@@ -1463,7 +1633,7 @@ own request; no P04 code is part of P03c2.
   mutants rather than silently excluding them.
 - The full P01 capability/fixture matrix, older TOP versions, corpus runs,
   release packaging and optional R01–R07 work remain deferred.
-- Future full compatibility claims still require native evidence; the P02/P03a/P03b/P03c1/P03c2
+- Future full compatibility claims still require native evidence; the P02/P03a/P03b/P03c1/P03c2/P04a
   checks validate only implemented behavior and their recorded reference cases.
 
 ## Research references
