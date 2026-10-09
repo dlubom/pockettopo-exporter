@@ -1,0 +1,15 @@
+assembly=1.3.7.0 runtime=2.0.50727.42
+PixPerMm=5
+references-fixture marker_start=230 marker=0 consumed=231 tail=17
+drawings-fixture marker_start=146 marker=1 consumed=147 tail=533
+references-prefix marker_start=230 marker=0 consumed=231 tail=0
+drawings-prefix marker_start=146 marker=1 consumed=147 tail=0
+references-missing marker_start=230 missing=EndOfStreamException consumed=230 tail=0
+drawings-missing marker_start=146 missing=EndOfStreamException consumed=146 tail=0
+PixPerMm=10
+references-fixture marker_start=230 marker=0 consumed=231 tail=17
+drawings-fixture marker_start=146 marker=1 consumed=147 tail=533
+references-prefix marker_start=230 marker=0 consumed=231 tail=0
+drawings-prefix marker_start=146 marker=1 consumed=147 tail=0
+references-missing marker_start=230 missing=EndOfStreamException consumed=230 tail=0
+drawings-missing marker_start=146 missing=EndOfStreamException consumed=146 tail=0

@@ -372,3 +372,71 @@ Compare fresh stdout to the frozen evidence; do not change expectations to match
 Go. Neither prefix acceptance nor native scalar readback validates elements,
 complete TOP files or exporters. Wine/.NET/PocketTopo remain evidence tools,
 not application or CI dependencies.
+
+
+## P04c1 first plan marker and original reader probe, 2026-10-09
+
+The unchanged fixtures and pinned native helper above establish the first
+plan marker independently of Go. `References` adds no drawing elements;
+`Drawings` appends a three-point Polygon first. Native `Drawing.Write` emits
+marker 0 for the former and marker 1 for the latter; `Drawing.Read` reads one
+UInt8 after its v3 mapping. Fresh readback confirms:
+
+| Fixture | Marker span / raw UInt8 | Consumed / full-file tail |
+| --- | --- | --- |
+| `api-references.top` | `[230,231)` / 0 | `231 / 17` |
+| `api-drawings.top` | `[146,147)` / 1 | `147 / 533` |
+
+`native-plan-marker-read.txt` is exact 15-line CRLF stdout from the separate
+`scripts/reference-plan-marker-probe.cs`, protected from Git normalization.
+Original `Trip.ReadList`, `Station.Read` and `Reference.Read` locate overview;
+two original `Mapping.Read` calls reach the marker. The probe reads exactly
+one byte using the .NET `BinaryReader` held by the original `FileReader`.
+It asserts literal helper/format marker positions and values. It never calls
+`Drawing.Read`, parses a payload/side mapping, writes a TOP file or uses Go.
+
+Both full fixtures and in-memory copies ending just after the marker agree
+in `PixPerMm=5` and native `SetVga` mode 10. Exact-prefix tails are zero.
+Copies ending before the marker throw `EndOfStreamException` with the stream
+position unchanged. No fixture is rewritten to create these bounded streams.
+C#/IL dispatch (0 terminates, 1 Polygon, 3 XSection, other nonzero bytes cause
+`ReadBytes(0)` then the next marker read) is documented in the main README;
+this probe deliberately does not execute that dispatch.
+
+Environment and original EXE/runtime hashes remain the same as earlier evidence:
+macOS arm64, Wine `wine-11.7 (Staging)`, .NET `2.0.50727.42` x86, assembly
+`1.3.7.0`. The final probe exited 0 with empty stderr. The permitted host
+compilation produced a usable executable; its two verified lingering
+compiler/start processes were stopped after native readback. Compilation
+process completion is not a CI gate. The EXE, runtime, C#/IL and all three
+TOP fixture hashes were verified before and after; no originals were edited.
+
+| New evidence | SHA-256 |
+| --- | --- |
+| `scripts/reference-plan-marker-probe.cs` | `29547ea71f4e7e23e09ffdc88f370faf3f335dac0fc5e2ae7988b29a259a719b` |
+| `native-plan-marker-read.txt` | `949ec2251c088881547feb092aae29a5c0f4c7ff687d324d769457447e62636a` |
+
+The pinned JKTZ helper was fetched into ignored `build/pinned-pockettopo-fixtures.cs`
+with `gh api` at revision `3e3daa4156c6e6e79dce5203d8bb8e36122d571f`,
+SHA-256 `ae1f32a1034bbd95a59e97db47e887fabb30b06eabe55a960c9c5ebf9090d005`.
+Its `References`/`Drawings` methods and ordered `Append` were reviewed against
+C#/IL; no JKTZ parser policy was imported.
+
+Actual optional commands run from this repository on the recorded host:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-plan-marker-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-plan-marker-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-plan-marker-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-references.top' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-plan-marker-read.txt 2>build/native-plan-marker-read.err
+```
+
+Compare a fresh stdout to frozen evidence; do not adjust it to match Go.
+One-byte prefix acceptance does not validate payloads, complete TOP files or
+exporters. Wine/.NET/PocketTopo remain optional evidence tools only.

@@ -5,10 +5,10 @@ formats, based on the PocketTopo 1.372 decompilation.
 
 ## Status
 
-Implementation authorized on 2026-10-09. **P02, P03a, P03b, P03c1, P03c2, P04a and P04b are complete**:
+Implementation authorized on 2026-10-09. **P02, P03a, P03b, P03c1, P03c2, P04a, P04b and P04c1 are complete**:
 minimal Go CLI and checks, immutable station IDs, and bounded v3 trip and
-measurement/reference/overview/plan-mapping prefix readers with raw fields, source offsets,
-copied records and explicit malformed-input errors. P03b, P03c1, P03c2 and P04a remain intact.
+measurement/reference/overview/plan-mapping/first-marker prefix readers with raw fields, source offsets,
+copied records and explicit malformed-input errors. All earlier contracts remain intact.
 Native export support is not yet implemented or validated.
 
 Confirmed priorities:
@@ -42,10 +42,11 @@ Confirmed priorities:
   push were subsequently authorized for `dlubom/pockettopo-exporter`; releases
   remain out of scope. P02 adds no exporter framework.
 
-**Next ready implementation PBI: P04c1 — first v3 plan element marker.** See the
+**Next ready implementation PBI: P04c2 — first plan Polygon point count only.** See the
 bounded acceptance contract below. P03b stops after trips, P03c1 after
 measurements, P03c2 after references, P04a after the overview mapping and
-P04b after the plan mapping; each leaves the remaining tail unparsed.
+P04b after the plan mapping and P04c1 after its first marker byte; each leaves
+the remaining tail unparsed.
 
 ## Reference material
 
@@ -405,7 +406,7 @@ From the repository root:
 bash scripts/tools.sh                 # download/build pinned development tools
 bash scripts/check.sh                 # format check, vet, Staticcheck, race tests,
                                       # >=95% behavior coverage, build, CLI smoke
-bash scripts/mutation.sh              # >=90% Gremlins killed; station/trip/measurement/reference/overview/plan mapping faults;
+bash scripts/mutation.sh              # >=90% Gremlins killed; station/trip/measurement/reference/overview/plan mapping/marker faults;
                                       # reject incomplete/empty/invalid runs
 bash scripts/mutation-trial.sh        # weak-test, build/setup-error controls,
                                       # macOS/Linux
@@ -583,7 +584,7 @@ Conversation history must not be required to reconstruct a critical decision.
 
 ### Proposed sequence
 
-P00 decisions needed to start, P02, P03a–P03c2 and P04a/P04b are complete. P04 is split below so
+P00 decisions needed to start, P02, P03a–P03c2 and P04a/P04b/P04c1 are complete. P04 is split below so
 the next chat can deliver one small implementation increment. Remaining rows are
 planned, not completed; refine each contract when its dependencies are ready.
 IDs describe this project only. R01–R07 are not scheduled for this handoff.
@@ -599,8 +600,9 @@ IDs describe this project only. R01–R07 are not scheduled for this handoff.
 | P03c2 | **Done:** bounded reference prefix, raw coordinates/comments and explicit unparsed tail; native evidence below | P03c1; Reference/Survey reader contract |
 | P04a | **Done:** bounded v3 overview mapping, three raw Int32 fields and explicit unparsed drawing tail; native evidence below | P03c2 |
 | P04b | **Done:** bounded plan/outline mapping with separate raw fields/spans and native evidence; stop before the first element marker | P04a |
-| P04c1 | **Next / ready:** read only the first plan element marker byte; preserve it and stop before its payload or side mapping | P04b |
-| P04c2+ | Later small slices: individual bounded plan element payloads, plan termination, side mapping/elements, then complete-file/unsupported-content accounting; refine separately | P04c1 |
+| P04c1 | **Done:** preserve the first plan marker byte and its span; stop before any payload, even for marker 0 | P04b |
+| P04c2 | **Next / ready:** first plan Polygon signed Int32 point count only; stop before vertices/color, no allocation | P04c1 |
+| P04c3+ | Later small slices: remaining first Polygon payload, XSection payload, plan termination, side mapping/elements, then complete-file/unsupported-content accounting; refine separately | P04c2 |
 | P05 | Reproduce isolated-input native text export; native golden cases for units, flags, comments and record order | P03c2, P04; required native update behavior understood |
 | P06 | Reproduce fixed-point angles, grouping and average directions with original-program evidence | P03c2 |
 | P07 | Reproduce reference placement and plan geometry, then extended projection and closure as separately reviewed slices | P06 |
@@ -1733,13 +1735,13 @@ and hosted CI are verified in the chat handoff; README is in that delivered
 commit. P04b stops before the first element marker and makes no element,
 complete-file or exporter compatibility claim.
 
-## Next ready PBI: P04c1 — first v3 plan element marker
+## Completed PBI: P04c1 — first v3 plan element marker
 
 **Outcome/dependencies:** a separate immutable source prefix extends P04b by
 exactly one byte: the first plan drawing element marker. This is deliberately
 split from variable-length payload parsing. Preserve every earlier API, mapping,
-source field, limit, error and stopping position. Requires a separate request;
-no P04c1 implementation is included in P04b.
+source field, limit, error and stopping position. P04c1 was explicitly
+authorized on 2026-10-09 and includes no later payload slice.
 
 **References:** analysis map, `DataSet.Read` ordering, `Drawing.Read`'s first
 `BinaryReader.ReadByte` and marker dispatch, and matching IL. Original
@@ -1775,9 +1777,179 @@ reviewed and no incomplete/error run accepted. Record native evidence/results,
 update README, commit, push, confirm CI for the exact SHA, stop after P04c1 and
 provide one successor prompt.
 
+### Implemented marker API and source policy (2026-10-09)
+
+`internal/top.ReadV3PlanMarkerPrefix` and
+`ReadV3PlanMarkerPrefixWithLimits` extend the unchanged P04b reader by one
+`take(1, "plan.elements[0].kind")`. They reuse `ReferenceLimits` without new
+bounds or allocations for drawing elements. Inherited validation/error precedence,
+zero/lower caller limits and the 64 MiB ceiling including the tail are unchanged.
+Every failure returns the empty `source.PlanMarkerPrefix`.
+
+`source.PlanMarkerPrefix` retains all earlier header/table/mapping accessors
+and adds `MarkerRaw` (UInt8). `PlanMarkerPrefixOffsets` embeds all P04b spans
+and adds `Marker`, a one-byte span. The constructor and `Bytes` accessor copy
+consumed bytes; mappings/spans are returned by value and earlier immutable
+records remain separate. A missing marker reports `truncated` at
+`plan.elements[0].kind`, offset equal to P04b's consumed end. The zero-table
+marker prefix consumes 41 bytes; P04b still accepts 40 bytes with no marker.
+P03b/P03c1/P03c2/P04a retain their 8/12/16/28-byte stopping contracts.
+
+All 256 bytes are retained unchanged. No dispatch or payload validation occurs;
+0 still consumes exactly one byte and stops before the side mapping. Markers
+1/3 and every other value succeed without any following byte. Arbitrary tails
+remain unparsed, with their size recorded separately from copied consumed bytes.
+No source input is modified and no CLI operation was added.
+
+### Marker C#/IL and fresh native evidence
+
+After the analysis map, inspected `DataSet.Read` (RVA `0x219c0`) and
+`Drawing.Read` (`0x10a30`) in C#/IL. The active v3 branch reads overview,
+then outline, then sideview. Outline reads its mapping before the first
+`BinaryReader.ReadByte` (`IL_003a`). Native dispatch is:
+
+| Marker | Native `Drawing.Read` behavior after the byte |
+| --- | --- |
+| 0 | Exit the element loop; the caller later reads sideview |
+| 1 | Construct `Polygon`, then call its payload reader |
+| 3 | Construct `XSection`, then call its payload reader |
+| Other nonzero values | Leave element null, call `ReadBytes(0)`, then read the next marker; no payload length is read |
+
+The last row is confirmed by IL's zero local at `IL_0046`, `ReadBytes`
+at `IL_00b6` and next `ReadByte` at `IL_00c3`. This is source inspection,
+not a claim of robust native unknown-payload support. The Go prefix intentionally
+stops before all those dispatch actions. Earlier JKTZ parser blob
+`74965043ebb9600ad71089bb079e76eaad1268f3` was checked through GitHub and
+reviewed locally: its rejection of kinds outside 0/1/3 and complete drawing
+loop are not adopted by this marker-only API. The pinned native helper's empty
+References drawing and first three-point Polygon in Drawings explain markers
+0/1 independently of Go.
+
+The separate [P04c1 native probe](scripts/reference-plan-marker-probe.cs)
+uses original `Trip.ReadList`, `Station.Read` and `Reference.Read` to locate
+the overview, calls original `Mapping.Read` twice, and reads exactly one byte
+through the original .NET `BinaryReader` held by `FileReader`. It asserts the
+pinned offsets and marker values; no `Drawing.Read`, element payload, side
+mapping, writer or Go output participates. In-memory streams ending before
+or just after the byte test missing and exact prefixes in both native pixel
+modes (5/10).
+
+| Fixture | Marker span / raw value | Consumed / unparsed full-file tail |
+| --- | --- | --- |
+| `api-references.top` (248 bytes) | `[230,231)` / 0 | `231 / 17` |
+| `api-drawings.top` (680 bytes) | `[146,147)` / 1 | `147 / 533` |
+
+Final native probe exit was 0 with empty stderr; its exact 15-line CRLF stdout
+is `native-plan-marker-read.txt`. Full and exact-prefix reads agree. Missing
+markers throw `EndOfStreamException` without advancing the stream. Environment
+is Wine Staging 11.7 / Microsoft .NET 2.0.50727.42 x86, original assembly
+1.3.7.0, macOS arm64. Original EXE/runtime, C#/IL and all three source TOP
+hashes were checked before and after and remain unchanged. Probe/output hashes,
+attribution and actual commands are in [fixture provenance](internal/top/testdata/README.md).
+
+### P04c1 checks and mutation scope
+
+Go 1.26.3 darwin/arm64, Staticcheck v0.8.1, Gremlins v0.6.0 (module version
+verified with `go version -m`; its binary version banner reports `dev`):
+
+- `bash scripts/check.sh`: passed formatting, vet, Staticcheck, uncached race
+  tests, build and unchanged CLI smoke; **100% statement coverage** in each
+  implemented package (`internal/cli`, `internal/source`, `internal/top`).
+  Tests cover all 256 markers, no payload, exact/arbitrary tails, absent marker,
+  inherited truncations/errors/limits, variable earlier tables, separate mappings,
+  immutable copies and every earlier stopping contract.
+- `bash scripts/mutation.sh`: the complete integrated campaign passed with
+  Gremlins **173/173 killed** (4 new marker-reader mutants and the unchanged
+  169 earlier mutants), no lived, uncovered, invalid, skipped or timed-out
+  mutants. The same command killed **6/6 station-ID, 19/19 trip, 35/35
+  measurement, 33/33 reference, 29/29 overview, 32/32 plan mapping and 25/25
+  marker explicit mutants**. Marker faults discard/mask the raw byte, confuse
+  spans/mappings, expose aliases, hardcode/reread offsets, replace caller limits,
+  misname errors, alter input, consume tails, read two bytes, require a next
+  marker/payload, reject unknown values, omit zero or return a partial failure.
+  Every explicit mutant compiled and failed a named assertion. Stale/ambiguous
+  targets, compiler errors and timeouts are rejected; no exemptions or weakened
+  gates were added. All campaigns ran on the delivered code/tests.
+- `bash scripts/mutation-trial.sh`: ordinary weak tests passed and both CLI
+  mutants survived; the shared gate rejected the run with exit 1. Deliberate
+  compiler/setup errors returned NOT VIABLE exit 2, never behavioral kills.
+- `GOCACHE="$PWD/.cache/go-build" GOTOOLCHAIN=local go test ./internal/top
+  -run '^$' -fuzz '^FuzzReadV3PlanMarkerPrefix$' -fuzztime=10s -parallel=2`:
+  passed, **1,176,471 executions**. Bounded inputs, deterministic values/errors,
+  unchanged input, empty failures, inherited mappings/spans, raw marker and exact
+  prefix/tail accounting are asserted. Ordinary checks run all earlier fuzz seeds.
+
+Measured Git blobs: `d0bd80d68ce50099d9b8be95c5fae246ffaa7f61` (model),
+`2c6c3f0d3b0e1a075be16dae088f9a6a9cffe56f` (model tests),
+`749c62276a897a00a44f3316fa556f8f96626a92` (reader),
+`19c93728a21a31e39ef9efad21b4b09a19daff0e` (reader tests).
+
+Independent read-only review found no Critical, Important or Minor issues;
+its race tests, formatting/shell checks and native evidence/hash checks passed.
+
+Reports regenerate in `coverage.out`, `mutation.json`,
+`build/plan-marker-mutation.json` and the unchanged earlier reports. CI repeats
+ordinary checks on Linux, Windows and macOS; Linux runs the complete mutation
+and negative-control commands, including the new marker scope. Exact pushed SHA
+and hosted CI are verified in the chat handoff; README is in that delivered
+commit. P04c1 stops before every payload and includes no later P04 implementation.
+
+## Next ready PBI: P04c2 — first plan Polygon point count only
+
+**Outcome/dependencies:** a separate immutable prefix extends P04c1 by exactly
+four bytes only when the first marker is 1: the Polygon's signed little-endian
+Int32 point count. Keep every earlier API, field, mapping, span, limit, error
+precedence and stopping contract. Requires a separate implementation request;
+P04c1 includes no point-count or other payload implementation.
+
+**References:** analysis map, `Drawing.Read` marker 1 dispatch,
+`Polygon.Read` (RVA `0xc4b8`, first `ReadInt32`/`newarr` and vertex/color order),
+matching IL, pinned native helper and `api-drawings.top`. Verify count behavior
+against original .NET before fixing negative/boundary expectations. Extend a
+separate native probe by one `ReadInt32` after the marker, without invoking
+`Polygon.Read` or reading vertices/color. The pinned helper's first Polygon
+has three points; its count span is `[147,151)` independently of Go.
+
+**Bounded acceptance contract:**
+
+- Reuse the immutable P04c1 model and retain the raw signed count, its four-byte
+  span, copied consumed bytes and tail accounting. No point collection or
+  coordinate/color/geometry model. Overview and plan mappings remain separate.
+- Marker 1 is the sole supported branch of this new count-only API. Other
+  markers, including 0/3, return `unsupported_element` at
+  `plan.elements[0].kind` and the marker start, without consuming their tails.
+  P04c1 continues to accept all 256 bytes unchanged.
+- A missing/incomplete count returns `truncated` at
+  `plan.elements[0].point_count`, the marker end. Reject negative counts with
+  `negative_count` there; preserve all nonnegative raw values within an explicit
+  operational ceiling. Introduce only a count limit (default 1,000,000, lower
+  nonnegative caller bounds; zero is real) alongside unchanged `ReferenceLimits`.
+  Validate the new limit first, then inherited limits/fields, marker, count.
+  Above-default/negative limits use `invalid_limit`; above-bound counts use
+  `resource_limit`. Every failure returns an empty new result.
+- Stop immediately after the count, even for zero. Do not allocate points or
+  preflight/require their bytes, color, next marker, side mapping or trailer.
+  An exact count-only prefix and arbitrary tail succeed within input bounds.
+- Test signed/endian/count/limit boundaries, every required count byte,
+  non-1 markers, variable earlier tables, immutable copies, inherited errors
+  and all earlier stops. Confirm the pinned native count/position and original
+  zero/negative/boundary behavior, add bounded fuzzing and explicit count/span/
+  copy/overread mutants. Native allocation semantics may be documented from IL;
+  do not trigger large allocations for a count-only probe.
+
+**Non-goals:** vertices, colors, full Polygon/XSection payloads, drawing element
+loops, side mapping/elements, geometry/rendering, complete-file validation,
+directory context, CLI inspect/export and exporters. Refine one next small
+payload slice; do not implement it in the same chat.
+
+**Required checks/handoff:** current check, complete mutation and negative-control
+commands; >=95% statement coverage, >=90% killed mutants, every survivor reviewed,
+no incomplete/error run accepted. Record native evidence, update README, commit,
+push, confirm exact-SHA CI, stop after P04c2 and provide one successor prompt.
+
 ## Open issues and deferred work
 
-- The TOP readers validate only the v3 trip/measurement/reference/overview/plan-mapping prefixes.
+- The TOP readers validate only the v3 trip/measurement/reference/overview/plan-mapping/first-marker prefixes.
   Drawing elements and side mappings, complete-file validation and native exporters remain
   unimplemented; the CLI still accepts only help/version.
 - Native measurement arithmetic/export formatting fidelity remains unproven in Go.
@@ -1786,7 +1958,7 @@ provide one successor prompt.
   mutants rather than silently excluding them.
 - The full P01 capability/fixture matrix, older TOP versions, corpus runs,
   release packaging and optional R01–R07 work remain deferred.
-- Future full compatibility claims still require native evidence; the P02/P03a/P03b/P03c1/P03c2/P04a/P04b
+- Future full compatibility claims still require native evidence; the P02/P03a/P03b/P03c1/P03c2/P04a/P04b/P04c1
   checks validate only implemented behavior and their recorded reference cases.
 
 ## Research references
