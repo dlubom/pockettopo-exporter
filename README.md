@@ -5,7 +5,7 @@ formats, based on the PocketTopo 1.372 decompilation.
 
 ## Status
 
-Implementation authorized on 2026-10-09. **P02 is complete locally**: minimal Go CLI,
+Implementation authorized on 2026-10-09. **P02 is complete**: minimal Go CLI,
 formatting/static checks, tests, coverage gate and a verified mutation trial.
 Native export support is not yet implemented or validated.
 
@@ -21,7 +21,8 @@ Confirmed priorities:
 ### P00 decisions required for P02
 
 - **Language/toolchain:** Go 1.26.3 (the installed and selected baseline), standard
-  library runtime, gofmt, go vet, Staticcheck v0.8.1. Gremlins v0.6.0 is accepted for the bounded mutation scope validated below. Tool upgrades are explicit changes.
+  library runtime, gofmt, go vet, Staticcheck v0.8.1. Gremlins v0.6.0 is accepted
+  for the bounded mutation scope validated below. Tool upgrades are explicit changes.
 - **First useful export:** isolated-input native text, followed by native Therion
   interchange and graphics DXF. Full native 1.372 export coverage remains the
   milestone; optional R01–R07 work is not a P02 prerequisite.
@@ -408,7 +409,8 @@ go run ./cmd/pockettopo-exporter --help
 go run ./cmd/pockettopo-exporter --version
 ```
 
-The built executable is `build/pockettopo-exporter` (`.exe` on Windows). It accepts exactly one of
+The built executable is `build/pockettopo-exporter` (`.exe` on Windows).
+It accepts exactly one of
 `--help`, `-h`, or `--version`. Success writes to stdout and exits 0. Missing,
 extra or unsupported arguments and output errors exit 1; diagnostics use stderr.
 `inspect` and `export` are not implemented. The development version is `dev`,
@@ -471,8 +473,14 @@ mutation scope/operators and re-evaluate on native arithmetic in P03a/P06;
 
 One GitHub Actions workflow runs formatting, vet, Staticcheck, tests/coverage and
 build/CLI smoke on Linux amd64, Windows amd64 and macOS arm64. Linux also runs
-mutation testing and its negative control. Action revisions and tool versions are pinned. Remote CI is
-not yet verified at this point; record actual run/commit evidence after push.
+mutation testing and its negative control. Action revisions and tool versions
+are pinned. [CI run 37915898340](https://github.com/dlubom/pockettopo-exporter/actions/runs/37915898340)
+passed all three jobs for implementation/tooling commit
+`3b68dda974483950cf55bcf5ef6b82cc7c4af7f2`. The remote `main` SHA was verified
+against that commit. The final handoff edit only records these results in README;
+consult [GitHub Actions](https://github.com/dlubom/pockettopo-exporter/actions)
+for the check attached to any later documentation commit.
+The repository is [public](https://github.com/dlubom/pockettopo-exporter).
 No release workflow or exporter packages were added.
 
 ## Validation strategy
@@ -578,7 +586,7 @@ IDs describe this project only. R01–R07 are not scheduled for this handoff.
 | --- | --- | --- |
 | P00 | Done for startup: Go, native-first scope, isolation, byte compatibility, platforms and gates selected above | This draft |
 | P01 | Deferred full exporter/options inventory; capture the reference contract needed by each implementation slice within that slice | Required before each corresponding exporter; optional research only when necessary |
-| P02 | Done locally: Git, Go skeleton, pinned tools, checks, CI definition and positive/negative mutation trial | Explicit implementation request, P00 |
+| P02 | Done: public Git repository, Go skeleton, pinned tools, passing three-platform CI and positive/negative mutation trial | Explicit implementation request, P00 |
 | P03a | **Next / ready:** source station ID decoding and display, retaining raw bits and internal identity; bounded contract below | P02; ID-specific C#/IL contract inside the slice |
 | P03b | Planned: bounded v3 header/trip reading, offsets and malformed-input errors; refine before implementation | P03a; relevant P01 reader contract |
 | P03c | Planned: references/measurements and partial source inspection; explicitly account for unparsed drawing tail | P03b; relevant P01 record contract |
@@ -698,7 +706,8 @@ actual commands/results and one refined next PBI (P03b if ready), then stop.
   mutants rather than silently excluding them.
 - The full P01 capability/fixture matrix, older TOP versions, corpus runs,
   release packaging and optional R01–R07 work remain deferred.
-- Remote CI results must be tied to the actual pushed commit, not this local run.
+- Future compatibility claims still require native evidence; the successful P02
+  CI run above validates only the skeleton and tooling.
 
 ## Research references
 
