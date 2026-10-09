@@ -14,13 +14,7 @@ cp -R cmd internal "$trial/"
 rm -f mutation.json
 cd "$trial"
 "$root/.tools/bin/gremlins" unleash --workers 2 --exclude-files 'cmd/' \
-  --threshold-efficacy 90 --threshold-mcover 100 --output "$root/mutation.json"
-# Fail closed on empty/incomplete runs, timeouts, invalid or unreviewed mutants.
+  --output "$root/mutation.json"
+# Fail closed on empty/incomplete runs, timeouts, invalid or unknown statuses.
 # Gremlins' built-in efficacy excludes several of those statuses.
-jq -e '
-  [.files[].mutations[]] as $m |
-  ($m | length) > 0 and
-  ($m | length) == .mutants_total and
-  all($m[]; .status == "KILLED" or .status == "LIVED") and
-  ([ $m[] | select(.status == "KILLED") ] | length) / ($m | length) >= 0.9
-' "$root/mutation.json"
+jq -e -f "$root/scripts/mutation-gate.jq" "$root/mutation.json"

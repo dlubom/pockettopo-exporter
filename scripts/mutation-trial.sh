@@ -26,10 +26,14 @@ GO
 rm -f build/mutation-weak.json
 cd "$trial"
 go test -count=1 ./...
-status=0
-"$root/.tools/bin/gremlins" unleash --workers 2 --threshold-efficacy 90 \
-  --threshold-mcover 100 --output "$root/build/mutation-weak.json" || status=$?
-[[ "$status" == 10 ]]
+"$root/.tools/bin/gremlins" unleash --workers 2 --output "$root/build/mutation-weak.json"
 jq -e '.mutants_total == 2 and .mutants_lived == 2 and .mutants_killed == 0
+  and ([.files[].mutations[]] | length) == 2
   and all(.files[].mutations[]; .status == "LIVED")' "$root/build/mutation-weak.json"
-printf 'Negative control passed: ordinary tests passed; both mutants survived; gate exited 10.\n'
+gate_status=0
+jq -e -f "$root/scripts/mutation-gate.jq" "$root/build/mutation-weak.json" || gate_status=$?
+if [[ "$gate_status" != 1 ]]; then
+  printf 'Expected mutation gate rejection (exit 1), got %s.\n' "$gate_status" >&2
+  exit 1
+fi
+printf 'Negative control passed: ordinary tests passed; both mutants survived; gate exited 1.\n'

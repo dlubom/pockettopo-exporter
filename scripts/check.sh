@@ -22,10 +22,16 @@ go tool cover -func=coverage.out | awk '
 binary=build/pockettopo-exporter
 if [[ $(go env GOOS) == windows ]]; then binary+=.exe; fi
 go build -o "$binary" ./cmd/pockettopo-exporter
-[[ "$("$binary" --version)" == 'pockettopo-exporter dev' ]]
+if [[ "$("$binary" --version)" != 'pockettopo-exporter dev' ]]; then
+  printf 'Unexpected version output.\n' >&2
+  exit 1
+fi
 "$binary" --help
 if "$binary" export >build/unsupported.out 2>build/unsupported.err; then
   printf 'Unsupported export unexpectedly succeeded.\n' >&2
   exit 1
 fi
-[[ ! -s build/unsupported.out && -s build/unsupported.err ]]
+if [[ -s build/unsupported.out || ! -s build/unsupported.err ]]; then
+  printf 'Unsupported argument did not respect the output contract.\n' >&2
+  exit 1
+fi

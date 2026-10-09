@@ -433,8 +433,8 @@ The mutation run generated **2 mutants, both killed**, with 0 lived, uncovered,
 timed-out, invalid or skipped mutants. They negate argument-count validation
 and output-error handling in `internal/cli/run.go`. The negative-control script
 runs the same source with a test that calls the CLI without asserting its result:
-ordinary tests pass, **both mutants live**, and Gremlins exits **10**, correctly
-rejecting the 90% gate. The original checkout is untouched by both trials.
+ordinary tests pass and **both mutants live**. The same JSON gate used by
+`mutation.sh` then exits **1**, correctly rejecting the 90% threshold. The original checkout is untouched by both trials.
 Reproduce with the two mutation commands above; inspect their per-mutant JSON
 in `mutation.json` and `build/mutation-weak.json`.
 
@@ -449,10 +449,20 @@ Gremlins initially panicked while copying the complete module with local tool
 caches. Inspection of its `internal/engine/workdir/workdir.go` showed that it
 copies ignored files too. `scripts/mutation.sh` therefore copies `go.mod`,
 optional `go.sum`, `cmd/` and `internal/` into a disposable source-only directory.
-Keep that explicit scope current when adding real packages/fixtures. The script
-rejects empty reports and any status other than KILLED/LIVED, then checks the
-actual killed fraction; it does not rely only on Gremlins' efficacy percentage.
+Keep that explicit scope current when adding real packages/fixtures. The shared `scripts/mutation-gate.jq` rejects empty reports and any status other
+than KILLED/LIVED, then checks the actual killed fraction. Native Gremlins
+threshold flags are not used: the trial found they could return exit 0 despite
+0% efficacy. The JSON gate is the authoritative CI check.
 No equivalent or invalid mutants have been exempted in P02.
+
+The first hosted run (`07b5bdc`, [run 37915394919](https://github.com/dlubom/pockettopo-exporter/actions/runs/37915394919))
+passed all ordinary checks on three systems and killed 2/2 Linux mutants, but
+correctly failed the negative control's expectation of Gremlins exit 10. Local
+Bash 3.2 had not stopped on a false standalone `[[ ... ]]` despite `set -e`, so
+that first local negative-control success message was invalid. The repaired
+trial checks the shared JSON gate with explicit failure handling; executable
+smoke assertions also now use explicit `if`/`exit` branches. This finding is why
+neither a tool's configured threshold nor a success message alone proves a gate.
 
 This trial establishes usefulness for conditional defects only. Gremlins' default
 operators do not mutate every return value, string or switch case. Expand the
