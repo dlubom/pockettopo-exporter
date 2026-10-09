@@ -12,13 +12,11 @@ if [[ -n "$unformatted" ]]; then
 fi
 go vet ./...
 .tools/bin/staticcheck ./...
+bash scripts/coverage-trial.sh
 go test -race -count=1 ./...
 go test -count=1 -coverprofile=coverage.out ./internal/...
 go tool cover -func=coverage.out
-go tool cover -func=coverage.out | awk '
-  $1 == "total:" { found = 1; if ($3 + 0 < 95) exit 1 }
-  END { if (!found) exit 1 }
-'
+awk -f scripts/coverage-gate.awk coverage.out
 binary=build/pockettopo-exporter
 if [[ $(go env GOOS) == windows ]]; then binary+=.exe; fi
 go build -o "$binary" ./cmd/pockettopo-exporter

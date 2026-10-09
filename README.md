@@ -405,7 +405,7 @@ From the repository root:
 ```sh
 bash scripts/tools.sh                 # download/build pinned development tools
 bash scripts/check.sh                 # format check, vet, Staticcheck, race tests,
-                                      # >=95% behavior coverage, build, CLI smoke
+                                      # exact >=95% coverage and boundary controls, build, CLI smoke
 bash scripts/mutation.sh              # >=90% Gremlins killed; station/trip/measurement/reference/overview/plan mapping/marker faults;
                                       # reject incomplete/empty/invalid runs
 bash scripts/mutation-trial.sh        # weak-test, build/setup-error controls,
@@ -427,6 +427,15 @@ Go/Staticcheck caches and tool binaries stay in ignored `.cache/` and `.tools/`.
 The application can build offline once Go is installed; installing development
 tools requires network access. `coverage.out`, `mutation.json` and `build/` are
 regenerated outputs. There is no `go.sum` because there are no module dependencies.
+
+The coverage gate sums statement counts directly from `coverage.out` and checks
+`100 * covered >= 95 * total`; the rounded percentage printed by `go tool cover`
+is informational. `bash scripts/coverage-trial.sh`, also run by `check.sh` on all
+three CI platforms, rejects 94.96% and 94.99%, accepts exactly 95% and above,
+and checks execution-count weighting, merged blocks, filenames containing spaces
+or colons, and rejection of empty profiles and malformed counters.
+This corrects the earlier gate's rounding gap without changing the 95% threshold
+or the measured 100% coverage of the completed P04c1 implementation.
 
 ### P02 verification and tool limits (2026-10-09)
 
