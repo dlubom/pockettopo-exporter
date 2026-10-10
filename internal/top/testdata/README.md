@@ -847,3 +847,67 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 
 Frozen stdout is protected from text normalization. Compare future native
 stdout to this evidence; never regenerate expected values using Go.
+
+## P04c8 second Polygon color and original scalar probe, 2026-10-10
+
+The separate [second-color probe](../../../scripts/reference-plan-second-polygon-color-probe.cs)
+uses original table/Mapping.Read methods and FileReader's BinaryReader. It reads
+first Polygon scalars, second marker/count/ordered X/Y, then exactly one raw
+UInt8 color, including zero points. No Drawing.Read/Polygon.Read, derived
+rectangle, pen selection, GUI, TOP write or Go-generated oracle participates.
+
+The unchanged pinned helper's second plan Polygon is gray. Polygon.Write emits
+code 2 after its three X/Y pairs; independent layout puts color at `[205,206)`.
+Fresh full/exact streams in pixel modes 5/10 confirm raw 2, consumed 206 and
+full-file tail 474. Missing color throws EndOfStreamException at 205 without
+advancing. The probe stops before the following marker.
+
+Independent zero/one/three-first/second-point literal streams cover all 256
+second color bytes with exact prefixes and arbitrary FF 80 tails. First color
+stays 129; signed/endian point boundaries and ordered pairs are asserted before
+the second color read. Missing color fails in all nine point-table combinations,
+including zero second points. Starts are `11 + 8 * (first_count + second_count)`;
+success consumes exactly one further byte. The 4,608 successful literals, nine
+missing literals, six fixture calls and three environment lines produce
+**4,626 exact CRLF rows**, independently checked row by row against literal
+values and positions. Final native exit was 0 and stderr empty.
+
+Environment: macOS arm64, Wine Staging 11.7, original assembly 1.3.7.0,
+Microsoft .NET x86 runtime 2.0.50727.42. Compilation produced the usable
+executable without diagnostics; only its two identified lingering compiler/start
+processes were stopped after successful readback. These optional commands are
+evidence tools, not application or CI dependencies.
+
+After the analysis map, inspected Polygon.Read (RVA 0xc4b8), Write (0xc350)
+and matching IL. ReadByte at IL_00f0 follows vertices and the derived rectangle
+even for zero points. Native color mapping is 1 black, 2 gray, 3 brown, 4 blue,
+5 red, 7 orange and default green (including 6/unknown). Write emits these codes
+and default 6. Mapping/rendering/write behavior is C#/IL evidence; it is not
+executed by the scalar probe or implemented by the Go source reader.
+The reviewed JKTZ parser's 1..7 restriction and aggregate point budget remain
+outside this contract. Original EXE/runtime, C#/IL, pinned helper, source TOP
+and every earlier probe/stdout were checked before and after and are unchanged.
+These observations do not prove full native Polygon/drawing/export acceptance.
+
+| New evidence | SHA-256 |
+| --- | --- |
+| `scripts/reference-plan-second-polygon-color-probe.cs` | `0a6e3b1dc0a1eb3a6c7622e53b692b7f2a0d8d505c8e3d2425ddfefb87c62f8b` |
+| `native-plan-second-polygon-color-read.txt` | `03f350dd7456bdf1aaa2b0695a758a29c108d053698d0b87fee0f3116233e1c5` |
+| Optional compiled probe (`build/reference-plan-second-polygon-color-probe.exe`) | `4013e9e03aa69e5ce3091a64199ce9032bdec3c77798a3f353e7aad6bce4c836` |
+
+Actual optional commands run from the repository root:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-plan-second-polygon-color-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-plan-second-polygon-color-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-plan-second-polygon-color-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-plan-second-polygon-color-read.txt 2>build/native-plan-second-polygon-color-read.err
+```
+
+Frozen stdout is protected from text normalization. Compare future native
+stdout to this evidence; never regenerate expected values using Go.

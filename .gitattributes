@@ -12,3 +12,4 @@ internal/top/testdata/native-plan-polygon-color-read.txt -text whitespace=cr-at-
 internal/top/testdata/native-plan-next-marker-read.txt -text whitespace=cr-at-eol
 internal/top/testdata/native-plan-second-polygon-count-read.txt -text whitespace=cr-at-eol
 internal/top/testdata/native-plan-second-polygon-points-read.txt -text whitespace=cr-at-eol
+internal/top/testdata/native-plan-second-polygon-color-read.txt -text whitespace=cr-at-eol
