@@ -5,9 +5,9 @@ formats, based on the PocketTopo 1.372 decompilation.
 
 ## Status
 
-Implementation authorized on 2026-10-09. **P02, P03a, P03b, P03c1, P03c2, P04a, P04b, P04c1, P04c2, P04c3, P04c4, P04c5, P04c6, P04c7, P04c8, P04c9, P04c10, P04c11 and P04c12 are complete**:
+Implementation authorized on 2026-10-09. **P02, P03a, P03b, P03c1, P03c2, P04a, P04b, P04c1, P04c2, P04c3, P04c4, P04c5, P04c6, P04c7, P04c8, P04c9, P04c10, P04c11, P04c12 and P04c13 are complete**:
 minimal Go CLI and checks, immutable station IDs, and bounded v3 trip and
-measurement/reference/overview/plan-mapping/first-marker/Polygon-count/Polygon-points/Polygon-color/next-marker/second-Polygon-count/second-Polygon-points/second-Polygon-color/following-marker/third-Polygon-count/third-Polygon-points/third-Polygon-color prefix readers with raw fields, source offsets,
+measurement/reference/overview/plan-mapping/first-marker/Polygon-count/Polygon-points/Polygon-color/next-marker/second-Polygon-count/second-Polygon-points/second-Polygon-color/following-marker/third-Polygon-count/third-Polygon-points/third-Polygon-color/third-next-marker prefix readers with raw fields, source offsets,
 copied records and explicit malformed-input errors. All earlier contracts remain intact.
 Native export support is not yet implemented or validated.
 
@@ -42,13 +42,13 @@ Confirmed priorities:
   push were subsequently authorized for `dlubom/pockettopo-exporter`; releases
   remain out of scope. P02 adds no exporter framework.
 
-**Next ready implementation PBI: P04c13 — next plan-element marker byte only.** See the
+**Next ready implementation PBI: P04c14 — fourth plan Polygon signed Int32 point count only.** See the
 bounded acceptance contract below. P03b stops after trips, P03c1 after
 measurements, P03c2 after references, P04a after the overview mapping and
 P04b after the plan mapping, P04c1 after its first marker byte and P04c2
 after the first Polygon point count, P04c3 after its raw vertices and P04c4
 after its raw color, P04c5 after the next marker byte and P04c6 after the
-second Polygon count, P04c7 after its raw vertices and P04c8 after its raw color, P04c9 after the following marker byte, P04c10 after the third Polygon count, P04c11 after its raw points, and P04c12 after its raw color;
+second Polygon count, P04c7 after its raw vertices and P04c8 after its raw color, P04c9 after the following marker byte, P04c10 after the third Polygon count, P04c11 after its raw points, P04c12 after its raw color, and P04c13 after the next marker;
 each leaves the remaining tail unparsed.
 
 ## Reference material
@@ -450,15 +450,15 @@ copies and Go caches. The matrix comes from `scripts/mutation.sh --matrix`;
 the default `bash scripts/mutation.sh` runs all the same groups locally.
 An optional group argument runs exactly one group:
 
-| Group | Complete scope at P04c12 |
+| Group | Complete scope at P04c13 |
 | --- | --- |
-| `gremlins` | All 272 Gremlins mutants; CI also runs weak-test and compiler/setup-error controls |
+| `gremlins` | All 276 Gremlins mutants; CI also runs weak-test and compiler/setup-error controls |
 | `tables` | Station, trips, measurements and references: 93 explicit faults |
 | `first-polygon` | Overview/plan mappings, first marker/count/points/color: 198 explicit faults |
 | `second-polygon` | Second count/points/color: 141 explicit faults |
-| `markers` | Next/following markers and third count/points/color: 250 explicit faults |
+| `markers` | Next/following markers, third count/points/color and next marker: 305 explicit faults |
 
-All 682 explicit faults remain mandatory. Gremlins still requires at least 90%
+All 737 explicit faults remain mandatory. Gremlins still requires at least 90%
 killed mutants; explicit campaigns still require every fault killed by a named
 test after successful compilation. Empty/incomplete reports, unknown statuses,
 timeouts and compiler/setup errors remain failures. Operators, worker count,
@@ -670,8 +670,9 @@ IDs describe this project only. R01–R07 are not scheduled for this handoff.
 | P04c10 | **Done:** third Polygon signed Int32 point count only when following marker is 1; stop before vertices/color | P04c9 |
 | P04c11 | **Done:** third Polygon raw vertices only; stop before color, including zero points | P04c10 |
 | P04c12 | **Done:** third Polygon raw color byte only; stop before a later marker | P04c11 |
-| P04c13 | **Next / ready:** next plan-element marker byte only; stop before its payload | P04c12 |
-| P04c14+ | Later small slices: subsequent payloads/markers, XSections, plan termination, side mapping/elements, then complete-file/unsupported-content accounting; refine separately | P04c13 |
+| P04c13 | **Done:** next plan-element marker byte only; stop before its payload | P04c12 |
+| P04c14 | **Next / ready:** fourth Polygon signed Int32 point count only; stop before vertices/color | P04c13 |
+| P04c15+ | Later small slices: subsequent payloads/markers, XSections, plan termination, side mapping/elements, then complete-file/unsupported-content accounting; refine separately | P04c14 |
 | P05 | Reproduce isolated-input native text export; native golden cases for units, flags, comments and record order | P03c2, P04; required native update behavior understood |
 | P06 | Reproduce fixed-point angles, grouping and average directions with original-program evidence | P03c2 |
 | P07 | Reproduce reference placement and plan geometry, then extended projection and closure as separately reviewed slices | P06 |
@@ -3579,10 +3580,10 @@ Reports regenerate in `coverage.out`, `mutation.json`,
 Three-platform CI, all five mutation groups, the plan and **CI complete**
 must succeed for the exact pushed SHA. P04c12 stops after third color.
 
-## Next ready PBI: P04c13 — next plan-element marker byte only
+## Completed PBI: P04c13 — next plan-element marker byte only
 
 **Outcome/dependencies:** extend P04c12 with exactly one uninterpreted next
-plan-element marker at `plan.elements[3].kind`. Requires a new implementation request.
+plan-element marker at `plan.elements[3].kind`. Implementation authorized on 2026-10-10.
 
 **References:** analysis map, Drawing.Read/Write and matching IL; unchanged
 pinned helper and `api-drawings.top`. Inspect the next marker at `[236,237)`
@@ -3614,9 +3615,108 @@ group scopes/measured counts, commit/push, confirm every platform check, every
 mutation group and **CI complete** for the exact pushed SHA. Provide the next
 small prompt. Stop after P04c13.
 
+### P04c13 implementation and native evidence
+
+`ReadV3PlanThirdNextMarkerPrefix` and its `WithLimits` variant reuse unchanged
+P04c12 and `PolygonCountLimits`, then read exactly one byte at
+`plan.elements[3].kind`. `source.PlanThirdNextMarkerPrefix` adds
+`ThirdNextMarkerRaw()` and a distinct `ThirdNextMarker` span, retaining all
+inherited accessors, offsets and immutable copies. Every value 0..255 succeeds
+without interpretation. Missing marker returns an empty result and `truncated`
+at the third-color end. Exact prefixes and arbitrary tails stop after one byte.
+
+After the analysis map, inspected Drawing.Read/Write and matching IL:
+ReadByte at IL_00c3 follows Element.Read; dispatch and the zero-marker loop test
+follow separately. Drawing.Write emits a terminal zero byte. JKTZ's byte read
+was checked against this evidence; its unknown-kind rejection and full drawing
+loop are outside this prefix and were not adopted.
+
+The fresh [original scalar probe](scripts/reference-plan-third-next-marker-probe.cs)
+uses original table/Mapping.Read methods and FileReader's BinaryReader, then
+three Polygon scalar tables/colors and exactly one next marker. No Drawing.Read,
+Polygon.Read, dispatch, payload, geometry, GUI or TOP writes. Full/exact streams
+in pixel modes 5/10 confirm marker 1 at `[236,237)`, consumed 237 and full tail
+443. Missing marker throws EndOfStreamException at 236. Literal streams cover
+independent 0/1/3-point tables, signed/endian extremes, all 256 markers, exact
+and FF 80 tails, and missing marker including empty tables. All **13,860 exact
+CRLF rows** match independently constructed expectations; exit 0, empty stderr.
+Hashes and actual optional commands are in [fixture provenance](internal/top/testdata/README.md).
+This confirms scalar reading; full native drawing/export compatibility remains unvalidated.
+
+### P04c13 verification and mutation scope
+
+Go 1.26.3 darwin/arm64, Staticcheck v0.8.1, Gremlins v0.6.0:
+
+- `bash scripts/check.sh`: passed formatting, vet, Staticcheck, exact coverage
+  controls, uncached race tests, build and unchanged CLI smoke; **100% statement
+  coverage** in every implemented package.
+- `bash scripts/mutation-trial.sh` and `bash scripts/mutation-dispatch-trial.sh`:
+  passed negative/build/setup controls and exact-once scheduling through default
+  and matrix dispatch, failure propagation and empty-report rejection.
+- `GOCACHE="$PWD/.cache/go-build" GOTOOLCHAIN=local go test ./internal/top
+  -run '^$' -fuzz '^FuzzReadV3PlanThirdNextMarkerPrefix$' -fuzztime=10s
+  -parallel=2`: passed, **879,201 executions**. Bounds: 4096 input bytes,
+  32 earlier records/points per table, 256 comment bytes. Checks determinism,
+  unchanged input, empty failures, inherited errors/fields/spans and raw marker,
+  exact one-byte stop and prefix/tail accounting.
+
+Independent read-only review found no outstanding Critical, Important or Minor
+issues. A source-constructor test targeted the previous model; corrected it
+and the reviewer independently retested it successfully. The reviewer passed
+uncached source/top race tests, 100% source/top coverage, a separate 5s fuzz run
+(**327,046 executions**), dispatch controls, C#/IL checks, hashes and all 13,860
+native CRLF rows. The preservation snapshot `build/p04c13-preservation.json`
+has 144 entries: 140 unchanged, with only README, fixture provenance, mutation
+orchestration and `.gitattributes` changed. All earlier source and native evidence
+are byte-for-byte unchanged.
+
+Gremlins killed **276/276 mutants** on the final constructor test, including
+a complete rerun after the cache failure and the separate post-review repeat. No lived, uncovered, invalid,
+skipped or timed-out entries; the strict report gate passed. Full `bash scripts/mutation.sh` rerun passed with **737/737 explicit faults**
+across all 19 scopes: 682 earlier plus **55/55 new marker faults**. Every report
+was regenerated after that run's Gremlins result, has its expected count and
+unique names, and records only KILLED entries after successful compilation and
+a named behavioral failure. The new campaign is registered exactly once in
+`markers`; all earlier scopes and gates remain enabled. Measured group totals:
+tables 93, first-polygon 198, second-polygon 141 and markers 305.
+
+The first full campaign was rejected after a live cache cleanup removed files
+needed by an active compilation. Its failure log is retained in
+`build/p04c13-mutation-cache-removal-failure.log`; compilation failures are not
+counted as killed mutants. Once the failed process exited, cleared only the
+project's rebuildable Go cache and restarted the complete campaign without
+changing reader/model code or gates. No source, fixture, probe or report was
+removed.
+Measured Git blobs:
+
+`336cf2eb247f6bdfa5cf25d29c230bdc01d9a947` (internal/top/plan_third_next_marker.go)
+
+`564e4cada10952efaf4be7f781c7ab8da128ce7b` (internal/top/plan_third_next_marker_test.go)
+
+`c6e55460956468ab2ec4c803f2d9b57e08a51b3e` (internal/source/plan_third_next_marker_prefix.go)
+
+`8fa2af5e429a365d9b8a1c078caa6f4460d39afc` (internal/source/plan_third_next_marker_prefix_test.go)
+
+Reports regenerate in `coverage.out`, `mutation.json`,
+`build/plan-third-next-marker-mutation.json` and all earlier reports.
+P04c13 stops after the next marker; no payload, loop, side drawing or CLI changes.
+
+## Next ready PBI: P04c14 — fourth plan Polygon signed Int32 point count only
+
+Requires a new implementation request. Reuse P04c13 and `PolygonCountLimits`;
+only when `ThirdNextMarkerRaw() == 1`, read one signed little-endian Int32 at
+`plan.elements[3].point_count`. Preserve raw count and distinct span, reject
+other marker values before payload, negative counts and exceeded per-table
+limits with established error precedence. Stop immediately after count,
+including zero, before fourth points/color or later markers. Confirm native
+position `[237,241)` with a fresh bounded scalar probe; retain every earlier
+contract and evidence. Add tests, bounded fuzzing and explicit mutations;
+run ordinary/full mutation/control checks, obtain independent review, update
+README, commit/push and verify every CI job for the exact SHA. Stop after P04c14.
+
 ## Open issues and deferred work
 
-- The TOP readers validate only the v3 trip/measurement/reference/overview/plan-mapping/first-marker/Polygon-count/Polygon-points/Polygon-color/next-marker/second-Polygon-count/second-Polygon-points/second-Polygon-color/following-marker/third-Polygon-count/third-Polygon-points/third-Polygon-color prefixes.
+- The TOP readers validate only the v3 trip/measurement/reference/overview/plan-mapping/first-marker/Polygon-count/Polygon-points/Polygon-color/next-marker/second-Polygon-count/second-Polygon-points/second-Polygon-color/following-marker/third-Polygon-count/third-Polygon-points/third-Polygon-color/third-next-marker prefixes.
   Later drawing payloads and side mappings, complete-file validation and native exporters remain
   unimplemented; the CLI still accepts only help/version.
 - Native measurement arithmetic/export formatting fidelity remains unproven in Go.
@@ -3625,7 +3725,7 @@ small prompt. Stop after P04c13.
   mutants rather than silently excluding them.
 - The full P01 capability/fixture matrix, older TOP versions, corpus runs,
   release packaging and optional R01–R07 work remain deferred.
-- Future full compatibility claims still require native evidence; the P02/P03a/P03b/P03c1/P03c2/P04a/P04b/P04c1/P04c2/P04c3/P04c4/P04c5/P04c6/P04c7/P04c8/P04c9/P04c10/P04c11/P04c12
+- Future full compatibility claims still require native evidence; the P02/P03a/P03b/P03c1/P03c2/P04a/P04b/P04c1/P04c2/P04c3/P04c4/P04c5/P04c6/P04c7/P04c8/P04c9/P04c10/P04c11/P04c12/P04c13
   checks validate only implemented behavior and their recorded reference cases.
 
 ## Research references

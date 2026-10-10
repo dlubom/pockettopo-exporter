@@ -1162,3 +1162,37 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 ```
 
 Frozen stdout is protected from text normalization; never regenerate expectations using Go.
+
+## P04c13 next plan marker scalar evidence (2026-10-10)
+
+Original PocketTopo 1.372, existing Wine 11.7 Staging/.NET x86 2.0.50727.42.
+The bounded probe reads exactly one marker after third color. Native marker 1
+is at `[236,237)`; full tail 443, exact tail 0, missing marker throws at 236.
+All 13,860 exact CRLF rows match independent literal expectations for all 256
+markers, independent empty/one/three-point tables and exact/FF 80 tails.
+Exit 0 and empty stderr. This is scalar evidence, not full drawing compatibility.
+
+| Artifact | SHA-256 |
+| --- | --- |
+| `scripts/reference-plan-third-next-marker-probe.cs` | `2795a664e9853b2b21331dd3f8b55d7769e09b05dab1a83aa5deea49140dfe3c` |
+| `internal/top/testdata/native-plan-third-next-marker-read.txt` | `f4f074c4dc8994b4b72d996943f452f1a3976ccab6a9c868d91ff1092c34bf59` |
+| `build/reference-plan-third-next-marker-probe.exe` | `00bf2d2325b748eae72d975d71a73bfd32518f462efc3d0423975f4bc989164b` |
+| `internal/top/testdata/api-drawings.top` | `4a494ead03cade750f670d50aa38661abda9b3e1f131d67f27a252982752c2a5` |
+| `../pockettopo-decompilation/decompiled/csharp/PocketTopo/Drawing.cs` | `c07a9f255cf372cbcc2a3ecd2a31b0f1c959325749fd9155d8fd9a5649f817e7` |
+| `../pockettopo-decompilation/decompiled/PocketTopo.il` | `ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76` |
+
+Actual optional commands run from the repository root:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-plan-third-next-marker-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-plan-third-next-marker-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-plan-third-next-marker-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-plan-third-next-marker-read.txt 2>build/native-plan-third-next-marker-read.err
+```
+
+Frozen stdout is protected from text normalization; expectations are independent of Go.

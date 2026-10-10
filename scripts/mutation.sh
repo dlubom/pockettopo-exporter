@@ -57,7 +57,7 @@ run_group() {
     tables) scopes=(station prefix measurements references) ;;
     first-polygon) scopes=(overview plan-mapping plan-marker plan-polygon-count plan-polygon-points plan-polygon-color) ;;
     second-polygon) scopes=(plan-second-polygon-count plan-second-polygon-points plan-second-polygon-color) ;;
-    markers) scopes=(plan-next-marker plan-following-marker plan-third-polygon-count plan-third-polygon-points plan-third-polygon-color) ;;
+    markers) scopes=(plan-next-marker plan-following-marker plan-third-polygon-count plan-third-polygon-points plan-third-polygon-color plan-third-next-marker) ;;
     *) printf 'Missing mutation group implementation: %s\n' "$selected" >&2; exit 2 ;;
   esac
   for scope in "${scopes[@]}"; do
