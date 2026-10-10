@@ -788,3 +788,62 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 
 Frozen stdout is protected from text normalization. Compare future native
 stdout with this evidence; never regenerate expected values using Go.
+
+## P04c7 second Polygon vertices and original scalar probe, 2026-10-10
+
+The separate [second-points probe](../../../scripts/reference-plan-second-polygon-points-probe.cs)
+uses original table/Mapping.Read methods and FileReader's BinaryReader. It reads
+first Polygon scalars, then second marker/count/ordered X/Y, stopping before
+second color, including zero points. No Drawing.Read/Polygon.Read, GUI, TOP
+writer, large native allocation or Go-generated oracle participates.
+
+The unchanged hash-verified pinned helper's Drawings/Append methods establish
+second gray points `(-4000,-2000)`, `(-3500,-1000)`, `(-2500,-1500)`.
+Fresh full/exact streams in pixel modes 5/10 confirm table `[181,205)`, consumed
+205 and full-file tail 475. Every 0–23-byte incomplete point table throws
+EndOfStreamException after consuming available bytes. Go preflights before
+allocation and returns an empty result with the stable table start.
+
+Nine combinations of zero/one/three first and second points, each with exact
+and arbitrary FF 80 tails, confirm signed/endian boundaries, order and second
+starts 11/19/35. Zero second points read no additional byte. The 18 successful
+literals, 52 fixture calls and three environment lines produce **73 exact CRLF
+stdout rows**, independently checked against literal values and positions.
+Final native exit was 0 and stderr empty. These are scalar observations;
+full native Polygon/drawing/export acceptance is unproven.
+
+Environment: macOS arm64, Wine Staging 11.7, original assembly 1.3.7.0,
+Microsoft .NET x86 runtime 2.0.50727.42. Compilation produced the usable
+executable without diagnostics; only its two identified lingering compiler/start
+processes were stopped after successful readback. Native commands are optional
+evidence tools, not application or CI dependencies.
+
+Inspected the analysis map, Drawing.Read/Polygon.Read/Polygon.Write and matching
+IL. Signed X/Y reads are IL_0041/IL_004e; writes IL_003e/IL_005b. Native derived
+rectangle and color at IL_00f0 follow all vertices, including zero points.
+This probe executes neither operation. Original EXE/runtime, C#/IL, helper,
+source TOP and every prior probe/stdout remain byte-for-byte intact, checked
+before and after. Their hashes remain as recorded above.
+
+| New evidence | SHA-256 |
+| --- | --- |
+| `scripts/reference-plan-second-polygon-points-probe.cs` | `7389f14338f854c6287f5eb308c301d902543ef4d62e9b4764590300377e0498` |
+| `native-plan-second-polygon-points-read.txt` | `eec3d7adc5f30a8280de92769223b16cfe4f2ee6073e5c3c3d68b873b7891e67` |
+| Optional compiled probe (`build/reference-plan-second-polygon-points-probe.exe`) | `c1dfa587c6c6b74489ce6e2b58787c53c3f81d20916c2706f05452585483cdda` |
+
+Actual optional commands run from the repository root:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-plan-second-polygon-points-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-plan-second-polygon-points-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-plan-second-polygon-points-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-plan-second-polygon-points-read.txt 2>build/native-plan-second-polygon-points-read.err
+```
+
+Frozen stdout is protected from text normalization. Compare future native
+stdout to this evidence; never regenerate expected values using Go.
