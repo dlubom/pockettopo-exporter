@@ -911,3 +911,63 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 
 Frozen stdout is protected from text normalization. Compare future native
 stdout to this evidence; never regenerate expected values using Go.
+
+## P04c9 following marker and original scalar probe, 2026-10-10
+
+The separate [following-marker probe](../../../scripts/reference-plan-following-marker-probe.cs)
+uses original table/Mapping.Read methods and FileReader's BinaryReader, then
+first and second Polygon scalars and exactly one following raw byte. It invokes
+no Drawing.Read/Polygon.Read, derived geometry/pen selection, GUI or TOP writer.
+The unchanged pinned helper's third plan Polygon is brown; its marker 1 follows
+second gray color 2 at `[206,207)`. Full/exact streams in pixel modes 5/10 confirm
+raw 1, consumed 207 and full-file tail 473. Missing marker throws
+EndOfStreamException at 206 without advancing.
+
+Zero/one/three points in both tables cover all 256 following marker bytes with
+complementary second colors (`255 - marker`), exact prefixes and FF 80 tails.
+First color stays 129; signed/endian boundary coordinates and order are asserted
+before the marker. Missing markers fail in all nine table combinations, including
+zero points. Literal starts are `12 + 8 * (first_count + second_count)`; success
+consumes exactly one further byte. All **4,626 exact CRLF rows** (4,608 successful
+literals, nine missing literals, six fixture calls, three environment lines)
+were checked independently against literal expectations, without Go output.
+Native exit 0, empty stderr.
+
+Environment: macOS arm64, Wine Staging 11.7, original assembly 1.3.7.0,
+Microsoft .NET x86 runtime 2.0.50727.42. Compilation emitted the usable EXE
+without diagnostics; only its two identified lingering compiler/start processes
+were stopped after successful readback. Wine's server socket required execution
+outside the sandbox; these optional tools remain separate from application and CI dependencies.
+After the analysis map, inspected Drawing.Read (RVA 0x10a30) ReadByte at IL_00c3,
+zero comparison/loop at IL_00ca, 1/3 dispatch, unknown ReadBytes(0), and
+Polygon.Read/Write/matching IL. Dispatch/termination are source inspection
+claims; the probe stops before dispatch, even for zero. This is bounded scalar
+evidence, not full native drawing/export acceptance.
+
+| New evidence | SHA-256 |
+| --- | --- |
+| `scripts/reference-plan-following-marker-probe.cs` | `0aaaac33810928ffaa6e9720adc81cd0c370204337580d933f695956df654133` |
+| `native-plan-following-marker-read.txt` | `19596fb11816d3132532a723727c9f2be82c8053172271bae5a112542d2f0cf4` |
+| Optional compiled probe (`build/reference-plan-following-marker-probe.exe`) | `df333a816f3ed37747e73c32c6366390c7d645b39a9d4e83babcaea24d5d963c` |
+
+Drawing.cs SHA-256 is `c07a9f255cf372cbcc2a3ecd2a31b0f1c959325749fd9155d8fd9a5649f817e7`,
+Polygon.cs `63d57a5200116e9a4acaadddecec5a1381ca8173544eddafdc14d07e29237fe2`,
+complete IL `ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76`.
+The pinned helper was read from its original Git object and matched the earlier
+`ae1f32a1034bbd95a59e97db47e887fabb30b06eabe55a960c9c5ebf9090d005` hash.
+Original EXE/runtime, C#/IL, TOP inputs and all earlier probes/stdout remain
+byte-for-byte unchanged; frozen stdout is protected from text normalization.
+
+Actual optional commands run from the repository root:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-plan-following-marker-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-plan-following-marker-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-plan-following-marker-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-plan-following-marker-read.txt 2>build/native-plan-following-marker-read.err
+```
