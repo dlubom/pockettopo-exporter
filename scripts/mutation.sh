@@ -1,6 +1,28 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
+groups=(gremlins tables first-polygon second-polygon markers)
+if [[ $# -gt 1 ]]; then
+  printf 'Expected at most one mutation group.\n' >&2
+  exit 2
+fi
+group=${1:-all}
+if [[ "$group" == --matrix ]]; then
+  printf '%s\n' "${groups[@]}" | jq -R . | jq -sc '{group: .}'
+  exit 0
+fi
+if [[ "$group" != all ]]; then
+  found=false
+  for candidate in "${groups[@]}"; do
+    if [[ "$group" == "$candidate" ]]; then found=true; fi
+  done
+  if [[ "$found" != true ]]; then
+    printf 'Unknown mutation group: %s\n' "$group" >&2
+    exit 2
+  fi
+fi
+
+run_gremlins() (
 root=$(pwd -W 2>/dev/null || pwd)
 export GOCACHE="$root/.cache/go-build" GOMODCACHE="$root/.cache/gomod"
 export GOTOOLCHAIN=local
@@ -25,19 +47,26 @@ cd "$trial"
 # Fail closed on empty/incomplete runs, timeouts, invalid or unknown statuses.
 # Gremlins' built-in efficacy excludes several of those statuses.
 jq -e -f "$root/scripts/mutation-gate.jq" "$root/mutation.json"
-bash "$root/scripts/mutation-station.sh"
-bash "$root/scripts/mutation-prefix.sh"
-bash "$root/scripts/mutation-measurements.sh"
-bash "$root/scripts/mutation-references.sh"
-bash "$root/scripts/mutation-overview.sh"
-bash "$root/scripts/mutation-plan-mapping.sh"
-bash "$root/scripts/mutation-plan-marker.sh"
-bash "$root/scripts/mutation-plan-polygon-count.sh"
-bash "$root/scripts/mutation-plan-polygon-points.sh"
-bash "$root/scripts/mutation-plan-polygon-color.sh"
-bash "$root/scripts/mutation-plan-next-marker.sh"
-bash "$root/scripts/mutation-plan-second-polygon-count.sh"
-bash "$root/scripts/mutation-plan-second-polygon-points.sh"
-bash "$root/scripts/mutation-plan-second-polygon-color.sh"
-bash "$root/scripts/mutation-plan-following-marker.sh"
-bash "$root/scripts/mutation-plan-third-polygon-count.sh"
+)
+
+run_group() {
+  local selected="$1" scope
+  local scopes=()
+  case "$selected" in
+    gremlins) run_gremlins; return ;;
+    tables) scopes=(station prefix measurements references) ;;
+    first-polygon) scopes=(overview plan-mapping plan-marker plan-polygon-count plan-polygon-points plan-polygon-color) ;;
+    second-polygon) scopes=(plan-second-polygon-count plan-second-polygon-points plan-second-polygon-color) ;;
+    markers) scopes=(plan-next-marker plan-following-marker plan-third-polygon-count) ;;
+    *) printf 'Missing mutation group implementation: %s\n' "$selected" >&2; exit 2 ;;
+  esac
+  for scope in "${scopes[@]}"; do
+    bash "scripts/mutation-$scope.sh"
+  done
+}
+
+if [[ "$group" == all ]]; then
+  for candidate in "${groups[@]}"; do run_group "$candidate"; done
+else
+  run_group "$group"
+fi

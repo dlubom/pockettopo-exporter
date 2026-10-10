@@ -411,6 +411,8 @@ bash scripts/check.sh                 # format check, vet, Staticcheck, race tes
                                       # exact >=95% coverage and boundary controls, build, CLI smoke
 bash scripts/mutation.sh              # >=90% Gremlins killed; station/trip/measurement/reference/overview/plan mapping/marker/count/point/color/next-marker/second-count/second-point/second-color faults;
                                       # reject incomplete/empty/invalid runs
+bash scripts/mutation.sh --matrix     # CI groups from the same local scheduler
+bash scripts/mutation-dispatch-trial.sh # complete scheduling and failure controls
 bash scripts/mutation-trial.sh        # weak-test, build/setup-error controls,
                                       # macOS/Linux
 
@@ -439,6 +441,43 @@ and checks execution-count weighting, merged blocks, filenames containing spaces
 or colons, and rejection of empty profiles and malformed counters.
 This corrects the earlier gate's rounding gap without changing the 95% threshold
 or the measured 100% coverage of the completed P04c1 implementation.
+
+### Parallel CI mutation campaigns (2026-10-10)
+
+Ordinary checks still run on Linux, Windows and macOS. Linux mutation work is
+split into five independent jobs, with separate checkouts, disposable source
+copies and Go caches. The matrix comes from `scripts/mutation.sh --matrix`;
+the default `bash scripts/mutation.sh` runs all the same groups locally.
+An optional group argument runs exactly one group:
+
+| Group | Complete scope at P04c10 |
+| --- | --- |
+| `gremlins` | All 252 Gremlins mutants; CI also runs weak-test and compiler/setup-error controls |
+| `tables` | Station, trips, measurements and references: 93 explicit faults |
+| `first-polygon` | Overview/plan mappings, first marker/count/points/color: 198 explicit faults |
+| `second-polygon` | Second count/points/color: 141 explicit faults |
+| `markers` | Next/following markers and third count: 139 explicit faults |
+
+All 571 explicit faults remain mandatory. Gremlins still requires at least 90%
+killed mutants; explicit campaigns still require every fault killed by a named
+test after successful compilation. Empty/incomplete reports, unknown statuses,
+timeouts and compiler/setup errors remain failures. Operators, worker count,
+tool versions, test timeouts and coverage thresholds are unchanged.
+
+The planning job checks that the groups schedule every explicit campaign script
+exactly once and that failures propagate. The final **CI complete** job requires
+all three platform checks, the plan and all mutation groups to succeed; failed,
+canceled or skipped dependencies cannot produce a successful final gate. Use
+**CI complete** as the required check when configuring branch protection.
+Parallel jobs reduce elapsed time when runners are available; queueing can still
+delay completion. Timing must be measured on the delivered commit.
+
+Local verification passed the ordinary checks (100% statement coverage), the
+full 252/252 Gremlins and 571/571 explicit campaigns, all negative controls,
+Bash 3.2 dispatch/syntax checks and actionlint v1.7.12. Independent read-only
+review found no remaining issues and checked rejection of failed, canceled and
+skipped dependency results. Parser code, fixtures, individual mutation scripts
+and acceptance gates are unchanged.
 
 ### P02 verification and tool limits (2026-10-09)
 
