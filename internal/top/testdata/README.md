@@ -1196,3 +1196,64 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 ```
 
 Frozen stdout is protected from text normalization; expectations are independent of Go.
+
+## P04c14 plan Polygon loop and original-method probe, 2026-10-10
+
+The new [probe](../../../scripts/reference-plan-polygons-probe.cs) loads the
+unchanged original PocketTopo 1.372 assembly in the same Wine/.NET environment
+as earlier evidence. It executes **original Drawing.Read and Polygon.Read** on
+bounded memory streams, then traverses original linked elements and reads their
+stored point arrays by reflection. No GUI instance, exports or TOP files are
+written. Original methods may compute their own internal bounding rectangles;
+Go implements no geometry.
+
+The pinned helper's `api-drawings.top` contains **eight Polygons / 22 points**
+starting at 146. Its first XSection marker is 3 at `[370,371)`; the new Go prefix
+consumes 371, leaving 309 bytes. The probe's separately labeled `bounded` harness
+uses original FileReader/BinaryReader scalars and applies the requested stop
+policy before unsupported payload. Full and exact inputs agree; removing that
+marker throws EndOfStreamException at 370. To test original Drawing.Read's
+terminal boundary, the probe copies the plan bytes and replaces marker 3 with 0;
+original methods consume local offset 237 (global 371), with tails 309 / 0.
+The original fixture itself remains byte-for-byte unchanged.
+
+Independent literal streams exercise 0/1/4/17/257 Polygons, zero point counts,
+signed and endian-asymmetric points, all 256 colors, all 255 stopping markers
+(0 and 2..255), exact/FF 80 tails and every cut of a five-Polygon plan.
+All **945 CRLF rows** match the independent literal expectations in
+`TestPlanPolygonsNativeProbeTranscript` byte-for-byte; native exit 0 and empty
+stderr. Expectations use pinned-helper coordinates and literal formulas, never
+Go reader results. Native truncations consume available scalar bytes; Go's
+preflight instead reports the established whole-points field start and returns
+an empty result. Unknown markers are not passed to original Drawing.Read:
+its C#/IL dispatches 3 and skips zero bytes for unknown kinds before continuing.
+The safer Go unsupported stop is a deliberate reader contract, not a claim of
+identical native unknown-kind handling. Color bytes remain raw in Go, while
+native Polygon.Read maps unknown colors to the green pen.
+
+| Artifact | SHA-256 |
+| --- | --- |
+| `scripts/reference-plan-polygons-probe.cs` | `cdb040b84ae08e844657e2799b49ecfeac68d97c8e0b8a988b81ad035feaba0d` |
+| `internal/top/testdata/native-plan-polygons-read.txt` | `eabcea5717319d160f05cbdfdef9566dee965675c85047bb3c11aa6be3883949` |
+| `build/reference-plan-polygons-probe.exe` | `3c2fa507bf3da4ba490908da3e07389abf765b3f5d5fb81c920f29a7caf7262a` |
+| `internal/top/testdata/api-drawings.top` | `4a494ead03cade750f670d50aa38661abda9b3e1f131d67f27a252982752c2a5` |
+| `../pockettopo-decompilation/decompiled/csharp/PocketTopo/Drawing.cs` | `c07a9f255cf372cbcc2a3ecd2a31b0f1c959325749fd9155d8fd9a5649f817e7` |
+| `../pockettopo-decompilation/decompiled/csharp/PocketTopo/Polygon.cs` | `63d57a5200116e9a4acaadddecec5a1381ca8173544eddafdc14d07e29237fe2` |
+| `../pockettopo-decompilation/decompiled/PocketTopo.il` | `ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76` |
+
+Actual optional commands (Wine needed socket access outside the sandbox):
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-plan-polygons-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-plan-polygons-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-plan-polygons-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-plan-polygons-read.txt 2>build/native-plan-polygons-read.err
+```
+
+Frozen stdout is protected from text normalization. Earlier evidence is retained.
+This confirms the measured loop/boundary cases, not whole-file/export compatibility.

@@ -5,10 +5,12 @@ formats, based on the PocketTopo 1.372 decompilation.
 
 ## Status
 
-Implementation authorized on 2026-10-09. **P02, P03a, P03b, P03c1, P03c2, P04a, P04b, P04c1, P04c2, P04c3, P04c4, P04c5, P04c6, P04c7, P04c8, P04c9, P04c10, P04c11, P04c12 and P04c13 are complete**:
+Implementation authorized on 2026-10-09. **P02, P03a, P03b, P03c1, P03c2, P04a, P04b, P04c1, P04c2, P04c3, P04c4, P04c5, P04c6, P04c7, P04c8, P04c9, P04c10, P04c11, P04c12, P04c13 and P04c14 are complete**:
 minimal Go CLI and checks, immutable station IDs, and bounded v3 trip and
 measurement/reference/overview/plan-mapping/first-marker/Polygon-count/Polygon-points/Polygon-color/next-marker/second-Polygon-count/second-Polygon-points/second-Polygon-color/following-marker/third-Polygon-count/third-Polygon-points/third-Polygon-color/third-next-marker prefix readers with raw fields, source offsets,
-copied records and explicit malformed-input errors. All earlier contracts remain intact.
+copied records and explicit malformed-input errors. P04c14 adds a bounded loop of
+complete plan Polygons, with an explicit terminator/unsupported-element stop.
+All earlier contracts remain intact.
 Native export support is not yet implemented or validated.
 
 Confirmed priorities:
@@ -42,13 +44,14 @@ Confirmed priorities:
   push were subsequently authorized for `dlubom/pockettopo-exporter`; releases
   remain out of scope. P02 adds no exporter framework.
 
-**Next ready implementation PBI: P04c14 — fourth plan Polygon signed Int32 point count only.** See the
-bounded acceptance contract below. P03b stops after trips, P03c1 after
+**Next bounded PBI: P04c15 — complete plan XSection records (requires a new request).** See the
+scope below. P03b stops after trips, P03c1 after
 measurements, P03c2 after references, P04a after the overview mapping and
 P04b after the plan mapping, P04c1 after its first marker byte and P04c2
 after the first Polygon point count, P04c3 after its raw vertices and P04c4
 after its raw color, P04c5 after the next marker byte and P04c6 after the
-second Polygon count, P04c7 after its raw vertices and P04c8 after its raw color, P04c9 after the following marker byte, P04c10 after the third Polygon count, P04c11 after its raw points, P04c12 after its raw color, and P04c13 after the next marker;
+second Polygon count, P04c7 after its raw vertices and P04c8 after its raw color, P04c9 after the following marker byte, P04c10 after the third Polygon count, P04c11 after its raw points, P04c12 after its raw color, and P04c13 after the next marker. P04c14 reads complete Polygons in a loop,
+stopping after marker 0 or an unsupported marker, before its payload;
 each leaves the remaining tail unparsed.
 
 ## Reference material
@@ -445,20 +448,21 @@ or the measured 100% coverage of the completed P04c1 implementation.
 ### Parallel CI mutation campaigns (2026-10-10)
 
 Ordinary checks still run on Linux, Windows and macOS. Linux mutation work is
-split into five independent jobs, with separate checkouts, disposable source
+split into six independent jobs, with separate checkouts, disposable source
 copies and Go caches. The matrix comes from `scripts/mutation.sh --matrix`;
 the default `bash scripts/mutation.sh` runs all the same groups locally.
 An optional group argument runs exactly one group:
 
-| Group | Complete scope at P04c13 |
+| Group | Complete scope at P04c14 |
 | --- | --- |
-| `gremlins` | All 276 Gremlins mutants; CI also runs weak-test and compiler/setup-error controls |
+| `gremlins` | All 313 Gremlins mutants; CI also runs weak-test and compiler/setup-error controls |
 | `tables` | Station, trips, measurements and references: 93 explicit faults |
 | `first-polygon` | Overview/plan mappings, first marker/count/points/color: 198 explicit faults |
 | `second-polygon` | Second count/points/color: 141 explicit faults |
 | `markers` | Next/following markers, third count/points/color and next marker: 305 explicit faults |
+| `plan-loop` | Complete plan Polygon loop, stops, budgets, spans and copies: 58 explicit faults |
 
-All 737 explicit faults remain mandatory. Gremlins still requires at least 90%
+All 795 explicit faults remain mandatory. Gremlins still requires at least 90%
 killed mutants; explicit campaigns still require every fault killed by a named
 test after successful compilation. Empty/incomplete reports, unknown statuses,
 timeouts and compiler/setup errors remain failures. Operators, worker count,
@@ -473,8 +477,10 @@ Parallel jobs reduce elapsed time when runners are available; queueing can still
 delay completion. Timing must be measured on the delivered commit.
 
 For each later PBI, register its new explicit mutation campaign exactly once in
-an existing `run_group` scope list in `scripts/mutation.sh`, preserving all
-earlier campaigns. Update the documented group scopes and measured counts.
+a `run_group` scope list in `scripts/mutation.sh`, preserving all earlier
+campaigns. P04c14 adds `plan-loop` to keep this complete behavior separately
+reviewable in CI; the five earlier groups and their measured scopes are unchanged.
+Update the documented group scopes and measured counts.
 Run `bash scripts/mutation-dispatch-trial.sh` to verify complete scheduling and
 failure propagation, alongside the full local mutation and control commands.
 Confirm all matrix jobs and **CI complete** succeed for the exact pushed SHA.
@@ -642,9 +648,11 @@ Conversation history must not be required to reconstruct a critical decision.
 
 ### Proposed sequence
 
-P00 decisions needed to start, P02, P03a–P03c2 and P04a/P04b/P04c1/P04c2/P04c3/P04c4/P04c5/P04c6/P04c7/P04c8/P04c9/P04c10 are complete. P04 is split below so
-the next chat can deliver one small implementation increment. Remaining rows are
-planned, not completed; refine each contract when its dependencies are ready.
+P00 decisions needed to start, P02, P03a–P03c2, P04a/P04b and P04c1–P04c14
+are complete. P04c1–P04c13 remain historical prefix contracts; P04c14 replaces
+additional per-Polygon scalar PBIs with one complete loop behavior. Future rows
+deliver complete records or independently useful behavior; refine each contract
+when its dependencies are ready. Remaining rows are planned, not completed.
 IDs describe this project only. R01–R07 are not scheduled for this handoff.
 
 | ID | Outcome and acceptance | Depends on |
@@ -671,8 +679,9 @@ IDs describe this project only. R01–R07 are not scheduled for this handoff.
 | P04c11 | **Done:** third Polygon raw vertices only; stop before color, including zero points | P04c10 |
 | P04c12 | **Done:** third Polygon raw color byte only; stop before a later marker | P04c11 |
 | P04c13 | **Done:** next plan-element marker byte only; stop before its payload | P04c12 |
-| P04c14 | **Next / ready:** fourth Polygon signed Int32 point count only; stop before vertices/color | P04c13 |
-| P04c15+ | Later small slices: subsequent payloads/markers, XSections, plan termination, side mapping/elements, then complete-file/unsupported-content accounting; refine separately | P04c14 |
+| P04c14 | **Done:** read any bounded number of complete plan Polygons in source order; stop at terminator or unsupported marker before payload | P04b; preserve P04c1–P04c13 |
+| P04c15 | Later: complete plan XSection records in the existing element loop, with native evidence and unsupported-content accounting | P04c14; new request |
+| P04d | Later: bounded side drawing and complete-file accounting, refined as behavior-sized increments | P04c15; new request |
 | P05 | Reproduce isolated-input native text export; native golden cases for units, flags, comments and record order | P03c2, P04; required native update behavior understood |
 | P06 | Reproduce fixed-point angles, grouping and average directions with original-program evidence | P03c2 |
 | P07 | Reproduce reference placement and plan geometry, then extended projection and closure as separately reviewed slices | P06 |
@@ -3701,23 +3710,162 @@ Reports regenerate in `coverage.out`, `mutation.json`,
 `build/plan-third-next-marker-mutation.json` and all earlier reports.
 P04c13 stops after the next marker; no payload, loop, side drawing or CLI changes.
 
-## Next ready PBI: P04c14 — fourth plan Polygon signed Int32 point count only
+## Completed PBI: P04c14 — bounded plan Polygon loop
 
-Requires a new implementation request. Reuse P04c13 and `PolygonCountLimits`;
-only when `ThirdNextMarkerRaw() == 1`, read one signed little-endian Int32 at
-`plan.elements[3].point_count`. Preserve raw count and distinct span, reject
-other marker values before payload, negative counts and exceeded per-table
-limits with established error precedence. Stop immediately after count,
-including zero, before fourth points/color or later markers. Confirm native
-position `[237,241)` with a fresh bounded scalar probe; retain every earlier
-contract and evidence. Add tests, bounded fuzzing and explicit mutations;
-run ordinary/full mutation/control checks, obtain independent review, update
-README, commit/push and verify every CI job for the exact SHA. Stop after P04c14.
+One complete behavior replaces further per-Polygon count/points/color/marker PBIs.
+Keep P04c1–P04c13 APIs and evidence as historical compatibility contracts.
+
+Implementation plan (this chat):
+
+- [x] Add `ReadV3PlanPolygonsPrefix` / `WithLimits`, immutable ordered complete
+  Polygons and a stop marker/span/reason, reusing the unchanged plan-mapping prefix.
+- [x] Test empty and many-element plans, zero counts, every byte/color/marker,
+  inherited errors and records, independent spans/copies and inclusive limits.
+- [x] Preserve per-Polygon `MaxPoints`; add `MaxElements` (100,000 Polygons) and
+  `MaxTotalPoints` (1,000,000). Zero is a real bound; reject invalid ceilings.
+  Check element limit before payload, negative/per-Polygon/total count before
+  point preflight/allocation. Malformed/resource failures return an empty result.
+- [x] Marker 0 succeeds with `terminated`; every other non-1 marker succeeds
+  with `unsupported_element`, preserving its byte and stopping before payload.
+  Neither stop requires side mapping or trailer; missing terminator is truncated.
+- [x] Add an independent original-assembly native loop/boundary probe and frozen
+  output; retain prior fixtures/probes byte-for-byte. No XSections, side drawing,
+  geometry, CLI or exports in Go.
+- [x] Run check, all mutation scopes, both control suites and bounded fuzzing;
+  obtain independent read-only review and update evidence.
+
+Delivery gate: commit/push and verify every hosted CI job for the exact SHA;
+record the commit/run in the handoff. Stop after this increment.
+
+Future PBIs must deliver complete behavior (for example complete XSection
+records), never another numbered Polygon's individual scalar fields.
+
+### P04c14 implementation and evidence
+
+`ReadV3PlanPolygonsPrefix` / `ReadV3PlanPolygonsPrefixWithLimits` return
+`source.PlanPolygonsPrefix`. Its immutable `Polygons()` slice contains complete
+raw records (`MarkerRaw`, `PointCountRaw`, ordered copied `Points`, `ColorRaw`)
+with record/marker/count/points/color spans. Inherited trip, measurement,
+reference and mapping accessors/spans come from the unchanged plan-mapping
+prefix. Copies are made at construction and output boundaries; the consumed
+prefix is copied once after the loop, rather than once per element.
+
+`StopReason()` explicitly distinguishes `terminated` from `unsupported_element`.
+`StopMarkerRaw()` and `Offsets().StopMarker` retain the consumed byte and span.
+Consumers must check the reason: an unsupported stop is a successful bounded
+prefix, not a complete plan. Missing markers/counts/points/colors, negative
+counts and exhausted budgets return the zero result and stable `ParseError`
+code/field/start-offset. Existing per-field prefix APIs remain unchanged.
+
+`PlanPolygonLimits` embeds the unchanged `PolygonCountLimits`, adds 100,000
+`MaxElements` and 1,000,000 `MaxTotalPoints` default ceilings, and preserves
+1,000,000 `MaxPoints` **per Polygon**. Bounds are operational, not native limits;
+zero is meaningful and values above defaults/negative values are invalid.
+New limit validation order is max_points, max_elements, max_total_points, then
+the inherited mapping reader's limits/errors. Element budget is checked at a
+marker-1 field before count/payload; stop markers require no element budget.
+Negative count precedes per-Polygon/remaining-total budget, which precedes
+points preflight/allocation. Subtraction/division avoid aggregate overflow.
+A zero count still requires color and the following marker. `TotalPoints()`
+counts only complete stored Polygons.
+
+After the analysis map, verified Drawing.Read/Write and Polygon.Read/Write in
+C# and matching IL: Drawing initial ReadByte IL_003a, Polygon dispatch and
+Element.Read IL_007f, next ReadByte IL_00c3 and positive marker loop IL_00ca;
+Polygon signed count IL_0007, X/Y IL_0041/IL_004e and raw color IL_00f0.
+JKTZ's existing loop/remaining-point budget was inspected against this source;
+its color-range rejection and XSection parsing were not adopted.
+
+The fresh [original-method probe](scripts/reference-plan-polygons-probe.cs)
+executes original Drawing.Read/Polygon.Read on terminated plan copies, and
+separately tests scalar stop-before-unsupported boundaries. The pinned native
+fixture yields eight Polygons / 22 points, XSection marker 3 at `[370,371)`,
+consumed 371 and tail 309. All **945 exact CRLF rows** match independent literal
+expectations for 0/1/4/17/257 Polygons, all colors/stopping markers, zero counts,
+exact/arbitrary tails and every required byte cut. Native exit 0, empty stderr;
+[provenance and actual commands](internal/top/testdata/README.md#p04c14-plan-polygon-loop-and-original-method-probe-2026-10-10)
+record the original unknown-kind/color behavior differences and hashes.
+All earlier APIs/source and native fixtures/probes remain byte-for-byte unchanged.
+
+### P04c14 verification
+
+Go 1.26.3, Staticcheck v0.8.1, Gremlins v0.6.0; no tool/gate upgrades.
+
+- `bash scripts/check.sh`: passed formatting, vet, Staticcheck, coverage controls,
+  uncached race tests, build and unchanged CLI smoke; **100% statement coverage**
+  across all implemented packages.
+- `bash scripts/mutation-plan-polygons.sh`: **58/58** unique explicit faults
+  killed after successful compilation and a named behavioral failure. Faults
+  cover loop continuation/order, zero counts, raw scalars, stop-before-payload,
+  each budget, preflight, empty errors, independent spans and copies.
+- `bash scripts/mutation-trial.sh` and `bash scripts/mutation-dispatch-trial.sh`:
+  passed weak-test survivors, compiler/setup failures, exact-once scheduling,
+  failure propagation, invalid arguments and empty-report rejection.
+- `GOCACHE="$PWD/.cache/go-build" GOTOOLCHAIN=local go test ./internal/top
+  -run '^$' -fuzz '^FuzzReadV3PlanPolygonsPrefix$' -fuzztime=10s -parallel=2`:
+  passed **723,488 executions** on the final field-name construction.
+  Bounds: 4096 input bytes, 32 earlier records and
+  points per Polygon, 32 elements, 128 total points, 256 comment bytes.
+  Properties check determinism, unchanged input, zero error results, inherited
+  metadata, raw ordered fields/spans, stop reason and exact prefix/tail accounting.
+
+Independent read-only review found no Critical, Important or Minor issues.
+It independently passed uncached source/top race tests, **100% coverage**,
+focused tests, a separate 5s fuzz run (**465,741 executions**) and dispatch
+controls; checked C#/IL, the 58 uniquely named KILLED faults and all 945 native
+rows. Its preservation check verified all 146 base-SHA snapshot entries;
+only README, fixture provenance, mutation orchestration and `.gitattributes`
+are updated among earlier tracked files. Native execution was performed by the
+implementer; the reviewer checked its source/transcript rather than rerunning Wine.
+
+The first full campaign was correctly rejected: Gremlins produced 313 KILLED
+and seven NOT VIABLE entries by applying arithmetic replacements to string
+concatenation in dynamic field names. Its rejected report is retained at
+`build/p04c14-gremlins-invalid-string-add.json`. Switched only field-name
+construction to `fmt.Sprintf`, retaining the same exact names and all mutation
+operators/gates; no invalid mutant is counted as killed. The independent reviewer
+checked the replacement, every exact mutation target, unchanged error contracts
+and repeated focused source/top race tests successfully.
+
+Gremlins rerun killed **313/313** mutants (276 earlier and 37 new), with no
+lived, uncovered, invalid, skipped or timed-out entries; the strict gate passed.
+To stay within local disk capacity, allowed this group to finish, then ran every
+remaining scheduler group with the same `bash scripts/mutation.sh "$group"`
+entry point, clearing only the rebuildable Go cache between completed groups:
+
+```sh
+# Gremlins completed in the restarted full campaign, strict JSON gate passed.
+while IFS= read -r group; do
+  if [[ "$group" == gremlins ]]; then continue; fi
+  GOCACHE="$PWD/.cache/go-build" GOTOOLCHAIN=local go clean -cache
+  bash scripts/mutation.sh "$group" || exit
+done < <(bash scripts/mutation.sh --matrix | jq -r '.group[]')
+```
+
+No cache is removed during compilation; each group retains every earlier fault
+and gate. The full campaign killed **795/795 explicit faults** across all
+**20 scopes** (737 earlier plus 58 new). All reports were freshly generated
+after the final Gremlins report, have the exact expected count and unique names,
+and contain only KILLED entries after compilation and named test failures.
+`build/p04c14-verification-summary.json` records the independent report audit.
+A dedicated `plan-loop` group retains every earlier campaign. All three platform
+checks, six mutation groups, the planning job and **CI complete** must pass for
+the exact pushed SHA; the final handoff records that SHA/run. Stop after P04c14.
+
+## Next bounded PBI: P04c15 — complete plan XSection records
+
+Requires a new implementation request. Extend the existing plan element loop
+with complete raw XSection records, all fields/spans, bounded errors and native
+method evidence; retain Polygon and unsupported-stop contracts. Refine its
+whole-record acceptance criteria before implementation. Do not split a record
+into independent scalar PBIs. Side drawing, geometry, CLI and exporters remain
+separate future work.
 
 ## Open issues and deferred work
 
 - The TOP readers validate only the v3 trip/measurement/reference/overview/plan-mapping/first-marker/Polygon-count/Polygon-points/Polygon-color/next-marker/second-Polygon-count/second-Polygon-points/second-Polygon-color/following-marker/third-Polygon-count/third-Polygon-points/third-Polygon-color/third-next-marker prefixes.
-  Later drawing payloads and side mappings, complete-file validation and native exporters remain
+  The new loop supports complete plan Polygons and explicit terminal/unsupported
+  stops. XSection payloads and side mappings, complete-file validation and native exporters remain
   unimplemented; the CLI still accepts only help/version.
 - Native measurement arithmetic/export formatting fidelity remains unproven in Go.
 - Gremlins is accepted only for the measured small scope; expand and reassess
@@ -3725,7 +3873,7 @@ README, commit/push and verify every CI job for the exact SHA. Stop after P04c14
   mutants rather than silently excluding them.
 - The full P01 capability/fixture matrix, older TOP versions, corpus runs,
   release packaging and optional R01–R07 work remain deferred.
-- Future full compatibility claims still require native evidence; the P02/P03a/P03b/P03c1/P03c2/P04a/P04b/P04c1/P04c2/P04c3/P04c4/P04c5/P04c6/P04c7/P04c8/P04c9/P04c10/P04c11/P04c12/P04c13
+- Future full compatibility claims still require native evidence; the P02/P03a/P03b/P03c1/P03c2/P04a/P04b/P04c1/P04c2/P04c3/P04c4/P04c5/P04c6/P04c7/P04c8/P04c9/P04c10/P04c11/P04c12/P04c13/P04c14
   checks validate only implemented behavior and their recorded reference cases.
 
 ## Research references
