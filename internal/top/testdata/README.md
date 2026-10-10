@@ -1100,3 +1100,65 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 ```
 
 Frozen stdout is protected from text normalization; never regenerate expectations using Go.
+
+## P04c12 third Polygon color and original scalar probe, 2026-10-10
+
+The separate [third-color probe](../../../scripts/reference-plan-third-polygon-color-probe.cs)
+uses original table/Mapping.Read methods and FileReader's BinaryReader, then
+first/second Polygon scalars, following marker/count, third X/Y and one color
+byte. No Drawing.Read/Polygon.Read, later marker, geometry, GUI or TOP write.
+The unchanged pinned helper's third brown Polygon has raw color 3 at `[235,236)`.
+Full/exact streams in pixel modes 5/10 confirm consumed 236, full-file tail 444.
+Missing color throws EndOfStreamException without advancing from 235.
+
+Independent literal streams cover zero/one/three points in each of all three
+tables, with first color 129 and second color 255. Literal coordinates are
+`(66051,-66051)`, `(Int32.MinValue,Int32.MaxValue)`, `(-1,0)` and
+`(16777217,-16777217)`. Every third color 0..255 is read with exact and FF 80
+tails; missing color is checked for every combination, including zero points.
+Literal color starts are `17 + 8 * (first + second + third)`. All **13,860 exact
+CRLF rows** (13,824 successful literals, 27 missing literals, six fixture reads
+and three environment lines) match an independently constructed literal oracle
+byte-for-byte; native exit 0, empty stderr. No Go-generated oracle or regenerated
+earlier evidence.
+
+After the analysis map, inspected Polygon.Read's ReadByte at IL_00f0 after its
+point loop and matching Write color branches, including brown byte 3. Pen
+selection and rendering are outside this raw reader. JKTZ's 1..7 restriction is
+not adopted. Scalar evidence does not establish full native drawing/export compatibility.
+
+Environment: macOS arm64, Wine Staging 11.7, original assembly 1.3.7.0,
+Microsoft .NET x86 runtime 2.0.50727.42. Compilation produced the usable EXE
+without diagnostics; only its two identified lingering compiler/start processes
+were stopped after successful readback. Wine's server socket required execution
+outside the sandbox. Optional tools remain separate from application/CI dependencies.
+
+| New evidence | SHA-256 |
+| --- | --- |
+| `scripts/reference-plan-third-polygon-color-probe.cs` | `3632bf7584a32815a6b6ed8f66004a6313f8b072ddccf648b58b8bc03ea0de9b` |
+| `native-plan-third-polygon-color-read.txt` | `713fbcc2c066fd624771065e99d9f41b9cc768b7ed147c38c9d56ca2f5325777` |
+| Optional compiled probe (`build/reference-plan-third-polygon-color-probe.exe`) | `a83938a1cfaec53fa570ef9d96a5d0f095124cd412ea6517cdea2afee0221d84` |
+
+Drawing.cs SHA-256 remains `c07a9f255cf372cbcc2a3ecd2a31b0f1c959325749fd9155d8fd9a5649f817e7`,
+Polygon.cs `63d57a5200116e9a4acaadddecec5a1381ca8173544eddafdc14d07e29237fe2`,
+complete IL `ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76`.
+The helper read from its pinned Git object matches
+`ae1f32a1034bbd95a59e97db47e887fabb30b06eabe55a960c9c5ebf9090d005`.
+Original EXE/runtime, C#/IL, TOP inputs and all earlier probes/stdout remain
+byte-for-byte unchanged against `build/p04c12-preservation.json`.
+
+Actual optional commands run from the repository root:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-plan-third-polygon-color-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-plan-third-polygon-color-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-plan-third-polygon-color-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-plan-third-polygon-color-read.txt 2>build/native-plan-third-polygon-color-read.err
+```
+
+Frozen stdout is protected from text normalization; never regenerate expectations using Go.
