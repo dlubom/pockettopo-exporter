@@ -2823,9 +2823,9 @@ Independent read-only review found no Critical, Important or Minor issues.
 It passed fresh targeted/full unit tests, full race tests, a separate bounded
 fuzz run (383,727 executions), formatting/shell/diff checks, all 73 native rows
 and new evidence hashes. The 159-path source/evidence snapshot preserves all
-155 protected paths; only README, fixture provenance, mutation orchestration
-and `.gitattributes` changed among earlier files. Original EXE/runtime, C#/IL,
-helper, TOP and every prior probe/stdout remain intact.
+154 protected paths; only README, fixture provenance, mutation orchestration,
+`.gitattributes` and the CI job timeout changed among earlier files. Original
+EXE/runtime, C#/IL, helper, TOP and every prior probe/stdout remain intact.
 
 Measured Git blobs: `b82c49ecba4b96ccfb9707728661741f0b176a2f` (reader), `a31de66d495311e0352d04d9998462904bf039f6` (reader tests),
 `6b051290a59c71587fcad251fec694112b5fce55` (model), `d8cf93206e38bbb4e412fdb70b0457221c95ad38` (model tests).
@@ -2835,6 +2835,12 @@ Reports regenerate in `coverage.out`, `mutation.json`,
 Three-platform CI repeats ordinary checks; Linux runs both complete mutation
 commands including the new second-points scope. Exact pushed SHA and green CI
 are verified in the chat handoff; README belongs to that delivered commit.
+The first hosted attempt (`fb2947ffda342649eeeff2f3c1f40f319aaa9d1c`,
+run `38029824715`) passed all ordinary platform checks and killed all 235
+Gremlins mutants, but its Linux job hit the previous 15-minute timeout during
+the explicit campaign. That incomplete run is not accepted. The CI job timeout
+is now 25 minutes so the complete campaigns and trial controls can finish;
+every check, mutation scope and acceptance gate remains enabled.
 P04c7 stops before second color, including zero, and includes no later payload
 or drawing/export implementation.
 
