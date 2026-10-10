@@ -971,3 +971,67 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
   'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
   >build/native-plan-following-marker-read.txt 2>build/native-plan-following-marker-read.err
 ```
+
+## P04c10 third Polygon count and original scalar probe, 2026-10-10
+
+The separate [third-count probe](../../../scripts/reference-plan-third-polygon-count-probe.cs)
+uses original table/Mapping.Read methods and FileReader's BinaryReader, then
+first/second Polygon scalars, following marker 1 and exactly one signed Int32.
+No Drawing.Read/Polygon.Read, third vertices/color, geometry, GUI or TOP write.
+The unchanged pinned helper's third brown plan Polygon has three points; the
+marker lies at `[206,207)` and count at `[207,211)`. Full/exact streams in pixel
+modes 5/10 confirm count 3, consumed 211, full-file tail 469. Four truncated
+prefixes throw EndOfStreamException after consuming available count bytes.
+
+Independent literal streams have zero/one/three points in each earlier table,
+first color 129 and second color 255. Counts from literal bytes are 0, 1, 3,
+66051, 1000000, 1000001, Int32.MaxValue, -1, Int32.MinValue and -66051. Each
+case has an exact prefix and FF 80 tail; each table combination tests all four
+partial-count lengths. Literal count starts are `13 + 8 * (first + second)`.
+All **231 exact CRLF rows** (180 successful literals, 36 partial literals,
+12 fixture reads and three environment lines) match independently constructed
+literal expectations; native exit 0 and stderr empty. No Go-generated oracle.
+
+After the analysis map, inspected Drawing.Read marker-1 dispatch at IL_0057,
+Polygon.Read ReadInt32 at IL_0007, newarr at IL_000f and Polygon.Write count
+Write(int32) at IL_001c. Go preserves scalar values but rejects negative/over-limit
+counts explicitly and performs no third allocation/preflight. Native scalar
+reads accept negative/large counts; this probe does not invoke the native point
+allocation. Full native drawing/export compatibility remains unvalidated.
+JKTZ's aggregate point budget/preflight and color restriction were reviewed and
+not adopted. Original EXE/runtime, C#/IL, pinned helper, source TOP and every
+prior probe/stdout remain unchanged, verified against the preservation snapshot.
+
+Environment: macOS arm64, Wine Staging 11.7, original assembly 1.3.7.0,
+Microsoft .NET x86 runtime 2.0.50727.42. Compilation produced the usable EXE
+without diagnostics; its two identified lingering compiler/start processes were
+stopped after successful readback. Wine's existing server socket required execution outside
+the sandbox. These optional evidence commands are not application/CI dependencies.
+
+| New evidence | SHA-256 |
+| --- | --- |
+| `scripts/reference-plan-third-polygon-count-probe.cs` | `30f547a6c3ed43d78ba03f2a640d9ec446e0fb37faf489cbc57a290c059694f9` |
+| `native-plan-third-polygon-count-read.txt` | `e3d431ee54000b28a7517058b04b943b34ff2e460813bd25cafc4bd915650179` |
+| Optional compiled probe (`build/reference-plan-third-polygon-count-probe.exe`) | `c07b6417ed796e0806e96b98e1d2b017a54433b7f91f4425a0808423e820d7d4` |
+
+Drawing.cs SHA-256 remains `c07a9f255cf372cbcc2a3ecd2a31b0f1c959325749fd9155d8fd9a5649f817e7`,
+Polygon.cs `63d57a5200116e9a4acaadddecec5a1381ca8173544eddafdc14d07e29237fe2`,
+complete IL `ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76`.
+The helper read from its original Git object matches the recorded
+`ae1f32a1034bbd95a59e97db47e887fabb30b06eabe55a960c9c5ebf9090d005` hash.
+
+Actual optional commands run from the repository root:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-plan-third-polygon-count-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-plan-third-polygon-count-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-plan-third-polygon-count-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-plan-third-polygon-count-read.txt 2>build/native-plan-third-polygon-count-read.err
+```
+
+Frozen stdout is protected from text normalization; never regenerate expected values using Go.
