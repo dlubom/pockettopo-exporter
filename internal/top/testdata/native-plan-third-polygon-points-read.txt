@@ -1,0 +1,397 @@
+assembly=1.3.7.0 runtime=2.0.50727.42
+PixPerMm=5
+drawings-fixture points=-2000,-2000;-1500,-1000;-500,-1500 start=211 consumed=235 tail=445
+drawings-prefix points=-2000,-2000;-1500,-1000;-500,-1500 start=211 consumed=235 tail=0
+drawings-truncated start=211 available=0 error=EndOfStreamException consumed=211 tail=0
+drawings-truncated start=211 available=1 error=EndOfStreamException consumed=212 tail=0
+drawings-truncated start=211 available=2 error=EndOfStreamException consumed=213 tail=0
+drawings-truncated start=211 available=3 error=EndOfStreamException consumed=214 tail=0
+drawings-truncated start=211 available=4 error=EndOfStreamException consumed=215 tail=0
+drawings-truncated start=211 available=5 error=EndOfStreamException consumed=216 tail=0
+drawings-truncated start=211 available=6 error=EndOfStreamException consumed=217 tail=0
+drawings-truncated start=211 available=7 error=EndOfStreamException consumed=218 tail=0
+drawings-truncated start=211 available=8 error=EndOfStreamException consumed=219 tail=0
+drawings-truncated start=211 available=9 error=EndOfStreamException consumed=220 tail=0
+drawings-truncated start=211 available=10 error=EndOfStreamException consumed=221 tail=0
+drawings-truncated start=211 available=11 error=EndOfStreamException consumed=222 tail=0
+drawings-truncated start=211 available=12 error=EndOfStreamException consumed=223 tail=0
+drawings-truncated start=211 available=13 error=EndOfStreamException consumed=224 tail=0
+drawings-truncated start=211 available=14 error=EndOfStreamException consumed=225 tail=0
+drawings-truncated start=211 available=15 error=EndOfStreamException consumed=226 tail=0
+drawings-truncated start=211 available=16 error=EndOfStreamException consumed=227 tail=0
+drawings-truncated start=211 available=17 error=EndOfStreamException consumed=228 tail=0
+drawings-truncated start=211 available=18 error=EndOfStreamException consumed=229 tail=0
+drawings-truncated start=211 available=19 error=EndOfStreamException consumed=230 tail=0
+drawings-truncated start=211 available=20 error=EndOfStreamException consumed=231 tail=0
+drawings-truncated start=211 available=21 error=EndOfStreamException consumed=232 tail=0
+drawings-truncated start=211 available=22 error=EndOfStreamException consumed=233 tail=0
+drawings-truncated start=211 available=23 error=EndOfStreamException consumed=234 tail=0
+PixPerMm=10
+drawings-fixture points=-2000,-2000;-1500,-1000;-500,-1500 start=211 consumed=235 tail=445
+drawings-prefix points=-2000,-2000;-1500,-1000;-500,-1500 start=211 consumed=235 tail=0
+drawings-truncated start=211 available=0 error=EndOfStreamException consumed=211 tail=0
+drawings-truncated start=211 available=1 error=EndOfStreamException consumed=212 tail=0
+drawings-truncated start=211 available=2 error=EndOfStreamException consumed=213 tail=0
+drawings-truncated start=211 available=3 error=EndOfStreamException consumed=214 tail=0
+drawings-truncated start=211 available=4 error=EndOfStreamException consumed=215 tail=0
+drawings-truncated start=211 available=5 error=EndOfStreamException consumed=216 tail=0
+drawings-truncated start=211 available=6 error=EndOfStreamException consumed=217 tail=0
+drawings-truncated start=211 available=7 error=EndOfStreamException consumed=218 tail=0
+drawings-truncated start=211 available=8 error=EndOfStreamException consumed=219 tail=0
+drawings-truncated start=211 available=9 error=EndOfStreamException consumed=220 tail=0
+drawings-truncated start=211 available=10 error=EndOfStreamException consumed=221 tail=0
+drawings-truncated start=211 available=11 error=EndOfStreamException consumed=222 tail=0
+drawings-truncated start=211 available=12 error=EndOfStreamException consumed=223 tail=0
+drawings-truncated start=211 available=13 error=EndOfStreamException consumed=224 tail=0
+drawings-truncated start=211 available=14 error=EndOfStreamException consumed=225 tail=0
+drawings-truncated start=211 available=15 error=EndOfStreamException consumed=226 tail=0
+drawings-truncated start=211 available=16 error=EndOfStreamException consumed=227 tail=0
+drawings-truncated start=211 available=17 error=EndOfStreamException consumed=228 tail=0
+drawings-truncated start=211 available=18 error=EndOfStreamException consumed=229 tail=0
+drawings-truncated start=211 available=19 error=EndOfStreamException consumed=230 tail=0
+drawings-truncated start=211 available=20 error=EndOfStreamException consumed=231 tail=0
+drawings-truncated start=211 available=21 error=EndOfStreamException consumed=232 tail=0
+drawings-truncated start=211 available=22 error=EndOfStreamException consumed=233 tail=0
+drawings-truncated start=211 available=23 error=EndOfStreamException consumed=234 tail=0
+literal first=0 second=0 third=0 points= start=17 consumed=17 tail=0
+literal first=0 second=0 third=0 points= start=17 consumed=17 tail=2
+literal first=0 second=0 third=1 points=66051,-66051 start=17 consumed=25 tail=0
+literal first=0 second=0 third=1 points=66051,-66051 start=17 consumed=25 tail=2
+literal first=0 second=0 third=1 start=17 available=0 error=EndOfStreamException consumed=17 tail=0
+literal first=0 second=0 third=1 start=17 available=1 error=EndOfStreamException consumed=18 tail=0
+literal first=0 second=0 third=1 start=17 available=2 error=EndOfStreamException consumed=19 tail=0
+literal first=0 second=0 third=1 start=17 available=3 error=EndOfStreamException consumed=20 tail=0
+literal first=0 second=0 third=1 start=17 available=4 error=EndOfStreamException consumed=21 tail=0
+literal first=0 second=0 third=1 start=17 available=5 error=EndOfStreamException consumed=22 tail=0
+literal first=0 second=0 third=1 start=17 available=6 error=EndOfStreamException consumed=23 tail=0
+literal first=0 second=0 third=1 start=17 available=7 error=EndOfStreamException consumed=24 tail=0
+literal first=0 second=0 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=17 consumed=41 tail=0
+literal first=0 second=0 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=17 consumed=41 tail=2
+literal first=0 second=0 third=3 start=17 available=0 error=EndOfStreamException consumed=17 tail=0
+literal first=0 second=0 third=3 start=17 available=1 error=EndOfStreamException consumed=18 tail=0
+literal first=0 second=0 third=3 start=17 available=2 error=EndOfStreamException consumed=19 tail=0
+literal first=0 second=0 third=3 start=17 available=3 error=EndOfStreamException consumed=20 tail=0
+literal first=0 second=0 third=3 start=17 available=4 error=EndOfStreamException consumed=21 tail=0
+literal first=0 second=0 third=3 start=17 available=5 error=EndOfStreamException consumed=22 tail=0
+literal first=0 second=0 third=3 start=17 available=6 error=EndOfStreamException consumed=23 tail=0
+literal first=0 second=0 third=3 start=17 available=7 error=EndOfStreamException consumed=24 tail=0
+literal first=0 second=0 third=3 start=17 available=8 error=EndOfStreamException consumed=25 tail=0
+literal first=0 second=0 third=3 start=17 available=9 error=EndOfStreamException consumed=26 tail=0
+literal first=0 second=0 third=3 start=17 available=10 error=EndOfStreamException consumed=27 tail=0
+literal first=0 second=0 third=3 start=17 available=11 error=EndOfStreamException consumed=28 tail=0
+literal first=0 second=0 third=3 start=17 available=12 error=EndOfStreamException consumed=29 tail=0
+literal first=0 second=0 third=3 start=17 available=13 error=EndOfStreamException consumed=30 tail=0
+literal first=0 second=0 third=3 start=17 available=14 error=EndOfStreamException consumed=31 tail=0
+literal first=0 second=0 third=3 start=17 available=15 error=EndOfStreamException consumed=32 tail=0
+literal first=0 second=0 third=3 start=17 available=16 error=EndOfStreamException consumed=33 tail=0
+literal first=0 second=0 third=3 start=17 available=17 error=EndOfStreamException consumed=34 tail=0
+literal first=0 second=0 third=3 start=17 available=18 error=EndOfStreamException consumed=35 tail=0
+literal first=0 second=0 third=3 start=17 available=19 error=EndOfStreamException consumed=36 tail=0
+literal first=0 second=0 third=3 start=17 available=20 error=EndOfStreamException consumed=37 tail=0
+literal first=0 second=0 third=3 start=17 available=21 error=EndOfStreamException consumed=38 tail=0
+literal first=0 second=0 third=3 start=17 available=22 error=EndOfStreamException consumed=39 tail=0
+literal first=0 second=0 third=3 start=17 available=23 error=EndOfStreamException consumed=40 tail=0
+literal first=0 second=1 third=0 points= start=25 consumed=25 tail=0
+literal first=0 second=1 third=0 points= start=25 consumed=25 tail=2
+literal first=0 second=1 third=1 points=66051,-66051 start=25 consumed=33 tail=0
+literal first=0 second=1 third=1 points=66051,-66051 start=25 consumed=33 tail=2
+literal first=0 second=1 third=1 start=25 available=0 error=EndOfStreamException consumed=25 tail=0
+literal first=0 second=1 third=1 start=25 available=1 error=EndOfStreamException consumed=26 tail=0
+literal first=0 second=1 third=1 start=25 available=2 error=EndOfStreamException consumed=27 tail=0
+literal first=0 second=1 third=1 start=25 available=3 error=EndOfStreamException consumed=28 tail=0
+literal first=0 second=1 third=1 start=25 available=4 error=EndOfStreamException consumed=29 tail=0
+literal first=0 second=1 third=1 start=25 available=5 error=EndOfStreamException consumed=30 tail=0
+literal first=0 second=1 third=1 start=25 available=6 error=EndOfStreamException consumed=31 tail=0
+literal first=0 second=1 third=1 start=25 available=7 error=EndOfStreamException consumed=32 tail=0
+literal first=0 second=1 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=25 consumed=49 tail=0
+literal first=0 second=1 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=25 consumed=49 tail=2
+literal first=0 second=1 third=3 start=25 available=0 error=EndOfStreamException consumed=25 tail=0
+literal first=0 second=1 third=3 start=25 available=1 error=EndOfStreamException consumed=26 tail=0
+literal first=0 second=1 third=3 start=25 available=2 error=EndOfStreamException consumed=27 tail=0
+literal first=0 second=1 third=3 start=25 available=3 error=EndOfStreamException consumed=28 tail=0
+literal first=0 second=1 third=3 start=25 available=4 error=EndOfStreamException consumed=29 tail=0
+literal first=0 second=1 third=3 start=25 available=5 error=EndOfStreamException consumed=30 tail=0
+literal first=0 second=1 third=3 start=25 available=6 error=EndOfStreamException consumed=31 tail=0
+literal first=0 second=1 third=3 start=25 available=7 error=EndOfStreamException consumed=32 tail=0
+literal first=0 second=1 third=3 start=25 available=8 error=EndOfStreamException consumed=33 tail=0
+literal first=0 second=1 third=3 start=25 available=9 error=EndOfStreamException consumed=34 tail=0
+literal first=0 second=1 third=3 start=25 available=10 error=EndOfStreamException consumed=35 tail=0
+literal first=0 second=1 third=3 start=25 available=11 error=EndOfStreamException consumed=36 tail=0
+literal first=0 second=1 third=3 start=25 available=12 error=EndOfStreamException consumed=37 tail=0
+literal first=0 second=1 third=3 start=25 available=13 error=EndOfStreamException consumed=38 tail=0
+literal first=0 second=1 third=3 start=25 available=14 error=EndOfStreamException consumed=39 tail=0
+literal first=0 second=1 third=3 start=25 available=15 error=EndOfStreamException consumed=40 tail=0
+literal first=0 second=1 third=3 start=25 available=16 error=EndOfStreamException consumed=41 tail=0
+literal first=0 second=1 third=3 start=25 available=17 error=EndOfStreamException consumed=42 tail=0
+literal first=0 second=1 third=3 start=25 available=18 error=EndOfStreamException consumed=43 tail=0
+literal first=0 second=1 third=3 start=25 available=19 error=EndOfStreamException consumed=44 tail=0
+literal first=0 second=1 third=3 start=25 available=20 error=EndOfStreamException consumed=45 tail=0
+literal first=0 second=1 third=3 start=25 available=21 error=EndOfStreamException consumed=46 tail=0
+literal first=0 second=1 third=3 start=25 available=22 error=EndOfStreamException consumed=47 tail=0
+literal first=0 second=1 third=3 start=25 available=23 error=EndOfStreamException consumed=48 tail=0
+literal first=0 second=3 third=0 points= start=41 consumed=41 tail=0
+literal first=0 second=3 third=0 points= start=41 consumed=41 tail=2
+literal first=0 second=3 third=1 points=66051,-66051 start=41 consumed=49 tail=0
+literal first=0 second=3 third=1 points=66051,-66051 start=41 consumed=49 tail=2
+literal first=0 second=3 third=1 start=41 available=0 error=EndOfStreamException consumed=41 tail=0
+literal first=0 second=3 third=1 start=41 available=1 error=EndOfStreamException consumed=42 tail=0
+literal first=0 second=3 third=1 start=41 available=2 error=EndOfStreamException consumed=43 tail=0
+literal first=0 second=3 third=1 start=41 available=3 error=EndOfStreamException consumed=44 tail=0
+literal first=0 second=3 third=1 start=41 available=4 error=EndOfStreamException consumed=45 tail=0
+literal first=0 second=3 third=1 start=41 available=5 error=EndOfStreamException consumed=46 tail=0
+literal first=0 second=3 third=1 start=41 available=6 error=EndOfStreamException consumed=47 tail=0
+literal first=0 second=3 third=1 start=41 available=7 error=EndOfStreamException consumed=48 tail=0
+literal first=0 second=3 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=41 consumed=65 tail=0
+literal first=0 second=3 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=41 consumed=65 tail=2
+literal first=0 second=3 third=3 start=41 available=0 error=EndOfStreamException consumed=41 tail=0
+literal first=0 second=3 third=3 start=41 available=1 error=EndOfStreamException consumed=42 tail=0
+literal first=0 second=3 third=3 start=41 available=2 error=EndOfStreamException consumed=43 tail=0
+literal first=0 second=3 third=3 start=41 available=3 error=EndOfStreamException consumed=44 tail=0
+literal first=0 second=3 third=3 start=41 available=4 error=EndOfStreamException consumed=45 tail=0
+literal first=0 second=3 third=3 start=41 available=5 error=EndOfStreamException consumed=46 tail=0
+literal first=0 second=3 third=3 start=41 available=6 error=EndOfStreamException consumed=47 tail=0
+literal first=0 second=3 third=3 start=41 available=7 error=EndOfStreamException consumed=48 tail=0
+literal first=0 second=3 third=3 start=41 available=8 error=EndOfStreamException consumed=49 tail=0
+literal first=0 second=3 third=3 start=41 available=9 error=EndOfStreamException consumed=50 tail=0
+literal first=0 second=3 third=3 start=41 available=10 error=EndOfStreamException consumed=51 tail=0
+literal first=0 second=3 third=3 start=41 available=11 error=EndOfStreamException consumed=52 tail=0
+literal first=0 second=3 third=3 start=41 available=12 error=EndOfStreamException consumed=53 tail=0
+literal first=0 second=3 third=3 start=41 available=13 error=EndOfStreamException consumed=54 tail=0
+literal first=0 second=3 third=3 start=41 available=14 error=EndOfStreamException consumed=55 tail=0
+literal first=0 second=3 third=3 start=41 available=15 error=EndOfStreamException consumed=56 tail=0
+literal first=0 second=3 third=3 start=41 available=16 error=EndOfStreamException consumed=57 tail=0
+literal first=0 second=3 third=3 start=41 available=17 error=EndOfStreamException consumed=58 tail=0
+literal first=0 second=3 third=3 start=41 available=18 error=EndOfStreamException consumed=59 tail=0
+literal first=0 second=3 third=3 start=41 available=19 error=EndOfStreamException consumed=60 tail=0
+literal first=0 second=3 third=3 start=41 available=20 error=EndOfStreamException consumed=61 tail=0
+literal first=0 second=3 third=3 start=41 available=21 error=EndOfStreamException consumed=62 tail=0
+literal first=0 second=3 third=3 start=41 available=22 error=EndOfStreamException consumed=63 tail=0
+literal first=0 second=3 third=3 start=41 available=23 error=EndOfStreamException consumed=64 tail=0
+literal first=1 second=0 third=0 points= start=25 consumed=25 tail=0
+literal first=1 second=0 third=0 points= start=25 consumed=25 tail=2
+literal first=1 second=0 third=1 points=66051,-66051 start=25 consumed=33 tail=0
+literal first=1 second=0 third=1 points=66051,-66051 start=25 consumed=33 tail=2
+literal first=1 second=0 third=1 start=25 available=0 error=EndOfStreamException consumed=25 tail=0
+literal first=1 second=0 third=1 start=25 available=1 error=EndOfStreamException consumed=26 tail=0
+literal first=1 second=0 third=1 start=25 available=2 error=EndOfStreamException consumed=27 tail=0
+literal first=1 second=0 third=1 start=25 available=3 error=EndOfStreamException consumed=28 tail=0
+literal first=1 second=0 third=1 start=25 available=4 error=EndOfStreamException consumed=29 tail=0
+literal first=1 second=0 third=1 start=25 available=5 error=EndOfStreamException consumed=30 tail=0
+literal first=1 second=0 third=1 start=25 available=6 error=EndOfStreamException consumed=31 tail=0
+literal first=1 second=0 third=1 start=25 available=7 error=EndOfStreamException consumed=32 tail=0
+literal first=1 second=0 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=25 consumed=49 tail=0
+literal first=1 second=0 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=25 consumed=49 tail=2
+literal first=1 second=0 third=3 start=25 available=0 error=EndOfStreamException consumed=25 tail=0
+literal first=1 second=0 third=3 start=25 available=1 error=EndOfStreamException consumed=26 tail=0
+literal first=1 second=0 third=3 start=25 available=2 error=EndOfStreamException consumed=27 tail=0
+literal first=1 second=0 third=3 start=25 available=3 error=EndOfStreamException consumed=28 tail=0
+literal first=1 second=0 third=3 start=25 available=4 error=EndOfStreamException consumed=29 tail=0
+literal first=1 second=0 third=3 start=25 available=5 error=EndOfStreamException consumed=30 tail=0
+literal first=1 second=0 third=3 start=25 available=6 error=EndOfStreamException consumed=31 tail=0
+literal first=1 second=0 third=3 start=25 available=7 error=EndOfStreamException consumed=32 tail=0
+literal first=1 second=0 third=3 start=25 available=8 error=EndOfStreamException consumed=33 tail=0
+literal first=1 second=0 third=3 start=25 available=9 error=EndOfStreamException consumed=34 tail=0
+literal first=1 second=0 third=3 start=25 available=10 error=EndOfStreamException consumed=35 tail=0
+literal first=1 second=0 third=3 start=25 available=11 error=EndOfStreamException consumed=36 tail=0
+literal first=1 second=0 third=3 start=25 available=12 error=EndOfStreamException consumed=37 tail=0
+literal first=1 second=0 third=3 start=25 available=13 error=EndOfStreamException consumed=38 tail=0
+literal first=1 second=0 third=3 start=25 available=14 error=EndOfStreamException consumed=39 tail=0
+literal first=1 second=0 third=3 start=25 available=15 error=EndOfStreamException consumed=40 tail=0
+literal first=1 second=0 third=3 start=25 available=16 error=EndOfStreamException consumed=41 tail=0
+literal first=1 second=0 third=3 start=25 available=17 error=EndOfStreamException consumed=42 tail=0
+literal first=1 second=0 third=3 start=25 available=18 error=EndOfStreamException consumed=43 tail=0
+literal first=1 second=0 third=3 start=25 available=19 error=EndOfStreamException consumed=44 tail=0
+literal first=1 second=0 third=3 start=25 available=20 error=EndOfStreamException consumed=45 tail=0
+literal first=1 second=0 third=3 start=25 available=21 error=EndOfStreamException consumed=46 tail=0
+literal first=1 second=0 third=3 start=25 available=22 error=EndOfStreamException consumed=47 tail=0
+literal first=1 second=0 third=3 start=25 available=23 error=EndOfStreamException consumed=48 tail=0
+literal first=1 second=1 third=0 points= start=33 consumed=33 tail=0
+literal first=1 second=1 third=0 points= start=33 consumed=33 tail=2
+literal first=1 second=1 third=1 points=66051,-66051 start=33 consumed=41 tail=0
+literal first=1 second=1 third=1 points=66051,-66051 start=33 consumed=41 tail=2
+literal first=1 second=1 third=1 start=33 available=0 error=EndOfStreamException consumed=33 tail=0
+literal first=1 second=1 third=1 start=33 available=1 error=EndOfStreamException consumed=34 tail=0
+literal first=1 second=1 third=1 start=33 available=2 error=EndOfStreamException consumed=35 tail=0
+literal first=1 second=1 third=1 start=33 available=3 error=EndOfStreamException consumed=36 tail=0
+literal first=1 second=1 third=1 start=33 available=4 error=EndOfStreamException consumed=37 tail=0
+literal first=1 second=1 third=1 start=33 available=5 error=EndOfStreamException consumed=38 tail=0
+literal first=1 second=1 third=1 start=33 available=6 error=EndOfStreamException consumed=39 tail=0
+literal first=1 second=1 third=1 start=33 available=7 error=EndOfStreamException consumed=40 tail=0
+literal first=1 second=1 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=33 consumed=57 tail=0
+literal first=1 second=1 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=33 consumed=57 tail=2
+literal first=1 second=1 third=3 start=33 available=0 error=EndOfStreamException consumed=33 tail=0
+literal first=1 second=1 third=3 start=33 available=1 error=EndOfStreamException consumed=34 tail=0
+literal first=1 second=1 third=3 start=33 available=2 error=EndOfStreamException consumed=35 tail=0
+literal first=1 second=1 third=3 start=33 available=3 error=EndOfStreamException consumed=36 tail=0
+literal first=1 second=1 third=3 start=33 available=4 error=EndOfStreamException consumed=37 tail=0
+literal first=1 second=1 third=3 start=33 available=5 error=EndOfStreamException consumed=38 tail=0
+literal first=1 second=1 third=3 start=33 available=6 error=EndOfStreamException consumed=39 tail=0
+literal first=1 second=1 third=3 start=33 available=7 error=EndOfStreamException consumed=40 tail=0
+literal first=1 second=1 third=3 start=33 available=8 error=EndOfStreamException consumed=41 tail=0
+literal first=1 second=1 third=3 start=33 available=9 error=EndOfStreamException consumed=42 tail=0
+literal first=1 second=1 third=3 start=33 available=10 error=EndOfStreamException consumed=43 tail=0
+literal first=1 second=1 third=3 start=33 available=11 error=EndOfStreamException consumed=44 tail=0
+literal first=1 second=1 third=3 start=33 available=12 error=EndOfStreamException consumed=45 tail=0
+literal first=1 second=1 third=3 start=33 available=13 error=EndOfStreamException consumed=46 tail=0
+literal first=1 second=1 third=3 start=33 available=14 error=EndOfStreamException consumed=47 tail=0
+literal first=1 second=1 third=3 start=33 available=15 error=EndOfStreamException consumed=48 tail=0
+literal first=1 second=1 third=3 start=33 available=16 error=EndOfStreamException consumed=49 tail=0
+literal first=1 second=1 third=3 start=33 available=17 error=EndOfStreamException consumed=50 tail=0
+literal first=1 second=1 third=3 start=33 available=18 error=EndOfStreamException consumed=51 tail=0
+literal first=1 second=1 third=3 start=33 available=19 error=EndOfStreamException consumed=52 tail=0
+literal first=1 second=1 third=3 start=33 available=20 error=EndOfStreamException consumed=53 tail=0
+literal first=1 second=1 third=3 start=33 available=21 error=EndOfStreamException consumed=54 tail=0
+literal first=1 second=1 third=3 start=33 available=22 error=EndOfStreamException consumed=55 tail=0
+literal first=1 second=1 third=3 start=33 available=23 error=EndOfStreamException consumed=56 tail=0
+literal first=1 second=3 third=0 points= start=49 consumed=49 tail=0
+literal first=1 second=3 third=0 points= start=49 consumed=49 tail=2
+literal first=1 second=3 third=1 points=66051,-66051 start=49 consumed=57 tail=0
+literal first=1 second=3 third=1 points=66051,-66051 start=49 consumed=57 tail=2
+literal first=1 second=3 third=1 start=49 available=0 error=EndOfStreamException consumed=49 tail=0
+literal first=1 second=3 third=1 start=49 available=1 error=EndOfStreamException consumed=50 tail=0
+literal first=1 second=3 third=1 start=49 available=2 error=EndOfStreamException consumed=51 tail=0
+literal first=1 second=3 third=1 start=49 available=3 error=EndOfStreamException consumed=52 tail=0
+literal first=1 second=3 third=1 start=49 available=4 error=EndOfStreamException consumed=53 tail=0
+literal first=1 second=3 third=1 start=49 available=5 error=EndOfStreamException consumed=54 tail=0
+literal first=1 second=3 third=1 start=49 available=6 error=EndOfStreamException consumed=55 tail=0
+literal first=1 second=3 third=1 start=49 available=7 error=EndOfStreamException consumed=56 tail=0
+literal first=1 second=3 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=49 consumed=73 tail=0
+literal first=1 second=3 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=49 consumed=73 tail=2
+literal first=1 second=3 third=3 start=49 available=0 error=EndOfStreamException consumed=49 tail=0
+literal first=1 second=3 third=3 start=49 available=1 error=EndOfStreamException consumed=50 tail=0
+literal first=1 second=3 third=3 start=49 available=2 error=EndOfStreamException consumed=51 tail=0
+literal first=1 second=3 third=3 start=49 available=3 error=EndOfStreamException consumed=52 tail=0
+literal first=1 second=3 third=3 start=49 available=4 error=EndOfStreamException consumed=53 tail=0
+literal first=1 second=3 third=3 start=49 available=5 error=EndOfStreamException consumed=54 tail=0
+literal first=1 second=3 third=3 start=49 available=6 error=EndOfStreamException consumed=55 tail=0
+literal first=1 second=3 third=3 start=49 available=7 error=EndOfStreamException consumed=56 tail=0
+literal first=1 second=3 third=3 start=49 available=8 error=EndOfStreamException consumed=57 tail=0
+literal first=1 second=3 third=3 start=49 available=9 error=EndOfStreamException consumed=58 tail=0
+literal first=1 second=3 third=3 start=49 available=10 error=EndOfStreamException consumed=59 tail=0
+literal first=1 second=3 third=3 start=49 available=11 error=EndOfStreamException consumed=60 tail=0
+literal first=1 second=3 third=3 start=49 available=12 error=EndOfStreamException consumed=61 tail=0
+literal first=1 second=3 third=3 start=49 available=13 error=EndOfStreamException consumed=62 tail=0
+literal first=1 second=3 third=3 start=49 available=14 error=EndOfStreamException consumed=63 tail=0
+literal first=1 second=3 third=3 start=49 available=15 error=EndOfStreamException consumed=64 tail=0
+literal first=1 second=3 third=3 start=49 available=16 error=EndOfStreamException consumed=65 tail=0
+literal first=1 second=3 third=3 start=49 available=17 error=EndOfStreamException consumed=66 tail=0
+literal first=1 second=3 third=3 start=49 available=18 error=EndOfStreamException consumed=67 tail=0
+literal first=1 second=3 third=3 start=49 available=19 error=EndOfStreamException consumed=68 tail=0
+literal first=1 second=3 third=3 start=49 available=20 error=EndOfStreamException consumed=69 tail=0
+literal first=1 second=3 third=3 start=49 available=21 error=EndOfStreamException consumed=70 tail=0
+literal first=1 second=3 third=3 start=49 available=22 error=EndOfStreamException consumed=71 tail=0
+literal first=1 second=3 third=3 start=49 available=23 error=EndOfStreamException consumed=72 tail=0
+literal first=3 second=0 third=0 points= start=41 consumed=41 tail=0
+literal first=3 second=0 third=0 points= start=41 consumed=41 tail=2
+literal first=3 second=0 third=1 points=66051,-66051 start=41 consumed=49 tail=0
+literal first=3 second=0 third=1 points=66051,-66051 start=41 consumed=49 tail=2
+literal first=3 second=0 third=1 start=41 available=0 error=EndOfStreamException consumed=41 tail=0
+literal first=3 second=0 third=1 start=41 available=1 error=EndOfStreamException consumed=42 tail=0
+literal first=3 second=0 third=1 start=41 available=2 error=EndOfStreamException consumed=43 tail=0
+literal first=3 second=0 third=1 start=41 available=3 error=EndOfStreamException consumed=44 tail=0
+literal first=3 second=0 third=1 start=41 available=4 error=EndOfStreamException consumed=45 tail=0
+literal first=3 second=0 third=1 start=41 available=5 error=EndOfStreamException consumed=46 tail=0
+literal first=3 second=0 third=1 start=41 available=6 error=EndOfStreamException consumed=47 tail=0
+literal first=3 second=0 third=1 start=41 available=7 error=EndOfStreamException consumed=48 tail=0
+literal first=3 second=0 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=41 consumed=65 tail=0
+literal first=3 second=0 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=41 consumed=65 tail=2
+literal first=3 second=0 third=3 start=41 available=0 error=EndOfStreamException consumed=41 tail=0
+literal first=3 second=0 third=3 start=41 available=1 error=EndOfStreamException consumed=42 tail=0
+literal first=3 second=0 third=3 start=41 available=2 error=EndOfStreamException consumed=43 tail=0
+literal first=3 second=0 third=3 start=41 available=3 error=EndOfStreamException consumed=44 tail=0
+literal first=3 second=0 third=3 start=41 available=4 error=EndOfStreamException consumed=45 tail=0
+literal first=3 second=0 third=3 start=41 available=5 error=EndOfStreamException consumed=46 tail=0
+literal first=3 second=0 third=3 start=41 available=6 error=EndOfStreamException consumed=47 tail=0
+literal first=3 second=0 third=3 start=41 available=7 error=EndOfStreamException consumed=48 tail=0
+literal first=3 second=0 third=3 start=41 available=8 error=EndOfStreamException consumed=49 tail=0
+literal first=3 second=0 third=3 start=41 available=9 error=EndOfStreamException consumed=50 tail=0
+literal first=3 second=0 third=3 start=41 available=10 error=EndOfStreamException consumed=51 tail=0
+literal first=3 second=0 third=3 start=41 available=11 error=EndOfStreamException consumed=52 tail=0
+literal first=3 second=0 third=3 start=41 available=12 error=EndOfStreamException consumed=53 tail=0
+literal first=3 second=0 third=3 start=41 available=13 error=EndOfStreamException consumed=54 tail=0
+literal first=3 second=0 third=3 start=41 available=14 error=EndOfStreamException consumed=55 tail=0
+literal first=3 second=0 third=3 start=41 available=15 error=EndOfStreamException consumed=56 tail=0
+literal first=3 second=0 third=3 start=41 available=16 error=EndOfStreamException consumed=57 tail=0
+literal first=3 second=0 third=3 start=41 available=17 error=EndOfStreamException consumed=58 tail=0
+literal first=3 second=0 third=3 start=41 available=18 error=EndOfStreamException consumed=59 tail=0
+literal first=3 second=0 third=3 start=41 available=19 error=EndOfStreamException consumed=60 tail=0
+literal first=3 second=0 third=3 start=41 available=20 error=EndOfStreamException consumed=61 tail=0
+literal first=3 second=0 third=3 start=41 available=21 error=EndOfStreamException consumed=62 tail=0
+literal first=3 second=0 third=3 start=41 available=22 error=EndOfStreamException consumed=63 tail=0
+literal first=3 second=0 third=3 start=41 available=23 error=EndOfStreamException consumed=64 tail=0
+literal first=3 second=1 third=0 points= start=49 consumed=49 tail=0
+literal first=3 second=1 third=0 points= start=49 consumed=49 tail=2
+literal first=3 second=1 third=1 points=66051,-66051 start=49 consumed=57 tail=0
+literal first=3 second=1 third=1 points=66051,-66051 start=49 consumed=57 tail=2
+literal first=3 second=1 third=1 start=49 available=0 error=EndOfStreamException consumed=49 tail=0
+literal first=3 second=1 third=1 start=49 available=1 error=EndOfStreamException consumed=50 tail=0
+literal first=3 second=1 third=1 start=49 available=2 error=EndOfStreamException consumed=51 tail=0
+literal first=3 second=1 third=1 start=49 available=3 error=EndOfStreamException consumed=52 tail=0
+literal first=3 second=1 third=1 start=49 available=4 error=EndOfStreamException consumed=53 tail=0
+literal first=3 second=1 third=1 start=49 available=5 error=EndOfStreamException consumed=54 tail=0
+literal first=3 second=1 third=1 start=49 available=6 error=EndOfStreamException consumed=55 tail=0
+literal first=3 second=1 third=1 start=49 available=7 error=EndOfStreamException consumed=56 tail=0
+literal first=3 second=1 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=49 consumed=73 tail=0
+literal first=3 second=1 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=49 consumed=73 tail=2
+literal first=3 second=1 third=3 start=49 available=0 error=EndOfStreamException consumed=49 tail=0
+literal first=3 second=1 third=3 start=49 available=1 error=EndOfStreamException consumed=50 tail=0
+literal first=3 second=1 third=3 start=49 available=2 error=EndOfStreamException consumed=51 tail=0
+literal first=3 second=1 third=3 start=49 available=3 error=EndOfStreamException consumed=52 tail=0
+literal first=3 second=1 third=3 start=49 available=4 error=EndOfStreamException consumed=53 tail=0
+literal first=3 second=1 third=3 start=49 available=5 error=EndOfStreamException consumed=54 tail=0
+literal first=3 second=1 third=3 start=49 available=6 error=EndOfStreamException consumed=55 tail=0
+literal first=3 second=1 third=3 start=49 available=7 error=EndOfStreamException consumed=56 tail=0
+literal first=3 second=1 third=3 start=49 available=8 error=EndOfStreamException consumed=57 tail=0
+literal first=3 second=1 third=3 start=49 available=9 error=EndOfStreamException consumed=58 tail=0
+literal first=3 second=1 third=3 start=49 available=10 error=EndOfStreamException consumed=59 tail=0
+literal first=3 second=1 third=3 start=49 available=11 error=EndOfStreamException consumed=60 tail=0
+literal first=3 second=1 third=3 start=49 available=12 error=EndOfStreamException consumed=61 tail=0
+literal first=3 second=1 third=3 start=49 available=13 error=EndOfStreamException consumed=62 tail=0
+literal first=3 second=1 third=3 start=49 available=14 error=EndOfStreamException consumed=63 tail=0
+literal first=3 second=1 third=3 start=49 available=15 error=EndOfStreamException consumed=64 tail=0
+literal first=3 second=1 third=3 start=49 available=16 error=EndOfStreamException consumed=65 tail=0
+literal first=3 second=1 third=3 start=49 available=17 error=EndOfStreamException consumed=66 tail=0
+literal first=3 second=1 third=3 start=49 available=18 error=EndOfStreamException consumed=67 tail=0
+literal first=3 second=1 third=3 start=49 available=19 error=EndOfStreamException consumed=68 tail=0
+literal first=3 second=1 third=3 start=49 available=20 error=EndOfStreamException consumed=69 tail=0
+literal first=3 second=1 third=3 start=49 available=21 error=EndOfStreamException consumed=70 tail=0
+literal first=3 second=1 third=3 start=49 available=22 error=EndOfStreamException consumed=71 tail=0
+literal first=3 second=1 third=3 start=49 available=23 error=EndOfStreamException consumed=72 tail=0
+literal first=3 second=3 third=0 points= start=65 consumed=65 tail=0
+literal first=3 second=3 third=0 points= start=65 consumed=65 tail=2
+literal first=3 second=3 third=1 points=66051,-66051 start=65 consumed=73 tail=0
+literal first=3 second=3 third=1 points=66051,-66051 start=65 consumed=73 tail=2
+literal first=3 second=3 third=1 start=65 available=0 error=EndOfStreamException consumed=65 tail=0
+literal first=3 second=3 third=1 start=65 available=1 error=EndOfStreamException consumed=66 tail=0
+literal first=3 second=3 third=1 start=65 available=2 error=EndOfStreamException consumed=67 tail=0
+literal first=3 second=3 third=1 start=65 available=3 error=EndOfStreamException consumed=68 tail=0
+literal first=3 second=3 third=1 start=65 available=4 error=EndOfStreamException consumed=69 tail=0
+literal first=3 second=3 third=1 start=65 available=5 error=EndOfStreamException consumed=70 tail=0
+literal first=3 second=3 third=1 start=65 available=6 error=EndOfStreamException consumed=71 tail=0
+literal first=3 second=3 third=1 start=65 available=7 error=EndOfStreamException consumed=72 tail=0
+literal first=3 second=3 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=65 consumed=89 tail=0
+literal first=3 second=3 third=3 points=-2147483648,2147483647;-1,0;16777217,-16777217 start=65 consumed=89 tail=2
+literal first=3 second=3 third=3 start=65 available=0 error=EndOfStreamException consumed=65 tail=0
+literal first=3 second=3 third=3 start=65 available=1 error=EndOfStreamException consumed=66 tail=0
+literal first=3 second=3 third=3 start=65 available=2 error=EndOfStreamException consumed=67 tail=0
+literal first=3 second=3 third=3 start=65 available=3 error=EndOfStreamException consumed=68 tail=0
+literal first=3 second=3 third=3 start=65 available=4 error=EndOfStreamException consumed=69 tail=0
+literal first=3 second=3 third=3 start=65 available=5 error=EndOfStreamException consumed=70 tail=0
+literal first=3 second=3 third=3 start=65 available=6 error=EndOfStreamException consumed=71 tail=0
+literal first=3 second=3 third=3 start=65 available=7 error=EndOfStreamException consumed=72 tail=0
+literal first=3 second=3 third=3 start=65 available=8 error=EndOfStreamException consumed=73 tail=0
+literal first=3 second=3 third=3 start=65 available=9 error=EndOfStreamException consumed=74 tail=0
+literal first=3 second=3 third=3 start=65 available=10 error=EndOfStreamException consumed=75 tail=0
+literal first=3 second=3 third=3 start=65 available=11 error=EndOfStreamException consumed=76 tail=0
+literal first=3 second=3 third=3 start=65 available=12 error=EndOfStreamException consumed=77 tail=0
+literal first=3 second=3 third=3 start=65 available=13 error=EndOfStreamException consumed=78 tail=0
+literal first=3 second=3 third=3 start=65 available=14 error=EndOfStreamException consumed=79 tail=0
+literal first=3 second=3 third=3 start=65 available=15 error=EndOfStreamException consumed=80 tail=0
+literal first=3 second=3 third=3 start=65 available=16 error=EndOfStreamException consumed=81 tail=0
+literal first=3 second=3 third=3 start=65 available=17 error=EndOfStreamException consumed=82 tail=0
+literal first=3 second=3 third=3 start=65 available=18 error=EndOfStreamException consumed=83 tail=0
+literal first=3 second=3 third=3 start=65 available=19 error=EndOfStreamException consumed=84 tail=0
+literal first=3 second=3 third=3 start=65 available=20 error=EndOfStreamException consumed=85 tail=0
+literal first=3 second=3 third=3 start=65 available=21 error=EndOfStreamException consumed=86 tail=0
+literal first=3 second=3 third=3 start=65 available=22 error=EndOfStreamException consumed=87 tail=0
+literal first=3 second=3 third=3 start=65 available=23 error=EndOfStreamException consumed=88 tail=0

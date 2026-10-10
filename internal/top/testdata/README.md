@@ -1035,3 +1035,68 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 ```
 
 Frozen stdout is protected from text normalization; never regenerate expected values using Go.
+
+## P04c11 third Polygon points and original scalar probe, 2026-10-10
+
+The separate [third-points probe](../../../scripts/reference-plan-third-polygon-points-probe.cs)
+uses original table/Mapping.Read methods and FileReader's BinaryReader, then
+first/second Polygon scalar fields, following marker/count and third signed X/Y
+pairs only. No Drawing.Read/Polygon.Read, third color, geometry, GUI or TOP write.
+The unchanged pinned helper's third brown Polygon has the ordered points
+`(-2000,-2000)`, `(-1500,-1000)`, `(-500,-1500)` at `[211,235)`.
+Full/exact streams in pixel modes 5/10 confirm consumed 235, full-file tail 445.
+All 24 partial-point lengths throw EndOfStreamException after consuming the
+available bytes. Go instead returns an empty result and the point-table start.
+
+Independent literal streams cover zero/one/three points in each of all three
+tables; first color 129 and second color 255. Literal point values are
+`(66051,-66051)`, `(Int32.MinValue,Int32.MaxValue)`, `(-1,0)` and
+`(16777217,-16777217)`. Every complete stream is read with exact and FF 80 tails;
+every partial third-point length is also read. Literal third-point starts are
+`17 + 8 * (first + second)`. All **397 exact CRLF rows** (54 successful literals,
+288 partial literals, 52 fixture reads and three environment lines) match an
+independently constructed literal oracle byte-for-byte; native exit 0, empty
+stderr. No Go-generated oracle or regenerated earlier evidence.
+
+After the analysis map, inspected Polygon.Read's X/Y ReadInt32 at IL_0041/IL_004e
+and assignments at IL_0064/IL_0079, and Polygon.Write's X/Y Write(int32) at
+IL_003e/IL_005b. Allocation, derived rectangle and color remain outside this
+reader. JKTZ's signed point decoding was reviewed; aggregate budgets and color
+restriction remain outside this contract. Scalar evidence does not establish
+full native drawing/export compatibility.
+
+Environment: macOS arm64, Wine Staging 11.7, original assembly 1.3.7.0,
+Microsoft .NET x86 runtime 2.0.50727.42. Compilation produced the usable EXE
+without diagnostics; only its two identified lingering compiler/start processes
+were stopped after successful readback. Wine's server socket required execution
+outside the sandbox. Optional tools remain separate from application/CI dependencies.
+
+| New evidence | SHA-256 |
+| --- | --- |
+| `scripts/reference-plan-third-polygon-points-probe.cs` | `1bcfd5ae8f59ff7c4dc5dcfd39dafe1b5a6de7e50e22482bbf7b17cea80e58e9` |
+| `native-plan-third-polygon-points-read.txt` | `345ffb288789b2f2c7acd561518475504b9ee2f5b531a28509608de5697b7518` |
+| Optional compiled probe (`build/reference-plan-third-polygon-points-probe.exe`) | `0d8c53f8103553b75788345f2602d58d07a96a98d7a96331141c12a85bb72efb` |
+
+Drawing.cs SHA-256 remains `c07a9f255cf372cbcc2a3ecd2a31b0f1c959325749fd9155d8fd9a5649f817e7`,
+Polygon.cs `63d57a5200116e9a4acaadddecec5a1381ca8173544eddafdc14d07e29237fe2`,
+complete IL `ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76`.
+The helper read from its pinned Git object matches
+`ae1f32a1034bbd95a59e97db47e887fabb30b06eabe55a960c9c5ebf9090d005`.
+Original EXE/runtime, C#/IL, TOP inputs and all earlier probes/stdout remain
+byte-for-byte unchanged against `build/p04c11-preservation.json`.
+
+Actual optional commands run from the repository root:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-plan-third-polygon-points-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-plan-third-polygon-points-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-plan-third-polygon-points-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-plan-third-polygon-points-read.txt 2>build/native-plan-third-polygon-points-read.err
+```
+
+Frozen stdout is protected from text normalization; never regenerate expectations using Go.
