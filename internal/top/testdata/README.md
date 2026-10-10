@@ -718,3 +718,73 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 
 Frozen stdout is protected from text normalization. Compare future native
 stdout to this evidence; never regenerate expectations from Go.
+
+## P04c6 second Polygon count and original scalar probe, 2026-10-10
+
+The separate [second-count probe](../../../scripts/reference-plan-second-polygon-count-probe.cs)
+uses original table/Mapping.Read methods and the BinaryReader held by original
+FileReader. It reads the first Polygon's pinned scalars, next marker 1, and one
+signed Int32, stopping before second points/color. No Drawing.Read/Polygon.Read,
+GUI, TOP writer, large point allocation or Go oracle participates.
+
+The unchanged hash-verified pinned helper's Drawings/Append methods establish
+three points in the second gray Polygon. Format layout puts its count at
+`[177,181)`; fresh native full/exact streams confirm count 3, consumed 181 and
+full-file tail 499 in pixel modes 5/10. Every 0–3-byte incomplete count throws
+EndOfStreamException after consuming available bytes. Go returns an empty result
+and its stable count-field start, preserving inherited strict error policy.
+
+Independent zero/one/three-first-point literal streams confirm second counts
+0, 1, 3, 66051, 1,000,000, 1,000,001, Int32.MaxValue, -1, Int32.MinValue and
+-66051, with exact prefixes and arbitrary FF 80 tails. They consume exactly four
+bytes at starts 7/15/31, without second-point allocation or color. Each literal
+first-point case also tests all four count truncations. Scalar native ReadInt32
+accepts all signed values; Go rejects negative/above-bound counts. These are
+scalar observations, not full native Polygon/drawing/export acceptance.
+
+The 60 successful literals, 12 truncated literals, 12 fixture calls and three
+environment lines produce **87 exact CRLF stdout rows**, all independently
+checked against literal expected values and positions. Final probe exit was 0
+and stderr empty. Environment: macOS arm64, Wine Staging 11.7, original assembly
+1.3.7.0, Microsoft .NET x86 2.0.50727.42. Compilation produced the usable
+executable without diagnostics; only its two identified lingering compiler/start
+processes were stopped after successful readback. Native commands are optional
+evidence tools, not application or CI dependencies.
+
+Inspected the analysis map, Drawing.Read (RVA 0x10a30), Polygon.Read (0xc4b8)
+and Polygon.Write (0xc350), with matching IL. Next ReadByte is IL_00c3;
+marker 1 dispatches Polygon.Read, whose signed ReadInt32 at IL_0007 precedes
+newarr at IL_000f. Write emits marker 1 then Int32 length at IL_001c. Second
+allocation/payload behavior is documented from C#/IL and was not executed.
+
+Original EXE/runtime, C#/IL, helper, source TOP fixtures and every earlier
+probe/stdout remain byte-for-byte unchanged, checked before and after. Polygon
+C# remains 63d57a5200116e9a4acaadddecec5a1381ca8173544eddafdc14d07e29237fe2;
+Drawing remains c07a9f255cf372cbcc2a3ecd2a31b0f1c959325749fd9155d8fd9a5649f817e7;
+IL remains ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76;
+helper remains ae1f32a1034bbd95a59e97db47e887fabb30b06eabe55a960c9c5ebf9090d005.
+Earlier JKTZ point-byte preflight/full drawing reads and aggregate budgets remain
+outside this count-only prefix; this increment reuses no additional parser code.
+
+| New evidence | SHA-256 |
+| --- | --- |
+| `scripts/reference-plan-second-polygon-count-probe.cs` | `a89deebc9013990defa93fa867f42ae4f7f2c6c89fe23f0f4c2d2cfac943e22d` |
+| `native-plan-second-polygon-count-read.txt` | `ec79176c505408103c1043763cfa18b144ae4b903edc454630a3dcc5a94eb64b` |
+| `Optional compiled probe (build/reference-plan-second-polygon-count-probe.exe)` | `5b19e07f02a37649c4c54dc0f6815d5718ff93567d046c89a992e080674e37a0` |
+
+Actual optional commands run from the repository root:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-plan-second-polygon-count-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-plan-second-polygon-count-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-plan-second-polygon-count-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-plan-second-polygon-count-read.txt 2>build/native-plan-second-polygon-count-read.err
+```
+
+Frozen stdout is protected from text normalization. Compare future native
+stdout with this evidence; never regenerate expected values using Go.

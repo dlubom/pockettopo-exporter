@@ -5,9 +5,9 @@ formats, based on the PocketTopo 1.372 decompilation.
 
 ## Status
 
-Implementation authorized on 2026-10-09. **P02, P03a, P03b, P03c1, P03c2, P04a, P04b, P04c1, P04c2, P04c3, P04c4 and P04c5 are complete**:
+Implementation authorized on 2026-10-09. **P02, P03a, P03b, P03c1, P03c2, P04a, P04b, P04c1, P04c2, P04c3, P04c4, P04c5 and P04c6 are complete**:
 minimal Go CLI and checks, immutable station IDs, and bounded v3 trip and
-measurement/reference/overview/plan-mapping/first-marker/Polygon-count/Polygon-points/Polygon-color/next-marker prefix readers with raw fields, source offsets,
+measurement/reference/overview/plan-mapping/first-marker/Polygon-count/Polygon-points/Polygon-color/next-marker/second-Polygon-count prefix readers with raw fields, source offsets,
 copied records and explicit malformed-input errors. All earlier contracts remain intact.
 Native export support is not yet implemented or validated.
 
@@ -42,12 +42,13 @@ Confirmed priorities:
   push were subsequently authorized for `dlubom/pockettopo-exporter`; releases
   remain out of scope. P02 adds no exporter framework.
 
-**Next ready implementation PBI: P04c6 — second plan Polygon point count only.** See the
+**Next ready implementation PBI: P04c7 — second plan Polygon vertices only.** See the
 bounded acceptance contract below. P03b stops after trips, P03c1 after
 measurements, P03c2 after references, P04a after the overview mapping and
 P04b after the plan mapping, P04c1 after its first marker byte and P04c2
 after the first Polygon point count, P04c3 after its raw vertices and P04c4
-after its raw color and P04c5 after the next marker byte; each leaves
+after its raw color, P04c5 after the next marker byte and P04c6 after the
+second Polygon count; each leaves
 the remaining tail unparsed.
 
 ## Reference material
@@ -408,7 +409,7 @@ From the repository root:
 bash scripts/tools.sh                 # download/build pinned development tools
 bash scripts/check.sh                 # format check, vet, Staticcheck, race tests,
                                       # exact >=95% coverage and boundary controls, build, CLI smoke
-bash scripts/mutation.sh              # >=90% Gremlins killed; station/trip/measurement/reference/overview/plan mapping/marker/count/point/color/next-marker faults;
+bash scripts/mutation.sh              # >=90% Gremlins killed; station/trip/measurement/reference/overview/plan mapping/marker/count/point/color/next-marker/second-count faults;
                                       # reject incomplete/empty/invalid runs
 bash scripts/mutation-trial.sh        # weak-test, build/setup-error controls,
                                       # macOS/Linux
@@ -595,7 +596,7 @@ Conversation history must not be required to reconstruct a critical decision.
 
 ### Proposed sequence
 
-P00 decisions needed to start, P02, P03a–P03c2 and P04a/P04b/P04c1/P04c2/P04c3/P04c4/P04c5 are complete. P04 is split below so
+P00 decisions needed to start, P02, P03a–P03c2 and P04a/P04b/P04c1/P04c2/P04c3/P04c4/P04c5/P04c6 are complete. P04 is split below so
 the next chat can deliver one small implementation increment. Remaining rows are
 planned, not completed; refine each contract when its dependencies are ready.
 IDs describe this project only. R01–R07 are not scheduled for this handoff.
@@ -616,8 +617,9 @@ IDs describe this project only. R01–R07 are not scheduled for this handoff.
 | P04c3 | **Done:** first plan Polygon raw vertices only; stop before color, including zero points | P04c2 |
 | P04c4 | **Done:** first plan Polygon raw color byte only; stop before the next marker | P04c3 |
 | P04c5 | **Done:** next plan element marker byte after the first Polygon; stop before its payload or side mapping, even for 0 | P04c4 |
-| P04c6 | **Next / ready:** second plan Polygon signed Int32 point count only, when next marker is 1; stop before its vertices/color | P04c5 |
-| P04c7+ | Later small slices: second Polygon vertices/color, subsequent markers, XSection payload, plan termination, side mapping/elements, then complete-file/unsupported-content accounting; refine separately | P04c6 |
+| P04c6 | **Done:** second plan Polygon signed Int32 point count only, when next marker is 1; stop before its vertices/color | P04c5 |
+| P04c7 | **Next / ready:** second Polygon raw vertices only; stop before its color, including zero points | P04c6 |
+| P04c8+ | Later small slices: second Polygon color, subsequent markers, XSection payload, plan termination, side mapping/elements, then complete-file/unsupported-content accounting; refine separately | P04c7 |
 | P05 | Reproduce isolated-input native text export; native golden cases for units, flags, comments and record order | P03c2, P04; required native update behavior understood |
 | P06 | Reproduce fixed-point angles, grouping and average directions with original-program evidence | P03c2 |
 | P07 | Reproduce reference placement and plan geometry, then extended projection and closure as separately reviewed slices | P06 |
@@ -2554,13 +2556,13 @@ complete mutation scripts; all three platforms run ordinary checks. Independent
 review and the exact pushed SHA/green CI are verified in the chat handoff.
 P04c5 stops here; no second payload or later drawing/export work is implemented.
 
-## Next ready PBI: P04c6 — second plan Polygon point count only
+## Completed PBI: P04c6 — second plan Polygon point count only
 
 **Outcome/dependencies:** a separate immutable prefix extends P04c5 by one
-signed little-endian Int32 count only when `NextMarkerRaw() == 1`. Requires a new
-implementation request. Preserve all earlier APIs, limits, errors, spans, copy
-contracts and stopping positions, including P04c5 success for every marker with
-no payload. No point allocation or vertices/color reading.
+signed little-endian Int32 count only when `NextMarkerRaw() == 1`. Implemented
+on 2026-10-10. Preserve all earlier APIs, limits, errors, spans, copy contracts
+and stopping positions, including P04c5 success for every marker with no payload.
+No second-point allocation or second vertices/color reading.
 
 **References:** analysis map, `Drawing.Read`/`Polygon.Read`/`Polygon.Write` and
 matching IL; unchanged helper's second plan Polygon and `api-drawings.top`.
@@ -2595,10 +2597,143 @@ side mapping/elements, full-file validation, geometry, CLI and exporters.
 preserved evidence, commit/push, exact-SHA green CI and one next small PBI prompt.
 Stop after P04c6; do not implement its successor in the same chat.
 
+### Implemented second-count API and evidence (2026-10-10)
+
+`internal/top.ReadV3PlanSecondPolygonCountPrefix` and
+`ReadV3PlanSecondPolygonCountPrefixWithLimits` reuse the unchanged next-marker
+reader and `PolygonCountLimits`. Only next marker 1 reaches `take(4,
+"plan.elements[1].point_count")`, decoded as signed little-endian Int32.
+`source.PlanSecondPolygonCountPrefix` retains every inherited accessor and adds
+`SecondPointCountRaw`; its offsets embed `PlanNextMarkerPrefixOffsets` and add
+`SecondPointCount`. `PointCountRaw` and `Points` still describe the first Polygon.
+Consumed bytes and inherited collections are copied; offset structs are values.
+
+Non-1 markers fail at `plan.elements[1].kind`, the next marker start, before
+count availability is checked. Missing/incomplete, negative and above-limit
+counts fail at `plan.elements[1].point_count`, its start, with `truncated`,
+`negative_count` and `resource_limit` respectively. Every failure returns an
+empty new result. Inherited validation, error precedence and limits remain
+unchanged. The existing point ceiling applies to each count separately, with
+zero and equality accepted; no aggregate budget is introduced. Exact prefixes
+with second counts 0 through 1,000,000 succeed without second points or color.
+The zero-table/zero-first-point prefix ends at 51; arbitrary tails remain unparsed.
+
+Inspected the analysis map, Drawing.Read/Polygon.Read/Polygon.Write and matching
+IL. Next marker ReadByte is IL_00c3; marker 1 selects Polygon and calls its Read
+at IL_007f. Polygon.Read (RVA 0xc4b8) begins with signed ReadInt32 at IL_0007,
+then native newarr at IL_000f. Polygon.Write (RVA 0xc350) emits marker 1 before
+its Int32 length at IL_001c. P04c6 stops before second-point allocation/preflight,
+vertices, derived bounds or color. Native allocation behavior is source evidence,
+not a full native Polygon execution.
+
+The unchanged pinned helper's second gray plan Polygon has three points;
+format layout independently locates its count at `[177,181)`. The separate
+[original scalar probe](scripts/reference-plan-second-polygon-count-probe.cs)
+uses original table/Mapping.Read methods and FileReader's BinaryReader. It reads
+first Polygon scalars, next marker 1, then exactly one second count. No drawing
+reader, GUI, TOP write or Go-generated oracle participates. Actual native results,
+hashes and reproduction commands are recorded in
+[fixture provenance](internal/top/testdata/README.md).
+
+### P04c6 verification and mutation scope
+
+Go 1.26.3 darwin/arm64, Staticcheck v0.8.1, Gremlins v0.6.0:
+
+- `bash scripts/check.sh`: passed formatting, vet, Staticcheck, exact coverage
+  controls, uncached race tests, build and unchanged CLI smoke. **100% statement
+  coverage** in each implemented package. Tests cover signed/endian/count/limit
+  boundaries, every count truncation, all next markers, zero/one/multiple first
+  points, variable earlier tables, inherited limits/errors/stops, copied fields/
+  records/spans and native positions. Allocation counts for second counts 0 and
+  1,000,000 are equal with no second payload; the two ceilings apply separately.
+- `bash scripts/mutation.sh`: the complete integrated campaign passed with
+  **219/219 Gremlins mutants killed** (nine new second-count reader mutants and
+  the unchanged 210 earlier mutants), with no lived, uncovered, invalid, skipped
+  or timed-out results. The same run killed **376/376 explicit mutants**: the
+  unchanged 326 earlier faults and **50 new second-count faults**. New faults
+  cover dispatch/count/endian/signed preservation, separate inclusive budgets,
+  inherited fields/spans, limits/error precedence/contexts, input/output copies,
+  empty failures, input mutation and second-point/color/tail overreads. Each
+  compiled and failed a named behavioral test; setup errors and timeouts are
+  rejected. No earlier scopes, gates or exclusions changed.
+- `bash scripts/mutation-trial.sh`: passed. Weak ordinary tests pass and both CLI
+  mutants live; the shared gate rejects them with exit 1. Compiler/setup-error
+  controls return NOT VIABLE exit 2, never behavioral kills.
+- `GOCACHE="$PWD/.cache/go-build" GOTOOLCHAIN=local go test ./internal/top
+  -run '^$' -fuzz '^FuzzReadV3PlanSecondPolygonCountPrefix$' -fuzztime=10s
+  -parallel=2`: passed, **1,069,772 executions**. Bounds: 4096 input bytes,
+  32 earlier records/first points/second count, 256 comment bytes. Properties
+  check deterministic values/errors, unchanged input, empty failures, inherited
+  fields/spans/validation, dispatch/count precedence and exact four-byte
+  consumed-prefix/tail accounting. Ordinary checks execute every fuzz seed.
+
+Independent read-only review found no Critical, Important or Minor issues.
+The reviewer independently passed fresh `go test -count=1 ./...` in isolated
+temporary caches, checked C#/IL and the helper, all 87 native rows and CRLF,
+new source/stdout/binary hashes, measured Go blobs, the 50-fault script and
+its report, preserved evidence, API contracts and the separate P04c7 scope.
+Only four planned existing files differ in the 153-path source/evidence
+snapshot: README, fixture provenance, `.gitattributes` and mutation orchestration;
+all 149 other paths remain unchanged. Original EXE/runtime, C#/IL, helper,
+TOP fixtures and every prior probe/stdout remain byte-for-byte intact.
+
+Measured Git blobs: `82e0dd8a6811d030e4e893bb4a6a54f92d2066f0` (reader), `cad0241c699e588e4636110f5b39dae50e1c5199` (reader tests),
+`550ae29899976acd51762a94f2f95b9489b5709d` (model), `fbdda2708ed28b17a5d7a3f733cbaeb7a84d37f2` (model tests).
+
+Reports regenerate in `coverage.out`, `mutation.json`,
+`build/plan-second-polygon-count-mutation.json` and all earlier reports.
+All three CI platforms run ordinary checks; Linux runs both complete mutation
+commands including the second-count scope. Exact pushed SHA and green hosted
+CI are verified in the chat handoff; README belongs to that commit.
+P04c6 stops here; second vertices/color and later drawing/export work remain
+unimplemented.
+
+## Next ready PBI: P04c7 — second plan Polygon vertices only
+
+**Outcome/dependencies:** a separate immutable prefix extends P04c6 through
+only the second Polygon's ordered raw point table. Requires a new implementation
+request. Preserve every earlier API, limit, raw field, record, span, error
+precedence, copy contract and stopping position. P04c6 still accepts its full
+count range with no second-point bytes.
+
+**References:** analysis map, Polygon.Read/Write signed X/Y order and matching
+IL; unchanged pinned helper and `api-drawings.top`. The second gray Polygon's
+points are `(-4000,-2000)`, `(-3500,-1000)`, `(-2500,-1500)`, table `[181,205)`.
+Confirm through a new bounded original scalar probe stopping before second color;
+preserve all earlier evidence and invoke no drawing readers, GUI or TOP writes.
+
+**Bounded acceptance contract:**
+
+- Reuse `ReadV3PlanSecondPolygonCountPrefixWithLimits`, `PolygonCountLimits`
+  and `source.PolygonPoint`, adding no limit. Add copied `SecondPoints` and a
+  separate `SecondPoints` table span; existing `Points` continues to mean first
+  Polygon points. Preserve ordered signed little-endian Int32 X/Y and each
+  record/X/Y span without units, float conversion or geometry.
+- Before allocating second points, require `second_count <= remaining_bytes / 8`.
+  Failed preflight returns `truncated` at `plan.elements[1].points`, the second
+  count end. Every failure returns an empty new result; inherited dispatch,
+  negative/resource/limit/error precedence remains unchanged.
+- Stop immediately after second vertices, before color. Zero second points
+  succeed at the P04c6 count end without another byte. Exact prefixes and
+  arbitrary tails succeed within inherited input bounds. Require no second
+  color, next marker, side mapping or trailer; introduce no aggregate budget.
+- Test zero/one/multiple points, signed/endian boundaries/order, every required
+  byte, inclusive/lower limits, inherited errors/stops, variable earlier tables,
+  copies/spans and pinned native position. Add bounded fuzzing and explicit
+  coordinate/order/span/copy/preflight/overread mutations.
+
+**Non-goals:** second color, element loops, XSections, plan completion, side
+mapping/elements, full-file validation, geometry, CLI and exporters.
+
+**Required checks/handoff:** all three existing check scripts, >=95% coverage,
+>=90% killed mutations with every survivor reviewed, independent review, README,
+preserved evidence, commit/push, exact-SHA green CI and one next small PBI prompt.
+Stop after P04c7; do not implement its successor in the same chat.
+
 ## Open issues and deferred work
 
-- The TOP readers validate only the v3 trip/measurement/reference/overview/plan-mapping/first-marker/Polygon-count/Polygon-points/Polygon-color/next-marker prefixes.
-  Drawing elements and side mappings, complete-file validation and native exporters remain
+- The TOP readers validate only the v3 trip/measurement/reference/overview/plan-mapping/first-marker/Polygon-count/Polygon-points/Polygon-color/next-marker/second-Polygon-count prefixes.
+  Later drawing payloads and side mappings, complete-file validation and native exporters remain
   unimplemented; the CLI still accepts only help/version.
 - Native measurement arithmetic/export formatting fidelity remains unproven in Go.
 - Gremlins is accepted only for the measured small scope; expand and reassess
@@ -2606,7 +2741,7 @@ Stop after P04c6; do not implement its successor in the same chat.
   mutants rather than silently excluding them.
 - The full P01 capability/fixture matrix, older TOP versions, corpus runs,
   release packaging and optional R01–R07 work remain deferred.
-- Future full compatibility claims still require native evidence; the P02/P03a/P03b/P03c1/P03c2/P04a/P04b/P04c1/P04c2/P04c3/P04c4/P04c5
+- Future full compatibility claims still require native evidence; the P02/P03a/P03b/P03c1/P03c2/P04a/P04b/P04c1/P04c2/P04c3/P04c4/P04c5/P04c6
   checks validate only implemented behavior and their recorded reference cases.
 
 ## Research references
