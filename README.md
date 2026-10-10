@@ -3241,9 +3241,9 @@ package, a separate 5s bounded fuzz run (**464,185 executions**), shell/diff
 checks, C#/IL and pinned-helper order, all 231 native CRLF rows/new hashes and
 all 57 uniquely targeted fail-closed mutations. The 128-entry preservation
 snapshot covers all 122 earlier tracked paths plus six reference/runtime files:
-124 entries are unchanged, with only README, fixture provenance, mutation
-orchestration and `.gitattributes` changed. All earlier source and evidence
-remain byte-for-byte intact. Native full drawing/export compatibility is outside
+123 entries are unchanged, with only README, fixture provenance, mutation
+orchestration, `.gitattributes` and the Linux CI job deadline changed. All earlier
+source and evidence remain byte-for-byte intact. Native full drawing/export compatibility is outside
 this scalar contract.
 
 Measured Git blobs: `e7223bb8ddc7c7020b9e7af4665d56d0e552de4c` (reader),
@@ -3254,8 +3254,15 @@ Measured Git blobs: `e7223bb8ddc7c7020b9e7af4665d56d0e552de4c` (reader),
 Reports regenerate in `coverage.out`, `mutation.json`,
 `build/plan-third-polygon-count-mutation.json` and all earlier reports.
 Three-platform CI repeats ordinary checks; Linux runs both complete mutation
-commands including the new scope. Exact pushed SHA and green CI are verified
-in the chat handoff. P04c10 stops before third vertices/color.
+commands including the new scope. The first hosted run completed all 252
+Gremlins faults and all 514 earlier explicit faults, then its 25-minute job
+deadline canceled the new scope's baseline before any new explicit faults.
+This incomplete run was not accepted. Linux now has a bounded 40-minute job
+deadline for the cumulative campaign; Windows/macOS retain 25 minutes. Mutation
+thresholds, fail-closed gates and individual test timeouts are unchanged. The
+follow-up deadline change was independently reviewed; all measured Go blobs
+above and native evidence are unchanged. Exact pushed SHA and green CI are
+verified in the chat handoff. P04c10 stops before third vertices/color.
 
 ## Next ready PBI: P04c11 — third plan Polygon raw points only
 
