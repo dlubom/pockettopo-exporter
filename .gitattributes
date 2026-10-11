@@ -23,3 +23,5 @@ internal/top/testdata/native-plan-third-next-marker-read.txt -text
 internal/top/testdata/native-plan-polygons-read.txt -text whitespace=cr-at-eol
 
 internal/top/testdata/native-plan-elements-read.txt -text whitespace=cr-at-eol
+
+internal/top/testdata/native-side-mapping-read.txt -text whitespace=cr-at-eol

@@ -1325,3 +1325,61 @@ that task's compiler and recovering abandoned cache space, recompiled the probe;
 its resulting assembly executed successfully with the exact frozen transcript.
 Wine's local socket required sandbox escalation. Native execution is optional
 for CI; the frozen independently asserted transcript is checked on every platform.
+
+## P04c16 complete side mapping native evidence (2026-10-11)
+
+After the analysis map, inspected DataSet.Read, Drawing.Read and Mapping.Read/Write
+in C# and IL. DataSet reads overview, outline, then sideview; Drawing.Read begins
+with Mapping.Read for v3. Mapping.Read calls signed ReadInt32 at IL_0008, IL_0019
+and IL_002a, then divides only the stored scale by PixPerMm at IL_0034.
+Go retains stored scale bits without division. JKTZ's parser confirms the layout
+but restricts scale to 10..50000; this restriction is not adopted.
+
+The new probe invokes original Drawing.Read (including mixed Polygon/XSection
+records) to establish the plan terminator, then original Mapping.Read only.
+It uses full/exact fixture copies and independently authored literal streams.
+Both normal and VGA pixel modes (5/10) are exercised. The pinned fixtures have
+side mappings [231,243) = (0,0,500) and [405,417) = (300,-400,500), leaving 5/263
+bytes unparsed. Literal plans have 0/1/4/17 mixed records, distinct origins,
+signed Int32 extremes, zero/negative scale and every missing side-field byte.
+
+All **210 exact CRLF rows** match independent expectations in
+`native_side_mapping_evidence_test.go`. Native execution exited 0 with empty
+stderr. Native partial Int32 reads consume the available bytes before raising
+EndOfStreamException; the Go reader instead reports the missing field's start
+and exposes no partial result. No native unknown-marker policy is adopted:
+P04c16 preserves P04c15's explicit unsupported stop without side reads.
+Earlier evidence remains unchanged. No geometry or native export claim.
+
+| Evidence | SHA-256 |
+| --- | --- |
+| `scripts/reference-side-mapping-probe.cs` | `b17cb37abf85ce9ec739dc38e139f10ff0a902c934f6ac3271a24a87b708ba68` |
+| `internal/top/testdata/native-side-mapping-read.txt` | `50795958fb0af4a597e4eb627fa9416cf07b6627a9b04a3904882128525ec4a9` |
+| `internal/top/testdata/api-references.top` | `9034cf5e52f92a8713c7823bd9be52bdb50b294966a9e9713c538b937b7feb5f` |
+| `internal/top/testdata/api-drawings.top` | `4a494ead03cade750f670d50aa38661abda9b3e1f131d67f27a252982752c2a5` |
+| `../pockettopo-decompilation/decompiled/csharp/PocketTopo/Mapping.cs` | `364d6d34cab642863ea92be7210afe652147ff509d9eba0cd35e319837d04e65` |
+| `../pockettopo-decompilation/decompiled/csharp/PocketTopo/Drawing.cs` | `c07a9f255cf372cbcc2a3ecd2a31b0f1c959325749fd9155d8fd9a5649f817e7` |
+| `../pockettopo-decompilation/decompiled/csharp/PocketTopo/DataSet.cs` | `18dc45a572a7fcd53c18eef93d5195ab3778a755485674237c07d7923a5d9940` |
+| `../pockettopo-decompilation/decompiled/PocketTopo.il` | `ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76` |
+| `/Users/dariuszlubomski/.local/share/pockettopo/app/PocketTopoV1372/PocketTopo.exe` | `048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371` |
+
+Actual optional commands (repository root; existing Wine/.NET runtime):
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-side-mapping-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-side-mapping-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-side-mapping-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-references.top' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-side-mapping-read.txt 2>build/native-side-mapping-read.err
+```
+
+Wine execution required sandbox escalation for its local socket. The compiler
+produced the executable but its Wine process remained running; stopped only that
+task's compiler processes after the generated probe executed successfully. Native
+execution is optional for CI; the independently asserted frozen transcript runs
+everywhere.

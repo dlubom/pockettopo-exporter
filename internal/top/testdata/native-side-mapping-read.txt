@@ -1,0 +1,210 @@
+many=0-tail start=13 raw=-66051,16777217,-501 native=-66051,16777217,-100 pixels=5 consumed=25 tail=2
+many=0-exact start=13 raw=-66051,16777217,-501 native=-66051,16777217,-100 pixels=5 consumed=25 tail=0
+many=0-cut=0 start=13 error=EndOfStreamException pixels=5 consumed=13 tail=0
+many=0-cut=1 start=13 error=EndOfStreamException pixels=5 consumed=14 tail=0
+many=0-cut=2 start=13 error=EndOfStreamException pixels=5 consumed=15 tail=0
+many=0-cut=3 start=13 error=EndOfStreamException pixels=5 consumed=16 tail=0
+many=0-cut=4 start=13 error=EndOfStreamException pixels=5 consumed=17 tail=0
+many=0-cut=5 start=13 error=EndOfStreamException pixels=5 consumed=18 tail=0
+many=0-cut=6 start=13 error=EndOfStreamException pixels=5 consumed=19 tail=0
+many=0-cut=7 start=13 error=EndOfStreamException pixels=5 consumed=20 tail=0
+many=0-cut=8 start=13 error=EndOfStreamException pixels=5 consumed=21 tail=0
+many=0-cut=9 start=13 error=EndOfStreamException pixels=5 consumed=22 tail=0
+many=0-cut=10 start=13 error=EndOfStreamException pixels=5 consumed=23 tail=0
+many=0-cut=11 start=13 error=EndOfStreamException pixels=5 consumed=24 tail=0
+many=1-tail start=27 raw=-66051,16777217,-501 native=-66051,16777217,-100 pixels=5 consumed=39 tail=2
+many=1-exact start=27 raw=-66051,16777217,-501 native=-66051,16777217,-100 pixels=5 consumed=39 tail=0
+many=1-cut=0 start=27 error=EndOfStreamException pixels=5 consumed=27 tail=0
+many=1-cut=1 start=27 error=EndOfStreamException pixels=5 consumed=28 tail=0
+many=1-cut=2 start=27 error=EndOfStreamException pixels=5 consumed=29 tail=0
+many=1-cut=3 start=27 error=EndOfStreamException pixels=5 consumed=30 tail=0
+many=1-cut=4 start=27 error=EndOfStreamException pixels=5 consumed=31 tail=0
+many=1-cut=5 start=27 error=EndOfStreamException pixels=5 consumed=32 tail=0
+many=1-cut=6 start=27 error=EndOfStreamException pixels=5 consumed=33 tail=0
+many=1-cut=7 start=27 error=EndOfStreamException pixels=5 consumed=34 tail=0
+many=1-cut=8 start=27 error=EndOfStreamException pixels=5 consumed=35 tail=0
+many=1-cut=9 start=27 error=EndOfStreamException pixels=5 consumed=36 tail=0
+many=1-cut=10 start=27 error=EndOfStreamException pixels=5 consumed=37 tail=0
+many=1-cut=11 start=27 error=EndOfStreamException pixels=5 consumed=38 tail=0
+many=4-tail start=75 raw=-66051,16777217,-501 native=-66051,16777217,-100 pixels=5 consumed=87 tail=2
+many=4-exact start=75 raw=-66051,16777217,-501 native=-66051,16777217,-100 pixels=5 consumed=87 tail=0
+many=4-cut=0 start=75 error=EndOfStreamException pixels=5 consumed=75 tail=0
+many=4-cut=1 start=75 error=EndOfStreamException pixels=5 consumed=76 tail=0
+many=4-cut=2 start=75 error=EndOfStreamException pixels=5 consumed=77 tail=0
+many=4-cut=3 start=75 error=EndOfStreamException pixels=5 consumed=78 tail=0
+many=4-cut=4 start=75 error=EndOfStreamException pixels=5 consumed=79 tail=0
+many=4-cut=5 start=75 error=EndOfStreamException pixels=5 consumed=80 tail=0
+many=4-cut=6 start=75 error=EndOfStreamException pixels=5 consumed=81 tail=0
+many=4-cut=7 start=75 error=EndOfStreamException pixels=5 consumed=82 tail=0
+many=4-cut=8 start=75 error=EndOfStreamException pixels=5 consumed=83 tail=0
+many=4-cut=9 start=75 error=EndOfStreamException pixels=5 consumed=84 tail=0
+many=4-cut=10 start=75 error=EndOfStreamException pixels=5 consumed=85 tail=0
+many=4-cut=11 start=75 error=EndOfStreamException pixels=5 consumed=86 tail=0
+many=17-tail start=275 raw=-66051,16777217,-501 native=-66051,16777217,-100 pixels=5 consumed=287 tail=2
+many=17-exact start=275 raw=-66051,16777217,-501 native=-66051,16777217,-100 pixels=5 consumed=287 tail=0
+many=17-cut=0 start=275 error=EndOfStreamException pixels=5 consumed=275 tail=0
+many=17-cut=1 start=275 error=EndOfStreamException pixels=5 consumed=276 tail=0
+many=17-cut=2 start=275 error=EndOfStreamException pixels=5 consumed=277 tail=0
+many=17-cut=3 start=275 error=EndOfStreamException pixels=5 consumed=278 tail=0
+many=17-cut=4 start=275 error=EndOfStreamException pixels=5 consumed=279 tail=0
+many=17-cut=5 start=275 error=EndOfStreamException pixels=5 consumed=280 tail=0
+many=17-cut=6 start=275 error=EndOfStreamException pixels=5 consumed=281 tail=0
+many=17-cut=7 start=275 error=EndOfStreamException pixels=5 consumed=282 tail=0
+many=17-cut=8 start=275 error=EndOfStreamException pixels=5 consumed=283 tail=0
+many=17-cut=9 start=275 error=EndOfStreamException pixels=5 consumed=284 tail=0
+many=17-cut=10 start=275 error=EndOfStreamException pixels=5 consumed=285 tail=0
+many=17-cut=11 start=275 error=EndOfStreamException pixels=5 consumed=286 tail=0
+field=0 value=-2147483648 start=75 raw=-2147483648,16777217,-501 native=-2147483648,16777217,-100 pixels=5 consumed=87 tail=2
+field=0 value=-16777217 start=75 raw=-16777217,16777217,-501 native=-16777217,16777217,-100 pixels=5 consumed=87 tail=2
+field=0 value=-501 start=75 raw=-501,16777217,-501 native=-501,16777217,-100 pixels=5 consumed=87 tail=2
+field=0 value=-11 start=75 raw=-11,16777217,-501 native=-11,16777217,-100 pixels=5 consumed=87 tail=2
+field=0 value=-5 start=75 raw=-5,16777217,-501 native=-5,16777217,-100 pixels=5 consumed=87 tail=2
+field=0 value=-1 start=75 raw=-1,16777217,-501 native=-1,16777217,-100 pixels=5 consumed=87 tail=2
+field=0 value=0 start=75 raw=0,16777217,-501 native=0,16777217,-100 pixels=5 consumed=87 tail=2
+field=0 value=1 start=75 raw=1,16777217,-501 native=1,16777217,-100 pixels=5 consumed=87 tail=2
+field=0 value=4 start=75 raw=4,16777217,-501 native=4,16777217,-100 pixels=5 consumed=87 tail=2
+field=0 value=5 start=75 raw=5,16777217,-501 native=5,16777217,-100 pixels=5 consumed=87 tail=2
+field=0 value=9 start=75 raw=9,16777217,-501 native=9,16777217,-100 pixels=5 consumed=87 tail=2
+field=0 value=10 start=75 raw=10,16777217,-501 native=10,16777217,-100 pixels=5 consumed=87 tail=2
+field=0 value=501 start=75 raw=501,16777217,-501 native=501,16777217,-100 pixels=5 consumed=87 tail=2
+field=0 value=16777217 start=75 raw=16777217,16777217,-501 native=16777217,16777217,-100 pixels=5 consumed=87 tail=2
+field=0 value=2147483647 start=75 raw=2147483647,16777217,-501 native=2147483647,16777217,-100 pixels=5 consumed=87 tail=2
+field=1 value=-2147483648 start=75 raw=-66051,-2147483648,-501 native=-66051,-2147483648,-100 pixels=5 consumed=87 tail=2
+field=1 value=-16777217 start=75 raw=-66051,-16777217,-501 native=-66051,-16777217,-100 pixels=5 consumed=87 tail=2
+field=1 value=-501 start=75 raw=-66051,-501,-501 native=-66051,-501,-100 pixels=5 consumed=87 tail=2
+field=1 value=-11 start=75 raw=-66051,-11,-501 native=-66051,-11,-100 pixels=5 consumed=87 tail=2
+field=1 value=-5 start=75 raw=-66051,-5,-501 native=-66051,-5,-100 pixels=5 consumed=87 tail=2
+field=1 value=-1 start=75 raw=-66051,-1,-501 native=-66051,-1,-100 pixels=5 consumed=87 tail=2
+field=1 value=0 start=75 raw=-66051,0,-501 native=-66051,0,-100 pixels=5 consumed=87 tail=2
+field=1 value=1 start=75 raw=-66051,1,-501 native=-66051,1,-100 pixels=5 consumed=87 tail=2
+field=1 value=4 start=75 raw=-66051,4,-501 native=-66051,4,-100 pixels=5 consumed=87 tail=2
+field=1 value=5 start=75 raw=-66051,5,-501 native=-66051,5,-100 pixels=5 consumed=87 tail=2
+field=1 value=9 start=75 raw=-66051,9,-501 native=-66051,9,-100 pixels=5 consumed=87 tail=2
+field=1 value=10 start=75 raw=-66051,10,-501 native=-66051,10,-100 pixels=5 consumed=87 tail=2
+field=1 value=501 start=75 raw=-66051,501,-501 native=-66051,501,-100 pixels=5 consumed=87 tail=2
+field=1 value=16777217 start=75 raw=-66051,16777217,-501 native=-66051,16777217,-100 pixels=5 consumed=87 tail=2
+field=1 value=2147483647 start=75 raw=-66051,2147483647,-501 native=-66051,2147483647,-100 pixels=5 consumed=87 tail=2
+field=2 value=-2147483648 start=75 raw=-66051,16777217,-2147483648 native=-66051,16777217,-429496729 pixels=5 consumed=87 tail=2
+field=2 value=-16777217 start=75 raw=-66051,16777217,-16777217 native=-66051,16777217,-3355443 pixels=5 consumed=87 tail=2
+field=2 value=-501 start=75 raw=-66051,16777217,-501 native=-66051,16777217,-100 pixels=5 consumed=87 tail=2
+field=2 value=-11 start=75 raw=-66051,16777217,-11 native=-66051,16777217,-2 pixels=5 consumed=87 tail=2
+field=2 value=-5 start=75 raw=-66051,16777217,-5 native=-66051,16777217,-1 pixels=5 consumed=87 tail=2
+field=2 value=-1 start=75 raw=-66051,16777217,-1 native=-66051,16777217,0 pixels=5 consumed=87 tail=2
+field=2 value=0 start=75 raw=-66051,16777217,0 native=-66051,16777217,0 pixels=5 consumed=87 tail=2
+field=2 value=1 start=75 raw=-66051,16777217,1 native=-66051,16777217,0 pixels=5 consumed=87 tail=2
+field=2 value=4 start=75 raw=-66051,16777217,4 native=-66051,16777217,0 pixels=5 consumed=87 tail=2
+field=2 value=5 start=75 raw=-66051,16777217,5 native=-66051,16777217,1 pixels=5 consumed=87 tail=2
+field=2 value=9 start=75 raw=-66051,16777217,9 native=-66051,16777217,1 pixels=5 consumed=87 tail=2
+field=2 value=10 start=75 raw=-66051,16777217,10 native=-66051,16777217,2 pixels=5 consumed=87 tail=2
+field=2 value=501 start=75 raw=-66051,16777217,501 native=-66051,16777217,100 pixels=5 consumed=87 tail=2
+field=2 value=16777217 start=75 raw=-66051,16777217,16777217 native=-66051,16777217,3355443 pixels=5 consumed=87 tail=2
+field=2 value=2147483647 start=75 raw=-66051,16777217,2147483647 native=-66051,16777217,429496729 pixels=5 consumed=87 tail=2
+references-full start=231 raw=0,0,500 native=0,0,100 pixels=5 consumed=243 tail=5
+references-exact start=231 raw=0,0,500 native=0,0,100 pixels=5 consumed=243 tail=0
+drawings-full start=405 raw=300,-400,500 native=300,-400,100 pixels=5 consumed=417 tail=263
+drawings-exact start=405 raw=300,-400,500 native=300,-400,100 pixels=5 consumed=417 tail=0
+many=0-tail start=13 raw=-66051,16777217,-501 native=-66051,16777217,-50 pixels=10 consumed=25 tail=2
+many=0-exact start=13 raw=-66051,16777217,-501 native=-66051,16777217,-50 pixels=10 consumed=25 tail=0
+many=0-cut=0 start=13 error=EndOfStreamException pixels=10 consumed=13 tail=0
+many=0-cut=1 start=13 error=EndOfStreamException pixels=10 consumed=14 tail=0
+many=0-cut=2 start=13 error=EndOfStreamException pixels=10 consumed=15 tail=0
+many=0-cut=3 start=13 error=EndOfStreamException pixels=10 consumed=16 tail=0
+many=0-cut=4 start=13 error=EndOfStreamException pixels=10 consumed=17 tail=0
+many=0-cut=5 start=13 error=EndOfStreamException pixels=10 consumed=18 tail=0
+many=0-cut=6 start=13 error=EndOfStreamException pixels=10 consumed=19 tail=0
+many=0-cut=7 start=13 error=EndOfStreamException pixels=10 consumed=20 tail=0
+many=0-cut=8 start=13 error=EndOfStreamException pixels=10 consumed=21 tail=0
+many=0-cut=9 start=13 error=EndOfStreamException pixels=10 consumed=22 tail=0
+many=0-cut=10 start=13 error=EndOfStreamException pixels=10 consumed=23 tail=0
+many=0-cut=11 start=13 error=EndOfStreamException pixels=10 consumed=24 tail=0
+many=1-tail start=27 raw=-66051,16777217,-501 native=-66051,16777217,-50 pixels=10 consumed=39 tail=2
+many=1-exact start=27 raw=-66051,16777217,-501 native=-66051,16777217,-50 pixels=10 consumed=39 tail=0
+many=1-cut=0 start=27 error=EndOfStreamException pixels=10 consumed=27 tail=0
+many=1-cut=1 start=27 error=EndOfStreamException pixels=10 consumed=28 tail=0
+many=1-cut=2 start=27 error=EndOfStreamException pixels=10 consumed=29 tail=0
+many=1-cut=3 start=27 error=EndOfStreamException pixels=10 consumed=30 tail=0
+many=1-cut=4 start=27 error=EndOfStreamException pixels=10 consumed=31 tail=0
+many=1-cut=5 start=27 error=EndOfStreamException pixels=10 consumed=32 tail=0
+many=1-cut=6 start=27 error=EndOfStreamException pixels=10 consumed=33 tail=0
+many=1-cut=7 start=27 error=EndOfStreamException pixels=10 consumed=34 tail=0
+many=1-cut=8 start=27 error=EndOfStreamException pixels=10 consumed=35 tail=0
+many=1-cut=9 start=27 error=EndOfStreamException pixels=10 consumed=36 tail=0
+many=1-cut=10 start=27 error=EndOfStreamException pixels=10 consumed=37 tail=0
+many=1-cut=11 start=27 error=EndOfStreamException pixels=10 consumed=38 tail=0
+many=4-tail start=75 raw=-66051,16777217,-501 native=-66051,16777217,-50 pixels=10 consumed=87 tail=2
+many=4-exact start=75 raw=-66051,16777217,-501 native=-66051,16777217,-50 pixels=10 consumed=87 tail=0
+many=4-cut=0 start=75 error=EndOfStreamException pixels=10 consumed=75 tail=0
+many=4-cut=1 start=75 error=EndOfStreamException pixels=10 consumed=76 tail=0
+many=4-cut=2 start=75 error=EndOfStreamException pixels=10 consumed=77 tail=0
+many=4-cut=3 start=75 error=EndOfStreamException pixels=10 consumed=78 tail=0
+many=4-cut=4 start=75 error=EndOfStreamException pixels=10 consumed=79 tail=0
+many=4-cut=5 start=75 error=EndOfStreamException pixels=10 consumed=80 tail=0
+many=4-cut=6 start=75 error=EndOfStreamException pixels=10 consumed=81 tail=0
+many=4-cut=7 start=75 error=EndOfStreamException pixels=10 consumed=82 tail=0
+many=4-cut=8 start=75 error=EndOfStreamException pixels=10 consumed=83 tail=0
+many=4-cut=9 start=75 error=EndOfStreamException pixels=10 consumed=84 tail=0
+many=4-cut=10 start=75 error=EndOfStreamException pixels=10 consumed=85 tail=0
+many=4-cut=11 start=75 error=EndOfStreamException pixels=10 consumed=86 tail=0
+many=17-tail start=275 raw=-66051,16777217,-501 native=-66051,16777217,-50 pixels=10 consumed=287 tail=2
+many=17-exact start=275 raw=-66051,16777217,-501 native=-66051,16777217,-50 pixels=10 consumed=287 tail=0
+many=17-cut=0 start=275 error=EndOfStreamException pixels=10 consumed=275 tail=0
+many=17-cut=1 start=275 error=EndOfStreamException pixels=10 consumed=276 tail=0
+many=17-cut=2 start=275 error=EndOfStreamException pixels=10 consumed=277 tail=0
+many=17-cut=3 start=275 error=EndOfStreamException pixels=10 consumed=278 tail=0
+many=17-cut=4 start=275 error=EndOfStreamException pixels=10 consumed=279 tail=0
+many=17-cut=5 start=275 error=EndOfStreamException pixels=10 consumed=280 tail=0
+many=17-cut=6 start=275 error=EndOfStreamException pixels=10 consumed=281 tail=0
+many=17-cut=7 start=275 error=EndOfStreamException pixels=10 consumed=282 tail=0
+many=17-cut=8 start=275 error=EndOfStreamException pixels=10 consumed=283 tail=0
+many=17-cut=9 start=275 error=EndOfStreamException pixels=10 consumed=284 tail=0
+many=17-cut=10 start=275 error=EndOfStreamException pixels=10 consumed=285 tail=0
+many=17-cut=11 start=275 error=EndOfStreamException pixels=10 consumed=286 tail=0
+field=0 value=-2147483648 start=75 raw=-2147483648,16777217,-501 native=-2147483648,16777217,-50 pixels=10 consumed=87 tail=2
+field=0 value=-16777217 start=75 raw=-16777217,16777217,-501 native=-16777217,16777217,-50 pixels=10 consumed=87 tail=2
+field=0 value=-501 start=75 raw=-501,16777217,-501 native=-501,16777217,-50 pixels=10 consumed=87 tail=2
+field=0 value=-11 start=75 raw=-11,16777217,-501 native=-11,16777217,-50 pixels=10 consumed=87 tail=2
+field=0 value=-5 start=75 raw=-5,16777217,-501 native=-5,16777217,-50 pixels=10 consumed=87 tail=2
+field=0 value=-1 start=75 raw=-1,16777217,-501 native=-1,16777217,-50 pixels=10 consumed=87 tail=2
+field=0 value=0 start=75 raw=0,16777217,-501 native=0,16777217,-50 pixels=10 consumed=87 tail=2
+field=0 value=1 start=75 raw=1,16777217,-501 native=1,16777217,-50 pixels=10 consumed=87 tail=2
+field=0 value=4 start=75 raw=4,16777217,-501 native=4,16777217,-50 pixels=10 consumed=87 tail=2
+field=0 value=5 start=75 raw=5,16777217,-501 native=5,16777217,-50 pixels=10 consumed=87 tail=2
+field=0 value=9 start=75 raw=9,16777217,-501 native=9,16777217,-50 pixels=10 consumed=87 tail=2
+field=0 value=10 start=75 raw=10,16777217,-501 native=10,16777217,-50 pixels=10 consumed=87 tail=2
+field=0 value=501 start=75 raw=501,16777217,-501 native=501,16777217,-50 pixels=10 consumed=87 tail=2
+field=0 value=16777217 start=75 raw=16777217,16777217,-501 native=16777217,16777217,-50 pixels=10 consumed=87 tail=2
+field=0 value=2147483647 start=75 raw=2147483647,16777217,-501 native=2147483647,16777217,-50 pixels=10 consumed=87 tail=2
+field=1 value=-2147483648 start=75 raw=-66051,-2147483648,-501 native=-66051,-2147483648,-50 pixels=10 consumed=87 tail=2
+field=1 value=-16777217 start=75 raw=-66051,-16777217,-501 native=-66051,-16777217,-50 pixels=10 consumed=87 tail=2
+field=1 value=-501 start=75 raw=-66051,-501,-501 native=-66051,-501,-50 pixels=10 consumed=87 tail=2
+field=1 value=-11 start=75 raw=-66051,-11,-501 native=-66051,-11,-50 pixels=10 consumed=87 tail=2
+field=1 value=-5 start=75 raw=-66051,-5,-501 native=-66051,-5,-50 pixels=10 consumed=87 tail=2
+field=1 value=-1 start=75 raw=-66051,-1,-501 native=-66051,-1,-50 pixels=10 consumed=87 tail=2
+field=1 value=0 start=75 raw=-66051,0,-501 native=-66051,0,-50 pixels=10 consumed=87 tail=2
+field=1 value=1 start=75 raw=-66051,1,-501 native=-66051,1,-50 pixels=10 consumed=87 tail=2
+field=1 value=4 start=75 raw=-66051,4,-501 native=-66051,4,-50 pixels=10 consumed=87 tail=2
+field=1 value=5 start=75 raw=-66051,5,-501 native=-66051,5,-50 pixels=10 consumed=87 tail=2
+field=1 value=9 start=75 raw=-66051,9,-501 native=-66051,9,-50 pixels=10 consumed=87 tail=2
+field=1 value=10 start=75 raw=-66051,10,-501 native=-66051,10,-50 pixels=10 consumed=87 tail=2
+field=1 value=501 start=75 raw=-66051,501,-501 native=-66051,501,-50 pixels=10 consumed=87 tail=2
+field=1 value=16777217 start=75 raw=-66051,16777217,-501 native=-66051,16777217,-50 pixels=10 consumed=87 tail=2
+field=1 value=2147483647 start=75 raw=-66051,2147483647,-501 native=-66051,2147483647,-50 pixels=10 consumed=87 tail=2
+field=2 value=-2147483648 start=75 raw=-66051,16777217,-2147483648 native=-66051,16777217,-214748364 pixels=10 consumed=87 tail=2
+field=2 value=-16777217 start=75 raw=-66051,16777217,-16777217 native=-66051,16777217,-1677721 pixels=10 consumed=87 tail=2
+field=2 value=-501 start=75 raw=-66051,16777217,-501 native=-66051,16777217,-50 pixels=10 consumed=87 tail=2
+field=2 value=-11 start=75 raw=-66051,16777217,-11 native=-66051,16777217,-1 pixels=10 consumed=87 tail=2
+field=2 value=-5 start=75 raw=-66051,16777217,-5 native=-66051,16777217,0 pixels=10 consumed=87 tail=2
+field=2 value=-1 start=75 raw=-66051,16777217,-1 native=-66051,16777217,0 pixels=10 consumed=87 tail=2
+field=2 value=0 start=75 raw=-66051,16777217,0 native=-66051,16777217,0 pixels=10 consumed=87 tail=2
+field=2 value=1 start=75 raw=-66051,16777217,1 native=-66051,16777217,0 pixels=10 consumed=87 tail=2
+field=2 value=4 start=75 raw=-66051,16777217,4 native=-66051,16777217,0 pixels=10 consumed=87 tail=2
+field=2 value=5 start=75 raw=-66051,16777217,5 native=-66051,16777217,0 pixels=10 consumed=87 tail=2
+field=2 value=9 start=75 raw=-66051,16777217,9 native=-66051,16777217,0 pixels=10 consumed=87 tail=2
+field=2 value=10 start=75 raw=-66051,16777217,10 native=-66051,16777217,1 pixels=10 consumed=87 tail=2
+field=2 value=501 start=75 raw=-66051,16777217,501 native=-66051,16777217,50 pixels=10 consumed=87 tail=2
+field=2 value=16777217 start=75 raw=-66051,16777217,16777217 native=-66051,16777217,1677721 pixels=10 consumed=87 tail=2
+field=2 value=2147483647 start=75 raw=-66051,16777217,2147483647 native=-66051,16777217,214748364 pixels=10 consumed=87 tail=2
+references-full start=231 raw=0,0,500 native=0,0,50 pixels=10 consumed=243 tail=5
+references-exact start=231 raw=0,0,500 native=0,0,50 pixels=10 consumed=243 tail=0
+drawings-full start=405 raw=300,-400,500 native=300,-400,50 pixels=10 consumed=417 tail=263
+drawings-exact start=405 raw=300,-400,500 native=300,-400,50 pixels=10 consumed=417 tail=0
