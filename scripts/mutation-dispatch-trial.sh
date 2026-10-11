@@ -86,6 +86,36 @@ if [[ $(cat "$DISPATCH_LOG") != gremlins ]]; then
   printf 'Full campaign continued after rejected Gremlins report.\n' >&2
   exit 1
 fi
+# Optional disk pruning must retain identical scheduling and target only this
+# disposable checkout's regenerable cache. Cleanup failures must propagate.
+mkdir -p fake-bin
+cat >fake-bin/go <<'SH'
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ "$*" != 'clean -cache' || "$GOCACHE" != "$DISPATCH_PRUNE_ROOT/.cache/go-build" ]]; then exit 2; fi
+printf 'prune\n' >>"$DISPATCH_PRUNE_LOG"
+if [[ "${DISPATCH_FAIL_PRUNE:-false}" == true ]]; then exit 1; fi
+SH
+chmod +x fake-bin/go
+export DISPATCH_PRUNE_ROOT
+DISPATCH_PRUNE_ROOT=$(pwd -W 2>/dev/null || pwd)
+export DISPATCH_PRUNE_LOG="$trial/prunes.log"
+rm "$DISPATCH_LOG"
+PATH="$trial/fake-bin:$PATH" POCKETTOPO_MUTATION_PRUNE_CACHE=true bash scripts/mutation.sh >/dev/null
+cmp full.log "$DISPATCH_LOG"
+if [[ $(wc -l <"$DISPATCH_PRUNE_LOG") -ne $(wc -l <full.log) ]]; then
+  printf 'Optional pruning missed or duplicated a completed campaign.\n' >&2
+  exit 1
+fi
+rm "$DISPATCH_LOG"
+if PATH="$trial/fake-bin:$PATH" POCKETTOPO_MUTATION_PRUNE_CACHE=true DISPATCH_FAIL_PRUNE=true bash scripts/mutation.sh >failure.log 2>&1; then
+  printf 'Optional cache cleanup failure was swallowed.\n' >&2
+  exit 1
+fi
+if [[ $(cat "$DISPATCH_LOG") != gremlins ]]; then
+  printf 'Campaign continued after cache cleanup failure.\n' >&2
+  exit 1
+fi
 rm "$DISPATCH_LOG"
 for args in unknown-group 'tables extra-argument'; do
   # Deliberate splitting supplies one unknown argument or two arguments.
@@ -98,4 +128,4 @@ if [[ -e "$DISPATCH_LOG" ]]; then
   printf 'Invalid mutation arguments ran a campaign.\n' >&2
   exit 1
 fi
-printf 'Mutation dispatch controls passed: every scope exactly once; group and report errors rejected.\n'
+printf 'Mutation dispatch controls passed: every scope exactly once; group/report/pruning errors rejected.\n'

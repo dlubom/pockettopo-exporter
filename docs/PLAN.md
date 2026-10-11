@@ -4,49 +4,47 @@ This is the single current backlog and handoff. [SPEC](SPEC.md) defines product
 contracts; [DEVELOPMENT](DEVELOPMENT.md) defines verification and delivery.
 Historical PBI numbers remain traceable; they do not imply equal-sized outcomes.
 
-## Verified baseline — 2026-10-11
+## Current implementation — 2026-10-11
 
-Implementation baseline: `bfa73944e3d3baad00b07e2b6dd5a8c9f9a3682b` (P04c17).
-The documentation reset changes no implementation, tests, fixtures or CI scripts.
+P04d starts from P04c17 (`bfa73944e3d3baad00b07e2b6dd5a8c9f9a3682b`) plus
+the documentation reset (`94a3f2e`). Existing prefix contracts remain unchanged.
 
 | Area | Implemented behavior | Delivery state |
 | --- | --- | --- |
 | P00/P02 | Go skeleton, pinned tools and verified quality gates | Implemented |
-| P03a–P03c2 | IDs, bounded v3 header/trips/measurements/references | Implemented internally; original inspect goal still pending |
+| P03a–P03c2 | IDs, bounded v3 header/trips/measurements/references | Implemented; exposed by P04d inspection |
 | P04a/P04b | Separate overview and plan mappings | Implemented |
 | P04c1–P04c13 | Fixed-position marker/count/point/color prefix APIs | Implemented historical contracts; preserve regressions |
 | P04c14/P04c15 | Bounded ordered plan Polygon/XSection loops, explicit stops | Implemented |
-| P04c16/P04c17 | Side mapping and first raw side marker | Implemented; side payload remains unread |
-| Complete source document / inspect | Full side drawing, tail accounting, usable CLI inspection | Not implemented; next item P04d |
+| P04c16/P04c17 | Side mapping and first raw side marker prefix APIs | Preserved historical contracts |
+| P04d | Full supported v3 source document, side drawing, tail accounting, inspect JSON | Implemented; full local gates verified |
 | P05–P14 | Native exports, processing, context and compatibility milestone | Not implemented |
 | P15/P16 | Walls SRV / Survex SVX | Subsequent scope |
 
-Fresh local `bash scripts/check.sh` passed during this audit: formatting, vet,
-Staticcheck, boundary controls, race tests, build/CLI smoke and **100% statement
-coverage** in all three internal packages. Full mutations were not rerun for
-this documentation-only reset. The implementation baseline has
-[successful exact-SHA CI](https://github.com/dlubom/pockettopo-exporter/actions/runs/38121341947):
-all 14 jobs, including all 9 mutation groups, succeeded. This is evidence for
-`bfa7394`. Publication of this documentation revision requires a separate green
-CI run for its exact commit; retrieve that result from GitHub Actions rather than
-assuming the implementation baseline's run covers a later commit.
+### Verification and publication
 
-### Git handoff
+P04d has independent native side/tail/writer evidence and a read-only fresh-agent
+review of the reader/model/CLI and C#/IL, with no substantive implementation
+findings. Its many-small-elements memory observation is addressed by a second
+benchmark and explicit limits in SPEC. Tooling review identified a weakened weak-suite
+cardinality check; the exact nine-mutant requirement is restored and verified.
+Local verification passed: check.sh (including race, Staticcheck, build and 100%
+statement coverage), 30-second document fuzzing (1,819,250 executions), all 482
+Gremlins mutants and all 996 explicit faults in 24 scopes, plus negative and
+dispatch controls. Existing frozen fixtures remain unchanged; P04d adds its own
+native transcript and provenance.
 
-The user selected **direct work on `main`** on 2026-10-11. Local `main` was
-fast-forwarded to P04c17 without rewriting commits. The follow-up request
-authorizes committing this documentation and pushing `main` with P04c17, then
-verifying all CI jobs for the exact pushed commit. This is direct publication;
-no PR is needed. Use Git history and the matching GitHub Actions run for the
-resulting commit and CI status, keeping live delivery evidence out of the spec.
+Exact-SHA hosted CI must pass before publication is reported as complete. Commands
+and full mutation scope remain authoritative in DEVELOPMENT/scripts; no earlier
+SHA substitutes for the final pushed revision. The commit's GitHub checks and
+delivery response provide publication evidence.
 
-Old P04c15/P04c16 branches contain no changes missing from local `main`;
-P04c17 is also included locally. They may be removed in a separately requested
-branch cleanup. Future implementation should not resume on those branches.
+The current user request authorizes direct work, commit and push on `main`.
+No branch/worktree/PR or exporter implementation is part of P04d.
 
-## Next recommended item: P04d — complete v3 source reading and inspection
+## P04d — complete v3 source reading and inspection
 
-**Status:** specified for the next implementation request; not implemented here.
+**Status:** implemented and locally verified; ready for P05 after exact-SHA CI.
 **Outcome:** a user can inspect a TOP v3 file and know what was read, whether it
 is complete/supported, and which bytes remain unexplained. This closes the
 original P03 inspection and P04 complete-file goals.
@@ -92,28 +90,65 @@ No geometry, export writer, old TOP versions or template-directory mode.
 - Pass the applicable full gates in DEVELOPMENT. Update this status and native
   evidence. Add/rebalance mutation scheduling only as needed to keep full scope.
 
+### P04d implementation sequence
+
+- [x] Establish native side-record and full-file boundary evidence using the original
+  1.372 assembly, independent literal streams, C# and IL; preserve earlier goldens.
+- [x] Add `source.Document` and `top.ReadV3[WithLimits]`: flatten table records,
+  share immutable drawing record types, retain complete raw input and field spans.
+  Test mixed side records, unknown stops, every truncation, tail classes and budgets.
+- [x] Add `inspect <input.top> --json`, deterministic schema 1, bounded input I/O,
+  structured analysis failures and explicit exit status. Test file/output failures.
+- [x] Extend full mutation scope without removing existing dispatch/failure controls;
+  measure representative memory, fuzz the reader, run all gates, obtain an independent
+  review and update current contracts.
+
+**Publication requirement:** commit/push the verified P04d tree on main and confirm
+every hosted CI job for that exact SHA before reporting delivery complete.
+
+Routine representation decisions: drawing counts are per drawing; document ceilings
+add a separate budget across both drawings. Malformed reads return an empty source
+result and a stable ParseError (matching existing APIs); inspect reports unavailable
+counts and all bytes as unparsed in that case. An absent trailer is supported but
+noncanonical; partial/nonzero/extra tails are preserved and unsupported. Native
+reader acceptance is established independently and does not override this policy.
+
 **Refinement rule:** settle routine API names and representation in code review.
 Record native boundary findings in SPEC/evidence before relying on them. A new
 dependency that changes the outcome or adds geometry/export work requires
 revising this PBI explicitly, not returning to arbitrary one-field tasks.
 
+## Next recommended item: P05 — native text export
+
+**Status:** specified; not implemented. **Dependency:** P04d. Deliver a usable
+`export` CLI for the native text format with exact original-program goldens,
+explicit isolated-input context, deterministic output/provenance/loss reporting
+and safe output publication. Research `Exporter.WriteText`, `Survey.WriteText`,
+`Station.WriteText` and the text-relevant `Survey.Update` effects in C#/IL and
+independent native probes before implementing. Promote only demonstrated P06/P07
+prerequisites; do not assume all geometry is necessary or bypass Update silently.
+Do not bundle other exporters or template-directory behavior.
+
 **Ready handoff prompt:**
 
-> Implement only P04d from docs/PLAN.md: complete TOP v3 source reading and
-> inspection. Read AGENTS.md, docs/SPEC.md and docs/DEVELOPMENT.md first, and verify
-> the current checkout. Work directly on main and preserve all existing prefix
-> contracts and native evidence. Deliver complete bounded side drawings, explicit
-> full-file/tail accounting and the specified inspect summary as one coherent
-> increment. Use native C#/IL and independent probes, run the applicable full
-> gates, review the result and update the plan. Do not implement exporters or
-> split individual drawing fields into separate PBIs. Report local verification
-> and publication state separately; follow the current request's commit/push
-> authorization. Stop after P04d and identify the next useful step toward P05.
+> Implement only P05 from docs/PLAN.md: a usable native PocketTopo 1.372 text
+> export through the CLI, building on P04d. Read AGENTS.md, README.md, SPEC, PLAN
+> and DEVELOPMENT; verify the checkout and work directly on main. Establish
+> Exporter.WriteText/Survey.WriteText/Station.WriteText and the text-relevant
+> Survey.Update semantics in original C#/IL plus independent native probes.
+> Implement only demonstrated processing prerequisites, preserve raw source
+> identities/bytes and all P04d/prefix contracts. Deliver exact isolated-input
+> native goldens, safe explicit output publication and provenance/loss reporting,
+> with normal/boundary/failure cases, full quality/mutation gates, independent
+> review and updated documentation. Do not add other exporters or directory
+> context. After verification, commit/push main and confirm green CI for its
+> exact SHA. Stop after P05; report behavior, limitations and the next useful
+> behavior-sized increment.
 
 ## Remaining original roadmap
 
-There are **11 required delivery stages to the native milestone**: P04d and
-P05–P14. P01 is a capability/fixture inventory maintained within those stages,
+After P04d there are **10 remaining required delivery stages to the native
+milestone**: P05–P14. P01 is a capability/fixture inventory maintained within those stages,
 not an additional standalone implementation chat. P15 and P16 add two subsequent
 stages for Walls and Survex. P17–P19 and R01–R07 are optional/conditional scope.
 
@@ -126,7 +161,7 @@ routine documentation and individual mutation groups are not separate PBIs.
 | ID | Outcome | Dependencies / refinement |
 | --- | --- | --- |
 | P01 | Native exporter/options and fixture capability matrix | Capture the relevant part with each exporter; finish full inventory by P14 |
-| P04d | Complete supported v3 source read and inspect | P04c17; next item above |
+| P04d | Complete supported v3 source read and inspect | Implemented above |
 | P05 | First usable isolated native text export through CLI, exact goldens and provenance/loss reporting | P04d; establish text-relevant `Survey.Update` effects and promote only demonstrated P06/P07 prerequisites |
 | P06 | Native fixed-point angles, consecutive-shot grouping and average directions | Measurement source model; real repeated/reversed/boundary cases |
 | P07 | Reference placement, plan geometry, extended projection and closure | P06; split by complete geometry behavior if necessary |

@@ -1429,3 +1429,73 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 Wine required escalation for its local socket. The compiler emitted the probe
 but its host process remained running; probe execution itself completed.
 CI verifies the frozen transcript without Wine.
+
+## P04d complete document
+
+The full reader/inspect evidence adds `scripts/reference-document-probe.cs` and
+`native-document-read.txt`; all earlier fixtures and native logs are unchanged.
+The probe invokes **original `DataSet.Read`/`Write` and side `Drawing.Read`** via
+reflection, with fresh Survey/BindingSource/Trip state per disposable input. It
+never calls Load or scans template neighbors. It writes only under ignored
+`build/document-probe`. The 347 CRLF stdout rows are preserved byte-for-byte;
+execution returned 0 and stderr was empty. `TestDocumentNativeEvidence` constructs
+all expected rows independently from the C# literal recipe and known fixture
+records, then checks exact bytes; it also reads literal mixed records in Go.
+
+| Artifact | SHA-256 |
+| --- | --- |
+| Original `PocketTopo.exe` | `048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371` |
+| `scripts/reference-document-probe.cs` | `5dd061d8d0b8984b48d9cb2ec436020932e11acfb88b3a1f1e493ace2762c742` |
+| `native-document-read.txt` | `21bf34d971a8e2dc4f2d28aba3d27463445c0112039a3767af9cdd1e0982acb7` |
+| Existing `api-references.top` | `9034cf5e52f92a8713c7823bd9be52bdb50b294966a9e9713c538b937b7feb5f` |
+| Existing `api-drawings.top` | `4a494ead03cade750f670d50aa38661abda9b3e1f131d67f27a252982752c2a5` |
+
+Actual native commands (Wine/.NET 2.0, existing reference installation):
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo /r:System.Windows.Forms.dll \
+  '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-document-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-document-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-document-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\document-probe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata' \
+  > build/native-document-read.txt 2> build/native-document-read.err
+```
+
+Literal cases contain 0/1/4/17 ordered side elements, alternating empty/one/two
+point Polygons and XSections with signed Int32 extremes, station raw `0x800fffff`
+(native internal identity -2), direction -2, and all 256 raw color bytes. Every
+side-byte cut [41,116) is rejected by original DataSet.Read; native partial field
+reads consume available bytes, unlike Go's stable field-start diagnostics.
+The real drawing fixture has eight Polygons (22 vertices) and two XSections in
+each drawing, body end 676 and a four-byte zero trailer. The references fixture
+has empty drawings, body end 244 and the same trailer.
+
+C#/IL reviewed: DataSet.Read ends with outline/sideview Read (IL_0087–IL_00a3),
+then reports true without a trailer/EOF check. DataSet.Write calls sideview.Write
+and BinaryWriter.Write(Int32 zero), IL_0063–IL_0072. Drawing.Read dispatches markers
+1/3, terminates on 0, and skips unknown markers with ReadBytes(0), IL_0046–IL_00bb.
+Polygon.Read uses signed count, signed X/Y pairs and raw ReadByte color (native
+pens interpret/normalize that byte); XSection.Read uses signed center/direction
+and ID.Read. Mapping.Read divides stored scale by PixPerMm only for native state.
+Go preserves stored values and makes no geometry/pen inference. Prior-art JKTZ
+`parser.py` was reviewed locally: its EOF/zero trailer policy is similar, but its
+validation/unknown errors are not substituted for the existing Go contracts.
+
+Native DataSet.Read accepted absent, 1/2/3-byte zero, exact zero Int32, nonzero
+Int32 and zero-plus-extra tails. The drawing stream ends at 116 in all seven
+cases; tail bytes are ignored. The original writer's empty source output is 58
+bytes, including final Int32 zero. Go therefore supports both EOF and exactly
+four zero bytes, but preserves/classifies partial/nonzero/extra tails as
+unsupported. This is an explicit policy stricter than native-reader acceptance,
+not a claim that the native format requires the writer trailer during reading.
+Native unknown markers 2/255 followed by zero succeed; Go preserves the marker
+and stops without guessing a payload or crossing into the next drawing.
+
+The source API, not inspection JSON, exposes original raw fields and spans.
+The JSON deliberately summarizes counts and accounting without dumping vertices.
+No text/geometry/export compatibility is claimed by these readback probes.

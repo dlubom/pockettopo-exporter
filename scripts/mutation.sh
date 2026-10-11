@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-groups=(gremlins tables first-polygon second-polygon markers plan-loop plan-elements side-mapping side-marker)
+groups=(gremlins tables first-polygon second-polygon markers plan-loop plan-elements side-mapping side-marker document)
 if [[ $# -gt 1 ]]; then
   printf 'Expected at most one mutation group.\n' >&2
   exit 2
@@ -49,11 +49,21 @@ cd "$trial"
 jq -e -f "$root/scripts/mutation-gate.jq" "$root/mutation.json"
 )
 
+# Optional local disk control; reports and source evidence are retained. Each
+# cleanup runs only after a completed campaign, never alongside a compiler.
+prune_cache() {
+  if [[ "${POCKETTOPO_MUTATION_PRUNE_CACHE:-false}" == true ]]; then
+    local root
+    root=$(pwd -W 2>/dev/null || pwd)
+    GOCACHE="$root/.cache/go-build" GOTOOLCHAIN=local go clean -cache
+  fi
+}
+
 run_group() {
   local selected="$1" scope
   local scopes=()
   case "$selected" in
-    gremlins) run_gremlins; return ;;
+    gremlins) run_gremlins; prune_cache; return ;;
     tables) scopes=(station prefix measurements references) ;;
     first-polygon) scopes=(overview plan-mapping plan-marker plan-polygon-count plan-polygon-points plan-polygon-color) ;;
     second-polygon) scopes=(plan-second-polygon-count plan-second-polygon-points plan-second-polygon-color) ;;
@@ -61,11 +71,13 @@ run_group() {
     plan-elements) scopes=(plan-elements) ;;
     side-mapping) scopes=(side-mapping) ;;
     side-marker) scopes=(side-marker) ;;
+    document) scopes=(document) ;;
     markers) scopes=(plan-next-marker plan-following-marker plan-third-polygon-count plan-third-polygon-points plan-third-polygon-color plan-third-next-marker) ;;
     *) printf 'Missing mutation group implementation: %s\n' "$selected" >&2; exit 2 ;;
   esac
   for scope in "${scopes[@]}"; do
     bash "scripts/mutation-$scope.sh"
+    prune_cache
   done
 }
 

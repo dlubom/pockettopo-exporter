@@ -1,0 +1,347 @@
+mixed=0 accepted=True records=0 values= consumed=54 tail=0
+mixed=1 accepted=True records=1 values=P:0 consumed=60 tail=0
+mixed=4 accepted=True records=4 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218|X:-2147483648,2147483647,-2,-2 consumed=116 tail=0
+mixed=17 accepted=True records=17 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218|X:-2147483648,2147483647,-2,-2|P:1:-66051,16777217|X:-2147483648,2147483647,-2,-2|P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218|X:-2147483648,2147483647,-2,-2|P:1:-66051,16777217|X:-2147483648,2147483647,-2,-2|P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218|X:-2147483648,2147483647,-2,-2|P:1:-66051,16777217 consumed=316 tail=0
+color=0 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=1 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=2 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=3 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=4 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=5 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=6 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=7 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=8 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=9 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=10 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=11 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=12 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=13 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=14 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=15 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=16 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=17 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=18 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=19 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=20 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=21 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=22 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=23 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=24 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=25 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=26 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=27 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=28 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=29 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=30 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=31 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=32 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=33 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=34 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=35 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=36 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=37 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=38 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=39 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=40 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=41 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=42 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=43 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=44 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=45 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=46 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=47 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=48 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=49 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=50 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=51 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=52 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=53 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=54 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=55 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=56 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=57 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=58 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=59 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=60 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=61 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=62 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=63 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=64 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=65 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=66 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=67 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=68 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=69 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=70 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=71 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=72 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=73 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=74 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=75 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=76 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=77 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=78 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=79 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=80 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=81 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=82 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=83 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=84 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=85 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=86 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=87 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=88 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=89 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=90 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=91 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=92 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=93 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=94 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=95 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=96 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=97 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=98 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=99 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=100 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=101 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=102 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=103 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=104 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=105 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=106 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=107 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=108 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=109 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=110 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=111 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=112 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=113 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=114 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=115 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=116 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=117 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=118 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=119 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=120 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=121 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=122 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=123 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=124 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=125 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=126 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=127 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=128 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=129 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=130 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=131 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=132 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=133 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=134 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=135 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=136 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=137 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=138 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=139 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=140 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=141 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=142 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=143 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=144 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=145 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=146 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=147 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=148 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=149 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=150 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=151 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=152 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=153 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=154 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=155 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=156 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=157 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=158 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=159 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=160 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=161 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=162 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=163 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=164 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=165 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=166 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=167 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=168 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=169 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=170 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=171 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=172 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=173 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=174 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=175 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=176 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=177 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=178 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=179 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=180 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=181 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=182 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=183 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=184 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=185 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=186 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=187 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=188 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=189 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=190 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=191 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=192 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=193 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=194 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=195 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=196 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=197 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=198 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=199 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=200 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=201 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=202 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=203 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=204 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=205 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=206 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=207 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=208 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=209 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=210 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=211 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=212 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=213 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=214 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=215 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=216 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=217 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=218 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=219 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=220 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=221 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=222 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=223 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=224 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=225 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=226 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=227 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=228 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=229 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=230 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=231 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=232 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=233 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=234 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=235 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=236 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=237 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=238 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=239 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=240 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=241 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=242 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=243 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=244 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=245 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=246 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=247 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=248 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=249 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=250 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=251 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=252 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=253 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=254 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+color=255 accepted=True records=3 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218 consumed=99 tail=0
+tail= accepted=True records=4 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218|X:-2147483648,2147483647,-2,-2 consumed=116 tail=0
+tail=00 accepted=True records=4 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218|X:-2147483648,2147483647,-2,-2 consumed=116 tail=1
+tail=00-00 accepted=True records=4 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218|X:-2147483648,2147483647,-2,-2 consumed=116 tail=2
+tail=00-00-00 accepted=True records=4 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218|X:-2147483648,2147483647,-2,-2 consumed=116 tail=3
+tail=00-00-00-00 accepted=True records=4 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218|X:-2147483648,2147483647,-2,-2 consumed=116 tail=4
+tail=01-00-00-00 accepted=True records=4 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218|X:-2147483648,2147483647,-2,-2 consumed=116 tail=4
+tail=00-00-00-00-FF accepted=True records=4 values=P:0|X:-2147483648,2147483647,-2,-2|P:2:-66051,16777217:-66052,16777218|X:-2147483648,2147483647,-2,-2 consumed=116 tail=5
+cut=41 accepted=False error=EndOfStreamException consumed=41
+cut=42 accepted=False error=EndOfStreamException consumed=42
+cut=43 accepted=False error=EndOfStreamException consumed=43
+cut=44 accepted=False error=EndOfStreamException consumed=44
+cut=45 accepted=False error=EndOfStreamException consumed=45
+cut=46 accepted=False error=EndOfStreamException consumed=46
+cut=47 accepted=False error=EndOfStreamException consumed=47
+cut=48 accepted=False error=EndOfStreamException consumed=48
+cut=49 accepted=False error=EndOfStreamException consumed=49
+cut=50 accepted=False error=EndOfStreamException consumed=50
+cut=51 accepted=False error=EndOfStreamException consumed=51
+cut=52 accepted=False error=EndOfStreamException consumed=52
+cut=53 accepted=False error=EndOfStreamException consumed=53
+cut=54 accepted=False error=EndOfStreamException consumed=54
+cut=55 accepted=False error=EndOfStreamException consumed=55
+cut=56 accepted=False error=EndOfStreamException consumed=56
+cut=57 accepted=False error=EndOfStreamException consumed=57
+cut=58 accepted=False error=EndOfStreamException consumed=58
+cut=59 accepted=False error=EndOfStreamException consumed=59
+cut=60 accepted=False error=EndOfStreamException consumed=60
+cut=61 accepted=False error=EndOfStreamException consumed=61
+cut=62 accepted=False error=EndOfStreamException consumed=62
+cut=63 accepted=False error=EndOfStreamException consumed=63
+cut=64 accepted=False error=EndOfStreamException consumed=64
+cut=65 accepted=False error=EndOfStreamException consumed=65
+cut=66 accepted=False error=EndOfStreamException consumed=66
+cut=67 accepted=False error=EndOfStreamException consumed=67
+cut=68 accepted=False error=EndOfStreamException consumed=68
+cut=69 accepted=False error=EndOfStreamException consumed=69
+cut=70 accepted=False error=EndOfStreamException consumed=70
+cut=71 accepted=False error=EndOfStreamException consumed=71
+cut=72 accepted=False error=EndOfStreamException consumed=72
+cut=73 accepted=False error=EndOfStreamException consumed=73
+cut=74 accepted=False error=EndOfStreamException consumed=74
+cut=75 accepted=False error=EndOfStreamException consumed=75
+cut=76 accepted=False error=EndOfStreamException consumed=76
+cut=77 accepted=False error=EndOfStreamException consumed=77
+cut=78 accepted=False error=EndOfStreamException consumed=78
+cut=79 accepted=False error=EndOfStreamException consumed=79
+cut=80 accepted=False error=EndOfStreamException consumed=80
+cut=81 accepted=False error=EndOfStreamException consumed=81
+cut=82 accepted=False error=EndOfStreamException consumed=82
+cut=83 accepted=False error=EndOfStreamException consumed=83
+cut=84 accepted=False error=EndOfStreamException consumed=84
+cut=85 accepted=False error=EndOfStreamException consumed=85
+cut=86 accepted=False error=EndOfStreamException consumed=86
+cut=87 accepted=False error=EndOfStreamException consumed=87
+cut=88 accepted=False error=EndOfStreamException consumed=88
+cut=89 accepted=False error=EndOfStreamException consumed=89
+cut=90 accepted=False error=EndOfStreamException consumed=90
+cut=91 accepted=False error=EndOfStreamException consumed=91
+cut=92 accepted=False error=EndOfStreamException consumed=92
+cut=93 accepted=False error=EndOfStreamException consumed=93
+cut=94 accepted=False error=EndOfStreamException consumed=94
+cut=95 accepted=False error=EndOfStreamException consumed=95
+cut=96 accepted=False error=EndOfStreamException consumed=96
+cut=97 accepted=False error=EndOfStreamException consumed=97
+cut=98 accepted=False error=EndOfStreamException consumed=98
+cut=99 accepted=False error=EndOfStreamException consumed=99
+cut=100 accepted=False error=EndOfStreamException consumed=100
+cut=101 accepted=False error=EndOfStreamException consumed=101
+cut=102 accepted=False error=EndOfStreamException consumed=102
+cut=103 accepted=False error=EndOfStreamException consumed=103
+cut=104 accepted=False error=EndOfStreamException consumed=104
+cut=105 accepted=False error=EndOfStreamException consumed=105
+cut=106 accepted=False error=EndOfStreamException consumed=106
+cut=107 accepted=False error=EndOfStreamException consumed=107
+cut=108 accepted=False error=EndOfStreamException consumed=108
+cut=109 accepted=False error=EndOfStreamException consumed=109
+cut=110 accepted=False error=EndOfStreamException consumed=110
+cut=111 accepted=False error=EndOfStreamException consumed=111
+cut=112 accepted=False error=EndOfStreamException consumed=112
+cut=113 accepted=False error=EndOfStreamException consumed=113
+cut=114 accepted=False error=EndOfStreamException consumed=114
+cut=115 accepted=False error=EndOfStreamException consumed=115
+api-references.top accepted=True records=0 values= consumed=244 tail=4
+api-drawings.top accepted=True records=10 values=P:3:-6000,2000:-5500,1000:-4500,1500|P:3:-4000,2000:-3500,1000:-2500,1500|P:3:-2000,2000:-1500,1000:-500,1500|P:3:0,2000:500,1000:1500,1500|P:3:2000,2000:2500,1000:3500,1500|P:3:4000,2000:4500,1000:5500,1500|P:3:6000,2000:6500,1000:7500,1500|P:1:7500,-3500|X:-5000,6000,-1048575,-1|X:5000,6000,-1048574,16384 consumed=676 tail=4
+unknown=2 accepted=True records=0 values= consumed=55 tail=0
+unknown=255 accepted=True records=0 values= consumed=55 tail=0
+writer size=58 bytes=54-6F-70-03-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00

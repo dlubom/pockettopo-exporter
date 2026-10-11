@@ -9,9 +9,9 @@ import (
 )
 
 func TestRun(t *testing.T) {
-	const usage = "Usage: pockettopo-exporter --help | --version\n\n" +
-		"PocketTopo exporter development skeleton.\n" +
-		"TOP reading and export are not implemented yet.\n"
+	const usage = "Usage: pockettopo-exporter --help | --version\n  pockettopo-exporter inspect <input.top> --json\n\n" +
+		"Inspect PocketTopo TOP v3 source data.\n" +
+		"Export is not implemented yet.\n"
 	for _, tc := range []struct {
 		name   string
 		args   []string
@@ -25,7 +25,7 @@ func TestRun(t *testing.T) {
 		{"no arguments", nil, 1, "", usage},
 		{"extra arguments", []string{"--help", "input.top"}, 1, "", usage},
 		{"multiple flags", []string{"--version", "--help"}, 1, "", usage},
-		{"inspect unavailable", []string{"inspect"}, 1, "", "Unsupported argument: \"inspect\". Use --help.\n"},
+		{"inspect incomplete", []string{"inspect"}, 1, "", usage},
 		{"export unavailable", []string{"export"}, 1, "", "Unsupported argument: \"export\". Use --help.\n"},
 		{"unknown flag", []string{"--unknown"}, 1, "", "Unsupported argument: \"--unknown\". Use --help.\n"},
 		{"empty argument", []string{""}, 1, "", "Unsupported argument: \"\". Use --help.\n"},

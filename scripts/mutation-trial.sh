@@ -10,6 +10,13 @@ trap 'rm -rf "$trial"' EXIT
 mkdir -p "$trial/internal/cli" build
 cp go.mod "$trial/"
 cp internal/cli/run.go "$trial/internal/cli/"
+# Keep the no-assertion control focused on argument/output handling. Its inspect
+# stub avoids introducing the strong source-reader tests into this weak suite.
+cat >"$trial/internal/cli/inspect.go" <<'GO'
+package cli
+import "io"
+func inspect(_ string, _, _ io.Writer) int { return 1 }
+GO
 mkdir "$trial/mutation-bin"
 cp scripts/mutation-go.sh "$trial/mutation-bin/go"
 chmod +x "$trial/mutation-bin/go"
@@ -27,6 +34,7 @@ import (
 
 func TestWithoutAssertions(t *testing.T) {
     cli.Run([]string{"--version"}, io.Discard, io.Discard)
+    cli.Run([]string{"inspect", "input.top", "--json"}, io.Discard, io.Discard)
 }
 GO
 rm -f build/mutation-weak.json
@@ -36,8 +44,8 @@ if ! go test -count=1 ./... >baseline.log 2>&1; then
   exit 1
 fi
 "$root/.tools/bin/gremlins" unleash --workers 2 --output "$root/build/mutation-weak.json"
-jq -e '.mutants_total == 2 and .mutants_lived == 2 and .mutants_killed == 0
-  and ([.files[].mutations[]] | length) == 2
+jq -e '.mutants_total == 9 and .mutants_lived == .mutants_total and .mutants_killed == 0
+  and ([.files[].mutations[]] | length) == .mutants_total
   and all(.files[].mutations[]; .status == "LIVED")' "$root/build/mutation-weak.json"
 gate_status=0
 jq -e -f "$root/scripts/mutation-gate.jq" "$root/build/mutation-weak.json" || gate_status=$?
@@ -45,7 +53,7 @@ if [[ "$gate_status" != 1 ]]; then
   printf 'Expected mutation gate rejection (exit 1), got %s.\n' "$gate_status" >&2
   exit 1
 fi
-printf 'Negative control passed: ordinary tests passed; both mutants survived; gate exited 1.\n'
+printf 'Negative control passed: ordinary tests passed; all exercised mutants survived; gate exited 1.\n'
 # Validate the adapter using a real type error. Its exit must be NOT VIABLE,
 # rather than the KILLED result Gremlins gives an unwrapped go test exit 1.
 cat >"$trial/internal/cli/invalid.go" <<'GO'

@@ -26,3 +26,5 @@ internal/top/testdata/native-plan-elements-read.txt -text whitespace=cr-at-eol
 
 internal/top/testdata/native-side-mapping-read.txt -text whitespace=cr-at-eol
 internal/top/testdata/native-side-marker-read.txt -text whitespace=cr-at-eol
+
+internal/top/testdata/native-document-read.txt -text whitespace=cr-at-eol

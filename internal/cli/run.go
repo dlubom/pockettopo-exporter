@@ -7,14 +7,22 @@ import (
 )
 
 const help = `Usage: pockettopo-exporter --help | --version
+  pockettopo-exporter inspect <input.top> --json
 
-PocketTopo exporter development skeleton.
-TOP reading and export are not implemented yet.
+Inspect PocketTopo TOP v3 source data.
+Export is not implemented yet.
 `
 
 // Run writes normal output to stdout and diagnostics to stderr.
 // It returns 0 on success and 1 on invalid arguments or an output error.
 func Run(args []string, stdout, stderr io.Writer) int {
+	if len(args) > 0 && args[0] == "inspect" {
+		if len(args) != 3 || args[1] == "" || args[1] == "--json" || args[2] != "--json" {
+			fmt.Fprint(stderr, help)
+			return 1
+		}
+		return inspect(args[1], stdout, stderr)
+	}
 	if len(args) != 1 {
 		fmt.Fprint(stderr, help)
 		return 1

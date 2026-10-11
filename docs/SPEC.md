@@ -99,6 +99,88 @@ Limits are acceptance ceilings, not a promise of low memory use. Existing nested
 prefix models retain multiple byte copies. The complete-file model should avoid
 extending that chain unnecessarily and state plan/side aggregate budget rules.
 
+## Complete v3 source document (P04d)
+
+`top.ReadV3` / `ReadV3WithLimits` return an immutable `source.Document` with one
+copy of the entire original input, flat table records, table/field spans,
+overview mapping and separate `Plan()` / `Side()` drawings. They reuse existing
+bounded table decoding without retaining its nested prefix objects. Drawings
+reuse the immutable Polygon/XSection record types; their historical `Plan*`
+names do not imply that side elements belong to the plan. No coordinates,
+colors, IDs, scale or directions are normalized. `Bytes()` and record accessors
+return copies. Empty/malformed results have neither drawing.
+
+Drawing budgets are independent per drawing: at most 100,000 complete elements,
+1,000,000 points per Polygon and 1,000,000 points in each drawing. Additional
+whole-document budgets default to 100,000 elements and 1,000,000 points across
+both drawings. Earlier input/table/comment defaults are unchanged (64 MiB input).
+Every bound is inclusive; zero is a real budget; callers may lower bounds but
+never raise defaults. Stop markers consume no element/point budget. Point counts
+are checked against both budgets and remaining bytes before allocation. These
+are operational limits, stricter than the native reader.
+
+Malformed/limit failures return the zero document and stable `ParseError`, with
+no partial success. Unknown plan markers stop before side mapping; unknown side
+markers stop before their payload. Both return a source document with a consumed
+raw stop marker, `Complete()==false`, `Supported()==false`, and `unreached` tail.
+`BodyEnd()` then denotes the stop boundary, rather than a terminated body.
+Original bytes after that boundary remain available through `UnparsedBytes()`.
+
+For two terminated drawings, `Complete()` means the supported body was read;
+`Supported()` additionally applies this explicit tail policy:
+
+| Bytes after side terminator | Tail kind | Supported | Accounting |
+| --- | --- | --- | --- |
+| EOF | `absent` | Yes, noncanonical | All body bytes consumed |
+| Exactly Int32 zero | `zero_trailer` | Yes, writer form | Four trailer bytes consumed |
+| 1–3 bytes | `partial_trailer` | No | Entire tail unparsed |
+| At least four bytes, first Int32 nonzero | `nonzero_trailer` | No | Entire tail unparsed |
+| Int32 zero followed by more bytes | `extra_bytes` | No | Zero trailer consumed; extra bytes unparsed |
+
+`ConsumedOffset()+UnparsedTailSize()==len(Bytes())` in every successful full-file
+result. `BodyEnd()` precedes the trailer; no tail payload length is inferred.
+Native `DataSet.Read` accepts all probed tails and never validates EOF. Native
+`DataSet.Write` emits Int32 zero. Native unknown markers are skipped with zero
+payload length, while this reader preserves the existing bounded unsupported
+stop policy. Writer form is not a claim that arbitrary raw colors/scales would
+round-trip unchanged through native derived pens/mappings.
+
+Memory is bounded but can be substantial. On macOS arm64 Go 1.26.3, one 100,000
+point Polygon (800,064 input bytes) allocated about 12 MB in total; 100,000 empty
+Polygons (600,054 bytes) allocated about 180 MB in total. These are benchmark
+allocation totals, not peak retained memory or a whole-corpus scalability claim.
+The CLI also clones element/table slices for summary access; earlier prefix APIs
+retain their existing higher-copy representation. Reproduce both assessments
+with `go test ./internal/top -run '^$' -bench '^BenchmarkDocument' -benchmem`.
+
+Native evidence, independent transcript expectations, fixture readback and
+commands live in [testdata/README](../internal/top/testdata/README.md#p04d-complete-document).
+
+## Inspect CLI (schema 1)
+
+`inspect <input.top> --json` reads exactly one named input, bounded to 64 MiB plus
+one detection byte. No neighboring-file scan, geometry, or vertex dump is done.
+`--help`, `-h` and `--version` keep their existing success/exit behavior; help now
+lists inspection. Export remains unavailable.
+
+The deterministic JSON object contains `schema_version: 1`, `tool_version: "dev"`,
+`source` (`sha256`, `size_bytes`, `top_version`), `status` (`supported`,
+`unsupported`, `malformed`), `complete`, `supported`, `counts` (trip/measurement/
+reference totals), `plan` and `side` (element/Polygon/XSection/point totals, stop
+reason/raw marker/offset), `accounting` (`body_end`, `consumed_bytes`,
+`unparsed_bytes`, `tail_kind`) and `diagnostics` (`code`, `field`, `offset`).
+Key order, compact encoding and one final LF are fixed by golden tests. No path,
+clock or timestamp is included. Diagnostics are an empty array on supported input.
+
+Exit 0 requires complete supported input and successful stdout writing. All other
+outcomes exit 1 with human diagnostics on stderr. If the bounded input was read,
+analysis failures also produce JSON: malformed results have null counts/drawings,
+zero body/consumed bytes, all bytes unparsed and the precise parse-error offset.
+`top_version` is null if fewer than four header bytes exist. Unsupported versions
+have status `unsupported`; unknown markers/tails have structured diagnostics.
+Argument/I/O/oversized-input failures produce no JSON, since complete input
+analysis is unavailable. An oversized prefix is never hashed as a complete file.
+
 ## Native semantics that future work must preserve
 
 - `Survey.EvalData` groups consecutive matching/reversed pairs and averages
@@ -126,8 +208,8 @@ extending that chain unnecessarily and state plan/side aggregate budget rules.
 
 ## CLI behavior to introduce with its implementation
 
-`inspect` and `export` remain planned commands; only help/version exist today.
-P04d fixes the inspect interface. P05 fixes export arguments and exit semantics.
+`inspect` is implemented as specified above. `export` remains planned; P05 fixes
+its arguments and exit semantics.
 
 Accept explicit paths and formats. Preserve inputs; reject input/output
 collisions and accidental overwrites. Write temporary output and publish only

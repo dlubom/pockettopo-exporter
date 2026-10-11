@@ -6,19 +6,26 @@ omissions. PocketTopo is a development reference, not a runtime dependency.
 
 ## Where the project stands
 
-The tested foundation exists: immutable source records, bounded TOP v3 readers,
-native reference fixtures, and CI on Linux, Windows and macOS. Internal readers
-reach complete supported plan drawings, the side mapping and its first marker.
-Side drawing payloads and complete-file accounting remain unfinished.
+The CLI reads supported **TOP v3** source data: trips, measurements, references,
+three raw mappings and ordered plan/side Polygons and XSections. It preserves
+original bytes, fields and offsets; unknown markers and unsupported tails remain
+explicitly unparsed. No geometry or exporter is implemented yet.
 
-**No exporter is implemented yet.** The CLI currently accepts only `--help`,
-`-h` and `--version`; internal parser APIs are not exposed through the CLI.
+```sh
+go run ./cmd/pockettopo-exporter inspect internal/top/testdata/api-drawings.top --json
+```
+
+Inspection emits deterministic schema-version-1 JSON with the input SHA-256,
+size/version, counts, completion/support state, byte accounting and diagnostics.
+Exit 0 means complete and supported; exit 1 covers malformed, unsupported,
+incomplete, I/O and output failures. See [SPEC](docs/SPEC.md#complete-v3-source-document-p04d)
+for the tail policy and source API. Inputs are never rewritten or scanned for
+neighboring files.
 
 Start with [the current state and next work item](docs/PLAN.md). Work directly on
-`main`, delivering one complete, reviewable behavior per increment. The next
-recommended increment is **P04d: complete v3 source reading and inspection**,
-followed by **P05: the first native text export**. Single-field P04c tasks are
-historical contracts, not the pattern for future work.
+`main`, delivering one complete, reviewable behavior per increment. **P04d**
+closes source reading and inspection; the next increment is **P05: native text
+export**. Historical per-field prefix APIs remain supported.
 
 ## Documentation
 

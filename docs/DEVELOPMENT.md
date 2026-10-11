@@ -17,19 +17,29 @@ bash scripts/mutation.sh
 bash scripts/mutation-dispatch-trial.sh
 bash scripts/mutation-trial.sh
 
+# On a space-constrained local disk, discard only regenerable Go build cache
+# after each completed campaign; all reports/gates and CI groups are unchanged.
+POCKETTOPO_MUTATION_PRUNE_CACHE=true bash scripts/mutation.sh
+
 bash scripts/mutation.sh --matrix      # authoritative list of current CI groups
 bash scripts/mutation.sh plan-elements # example focused campaign
 
 gofmt -w cmd internal
 go run ./cmd/pockettopo-exporter --help
 go run ./cmd/pockettopo-exporter --version
+go run ./cmd/pockettopo-exporter inspect internal/top/testdata/api-drawings.top --json
+go test ./internal/top -run '^$' -bench '^BenchmarkDocument' -benchmem
 ```
 
 `check.sh` checks formatting, vet, Staticcheck, coverage-boundary controls,
 uncached race tests, coverage, build and CLI smoke behavior. Generated outputs
 are `coverage.out`, `mutation.json` and `build/`; caches/tools are in ignored
 `.cache/` and `.tools/`. There is no `go.sum` because there are no module
-dependencies. Run one local mutation campaign at a time: reports/cache paths
+dependencies. The document group covers P04d source/accounting/inspect faults alongside the
+unchanged earlier groups. The weak-suite negative control deliberately stubs
+inspection and exercises both version and inspect arguments without assertions;
+all nine generated mutants must live and the quality gate must reject them.
+Run one local mutation campaign at a time: reports/cache paths
 are shared. CI parallelism uses separate checkouts and caches.
 
 ## Quality gates
