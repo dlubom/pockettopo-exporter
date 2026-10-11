@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-groups=(gremlins tables first-polygon second-polygon markers plan-loop plan-elements side-mapping side-marker document native-text)
+groups=(gremlins-tables gremlins-drawings gremlins-output gremlins-processing
+  tables mappings first-polygon second-count second-points second-color
+  next-markers third-count third-points third-color third-marker
+  plan-loop plan-elements side-mapping side-marker document native-text processing)
 if [[ $# -gt 1 ]]; then
   printf 'Expected at most one mutation group.\n' >&2
   exit 2
@@ -22,7 +25,28 @@ if [[ "$group" != all ]]; then
   fi
 fi
 
+# Every production internal Go file belongs to exactly one shard. Unknown new
+# packages fail closed until assigned; all shards still use the full test suite.
+gremlins_shard() {
+  case "$1" in
+    internal/source/*|internal/top/prefix.go|internal/top/measurements.go|internal/top/references.go) printf tables ;;
+    internal/top/*) printf drawings ;;
+    internal/cli/*|internal/exporttext/*|internal/nativefmt/*) printf output ;;
+    internal/processing/*) printf processing ;;
+    *) printf 'Unassigned Gremlins source file: %s\n' "$1" >&2; return 2 ;;
+  esac
+}
+
 run_gremlins() (
+selected="$1"
+exclusions=(--exclude-files 'cmd/')
+for file in internal/*/*.go; do
+  case "$file" in *_test.go) continue ;; esac
+  shard=$(gremlins_shard "$file")
+  if [[ "$shard" != "$selected" ]]; then
+    exclusions+=(--exclude-files "^${file//./\\.}$")
+  fi
+done
 root=$(pwd -W 2>/dev/null || pwd)
 export GOCACHE="$root/.cache/go-build" GOMODCACHE="$root/.cache/gomod"
 export GOTOOLCHAIN=local
@@ -41,7 +65,7 @@ POCKETTOPO_MUTATION_REAL_GO=$(command -v go)
 export PATH="$trial/mutation-bin:$PATH"
 rm -f mutation.json
 cd "$trial"
-"$root/.tools/bin/gremlins" unleash --workers 2 --exclude-files 'cmd/' \
+"$root/.tools/bin/gremlins" unleash --workers 2 "${exclusions[@]}" \
   --invert-assignments --invert-bitwise \
   --output "$root/mutation.json"
 # Fail closed on empty/incomplete runs, timeouts, invalid or unknown statuses.
@@ -63,17 +87,25 @@ run_group() {
   local selected="$1" scope
   local scopes=()
   case "$selected" in
-    gremlins) run_gremlins; prune_cache; return ;;
+    gremlins-*) run_gremlins "${selected#gremlins-}"; prune_cache; return ;;
     tables) scopes=(station prefix measurements references) ;;
-    first-polygon) scopes=(overview plan-mapping plan-marker plan-polygon-count plan-polygon-points plan-polygon-color) ;;
-    second-polygon) scopes=(plan-second-polygon-count plan-second-polygon-points plan-second-polygon-color) ;;
+    mappings) scopes=(overview plan-mapping) ;;
+    first-polygon) scopes=(plan-marker plan-polygon-count plan-polygon-points plan-polygon-color) ;;
+    second-count) scopes=(plan-second-polygon-count) ;;
+    second-points) scopes=(plan-second-polygon-points) ;;
+    second-color) scopes=(plan-second-polygon-color) ;;
     plan-loop) scopes=(plan-polygons) ;;
     plan-elements) scopes=(plan-elements) ;;
     side-mapping) scopes=(side-mapping) ;;
     side-marker) scopes=(side-marker) ;;
     document) scopes=(document) ;;
     native-text) scopes=(text) ;;
-    markers) scopes=(plan-next-marker plan-following-marker plan-third-polygon-count plan-third-polygon-points plan-third-polygon-color plan-third-next-marker) ;;
+    processing) scopes=(processing) ;;
+    next-markers) scopes=(plan-next-marker plan-following-marker) ;;
+    third-count) scopes=(plan-third-polygon-count) ;;
+    third-points) scopes=(plan-third-polygon-points) ;;
+    third-color) scopes=(plan-third-polygon-color) ;;
+    third-marker) scopes=(plan-third-next-marker) ;;
     *) printf 'Missing mutation group implementation: %s\n' "$selected" >&2; exit 2 ;;
   esac
   for scope in "${scopes[@]}"; do

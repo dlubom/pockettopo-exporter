@@ -31,3 +31,7 @@ internal/top/testdata/native-document-read.txt -text whitespace=cr-at-eol
 internal/top/testdata/native-text-read.txt -text whitespace=cr-at-eol
 # Native byte goldens retain intentional padding and final empty separators.
 internal/exporttext/testdata/*.txt -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof
+
+internal/top/testdata/native-grouping-read.txt -text whitespace=cr-at-eol
+internal/processing/testdata/*.tsv -text whitespace=cr-at-eol
+internal/processing/testdata/*.bin binary

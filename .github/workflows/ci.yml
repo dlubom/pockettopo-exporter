@@ -57,13 +57,13 @@ jobs:
         with:
           go-version-file: go.mod
           cache: false
-      - if: matrix.group == 'gremlins'
+      - if: startsWith(matrix.group, 'gremlins-')
         run: bash scripts/tools.sh
       - name: Run mutation group
         env:
           MUTATION_GROUP: ${{ matrix.group }}
         run: bash scripts/mutation.sh "$MUTATION_GROUP"
-      - if: matrix.group == 'gremlins'
+      - if: matrix.group == 'gremlins-output'
         run: bash scripts/mutation-trial.sh
 
   complete:

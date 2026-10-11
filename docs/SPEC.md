@@ -331,3 +331,90 @@ SHA-256, context inventory/order, resolved settings, output hashes, contributing
 source rows, transformations and omissions. Record identity is source hash plus
 kind/index/offset, not a display name or matching geometry. Avoid unnecessary
 absolute local paths and timestamps in deterministic output.
+
+## Native grouped measurement processing (P06)
+
+`processing.GroupMeasurements(source.Document)` consumes a complete supported
+v3 document from `top.ReadV3`, returning an immutable `Result` or an empty result
+and error. `Rows()`, `Groups()` and `Group.Members()` return copies. Every row
+retains its original immutable `source.Measurement`, source index and complete
+field/record byte spans. Groups retain the head's raw From/To, correction and
+all contiguous member indices with a per-member reversal flag. Raw aliases and
+source flags/trips remain visible; no record or input byte is rewritten.
+
+The context is one isolated input with zero native template boundaries.
+Per-row correction follows standard 1.372 `Trip.Read/Evaluate/DeclCorrByIndex`:
+valid manual trips use their signed stored correction; Auto (`-32768`), negative
+or out-of-range indices use zero. Embedded date/reference data does not supply
+a magnetic correction. Real azimuth is the recorded azimuth plus that row's
+correction, narrowed to signed Int16. The quarter-wave sine table has 16,385
+Q30 entries generated with ties-to-even rounding; native table bytes are tested
+exhaustively. `Angle.ToRect` multiplies in Int64, adds `2^29`, arithmetic-shifts
+by 30 and narrows to Int32. This rounds negative halves toward positive infinity.
+Inclination produces DH/DD, then real azimuth and DD produce DX/DY (all mm).
+
+Grouping reproduces the portion of `Survey.EvalData` before placement:
+
+- Native ID value `-1` is undefined, including raw aliases. Undefined From rows
+  are retained as individual `undefined_from` groups with zero evaluated vector.
+  Their row vectors are independently calculated with native Angle arithmetic;
+  native EvalData itself skips their vector calculation.
+- Undefined To rows are individual `splay` groups, even when adjacent and equal.
+  Every other endpoint, including distinct reserved IDs with empty display text,
+  participates in `leg` groups by native identity equality.
+- Only consecutive identical/reversed endpoint pairs join a leg. The head fixes
+  orientation; self-pairs match forward first. Trip, flag, roll and comment
+  changes do not split a group. An intervening row ends it; no proximity/outlier
+  threshold or physical-value filtering is applied.
+- DX/DY/DH contributions reverse sign for reversed rows; DD never does.
+  Int32 accumulation and negation wrap exactly as unchecked IL `add/sub/neg`.
+  Divide the wrapped totals by the member count, truncating toward zero. Only
+  the head's Flip negates averaged DD, and only for legs. Retain zero, negative
+  and sentinel distances without silently repairing them.
+
+Forward/reverse directions call the equivalent of `Station.GetAvDirection` on
+that averaged vector. Distance is the square root of the unchecked Int64 square
+sum, narrowed to Float32, not an arithmetic mean of distances. Reverse negates
+Int32 DX/DY/DH after computing distance. Azimuth is Float32 atan2(DX,DY), minus
+Float32 radians of the head's trip correction, adding one Float32 `2*pi` if
+negative. Inclination is Float32 atan2(DH,sqrt(DX²+DY²)). Zero/nonpositive/NaN
+distance yields zero angles. No extra modulo or angular mean is substituted.
+All frozen native direction Float32 bits are compared exactly.
+
+Reference placement, SetupShot/SetupXsect projection, closure, geometry-derived
+station orientation, template-directory context and other exporters are absent.
+A reverse direction is an explicit orientation option, not an inferred native
+placed station. This API therefore also processes inputs whose later native
+Update would fail. P05 keeps its isolated text contract and exact bytes, emitting
+all individual source rows without calling this processing API.
+
+### Process CLI (schema 1)
+
+`process <input.top> --json` reads only the named input, bounded by P04d's 64 MiB
+ceiling plus one detection byte, and emits deterministic compact JSON plus LF.
+The profile is `isolated_native_grouping`; `schema_version: 1` and `source`
+(SHA-256, full size and TOP version) identify the input. `rows` preserves every
+raw measurement field, raw/native/display IDs, source offsets, correction,
+real azimuth and vector. `groups` holds head/kind/IDs, contiguous `members`
+(`row_index`, `reversed`), averaged vector, correction and both directions.
+Offsets retain the source API's field names and Start/End byte intervals.
+Direction numbers are mm/radians; `float32_bits` stores unsigned IEEE-754 bits
+in distance/azimuth/inclination order. Nonfinite numbers serialize as null,
+retaining their bits. Empty rows/groups serialize as empty arrays.
+
+Exit 0 requires a supported complete source and successful JSON output. Invalid
+arguments, I/O/oversize/malformed/unsupported/incomplete inputs and output errors
+exit 1, with diagnostics on stderr. Analysis failures produce no JSON; a failing
+writer may have received a partial stream. Existing `inspect` schema 1 and P05
+export bytes stay unchanged; help additionally lists the process command.
+
+Processing has linear time/storage in row count under the inherited one-million
+measurement ceiling. It materializes rows/groups and the CLI materializes JSON
+metadata; there is no separate output-size ceiling or streaming-memory promise.
+On macOS arm64 Go 1.26.3, grouping 100,000 pre-read rows allocated about 55.4 MB
+for one group and 102 MB for singletons. These are total allocations excluding
+parsing and JSON, not peak retained memory or a largest-input guarantee.
+Reproduce with `go test ./internal/processing -run '^$' -bench '^BenchmarkGrouped' -benchmem`.
+
+C#/IL references, original-program captures and fixture hashes are in
+[testdata/README](../internal/top/testdata/README.md#p06-native-grouped-measurements).

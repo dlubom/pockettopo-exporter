@@ -1583,3 +1583,93 @@ remain those documented above. Hashes of new evidence and fixtures:
 | `internal/exporttext/testdata/rounding.txt` | `173d798039576472d4951847921223298fc8184e13eb1793466a713a9216bb98` |
 | `internal/exporttext/testdata/update-error.top` | `62f13f08b0173bfef45f9f8de2f9f0c335746ed81665e52246488dea8b71c1df` |
 | `internal/exporttext/testdata/update-error.txt` | `b2489a6e29d3db57524e6e02e1cc9e483fb43f7cc3ac4af608306eae37dbfc38` |
+
+## P06 native grouped measurements
+
+`scripts/reference-grouping-probe.cs` invokes the unchanged original PocketTopo
+1.372 assembly (SHA-256 `048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371`).
+No recovered code is compiled. Capture environment: macOS arm64, existing Wine
+staging and Microsoft .NET 2.0 x86; invariant culture. Trip.Reset and isolated
+DataSet.Read(path,false) precede Trip.Evaluate(null). Empty native actDir/tplDir
+placement dictionaries make every SetupShot/SetupXsect return before placement;
+Survey.EvalData still performs its real consecutive grouping and arithmetic.
+No native Update, references, closure or neighboring-directory load is invoked.
+Each source row's ToRect/RealAzimuth output is recorded independently. Head idx
+is assigned by native EvalData while consumed members retain a probe sentinel;
+this establishes group boundaries without a copied grouping implementation.
+GetAvDirection is called on every head in both orientations, preserving all
+six Float32 bit patterns in TSV. Original stdout is `native-grouping-read.txt`;
+final stderr is empty and the capture completed with exit 0. The .NET C# compiler
+emitted valid probe binaries but remained active in Wine after compilation;
+only these completed compiler processes were stopped after successful captures.
+
+C# reviewed: Angle.cs (quarter-wave table, ToRect), Survey.cs EvalData,
+Station.cs RealAzimuth/GetAvDirection, Trip.cs Read/Evaluate/DeclCorrByIndex and
+ID.cs Read/op_Equality. Matching IL was checked at Angle.ToRect lines 28142–28285
+(Int64 product/add/shift/narrow), Angle static constructor through 28603,
+Survey.EvalData lines 9423–9993 (unchecked add/sub/neg, signed div and forward
+match precedence), Station.RealAzimuth through 42154 and GetAvDirection through 44407
+(Int64 squares, conv.r4, one Float32 wrap), and Trip's signed correction lookup.
+JKTZ `averaging.py` was inspected as prior art: independent circular/arithmetic
+means and explicit repeat confirmation differ from the native vector pipeline,
+so that implementation is not reused as the oracle.
+
+New evidence in `internal/processing/testdata/` is independently constructed
+with BinaryWriter and calculated by the original assembly, never the Go port:
+
+| Case | Established native behavior |
+| --- | --- |
+| empty | Four trips, no rows/groups, complete writer-form input |
+| repeats | 12 real rows; groups of 3/1/1/2/5; repeats/reversals across manual/Auto trips, separate later pair, head/member Flip and flags |
+| boundaries | 14 rows; 359/1-degree wrap, cancellation and zero vector, vertical, negative/sentinel/max Int32 distances, wrapped component sums, negative division, negative/out-of-range/exact trip-count indices |
+| identities | 13 rows; undefined aliases, splays, distinct reserved values with empty display, reversed reserved pair, self-pair forward precedence, intervening undefined row, matching raw-ID aliases (`0x80200000` / `0x000fffff`) |
+| flags | 512 rows, 256 actual repeated/reversed pairs, every head flag byte and contrasting member flags |
+| random | 512 literal unchecked-LCG rows in 128 actual four-row endpoint groups; signed angles/distances and trip changes |
+| rect.tsv | 176 original ToRect outcomes across quadrants, short wrapping, ±1/±5/±1000, Int32 extremes and ±16777216 exact-half cases |
+| sine-table.bin | All 16,385 original Int32 Q30 table entries, little endian |
+
+Tests compare exact native vectors, group boundaries and both Float32 direction
+bit triples, while checking every raw row, contiguous lineage and source spans.
+A controlled derivative of identities additionally checks distinct reserved From
+IDs sharing the same To; the expected split follows the independently established
+native ID equality and EvalData pair rule. Accessor mutation, deterministic
+processing, rejected unsupported documents, CLI bounds/I/O/JSON and the unchanged
+P05 native text goldens are regression-tested. The process JSON golden defines
+our stable inspection representation; it is not claimed to be a native JSON
+export. Existing P05 fixture/transcript hashes above remain unchanged.
+
+Final capture commands, using the existing Wine executable on PATH (or
+`/Applications/Wine Staging.app/Contents/Resources/wine/bin/wine`):
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo /r:System.Windows.Forms.dll \
+  '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p06\reference-grouping-probe-final.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-grouping-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/p06/reference-grouping-probe-final.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p06\native-final' \
+  > build/p06/native-grouping-read-final.txt 2> build/p06/native-grouping-read-final.err
+```
+
+| File | SHA-256 |
+| --- | --- |
+| `scripts/reference-grouping-probe.cs` | `64557b926f009f8cd7f0f3b0932101b099fbea8ace72ab8de3a7fe4b41f13a00` |
+| `internal/top/testdata/native-grouping-read.txt` | `5bd2b2abb6f8f64cdf7f7c23b72b131f5417fa7e65fe9a10d46283be203fa745` |
+| `internal/processing/testdata/boundaries.top` | `2f010b19d99280b12fa30fe828009a6f47736d11b1d4df89afb897622dcb6843` |
+| `internal/processing/testdata/boundaries.tsv` | `12d1e2a9b0c9cfce259d59849f439cdccf23bb254c7b668e0df9ef37da73d6e2` |
+| `internal/processing/testdata/empty.top` | `e2e16641ef68f3b7f91c7a30d3b62afe4ca53ad22b4ec665198f6cdd695beec2` |
+| `internal/processing/testdata/empty.tsv` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `internal/processing/testdata/flags.top` | `2e0e469f30867b386c9bab5b26d8ec1b11b58a19c33905cdddf4f13ede19b549` |
+| `internal/processing/testdata/flags.tsv` | `4c6a308acab6780f6cb7d8b9c87dadb311d27a6e2386a75b823fb0bd0c7e3675` |
+| `internal/processing/testdata/identities.top` | `a8a328bd8b5dfc8b5f0b589799767c8225c07c8973f9be5312d295d15a74f5a1` |
+| `internal/processing/testdata/identities.tsv` | `7fa34258a21b50ede215f46db24c7ab25a9dba89847ae30a659c9c58ca0dd295` |
+| `internal/processing/testdata/random.top` | `d8b371ecbc64332eecc1af8e58b5fc979acbe3950f6da6c6da6f0f1433329dc6` |
+| `internal/processing/testdata/random.tsv` | `5b5cea91b2102b2ee567f7e9c2f7baa8afe751793ea2d24b49cd353be797d1d0` |
+| `internal/processing/testdata/rect.tsv` | `f3bf730b452f9f8ed5d7ce1035bce6f7c049fb8c4f2d7e0d4bffba533c02f822` |
+| `internal/processing/testdata/repeats.top` | `3456961c222653c860bb134d8541e98c10bb08447751ec61d10efef31883dbd5` |
+| `internal/processing/testdata/repeats.tsv` | `c9c8d51946cc4db9020371ab16bec9ba80a2b2bcde1a772db181e0ba3e233f59` |
+| `internal/processing/testdata/sine-table.bin` | `cf2e46579e7df652e363e697235870d77b685a324996530c401fa9688885e208` |
+| `internal/cli/testdata/process-repeats.json` | `ee61404f28337d585a9648db7c9e644b43cec6c27214ef7d26263f3556161322` |

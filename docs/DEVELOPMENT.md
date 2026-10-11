@@ -13,7 +13,9 @@ From the repository root:
 ```sh
 bash scripts/tools.sh
 bash scripts/check.sh
-bash scripts/mutation.sh
+bash scripts/mutation.sh                 # sequential full campaign
+bash scripts/mutations-parallel.sh       # full local campaign; default 3 private workers
+POCKETTOPO_MUTATION_JOBS=2 bash scripts/mutations-parallel.sh
 bash scripts/mutation-dispatch-trial.sh
 bash scripts/mutation-trial.sh
 
@@ -39,10 +41,17 @@ are `coverage.out`, `mutation.json` and `build/`; caches/tools are in ignored
 dependencies. The document group covers P04d source/accounting/inspect faults alongside the
 unchanged earlier groups. The native-text group covers serialization, decimal
 formatting, provenance and safe CLI publication. The weak-suite negative control deliberately stubs
-inspection/export and exercises version, inspect and export arguments without assertions;
-all 18 generated mutants must live and the quality gate must reject them.
-Run one local mutation campaign at a time: reports/cache paths
-are shared. CI parallelism uses separate checkouts and caches.
+inspection/export/processing and exercises version, inspect, process and export arguments without assertions;
+all 25 generated mutants must live and the quality gate must reject them.
+Run one sequential campaign or one parallel coordinator at a time. The parallel
+runner snapshots only source/scripts/pinned tools into a private checkout per
+group with private caches/reports. It limits active groups, collects reports and
+runtimes in `build/mutation-parallel/`, fills a free worker immediately, stops
+scheduling when a child failure is observed and waits for active children before
+cleanup. It prunes each private cache after
+completed campaigns by default; set `POCKETTOPO_MUTATION_PRUNE_CACHE=false` only
+when disk space permits. This runner never changes Git branches/worktrees.
+CI parallelism uses separate checkouts and caches.
 
 ## Quality gates
 
@@ -71,6 +80,23 @@ Keep parallel mutation scheduling. Group count is an execution detail, not the
 number of PBIs or a target to preserve. Rebalance measured runtimes when needed;
 do not automatically add one group for every field/task. Such a change must keep
 the same complete scope, thresholds and controls.
+
+### Mutation scheduling after P06
+
+The previous P05 CI ran 11 mutation groups; the slowest `markers` group took
+about 16 minutes and Gremlins about 13 minutes. P06 uses 22 groups: expensive
+second/third Polygon scopes are separated, mappings and marker pairs stay
+cohesive, and processing has a targeted campaign. The unchanged prior 25 explicit
+scopes plus P06 processing remain exactly-once; all prior faults and thresholds
+are retained. Gremlins is partitioned into tables, drawings, output and processing
+by source file, with all internal production files assigned to one shard and
+unknown new packages rejected. Every shard still discovers coverage with the
+full suite, uses all prior operators, the fail-closed adapter and the same >=90%
+JSON gate. Full/sharded mutation inventories are compared during delivery.
+The scheduling controls check serial/matrix/parallel scope equality, private
+source snapshots, report collection, real 2..3 overlap within a 3-worker budget,
+child failures, invalid budgets, unknown packages and unchanged pruning controls.
+CI's aggregate still requires every shard/group and every platform check.
 
 ## One complete behavior per increment
 

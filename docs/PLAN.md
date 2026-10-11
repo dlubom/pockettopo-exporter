@@ -20,7 +20,8 @@ the documentation reset (`94a3f2e`). P05 builds on verified P04d
 | P04c16/P04c17 | Side mapping and first raw side marker prefix APIs | Preserved historical contracts |
 | P04d | Full supported v3 source document, side drawing, tail accounting, inspect JSON | Implemented; full local gates verified |
 | P05 | Isolated native text CLI, native byte goldens, provenance/loss report, safe new-directory publication | Implemented; full local gates verified |
-| P06–P14 | Processing, context, other native exports and compatibility milestone | Not implemented |
+| P06 | Native fixed-point grouping, source-row lineage and average-direction processing/JSON | Implemented; full local gates verified |
+| P07–P14 | Geometry, context, other native exports and compatibility milestone | Not implemented |
 | P15/P16 | Walls SRV / Survex SVX | Subsequent scope |
 
 ### Verification and publication
@@ -182,17 +183,67 @@ hashes are verified. Independent follow-up review reports no substantive finding
 The pushed commit's GitHub checks and delivery response provide exact-SHA CI
 publication evidence; no earlier SHA substitutes for it.
 
-### Next recommended item: P06 — native grouped measurement processing
+## P06 — native grouped measurement processing
 
-Deliver native fixed-point vectors and consecutive matching/reversed-shot groups
-with their complete source-row lineage and native average directions. Establish
-real repeated/reversed/across-trip and 0/360-degree cases against original
-EvalData/Angle/GetAvDirection in C#/IL and independent probes. Keep raw source
-records separate from processing and preserve P05 text bytes; they deliberately
-emit all individual source rows. Do not include placement, closure, template
-context or another exporter. Finalize the useful API/inspection boundary in P06
-without splitting arithmetic fields into separate PBIs. Stop after P06 when it
-is explicitly requested; this P05 chat stops here after publication.
+**Status:** implemented; full local gates verified. **Dependency:** P05. **Boundary:** isolated complete
+supported TOP v3 input; fixed-point vectors, consecutive native identity groups,
+source-row lineage and forward/reverse native average directions. Preserve P05
+text bytes and existing inspection schema. Placement, closure, directory context
+and other exporters belong to later stages.
+
+### Implementation and verification sequence
+
+- [x] Capture original Angle.ToRect/sine table, isolated Survey.EvalData and
+  Station.GetAvDirection goldens; confirm C#/IL rounding, Int32/Int64 wrapping,
+  identity aliases, undefined endpoints, flags and per-row trip corrections.
+- [x] Add `internal/processing` with a source-preserving grouped result and
+  `process <input.top> --json` inspection; test repeat/reverse/trip boundaries,
+  0/360, 1/2/3+ readings, separated pairs, degenerate/extreme values and lineage.
+- [x] Rebalance measured mutation groups and add bounded local concurrency in
+  independent disposable checkouts; preserve all scopes and failure controls.
+- [x] Run full ordinary/mutation/negative/dispatch gates, obtain independent
+  review, and update contracts and provenance.
+
+**Publication requirement:** commit/push the verified P06 tree on main and confirm
+every hosted CI job for the exact pushed SHA before reporting delivery complete.
+
+### Delivered behavior and evidence
+
+`process <input.top> --json` and `processing.GroupMeasurements` preserve every
+raw source row/offset and expose consecutive matching/reversed native groups,
+Q30 fixed-point vectors, per-row corrections and forward/reverse Float32 average
+directions. Original assembly goldens cover six datasets, every sine-table entry
+and 176 ToRect boundary outcomes. P05's 16 frozen evidence hashes are unchanged.
+Placement, closure, directory context and other exporters remain outside P06.
+See [SPEC](SPEC.md#native-grouped-measurement-processing-p06) and
+[fixture provenance](../internal/top/testdata/README.md#p06-native-grouped-measurements).
+
+A fresh read-only reviewer checked C#/IL, source lineage, processing/CLI,
+fixtures and mutation orchestration, independently running the full Go suite and
+focused race checks. No substantive behavior defect was found. The review exposed
+Gremlins switch-condition coverage mapping; equivalent `if` branches now permit
+all sites to run without reducing scope. Compiler-invalid pointer-address
+mutations were removed by idiomatic `new` allocation. Targeted survivor checks
+added true ID-alias/same-To reserved-ID cases, exact trip-count boundary evidence,
+input-read error preservation and exact input-limit tests. All 34 targeted P06
+faults now fail named behavioral tests. Dispatch controls prove private snapshots,
+complete report collection, bounded overlapping workers and failure propagation.
+The final source snapshot passed `check.sh` (formatting, vet, staticcheck, race,
+coverage controls, full tests, build and smoke checks): statement coverage 99.5%,
+processing 100%. All **1097** explicit faults across **26** scopes were KILLED.
+The 22-group parallel campaign completed successfully with at most three private
+workers. The four Gremlins shards killed **731/741** mutants (98.65%); their
+disjoint site union exactly matches unsharded discovery. No uncovered, invalid,
+timed-out or skipped outcomes were accepted. Ten survivors were reviewed: seven
+preserved P05 equivalents/cleanup diagnostics and three equivalent quarter-wave
+boundary comparisons (both branches return the same exact endpoint values).
+The weak-suite negative control leaves exactly 25 mutants LIVED and is rejected;
+build/setup-error controls remain NOT VIABLE and fail closed. All 33 documented
+P05/P06 evidence hashes were verified. Publication remains subject to every
+exact-SHA hosted CI job.
+
+**Next useful increment after delivery:** P07 — reference placement and plan
+geometry, refined at a complete behavior boundary. Not implemented in P06.
 
 ## Remaining original roadmap
 

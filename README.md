@@ -10,7 +10,8 @@ The CLI reads supported **TOP v3** source data: trips, measurements, references,
 three raw mappings and ordered plan/side Polygons and XSections. It preserves
 original bytes, fields and offsets; unknown markers and unsupported tails remain
 explicitly unparsed. It exports isolated native text with source lineage and loss
-reporting; geometry and other exporters remain future work.
+reporting. Native grouped measurement processing preserves every source row;
+station placement and other exporters remain future work.
 
 ```sh
 go run ./cmd/pockettopo-exporter inspect internal/top/testdata/api-drawings.top --json
@@ -35,8 +36,16 @@ Update independence, its explicit failure deviation, publication and losses.
 
 Start with [the current state and next work item](docs/PLAN.md). Work directly on
 `main`, delivering one complete, reviewable behavior per increment. **P05**
-adds usable native text export. The next increment is **P06: native grouped
-measurement processing**. Historical per-field prefix APIs remain supported.
+adds usable native text export; **P06** adds native fixed-point consecutive and
+reversed measurement groups with source lineage and average directions.
+
+```sh
+go run ./cmd/pockettopo-exporter process internal/processing/testdata/repeats.top --json
+```
+
+Processing is isolated and precedes placement/closure. It does not average P05
+text rows. See [the processing contract](docs/SPEC.md#native-grouped-measurement-processing-p06).
+The next increment is **P07: reference placement and geometry**, not implemented. Historical per-field prefix APIs remain supported.
 
 ## Documentation
 
@@ -62,7 +71,8 @@ go run ./cmd/pockettopo-exporter --version
 
 The executable is written to `build/pockettopo-exporter` (`.exe` on Windows).
 See [DEVELOPMENT](docs/DEVELOPMENT.md) for the complete mutation campaign and
-its parallel CI groups. There are no application module dependencies.
+its parallel CI groups and bounded local runner (`bash scripts/mutations-parallel.sh`).
+There are no application module dependencies.
 
 ## Product direction and references
 
