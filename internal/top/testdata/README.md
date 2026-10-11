@@ -1383,3 +1383,49 @@ produced the executable but its Wine process remained running; stopped only that
 task's compiler processes after the generated probe executed successfully. Native
 execution is optional for CI; the independently asserted frozen transcript runs
 everywhere.
+
+## P04c17 first side marker native evidence (2026-10-11)
+
+The separate `reference-side-marker-probe.cs` executes original plan
+`Drawing.Read` and side `Mapping.Read`, then `BinaryReader.ReadByte`, the exact
+marker operation in original `Drawing.Read`. It intentionally does not execute
+side payload dispatch. C# `Drawing.cs:171-183` and IL `Drawing.Read` at
+`IL_0017`/`IL_003a` establish mapping-before-marker; `DataSet.cs:138-139` reads
+plan then side. The earlier JKTZ parser's `drawing` method also reads one byte
+immediately after mapping, but its complete-file unknown-marker rejection is
+not adopted by this prefix API.
+
+All 775 exact CRLF rows are independently asserted in
+`side_marker_native_test.go`: literal mixed plans with 0/4/17 elements, all 256
+marker values, missing marker EOF, and full/exact existing fixtures. Literal
+marker offset is `25 + 14*ceil(n/2) + 17*floor(n/2)`; fixtures independently place
+markers at `[243,244)` (zero; tail 4) and `[417,418)` (one; tail 262).
+Native probe exited 0 with empty stderr. Earlier native artifacts are unchanged.
+This is method/field evidence; no geometry or native exporter claim is made.
+
+| Artifact | SHA-256 |
+| --- | --- |
+| `scripts/reference-side-marker-probe.cs` | `ac896b16efe95a6f19ba5d477020a142467598a1774dfbe00e355d323a0003b1` |
+| `internal/top/testdata/native-side-marker-read.txt` | `89c006cba519d00a0be06774596d4019264746b967016bdd42d93ce13bf8de21` |
+| `Drawing.cs` | `c07a9f255cf372cbcc2a3ecd2a31b0f1c959325749fd9155d8fd9a5649f817e7` |
+| `PocketTopo.il` | `ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76` |
+
+Original EXE/fixture hashes and Wine/.NET runtime are unchanged from P04c16.
+Actual commands (repository root; existing runtime):
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-side-marker-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-side-marker-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-side-marker-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-references.top' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-side-marker-read.txt 2>build/native-side-marker-read.err
+```
+
+Wine required escalation for its local socket. The compiler emitted the probe
+but its host process remained running; probe execution itself completed.
+CI verifies the frozen transcript without Wine.

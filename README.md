@@ -5,7 +5,7 @@ formats, based on the PocketTopo 1.372 decompilation.
 
 ## Status
 
-Implementation authorized on 2026-10-09. **P02, P03a, P03b, P03c1, P03c2, P04a, P04b, P04c1, P04c2, P04c3, P04c4, P04c5, P04c6, P04c7, P04c8, P04c9, P04c10, P04c11, P04c12, P04c13, P04c14, P04c15 and P04c16 are complete**:
+Implementation authorized on 2026-10-09. **P02, P03a, P03b, P03c1, P03c2, P04a, P04b, P04c1, P04c2, P04c3, P04c4, P04c5, P04c6, P04c7, P04c8, P04c9, P04c10, P04c11, P04c12, P04c13, P04c14, P04c15, P04c16 and P04c17 are complete**:
 minimal Go CLI and checks, immutable station IDs, and bounded v3 trip and
 measurement/reference/overview/plan-mapping/first-marker/Polygon-count/Polygon-points/Polygon-color/next-marker/second-Polygon-count/second-Polygon-points/second-Polygon-color/following-marker/third-Polygon-count/third-Polygon-points/third-Polygon-color/third-next-marker prefix readers with raw fields, source offsets,
 copied records and explicit malformed-input errors. P04c14 adds a bounded loop of
@@ -13,7 +13,9 @@ complete plan Polygons, with an explicit terminator/unsupported-element stop.
 P04c15 adds complete raw plan XSections in a separate mixed-element loop,
 retaining ordered Polygon/XSection records and the same explicit stop policy.
 P04c16 adds a complete raw side mapping after a terminated supported plan,
-with explicit mapping absence on unsupported plan stops. All earlier contracts remain intact.
+with explicit mapping absence on unsupported plan stops. P04c17 reads exactly
+one raw side marker after a present mapping, with explicit marker absence on
+unsupported plan stops. All earlier contracts remain intact.
 Native export support is not yet implemented or validated.
 
 Confirmed priorities:
@@ -47,7 +49,7 @@ Confirmed priorities:
   push were subsequently authorized for `dlubom/pockettopo-exporter`; releases
   remain out of scope. P02 adds no exporter framework.
 
-**Next bounded PBI: P04c17 — first side element marker (requires a new request).** See the
+**Next bounded PBI: P04c18 — first side Polygon point count (requires a new request).** See the
 scope below. P03b stops after trips, P03c1 after
 measurements, P03c2 after references, P04a after the overview mapping and
 P04b after the plan mapping, P04c1 after its first marker byte and P04c2
@@ -4162,13 +4164,130 @@ all earlier report paths. All three platform checks, eight mutation groups,
 the planning job and **CI complete** must succeed for the exact pushed SHA.
 The final handoff records that SHA/run. Stop after P04c16.
 
-## Next bounded PBI: P04c17 — first side element marker
+## Completed PBI: P04c17 — first side element marker
 
-Requires a new implementation request. After a present complete side mapping,
-read one raw side element marker with its span and bounded errors; preserve
-unsupported plan-stop handling and all earlier APIs. Refine acceptance criteria
-before implementation. Side payloads, geometry, CLI, exporters and complete-file
-validation remain separate work. Stop after P04c16 in this delivery.
+Implementation requested on 2026-10-11. P04c16 was integrated into `main` by fast-forward before this increment;
+the numbered P04c17 scope is the first side element marker defined here.
+
+Acceptance criteria:
+
+- Add separate `ReadV3SideMarkerPrefix` / `WithLimits` and immutable
+  `source.SideMarkerPrefix`, embedding the unchanged side-mapping metadata.
+- After a present mapping, require exactly one raw byte at
+  `side.elements[0].kind`; accept all 256 values, preserve its independent span,
+  and stop before every payload or subsequent byte, including marker zero.
+- `SideMarkerRaw() (byte, bool)` distinguishes present zero from absence.
+  Unsupported plan stops succeed without mapping or side marker, with zero span.
+- Missing marker and all inherited failures return the zero result. Preserve
+  `PlanElementLimits`, validation precedence, copied bytes/records, raw fields,
+  exact consumed offset and uninterpreted tail accounting.
+- Preserve all previous source/tests/native artifacts. Validate every marker,
+  empty/mixed/many plans, all cuts, inherited limits/errors, variable tables,
+  immutable copies, independent fixture offsets and original method evidence.
+
+Implementation plan (one bounded record behavior):
+
+- [x] Add source/reader tests and observe missing-API failure.
+- [x] Implement `internal/source/side_marker_prefix.go` and
+      `internal/top/side_marker.go`; pass old/new tests.
+- [x] Freeze `scripts/reference-side-marker-probe.cs` original-method evidence
+      and assert every transcript row independently in Go tests.
+- [x] Register `scripts/mutation-side-marker.sh` exactly once; run full checks,
+      all mutation groups, both controls, focused 10s fuzz and independent review.
+- [x] Document measured local evidence and independent review.
+- [x] Prepare commit/push and the exact-SHA hosted CI gate (final handoff below).
+
+Side payloads, geometry, CLI, exporters and complete-file validation remain
+separate work. Stop after P04c17.
+
+### P04c17 implementation and evidence
+
+`ReadV3SideMarkerPrefix` / `WithLimits` wrap the unchanged side-mapping reader.
+`source.SideMarkerPrefix` embeds its immutable result, adds
+`SideMarkerRaw() (byte, bool)` and `Offsets().SideMarker`, and retains copied
+prefix bytes, exact consumed offset and uninterpreted tail size. Present zero
+is distinct from absence. Unsupported plan stops never require a side marker;
+all inherited errors and a missing marker return the zero result. All 256 raw
+markers are accepted, with no dispatch or payload reads. Existing limits and
+validation order remain unchanged; plan budgets do not count this side marker.
+
+After the analysis map, inspected original Drawing.Read, Mapping.Read and
+DataSet.Read in C#/IL and the earlier JKTZ drawing parser. The new original-method
+probe freezes **775 exact CRLF rows**, independently asserted from literal
+record widths and fixture boundaries. Native fixture markers are `[243,244)`
+(zero, tail 4) and `[417,418)` (one, tail 262). Native execution exited 0 with empty
+stderr. See [provenance and commands](internal/top/testdata/README.md#p04c17-first-side-marker-native-evidence-2026-10-11).
+This proves field/stream behavior only; no native exporter or geometry claim.
+
+Independent read-only review found no blocking issues. It reconstructed every
+transcript row separately, traversed fixture records to establish marker offsets,
+verified evidence hashes, inspected the focused faults and exact-once scheduling, and checked earlier artifact preservation. Review did not execute
+Go or Wine during the implementer's cache-sensitive campaign. All **175 earlier
+tracked paths** were compared to base `640d99634b1975ddeb1bb331ab91d68e0a6c6e0e`;
+only README, fixture provenance, `.gitattributes` and the scheduler changed among
+earlier files. Prior source, tests, probes and native artifacts are unchanged.
+
+### P04c17 verification
+
+- `bash scripts/check.sh`: passed formatting, vet, Staticcheck, coverage controls,
+  uncached race tests, build and unchanged CLI smoke; **100% statement coverage**.
+- Both mutation control suites passed weak-test survivors, compiler/setup failure
+  rejection, exact-once scheduling, failure propagation and empty-report rejection.
+- `GOCACHE="$PWD/.cache/go-build" GOTOOLCHAIN=local GOFLAGS=-p=1 go test
+  ./internal/top -run '^$' -fuzz '^FuzzReadV3SideMarkerPrefix$' -fuzztime=10s
+  -parallel=2`: passed **1,238,796 executions**. Bounds: 4096 input bytes, 32 earlier
+  records, 256 comment bytes, 32 points per Polygon, 32 plan elements, 128 total
+  points. Properties cover unchanged input, determinism, zero errors, inherited
+  metadata, marker presence/raw bits/span and exact prefix/tail accounting.
+
+The first fuzz command exited 1 without diagnostics and is rejected evidence.
+After cleaning only the repository's rebuildable Go cache with no active Go
+compilation, serial compilation and the exact command above passed. Native
+compiler host processes remained running after emitting a working probe;
+only those two identified P04c17 processes were stopped after successful execution.
+The focused campaign killed all 34 compiled faults but its final gate correctly
+rejected duplicated `hide-tail` names. The duplicate names were made distinct;
+all 34 names were checked independently before restarting the full campaign.
+The rejected report remains in `build/p04c17-rejected-duplicate-names.json`.
+The full campaign uses an exact source/test/scripts copy, one Gremlins worker
+and the P04c16 bounded-cache fallback: forward every Go argument/status, clean
+only after completed test commands, restore a reusable hash-addressed cache seed.
+No other compilation shares that cache. Public scripts retain two workers and
+all existing gates. Full Gremlins passed **381/381 killed** (375 earlier plus 6
+new), with zero lived/uncovered/invalid/skipped/timed-out entries. Its strict JSON
+gate passed. The complete explicit phase passed **949/949 faults across 23 scopes** (915
+earlier plus **34/34 new**), with unique names per scope and only KILLED entries.
+Every fault compiled and failed a named behavioral test; no build/setup/timeout
+failure counted as killed. All reports were regenerated after Gremlins. The
+final audit passed and confirms exact source/test/script copy contents.
+
+All three platform checks, nine mutation groups, the planning job and **CI
+complete** must succeed for the exact pushed SHA. The final handoff records
+that SHA and hosted run. Stop after P04c17.
+
+Actual full-campaign command:
+
+```sh
+GOFLAGS=-p=1 P04C17_CACHE_COUNTER="$PWD/build/p04c17-cache-counter" \
+  PATH="$PWD/build/p04c17-local-validation/cache-bin:$PATH" \
+  bash build/p04c17-local-validation/scripts/mutation.sh \
+  >build/p04c17-full-mutation.log 2>&1
+python3 build/p04c17-audit.py
+```
+
+The final audit requires all 23 explicit reports, their exact counts/unique
+names/KILLED status and regeneration after Gremlins, then compares both file
+inventories and every source/test/script byte (only workers 2 -> 1 differs).
+Reports regenerate in `mutation.json`, `build/side-marker-mutation.json` and all
+earlier report paths; audit summary is `build/p04c17-verification-summary.json`.
+Selected Go 1.26.3, Staticcheck 0.8.1 and Gremlins 0.6.0 remain unchanged.
+
+## Next bounded PBI: P04c18 — first side Polygon point count
+
+Requires a new request and refined acceptance criteria. After a first side
+marker of 1, read only its raw signed Int32 point count, bounded errors and span;
+preserve earlier prefix contracts. Side vertices/color, other payloads, geometry,
+CLI, exporters and complete-file validation remain separate work.
 
 ## Open issues and deferred work
 
@@ -4176,7 +4295,8 @@ validation remain separate work. Stop after P04c16 in this delivery.
   The new loop supports complete plan Polygons and explicit terminal/unsupported
   stops. The mixed-element loop also preserves complete raw plan XSections.
   The side-mapping API preserves a complete raw side mapping after a terminated
-  supported plan. Side elements, complete-file validation and native exporters
+  supported plan. The side-marker API also retains its first raw marker.
+  Side payloads, complete-file validation and native exporters
   remain unimplemented; the CLI still accepts only help/version.
 - Native measurement arithmetic/export formatting fidelity remains unproven in Go.
 - Gremlins is accepted only for the measured small scope; expand and reassess
@@ -4184,7 +4304,7 @@ validation remain separate work. Stop after P04c16 in this delivery.
   mutants rather than silently excluding them.
 - The full P01 capability/fixture matrix, older TOP versions, corpus runs,
   release packaging and optional R01–R07 work remain deferred.
-- Future full compatibility claims still require native evidence; the P02/P03a/P03b/P03c1/P03c2/P04a/P04b/P04c1/P04c2/P04c3/P04c4/P04c5/P04c6/P04c7/P04c8/P04c9/P04c10/P04c11/P04c12/P04c13/P04c14/P04c15/P04c16
+- Future full compatibility claims still require native evidence; the P02/P03a/P03b/P03c1/P03c2/P04a/P04b/P04c1/P04c2/P04c3/P04c4/P04c5/P04c6/P04c7/P04c8/P04c9/P04c10/P04c11/P04c12/P04c13/P04c14/P04c15/P04c16/P04c17
   checks validate only implemented behavior and their recorded reference cases.
 
 ## Research references

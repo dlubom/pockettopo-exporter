@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-groups=(gremlins tables first-polygon second-polygon markers plan-loop plan-elements side-mapping)
+groups=(gremlins tables first-polygon second-polygon markers plan-loop plan-elements side-mapping side-marker)
 if [[ $# -gt 1 ]]; then
   printf 'Expected at most one mutation group.\n' >&2
   exit 2
@@ -60,6 +60,7 @@ run_group() {
     plan-loop) scopes=(plan-polygons) ;;
     plan-elements) scopes=(plan-elements) ;;
     side-mapping) scopes=(side-mapping) ;;
+    side-marker) scopes=(side-marker) ;;
     markers) scopes=(plan-next-marker plan-following-marker plan-third-polygon-count plan-third-polygon-points plan-third-polygon-color plan-third-next-marker) ;;
     *) printf 'Missing mutation group implementation: %s\n' "$selected" >&2; exit 2 ;;
   esac
