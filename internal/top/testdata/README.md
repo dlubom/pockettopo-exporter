@@ -1257,3 +1257,71 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 
 Frozen stdout is protected from text normalization. Earlier evidence is retained.
 This confirms the measured loop/boundary cases, not whole-file/export compatibility.
+
+## P04c15 complete plan XSection native evidence (2026-10-11)
+
+After the analysis map, inspected XSection.Read/Write, Drawing.Read and ID.Read
+in C# and matching IL. XSection.Read calls signed ReadInt32 at IL_0007/IL_0013,
+ID.Read at IL_0028 and signed ReadInt32 at IL_0040, without direction bounds or
+station lookup. Write emits marker 3, center X/Y, ID and direction. The payload
+is 16 bytes; the complete source record is 17 bytes. ID.Read normalizes the
+internal identity; Go retains the original UInt32 bits separately through StationID.
+JKTZ's local parser confirms field order but imposes direction >= -1 and rejects
+unknown markers; neither policy is adopted here.
+
+The pinned helper's Drawings method independently authors plan sections at
+(-5000,-6000), station "1", direction -1 and (5000,-6000), station "2", direction
+16384. Fixture raw IDs are 0x80000002 / 0x80000003; native internal IDs are
+-1048575 / -1048574. Records occupy [370,387) and [387,404); marker 0 is [404,405).
+The new API reads eight Polygons / 22 points and these two XSections, consumed
+405 with 275 tail bytes. P04c14 continues to stop after marker 3 at 371.
+
+The fresh original-method probe invokes original Drawing.Read, which dispatches
+original Polygon.Read and XSection.Read, on a fixture copy starting at mapping
+134 and independent literal streams. It inspects original linked-list order,
+center values, normalized internal IDs and signed directions. No TOP writes,
+GUI, exports or station resolution. Full and exact fixture streams consume 271
+relative bytes, with 275/0 tail. Missing terminator raises EndOfStreamException
+at 270. Literal streams exercise 0/1/2/3/4/17/257 mixed records, exact/arbitrary
+tails, signed/endian extremes, alias/reserved station IDs, negative directions
+below -1, directions above 65535 and every byte cut after mapping. The original
+native unknown-marker rows document its zero-payload continuation; Go's explicit
+unsupported stop is independently tested and intentionally differs.
+
+All **238 exact CRLF rows** match independently constructed literal expectations
+and pinned helper fields, including unchecked C# Int32 arithmetic in the 257-record
+literal. Native execution exited 0 with empty stderr. Transcript tests do not use
+the Go parser or probe output to generate expected values. All earlier native
+fixtures/probes are preserved byte-for-byte; no full export compatibility claim.
+
+| Evidence | SHA-256 |
+| --- | --- |
+| `scripts/reference-plan-elements-probe.cs` | `a3146dc03f3af6d8e154a632364479180180a336af87e10fcb58351220033770` |
+| `internal/top/testdata/native-plan-elements-read.txt` | `654b9209da1b6e9d49218c7365e08b74fc4f9547eb06f90da51da663e33dc319` |
+| `internal/top/testdata/api-drawings.top` | `4a494ead03cade750f670d50aa38661abda9b3e1f131d67f27a252982752c2a5` |
+| `build/pinned-pockettopo-fixtures.cs` | `ae1f32a1034bbd95a59e97db47e887fabb30b06eabe55a960c9c5ebf9090d005` |
+| `../pockettopo-decompilation/decompiled/csharp/PocketTopo/XSection.cs` | `8c5a99138193290b5433c7d7470e3b4329067e7bfbe5b0ef81dffa669719d1ac` |
+| `../pockettopo-decompilation/decompiled/csharp/PocketTopo/Drawing.cs` | `c07a9f255cf372cbcc2a3ecd2a31b0f1c959325749fd9155d8fd9a5649f817e7` |
+| `../pockettopo-decompilation/decompiled/csharp/PocketTopo/ID.cs` | `8737d23529d5c27bc7d7be7a9563b73cd76ed8738d95639dde64eef113790fe6` |
+| `../pockettopo-decompilation/decompiled/PocketTopo.il` | `ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76` |
+| `/Users/dariuszlubomski/.local/share/pockettopo/app/PocketTopoV1372/PocketTopo.exe` | `048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371` |
+
+Actual optional commands (existing Wine/runtime, repository root):
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-plan-elements-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-plan-elements-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-plan-elements-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata\api-drawings.top' \
+  >build/native-plan-elements-read.txt 2>build/native-plan-elements-read.err
+```
+
+The first compile began while the disk was full and stalled. After stopping only
+that task's compiler and recovering abandoned cache space, recompiled the probe;
+its resulting assembly executed successfully with the exact frozen transcript.
+Wine's local socket required sandbox escalation. Native execution is optional
+for CI; the frozen independently asserted transcript is checked on every platform.

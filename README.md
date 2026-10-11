@@ -5,11 +5,13 @@ formats, based on the PocketTopo 1.372 decompilation.
 
 ## Status
 
-Implementation authorized on 2026-10-09. **P02, P03a, P03b, P03c1, P03c2, P04a, P04b, P04c1, P04c2, P04c3, P04c4, P04c5, P04c6, P04c7, P04c8, P04c9, P04c10, P04c11, P04c12, P04c13 and P04c14 are complete**:
+Implementation authorized on 2026-10-09. **P02, P03a, P03b, P03c1, P03c2, P04a, P04b, P04c1, P04c2, P04c3, P04c4, P04c5, P04c6, P04c7, P04c8, P04c9, P04c10, P04c11, P04c12, P04c13, P04c14 and P04c15 are complete**:
 minimal Go CLI and checks, immutable station IDs, and bounded v3 trip and
 measurement/reference/overview/plan-mapping/first-marker/Polygon-count/Polygon-points/Polygon-color/next-marker/second-Polygon-count/second-Polygon-points/second-Polygon-color/following-marker/third-Polygon-count/third-Polygon-points/third-Polygon-color/third-next-marker prefix readers with raw fields, source offsets,
 copied records and explicit malformed-input errors. P04c14 adds a bounded loop of
 complete plan Polygons, with an explicit terminator/unsupported-element stop.
+P04c15 adds complete raw plan XSections in a separate mixed-element loop,
+retaining ordered Polygon/XSection records and the same explicit stop policy.
 All earlier contracts remain intact.
 Native export support is not yet implemented or validated.
 
@@ -3852,20 +3854,179 @@ A dedicated `plan-loop` group retains every earlier campaign. All three platform
 checks, six mutation groups, the planning job and **CI complete** must pass for
 the exact pushed SHA; the final handoff records that SHA/run. Stop after P04c14.
 
-## Next bounded PBI: P04c15 — complete plan XSection records
+## Completed PBI: P04c15 — complete plan XSection records
 
-Requires a new implementation request. Extend the existing plan element loop
-with complete raw XSection records, all fields/spans, bounded errors and native
-method evidence; retain Polygon and unsupported-stop contracts. Refine its
-whole-record acceptance criteria before implementation. Do not split a record
-into independent scalar PBIs. Side drawing, geometry, CLI and exporters remain
-separate future work.
+Whole-record acceptance criteria refined before implementation (2026-10-11):
+
+- Add `ReadV3PlanElementsPrefix` / `WithLimits` and immutable
+  `source.PlanElementsPrefix.Elements()` in original mixed Polygon/XSection order.
+  Preserve all earlier APIs byte-for-byte, including P04c14 stopping at marker 3.
+  Reuse unchanged plan-mapping metadata and complete Polygon values/spans.
+- Marker 3 requires one complete 17-byte record: marker, signed little-endian
+  Int32 center X/Y, raw UInt32 station ID and signed Int32 direction, in that order.
+  Preserve all bit patterns through `StationID`; accept every direction including
+  -1, values below -1 and values above 65535 without normalization or geometry.
+  Retain distinct record/marker/center-X/center-Y/station-ID/direction spans.
+- Continue after every complete supported record. Marker 0 returns `terminated`;
+  every non-0/1/3 byte returns `unsupported_element` after its marker only.
+  Retain StopMarkerRaw/StopReason, stop span, Bytes/ConsumedOffset and
+  UnparsedTailSize accounting. Both stops succeed without payload, side mapping
+  or trailer. Missing required bytes return only the zero result and `truncated` at the field's start:
+  `plan.elements[i].kind`, `.center.x`, `.center.y`, `.station_id`, `.direction`
+  or the unchanged Polygon field names. Require a following marker even after
+  a complete XSection. No partially accumulated result on any error.
+- `PlanElementLimits` retains existing inherited limits/defaults and validation
+  order: max_points, max_elements, max_total_points, then inherited limits.
+  MaxElements (100,000) counts both supported kinds, checked at the marker before
+  payload; a stop consumes no budget. MaxPoints (1,000,000) remains per Polygon;
+  MaxTotalPoints (1,000,000) and TotalPoints count only Polygon vertices.
+  Zero is meaningful; bounds are inclusive. Polygon negative-count/budget/
+  preflight/allocation precedence remains unchanged. No XSection allocation
+  or source-ID lookup is needed before the element budget check.
+- Test mixed and consecutive records, empty/many plans, all stop markers and
+  colors, signed/endian/ID extremes, every required byte cut, independent spans,
+  immutable input/output copies, all bounds/errors and inherited metadata.
+  Add bounded fuzzing, focused fail-closed faults and an original-assembly
+  Drawing.Read/XSection.Read probe with independent literal expectations.
+  Preserve all earlier fixtures/probes and native evidence byte-for-byte.
+  Native ID normalization is compared separately from preserved raw bits; native
+  unknown-marker continuation differs from our explicit unsupported stop.
+- Run `bash scripts/check.sh`, every `scripts/mutation.sh` group, both mutation
+  control suites and focused fuzzing. Require >=95% coverage, >=90% Gremlins
+  killed with every survivor reviewed, no invalid/incomplete entries and 100%
+  focused faults killed. Register the new scope exactly once. Obtain independent
+  review, commit/push and verify all CI jobs for the exact delivered SHA.
+
+Implementation plan (one complete record behavior):
+
+- [x] Write mixed-element/model tests; observe the new API's absence.
+- [x] Implement separate immutable model and bounded loop; pass old/new tests.
+- [x] Execute/freeze native method evidence and independently assert every row.
+- [x] Add mutation scope, fuzz, full checks and independent read-only review.
+- [x] Document measured results; prepare commit/push and exact-SHA CI gate.
+
+Non-goals: side drawing, station resolution, geometry, direction conversion,
+CLI, exporters and complete-file validation. Stop after P04c15.
+
+### P04c15 implementation and evidence
+
+`ReadV3PlanElementsPrefix` / `WithLimits` introduce a separate mixed-element API.
+`source.PlanElementsPrefix.Elements()` returns immutable ordered `PlanElement`
+values with checked `Polygon()` / `XSection()` variants. Complete Polygons reuse
+`PlanPolygon`; `PlanXSection` stores raw center Int32s, `StationID` bits and signed
+Int32 direction, with independent record/marker/scalar spans. The zero element
+has neither variant. Existing `ReadV3PlanPolygonsPrefix` still stops at marker 3.
+No earlier reader/model is edited.
+
+`PlanElementLimits` has the same default ceilings and inherited fields as
+`PlanPolygonLimits`. Only MaxElements gains both supported kinds in this new API;
+point budgets count only Polygon vertices. Error fields use mixed source indices,
+so a Polygon after two XSections is still `plan.elements[2]`. Each XSection scalar
+requires four bytes at its own field; subsequent marker is required. Every parse
+failure returns the zero result, even after completed earlier elements. Success
+retains exact consumed bytes, stop metadata and uninterpreted tail size.
+
+The original Drawing.Read probe dispatches original XSection.Read/Polygon.Read.
+All 238 CRLF rows match independent literal/helper expectations. The fixture has
+eight Polygons (22 points) followed by two XSections at [370,387) and [387,404),
+then terminator [404,405); consumed 405, tail 275. Raw IDs 0x80000002/0x80000003
+remain distinct from native identities -1048575/-1048574. Direction -1 and 16384
+and unrestricted signed literal extremes are preserved. See
+[fixture provenance](internal/top/testdata/README.md#p04c15-complete-plan-xsection-native-evidence-2026-10-11)
+for C#/IL positions, hashes, actual commands and native unknown-marker differences.
+The original assembly was executed by the implementer; the reviewer independently
+checked source, fixture bytes and reconstructed every native transcript row.
+No geometry or native exporter compatibility is claimed.
+
+### P04c15 verification
+
+Independent read-only review found no unresolved parser/model defects. Fixed its
+two verification findings: distinct Polygon/XSection mutation names and explicit
+simultaneously-invalid-limit tests/fault. Independent source/top uncached race
+tests passed; separate focused 5s fuzz passed 492,908 executions. Its preservation
+check confirmed all 120 earlier source/test/fixture/probe paths unchanged against
+base 0c09abc5e101c1b4a92a5952c1948b2946c43bc8.
+
+Local disk exhaustion caused baseline/build failures and rejected an incomplete
+focused campaign; no compilation failure was counted as killed. An earlier
+78-fault report with duplicate names was also correctly rejected. Final full
+verification uses a disposable exact source/test/scripts copy, one Gremlins worker
+and a Go wrapper that forwards exact arguments/status, clearing only that copy's
+cache after every 12 completed test commands. No cache is removed during active
+compilation. The reviewer checked this fallback; public scripts retain normal
+workers/caching, all earlier scopes and strict gates. Results are recorded below
+with the completed report audit in `build/p04c15-verification-summary.json`.
+
+- Full local campaign: **364/364 Gremlins mutants killed** (313 earlier plus
+  51 new), no lived/uncovered/invalid/skipped/timed-out entries; strict gate passed.
+  **874/874 explicit faults** across **21 scopes** (795 earlier plus **79/79 new**).
+  Every report has its exact count, unique per-scope names and only KILLED entries,
+  generated after Gremlins; compilation and named behavioral failures are required.
+  Group counts: tables 93, first-polygon 198, second-polygon 141, markers 305,
+  plan-loop 58 and plan-elements 79. Seven groups include Gremlins. The new
+  campaign is scheduled exactly once in its own `plan-elements` group.
+- `bash scripts/mutation-trial.sh` and `bash scripts/mutation-dispatch-trial.sh`:
+  passed weak-test survivors, build/setup failure controls, exact-once scheduling,
+  group failure propagation, invalid arguments and empty-report rejection.
+- `GOCACHE="$PWD/.cache/go-build" GOTOOLCHAIN=local go test ./internal/top
+  -run '^$' -fuzz '^FuzzReadV3PlanElementsPrefix$' -fuzztime=10s -parallel=2`:
+  passed **1,042,970 executions**. Bounds: 4096 input bytes, 32 earlier records,
+  256 comment bytes, 32 points per Polygon, 32 elements and 128 total points.
+  Properties cover determinism, unchanged input, zero error results, inherited
+  metadata, raw ordered records/spans, stop reason and exact prefix/tail accounting.
+
+Actual full-campaign fallback command after copying unchanged source/tests/scripts
+into the ignored disposable validation directory (only workers 2 -> 1 and the
+completed-command cache wrapper differ):
+
+```sh
+P04C15_CACHE_COUNTER="$PWD/build/p04c15-cache-counter" \
+  PATH="$PWD/build/p04c15-local-validation/cache-bin:$PATH" \
+  bash build/p04c15-local-validation/scripts/mutation.sh \
+  >build/p04c15-full-mutation.log 2>&1
+python3 build/p04c15-audit.py
+```
+
+The wrapper forwards exact arguments/exit status to `/opt/homebrew/bin/go` and
+runs `go clean -cache` only after every 12 completed test commands, with one
+worker and no other campaign sharing that cache. The audit copies all final
+reports to their normal paths and confirms all source/test bytes match the
+checkout. Rejected duplicate-name evidence is retained in
+`build/p04c15-rejected-duplicate-name.json`; baseline disk failures are recorded
+in `build/p04c15-baseline.log`.
+`bash scripts/check.sh` on the final implementation passed formatting, vet,
+Staticcheck, exact coverage controls, uncached race tests, build and unchanged
+CLI smoke. **100% statement coverage** across every implemented package. Selected
+Go 1.26.3, Staticcheck 0.8.1 and Gremlins 0.6.0 remain unchanged. The review and
+final audit confirm earlier source/native evidence is preserved; only README,
+fixture provenance, mutation scheduling and `.gitattributes` change among older
+tracked files.
+
+Measured Git blobs: `5ed42969e0469da42535f4c9f2a9629659ce4be4` (reader),
+`e9effe7d8b868ea4254c7ae144089656a43ec079` (reader tests),
+`2a7df5fc593db770194bf73e03cd4fff03034720` (model),
+`b419a1d97cad0bb116de1f2274f7ec7590e1d0ef` (model tests).
+
+Reports regenerate in `coverage.out`, `mutation.json`,
+`build/plan-elements-mutation.json` and all earlier reports. All three platform
+checks, seven mutation groups, the planning job and **CI complete** must succeed
+for the exact pushed SHA. The final handoff records that SHA/run. P04c15 ends
+here; side drawing, geometry, CLI and exporters remain deferred.
+
+## Next bounded PBI: P04c16 — complete side mapping prefix
+
+Requires a new implementation request. After a terminated complete supported
+plan, read one complete raw side Mapping with its fields/spans and bounded errors;
+preserve unsupported-stop handling and all existing plan APIs. Refine the complete
+mapping acceptance criteria before implementation. Side elements, geometry, CLI,
+exporters and complete-file validation remain separate future work.
 
 ## Open issues and deferred work
 
 - The TOP readers validate only the v3 trip/measurement/reference/overview/plan-mapping/first-marker/Polygon-count/Polygon-points/Polygon-color/next-marker/second-Polygon-count/second-Polygon-points/second-Polygon-color/following-marker/third-Polygon-count/third-Polygon-points/third-Polygon-color/third-next-marker prefixes.
   The new loop supports complete plan Polygons and explicit terminal/unsupported
-  stops. XSection payloads and side mappings, complete-file validation and native exporters remain
+  stops. The mixed-element loop also preserves complete raw plan XSections.
+  Side mappings, complete-file validation and native exporters remain
   unimplemented; the CLI still accepts only help/version.
 - Native measurement arithmetic/export formatting fidelity remains unproven in Go.
 - Gremlins is accepted only for the measured small scope; expand and reassess
@@ -3873,7 +4034,7 @@ separate future work.
   mutants rather than silently excluding them.
 - The full P01 capability/fixture matrix, older TOP versions, corpus runs,
   release packaging and optional R01–R07 work remain deferred.
-- Future full compatibility claims still require native evidence; the P02/P03a/P03b/P03c1/P03c2/P04a/P04b/P04c1/P04c2/P04c3/P04c4/P04c5/P04c6/P04c7/P04c8/P04c9/P04c10/P04c11/P04c12/P04c13/P04c14
+- Future full compatibility claims still require native evidence; the P02/P03a/P03b/P03c1/P03c2/P04a/P04b/P04c1/P04c2/P04c3/P04c4/P04c5/P04c6/P04c7/P04c8/P04c9/P04c10/P04c11/P04c12/P04c13/P04c14/P04c15
   checks validate only implemented behavior and their recorded reference cases.
 
 ## Research references
