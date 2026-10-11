@@ -122,7 +122,7 @@ revising this PBI explicitly, not returning to arbitrary one-field tasks.
 
 ## P05 — native text export
 
-**Status:** implemented and locally verified. **Dependency:** P04d.
+**Status:** implemented; full local gates verified. **Dependency:** P04d.
 Delivers a usable
 `export` CLI for the native text format with exact original-program goldens,
 explicit isolated-input context, deterministic output/provenance/loss reporting
@@ -141,7 +141,9 @@ BOM/CRLF. Every source row survives, with byte-span/output-line lineage,
 raw/native/display identities, source and output hashes, transformations and
 omissions. P04d and prefix APIs remain unchanged. Existing output paths are
 refused; files are synced and closed before no-replace hard-link publication,
-report last. Cleanup retires temporary names and checks original file identity.
+report last. Cleanup retires temporary names and checks original file identity
+while private hard links pin inodes through rollback. Once the complete report
+is linked, cleanup errors preserve the complete package.
 
 C# and IL plus seven independent successful native byte goldens establish text
 formatting and Update independence. These include actual repeat/reversal across
@@ -157,22 +159,28 @@ A fresh read-only reviewer checked native C#/IL, all new behavior and gates,
 finding one substantive cleanup ownership defect. Recreated temporary/final
 path regressions failed before the repair and pass afterward. Follow-up survivor
 review strengthened input-read error preservation and exact-limit diagnostics.
-No substantive findings remain. Seven final Gremlins survivors were reviewed:
-five equivalent padding/numeric branches and two noncritical cleanup-diagnostic
-variants, with no critical survivor.
+Linux CI additionally exposed immediate inode reuse after removing the original
+final link. The repair retains private ownership hard links through rollback;
+independent review confirmed the ordering and post-commit failure policy. Tests
+cover second-anchor conflicts and foreign file/directory anchor replacement after
+commit, alongside the original rollback/recreated-path cases. Windows rejects
+control-character filenames before export; only that filesystem fixture is
+skipped there, while direct title validation remains cross-platform.
 
-Final local verification passed: `check.sh` (race, vet, Staticcheck, coverage
-controls, build and CLI checks; 99.5% statement coverage), all 621 Gremlins
-mutants (614 killed, 7 lived; 98.87%; no invalid/uncovered/timed-out outcomes),
-and all 1,057 explicit compile-and-test faults in 25 scopes. Full scope was
-verified with the complete campaign plus focused native-text/Gremlins reruns
-after correcting a noncompiling planned fault and strengthening tests. All 18
-weak-suite mutants live and the gate rejects them; compiler/setup failure and
-exactly-once dispatch/pruning controls also pass. Seven native byte goldens,
-all 16 new evidence hashes, local documentation links and staged whitespace
-checks pass. The built CLI independently matches the api-drawings text golden
-and both report hashes. The commit's exact-SHA GitHub checks and delivery
-response provide publication evidence; no earlier SHA substitutes for it.
+Final ordinary gates pass with **99.5%** total statement coverage. Gremlins
+reports **619/626 KILLED (98.88%)**, seven reviewed survivors and no uncovered,
+invalid, timed-out or skipped outcomes. Five survivors are equivalent zero-boundary
+or valid-ID changes; two affect only cleanup diagnostics, not publication or
+foreign-entry preservation. All **1063** explicit faults across **25** scopes are
+KILLED, including 67 native-text faults and six ownership-anchor/commit faults.
+Dispatch controls preserve exactly-once scheduling and failure propagation;
+the weak-suite control has all 18 mutants LIVED and rejects the gate. Compiler
+and setup failure controls return NOT VIABLE, never KILLED. The rebuilt CLI
+matches the native drawings golden, preserves its source and produces the
+verified source/text hashes and exactly two artifacts. All 16 P05 frozen evidence
+hashes are verified. Independent follow-up review reports no substantive findings.
+The pushed commit's GitHub checks and delivery response provide exact-SHA CI
+publication evidence; no earlier SHA substitutes for it.
 
 ### Next recommended item: P06 — native grouped measurement processing
 

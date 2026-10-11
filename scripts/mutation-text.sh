@@ -99,6 +99,14 @@ mutate ignore-close internal/cli/export.go 'if err == nil {
 	return err'
 mutate short-write internal/cli/export.go 'err == nil && n != len(b)' false
 mutate cleanup-identity internal/cli/export.go 'if !os.SameFile(current, p.identity) {' 'if os.SameFile(current, p.identity) {'
+mutate anchor-tracking internal/cli/export.go 'anchors = append(anchors, ownedPath{anchor, fileIdentity})' '_ = anchors'
+mutate release-anchor-early internal/cli/export.go 'anchors = append(anchors, ownedPath{anchor, fileIdentity})' 'anchors = append(anchors, ownedPath{anchor, fileIdentity}); _ = os.Remove(anchor)'
+mutate ignore-anchor-conflict internal/cli/export.go 'if e = os.Link(temp, anchor); e != nil {' 'if e = os.Link(temp, anchor); false {'
+mutate discard-commit internal/cli/export.go 'committed = true' 'committed = false'
+mutate ignore-anchor-identity internal/cli/export.go 'e == nil && !os.SameFile(current, anchor.identity)' 'e == nil && os.SameFile(current, anchor.identity) && false'
+mutate ignore-anchor-cleanup internal/cli/export.go 'if e != nil {
+			return fmt.Errorf("cannot remove ownership anchor: %w", e)' 'if false {
+			return fmt.Errorf("cannot remove ownership anchor: %w", e)'
 mutate wrong-format internal/cli/run.go 'args[3] != "text"' 'args[3] == "text"'
 jq -s '.' mutants.jsonl > "$report"
-jq -e 'length == 61 and (map(.name)|unique|length)==61 and all(.[];.status=="KILLED")' "$report"
+jq -e 'length == 67 and (map(.name)|unique|length)==67 and all(.[];.status=="KILLED")' "$report"

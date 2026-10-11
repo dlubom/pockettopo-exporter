@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -79,6 +80,9 @@ func TestExportInputAndDestinationFailures(t *testing.T) {
 		{"input overwrite", input, nil, input},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
+			if runtime.GOOS == "windows" && tc.name == "control title" {
+				t.Skip("Windows rejects control-character filenames; exporttext tests validate control characters directly")
+			}
 			if tc.data != nil {
 				if err := os.WriteFile(tc.input, tc.data, 0600); err != nil {
 					t.Fatal(err)

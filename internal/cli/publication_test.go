@@ -3,9 +3,11 @@ package cli
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"pockettopo-exporter/internal/exporttext"
@@ -26,6 +28,69 @@ func (c conflictingReport) MarshalJSON() ([]byte, error) {
 type replacedArtifactReport struct {
 	path    string
 	replace bool
+}
+
+type replacedAnchorReport struct {
+	path      string
+	directory bool
+}
+
+func (c replacedAnchorReport) MarshalJSON() ([]byte, error) {
+	if err := os.Remove(c.path); err != nil {
+		return nil, err
+	}
+	if !c.directory {
+		return []byte("{}"), os.WriteFile(c.path, []byte("foreign anchor"), 0600)
+	}
+	if err := os.Mkdir(c.path, 0700); err != nil {
+		return nil, err
+	}
+	return []byte("{}"), os.WriteFile(filepath.Join(c.path, "foreign"), []byte("foreign anchor"), 0600)
+}
+
+func TestExportAnchorConflict(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "new")
+	foreign := filepath.Join(dir, ".report.json.owner")
+	r := exporttext.Result{Text: []byte("text"), Report: exporttext.Report{Records: []exporttext.Record{{Raw: conflictingReport{foreign}}}}}
+	if err := publish(dir, r); err == nil {
+		t.Fatal("foreign anchor accepted")
+	}
+	b, err := os.ReadFile(foreign)
+	if err != nil || string(b) != "other writer" {
+		t.Fatalf("foreign anchor lost: %q %v", b, err)
+	}
+	entries, err := os.ReadDir(dir)
+	if err != nil || len(entries) != 1 {
+		t.Fatalf("rollback anchor debris: %v %v", entries, err)
+	}
+}
+
+func TestExportCommittedAnchorFailure(t *testing.T) {
+	for _, directory := range []bool{false, true} {
+		t.Run(fmt.Sprintf("directory=%t", directory), func(t *testing.T) {
+			dir := filepath.Join(t.TempDir(), "new")
+			foreign := filepath.Join(dir, ".survey.txt.owner")
+			r := exporttext.Result{Text: []byte("complete text"), Report: exporttext.Report{Records: []exporttext.Record{{Raw: replacedAnchorReport{foreign, directory}}}}}
+			err := publish(dir, r)
+			if err == nil || !strings.Contains(err.Error(), "export published") {
+				t.Fatalf("commit failure hidden: %v", err)
+			}
+			b, err := os.ReadFile(filepath.Join(dir, "survey.txt"))
+			if err != nil || string(b) != "complete text" {
+				t.Fatalf("committed text removed: %q %v", b, err)
+			}
+			if b, err := os.ReadFile(filepath.Join(dir, "report.json")); err != nil || !bytes.Contains(b, []byte("schema_version")) {
+				t.Fatalf("committed report removed: %q %v", b, err)
+			}
+			if directory {
+				foreign = filepath.Join(foreign, "foreign")
+			}
+			b, err = os.ReadFile(foreign)
+			if err != nil || string(b) != "foreign anchor" {
+				t.Fatalf("foreign anchor removed: %q %v", b, err)
+			}
+		})
+	}
 }
 
 func (c replacedArtifactReport) MarshalJSON() ([]byte, error) {

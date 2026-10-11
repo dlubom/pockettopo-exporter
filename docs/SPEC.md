@@ -246,9 +246,20 @@ synced and closed, then hard-linked to its final name without replacement.
 explicitly. Existing files/directories/symlinks and concurrent final-file entries
 are never overwritten. On failure, remove only files this invocation created
 and the directory if empty; retire removed temporary names and check recorded
-file identities before cleanup. Report cleanup failures and leave foreign entries.
+file identities before cleanup. Exclusive private `.survey.txt.owner` and
+`.report.json.owner` hard links pin the original inodes before temporary names
+are retired. Keep these anchors through every rollback ownership check; remove
+public owned paths first and anchors last. This prevents immediate inode reuse
+from making a foreign replacement appear owned. Ordinary successful publication
+removes both anchors and leaves exactly the two artifacts.
+
+Publication is committed immediately after linking the complete report. Subsequent
+temporary/anchor cleanup failures return an explicit `export published` error,
+preserving both complete artifacts and remaining anchors. Report cleanup failures
+and leave foreign entries, including replaced anchors.
 Identity checking and unlink are separate filesystem operations; arbitrary
-same-user pathname replacement during that interval is outside this guarantee.
+same-user pathname replacement during that interval or tampering with private
+anchors is outside this guarantee.
 The reserved output directory must not be actively modified during export.
 No recursive removal or source rewrite is performed. This is not an atomic
 multi-file transaction: process termination can leave an incomplete new directory;
@@ -300,13 +311,14 @@ for commands, hashes, controlled context and independent goldens.
   the complete-file policy; preserve/classify extra bytes rather than inventing
   a native requirement for a zero trailer.
 - `Survey.WriteText` calls `Update`; `Station.WriteText` writes individual rows
-  with processed flag semantics. P05 must establish which update effects affect
-  text output, rather than assuming all geometry is required or bypassing it.
+  with native flag semantics. P05's C#/IL and probe-backed analysis establishes
+  text-field independence and the explicit geometry-failure deviation above.
+  Other exporters must establish their own Update dependencies.
 
-## CLI behavior to introduce with its implementation
+## CLI behavior
 
-`inspect` is implemented as specified above. `export` remains planned; P05 fixes
-its arguments and exit semantics.
+`inspect` and the isolated P05 text `export` are implemented as specified above,
+including their arguments and exit semantics. Other exporters remain planned.
 
 Accept explicit paths and formats. Preserve inputs; reject input/output
 collisions and accidental overwrites. Write temporary output and publish only
