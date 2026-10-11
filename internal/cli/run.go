@@ -8,10 +8,12 @@ import (
 
 const help = `Usage: pockettopo-exporter --help | --version
   pockettopo-exporter inspect <input.top> --json
+  pockettopo-exporter geometry <input.top> --json [--close-loops]
   pockettopo-exporter process <input.top> --json
   pockettopo-exporter export <input.top> --format text --output <new-directory>
 
 Inspect PocketTopo TOP v3 source data.
+Place native isolated geometry with optional loop closure.
 Process native consecutive measurement groups (isolated input).
 Export isolated native text (metres, 360 degrees) and a provenance/loss report.
 `
@@ -25,6 +27,19 @@ func Run(args []string, stdout, stderr io.Writer) int {
 			return 1
 		}
 		return export(args[1], args[5], stdout, stderr)
+	}
+	if len(args) > 0 && args[0] == "geometry" {
+		if (len(args) != 3 && len(args) != 4) || args[1] == "" || args[1] == "--json" || args[2] != "--json" {
+			fmt.Fprint(stderr, help)
+			return 1
+		}
+		for _, option := range args[3:] {
+			if option != "--close-loops" {
+				fmt.Fprint(stderr, help)
+				return 1
+			}
+		}
+		return geometry(args[1], len(args) == 4, stdout, stderr)
 	}
 	if len(args) > 0 && args[0] == "process" {
 		if len(args) != 3 || args[1] == "" || args[1] == "--json" || args[2] != "--json" {

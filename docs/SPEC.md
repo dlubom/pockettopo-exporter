@@ -382,7 +382,8 @@ distance yields zero angles. No extra modulo or angular mean is substituted.
 All frozen native direction Float32 bits are compared exactly.
 
 Reference placement, SetupShot/SetupXsect projection, closure, geometry-derived
-station orientation, template-directory context and other exporters are absent.
+station orientation are absent from P06; P07 exposes them separately below.
+Template-directory context and other exporters remain absent.
 A reverse direction is an explicit orientation option, not an inferred native
 placed station. This API therefore also processes inputs whose later native
 Update would fail. P05 keeps its isolated text contract and exact bytes, emitting
@@ -418,3 +419,77 @@ Reproduce with `go test ./internal/processing -run '^$' -bench '^BenchmarkGroupe
 
 C#/IL references, original-program captures and fixture hashes are in
 [testdata/README](../internal/top/testdata/README.md#p06-native-grouped-measurements).
+
+## Isolated native geometry (P07)
+
+`processing.PlaceGeometry(Document, GeometryOptions)` requires one complete
+supported v3 source. It uses P06 groups without changing their vectors, source
+rows or average directions. P05 text and schema-1 `process`/`inspect` output are
+unchanged. There are no templates or neighboring-file scans.
+
+`EvalRef` chooses the first reference whose native ID is not UNDEF as the base.
+It subtracts signed Int64 east/north and Int32 altitude, then narrows differences
+to native Int32 millimetres. Duplicate reference records survive; the first
+native identity wins lookup. UNDEF references do not participate in geometry;
+raw records remain in the source document. If no usable references exist, the
+first measurement FROM other than UNDEF supplies a synthetic origin. No origin
+is invented for another disconnected component. A synthetic node has key
+`reference:-1`, no source span and `base_key=none`; it is not a geographic fix.
+
+Each node keeps its source kind/index key, derived endpoint identity, head record
+span, attachment key, status, vector, position and Int64 Q30 corrections.
+The endpoint retains the selected FROM/TO/reference bits, except undefined FROM
+uses canonical UNDEF. Raw identities and all source fields remain in Document
+and P06 rows; endpoint identity never substitutes for source-row identity.
+`group:<head-index>` refers to P06's group/head and member lineage; averaged
+members are not separate placed stations. Nodes are returned in source-reference
+then source-group order; synthetic origin precedes groups. Undefined FROM,
+unplaced groups and zero-distance splays remain explicit. Accessors copy slices;
+source records and bytes remain immutable.
+
+Native coordinates are X east/right, Y south/down, H downward and D extended,
+all Int32 millimetres. Geometry is relative to the chosen base, not a declared
+CRS or field-verified tie. SetupShot preserves native first-pass reverse rules,
+LIFO pending stacks and both retry phases. The first placed native identity
+remains the lookup node; later occurrences create explicit loop endpoints.
+Reverse placement negates DX/DY/DH but preserves DD. SetupXsect attaches splays
+without putting them into station lookup. A zero-distance splay has no placed
+endpoint. Invisible shots still place and close; no native display bounds or
+survey-length statistics are claimed by this API.
+
+Extended projection uses the head's raw azimuth, grouped DD and the actual
+attachment orientation and Flip. The head raw distance supplies the zero-distance
+azimuth sentinel and closure weight, not the projected length. It follows projected/zero-distance predecessors
+when the native program does, and reproduces SideProjection's Int16 angular
+narrowing, Q30 sine table, signed shifts and multiply/divide order. It does not
+replace this with Cartesian length or P06's corrected average azimuth. Adjacent
+nonprojected shots can revise earlier splays' D; final source-order node output
+contains those revisions.
+
+Closure is opt-in. Native Loop.Setup finds common ancestors/reference stops;
+Loop.Close apportions Q30 X/Y/H corrections using each group head's **raw**
+distance (not averaged length), unchecked Int32 weight and Int64 arithmetic.
+Loop order is reverse insertion order. Corrections iterate against the initial
+positions until the native reported maximum is <=10 mm, then placement is
+rebuilt. D is not directly corrected. Zero-weight loops perform no correction.
+Returned loops link both node keys, retain the final X/Y/H/D residual and report
+a derived path weight. Inspection weights ignore temporary source mark bits;
+actual closure retains their native effect, including failures.
+
+The Go port replaces native null-ancestor/arithmetic exceptions and unbounded
+work with `GeometryError{Code,Key}` and an empty result. Defaults allow 10,000,000
+retry/ancestor/closure work steps and 10,000 closure iterations; zero chooses the
+default, negative limits are invalid, positive limits are inclusive. These are
+explicit portability limits, not native iteration counts. The native constant
+10 is an error tolerance. All ordinary additions/negations/products still wrap
+at native widths; checked Abs/division failures remain errors.
+
+`geometry <input.top> --json [--close-loops]` emits deterministic schema 1 with
+profile `isolated_native_geometry`, source SHA-256/size/version, base key,
+closure selection/iterations, nodes and loops. Empty collections are arrays.
+Exit 0 means geometry evaluation succeeded, including explicit unplaced nodes;
+exit 1 means invalid arguments, source/native/resource/I/O/output failure, with
+diagnostics on stderr and no analysis JSON on evaluation failure. The command
+uses the same bounded source reader as P06. It does not publish an export package.
+Original-assembly goldens, C#/IL references, captures and hashes are documented
+in [fixture provenance](../internal/top/testdata/README.md#p07-native-geometry).

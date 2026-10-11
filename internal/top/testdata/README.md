@@ -1673,3 +1673,138 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 | `internal/processing/testdata/repeats.tsv` | `c9c8d51946cc4db9020371ab16bec9ba80a2b2bcde1a772db181e0ba3e233f59` |
 | `internal/processing/testdata/sine-table.bin` | `cf2e46579e7df652e363e697235870d77b685a324996530c401fa9688885e208` |
 | `internal/cli/testdata/process-repeats.json` | `ee61404f28337d585a9648db7c9e644b43cec6c27214ef7d26263f3556161322` |
+
+## P07 native geometry
+
+All expectations come from reflection into the unchanged original PocketTopo
+1.372 assembly (SHA-256 `048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371`),
+not from Go output or a recompiled decompilation. `reference-geometry-probe.cs`
+writes independent literal v3 streams and calls DataSet.Read then
+Survey.CloseLoops(false/true,false) in fresh isolated surveys. No directory
+loading or templates run. Original stdout and UTF-8/CRLF TSV bytes are frozen.
+
+C#/IL checked: Survey.EvalRef, SetupShot, SetupXsect, EvalData, Update and
+CloseLoops; Station.FwAzimuth/flags/ResetError; Reference constructor/Read;
+ID.Next/NextTo; Angle.Sin/Cos; Projection.SideProjection; Loop.Setup/Close/
+CloseLoops in `../pockettopo-decompilation/decompiled/csharp/PocketTopo/` and
+`decompiled/PocketTopo.il`. EvalRef is at IL lines 9996–10695, SetupShot at
+8468–9186, SideProjection at 5421–5852, Loop.Setup/Close/CloseLoops at
+64809–65524. EvalRef uses unchecked Int64 subtraction then conv.i4; Loop.Close
+uses Int32 subtraction before conv.i8/shl 30 and signed Int64 div. The native
+loop tolerance is 10 mm, not ten iterations. Earlier JKTZ projection.py was
+reviewed: its floating component-root overlay and geometry averages are not
+reused as native placement/closure truth.
+
+Twenty-two datasets cover empty/all-undefined input, references/duplicates/aliases/
+large wrapped coordinate differences, splays and zero splays, delayed/reversed/
+disconnected placement, repeated heads and closure weighting, Flip and invisible
+flags, chained projection through zero-length predecessors, intersecting loops,
+fixed-reference loops and zero-weight loops. `phase-priority` makes the two retry phases choose different attachment trees
+and includes a nonadjacent reverse attachment that requires the final phase.
+`priority` demonstrates the immediate adjacent-reversed rule.
+`ordering` makes two deferred
+legs compete for one identity; `common-cleanup` makes the second loop-search
+arm detect the common ancestor, then closes another loop. The latter native
+fixture independently validates the regression discovered by review.
+`failure`, `arithmetic` and closed `markfail` freeze native NullReferenceException/
+OverflowException outcomes; Go reports stable errors with no partial result.
+Unclosed `markfail` succeeds natively. Inspection loop path weights deliberately
+ignore temporary mark bits; actual closure retains their native effect.
+
+`projection.tsv` freezes 1960 original SideProjection values: undefined axes,
+quarter/half-circle and near-boundary directions, equal/opposite/mixed axes,
+all four Flip pairs and length 12345. Geometry TSV records preserve base key,
+reference/head keys, native identity, start key, X/Y/H/D, DX/DY/DH/DD, Int64 Q30
+corrections and loop count. Every source TOP and golden is read back by Go tests.
+`loops.tsv` independently records native loop endpoint keys, order and X/Y/H/D
+residuals before/after closure, including deferred-identity competition.
+The original program has no JSON geometry format; schema 1 is this project's
+inspection representation. Existing 33 P05/P06 evidence hashes were reverified.
+
+Final capture commands (existing Wine/.NET 2 runtime):
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo /r:System.Windows.Forms.dll \
+  '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p07\probe-phase.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-geometry-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/p07/probe-phase.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p07\native-phase' \
+  > build/p07/native-phase-read.txt 2> build/p07/native-phase-read.err
+```
+
+| File | SHA-256 |
+| --- | --- |
+| `scripts/reference-geometry-probe.cs` | `6faeb7813272d930eb196ca23722bf33ea17f40254a9bcebbcc775db2724db79` |
+| `internal/top/testdata/native-geometry-read.txt` | `af883b7266a2860b0eb797379f4e9e49f1f59bac1da6c224c5fe448781155dab` |
+| `internal/processing/testdata/geometry/arithmetic-closed.tsv` | `eab90fd8a6496b348757f581dc2a4bf8ab358cc7b7d51dac475d6b73862f3911` |
+| `internal/processing/testdata/geometry/arithmetic.top` | `bc34ec5e33865c995d296320c55cd3f1468ac24d6d47af0139e23c13f1939b8a` |
+| `internal/processing/testdata/geometry/arithmetic.tsv` | `eab90fd8a6496b348757f581dc2a4bf8ab358cc7b7d51dac475d6b73862f3911` |
+| `internal/processing/testdata/geometry/chain-closed.tsv` | `6e80dd58e2482983a5f9be6351aaa43b7087b99b56e31f29afd1817753a482ed` |
+| `internal/processing/testdata/geometry/chain.top` | `19c0ac225efda8fbc6fbead54d54fd21f90f5e039d3e2653c877383bef10e9e9` |
+| `internal/processing/testdata/geometry/chain.tsv` | `6e80dd58e2482983a5f9be6351aaa43b7087b99b56e31f29afd1817753a482ed` |
+| `internal/processing/testdata/geometry/common-cleanup-closed.tsv` | `febb156c571b13b637f488f81164465815ed0f5a4863bc530756a7cac9c0735b` |
+| `internal/processing/testdata/geometry/common-cleanup.top` | `ddb73c5d104704046661b24dca2d3f0784f7ca72974099d39bed5985fcea71c3` |
+| `internal/processing/testdata/geometry/common-cleanup.tsv` | `551f7cacfe90f6659a8b16706775b6d0f47d929359a9da4fad4c2f0ddc9d2121` |
+| `internal/processing/testdata/geometry/delayed-closed.tsv` | `b044432607ca66f8910afe62686a2c962c88fe6a60e1a8436ad9b141fb4fb54e` |
+| `internal/processing/testdata/geometry/delayed.top` | `c9926e399de316d963219e509c934000aefd1e5d2421944f3bcf24f14ee97181` |
+| `internal/processing/testdata/geometry/delayed.tsv` | `b044432607ca66f8910afe62686a2c962c88fe6a60e1a8436ad9b141fb4fb54e` |
+| `internal/processing/testdata/geometry/empty-closed.tsv` | `ac157cfb3606195d52e24d373a4dd45bb61119b7ef1a26031b14aa94d72d4629` |
+| `internal/processing/testdata/geometry/empty.top` | `9b9bc7a5b1a4346a40051128c78452fcdfef148a36d3751705214706386f0477` |
+| `internal/processing/testdata/geometry/empty.tsv` | `ac157cfb3606195d52e24d373a4dd45bb61119b7ef1a26031b14aa94d72d4629` |
+| `internal/processing/testdata/geometry/failure-closed.tsv` | `a1880531451caae18a40524699f9cec36db36cc70db2a4916820eed7394f2bda` |
+| `internal/processing/testdata/geometry/failure.top` | `fc0ecbddf064d2391feb8acd76febb0d2fd3017d38ebb6741ea6e0289367a572` |
+| `internal/processing/testdata/geometry/failure.tsv` | `a1880531451caae18a40524699f9cec36db36cc70db2a4916820eed7394f2bda` |
+| `internal/processing/testdata/geometry/fixedloop-closed.tsv` | `3433a87ace52f562d53137b303e162db3f1e120aea0291d0fb50382a6bafef2b` |
+| `internal/processing/testdata/geometry/fixedloop.top` | `6c070e0bd160ee2ed28579c664b5a88713cdae91d60bc39051c9c3464d0f919c` |
+| `internal/processing/testdata/geometry/fixedloop.tsv` | `6b687df74991b71155e7f73acc05852f8eeddb63c806d4c71016ca57fe6b8fbc` |
+| `internal/processing/testdata/geometry/identities-closed.tsv` | `b0c0d05236d2b47cfa89fe31a1a069d10fb543672c2c9b013d0120d9a655e235` |
+| `internal/processing/testdata/geometry/identities.top` | `460e321297cb89f7bc561f1ca3c3dbde36393f3413ee67f4f2da6e0d0332a95c` |
+| `internal/processing/testdata/geometry/identities.tsv` | `b0c0d05236d2b47cfa89fe31a1a069d10fb543672c2c9b013d0120d9a655e235` |
+| `internal/processing/testdata/geometry/intersecting-closed.tsv` | `1b48cf2a43005de1ad4fad1b95203ea87c0bb19fc59329b18d8aa02614cb8201` |
+| `internal/processing/testdata/geometry/intersecting.top` | `82d16ecc85e958c55cee254a3c3a65bd9fee050bd46a8ba1eef42520dc33aec0` |
+| `internal/processing/testdata/geometry/intersecting.tsv` | `3a688233e2e98a848f5a2b1e15def483227056473d64ab2021af1d8d1e1f9e79` |
+| `internal/processing/testdata/geometry/loop-closed.tsv` | `da6874877593af05873a99b576ee1da0e6cae7399cf1f1e31a854226f2a38be0` |
+| `internal/processing/testdata/geometry/loop.top` | `821429c3441b2b39aeb2b75add3d38d2c131d8ab15079c59a5faa967708100a1` |
+| `internal/processing/testdata/geometry/loop.tsv` | `271190b69e6282f2dd9f57d2ba5502b2f88749ffa4000ff81ea9f9c2ce57b53e` |
+| `internal/processing/testdata/geometry/loops.tsv` | `fd064d7d9c0397f2e71d4b7e4592f52136229e64a4b99cd3801d6e4eccfbe7c1` |
+| `internal/processing/testdata/geometry/markfail-closed.tsv` | `a1880531451caae18a40524699f9cec36db36cc70db2a4916820eed7394f2bda` |
+| `internal/processing/testdata/geometry/markfail.top` | `04b8afc779ef740ecac520526092aef1658496a46c4759abc0804f61f09abc71` |
+| `internal/processing/testdata/geometry/markfail.tsv` | `271190b69e6282f2dd9f57d2ba5502b2f88749ffa4000ff81ea9f9c2ce57b53e` |
+| `internal/processing/testdata/geometry/ordering-closed.tsv` | `2056568450426c3ecadb91290fb77f235e3ced19ac533fc533a8e7387d68a55d` |
+| `internal/processing/testdata/geometry/ordering.top` | `78fcd83e1debf13e131909691b7ff63ee314e952a3e88553ad23b6df45b928ba` |
+| `internal/processing/testdata/geometry/ordering.tsv` | `b7ff354e124fdabbdf3635c60504175927a199f72a298d9632660233e7d0b636` |
+| `internal/processing/testdata/geometry/phase-priority-closed.tsv` | `b4e6cde59006fd4e4fc3dcf156965ad02bf89906b2528fe18129ea24ad239206` |
+| `internal/processing/testdata/geometry/phase-priority.top` | `06b53efa63dc999a620974c6c1a870a6710c4fc20a844cc1edc3757ff0a114cd` |
+| `internal/processing/testdata/geometry/phase-priority.tsv` | `25b43eae9217d3a600679b6dadfb35a335850186c0c876ffa017a3385be9f2bc` |
+| `internal/processing/testdata/geometry/priority-closed.tsv` | `e5ba05f4d015c6be909aa0368dd84a6d49dbc2911b5ef2d33f8a4ec5c5dbfbdf` |
+| `internal/processing/testdata/geometry/priority.top` | `10bce1b004749e012b2cc9f976b3a4cf6534050669e6f4f90606328b40d75e72` |
+| `internal/processing/testdata/geometry/priority.tsv` | `d4bb3b0c7e73e06d9c42b05f75a21d039fd1693d0567e7df9ce2c1c5a4bee999` |
+| `internal/processing/testdata/geometry/projected-closed.tsv` | `67197dbdd5d3d6790f982046fb0fadbdd88b058d4b0f51198d39398fff26585e` |
+| `internal/processing/testdata/geometry/projected.top` | `be4112b73ec47476fdb54d2b64392a4af48da6a7caad1a2c48b540e09c1d9716` |
+| `internal/processing/testdata/geometry/projected.tsv` | `67197dbdd5d3d6790f982046fb0fadbdd88b058d4b0f51198d39398fff26585e` |
+| `internal/processing/testdata/geometry/projection-chain-closed.tsv` | `606b60daed084c084274626fe4adcdb6f106db77df53e1b86e5f8e89877a46bf` |
+| `internal/processing/testdata/geometry/projection-chain.top` | `4db69b6ce09bae7f1dd080449ca85949353498216a0f28c99f933fcb601b6eec` |
+| `internal/processing/testdata/geometry/projection-chain.tsv` | `606b60daed084c084274626fe4adcdb6f106db77df53e1b86e5f8e89877a46bf` |
+| `internal/processing/testdata/geometry/projection.tsv` | `11431f986ab14090754dbaba9c87d5db8350d5c717625633d024db7202a4882f` |
+| `internal/processing/testdata/geometry/references-closed.tsv` | `02fbcdbb8129e3e14050e71015df2e901b8178ec6e6b6b5defc77271d4936a5e` |
+| `internal/processing/testdata/geometry/references.top` | `58badeb06d81f9dc09fb6e2c60af904386bf8049c3594af9e09725c91f11c683` |
+| `internal/processing/testdata/geometry/references.tsv` | `02fbcdbb8129e3e14050e71015df2e901b8178ec6e6b6b5defc77271d4936a5e` |
+| `internal/processing/testdata/geometry/repeatloop-closed.tsv` | `1cb540062add2e700551c9deb34e96214b1944f9ed3f8f63062159da7595e570` |
+| `internal/processing/testdata/geometry/repeatloop.top` | `9992149009b99b17d2871170c8e4d5ed0a2477e0715aad644970217dc0410d27` |
+| `internal/processing/testdata/geometry/repeatloop.tsv` | `316a4d9ff8c7089b1ddc0d6e3f9b6fa06804f4db6a4077ca2eb51a5a9caed67e` |
+| `internal/processing/testdata/geometry/reversed-closed.tsv` | `48347b10c1705f94d2bdc257cd7f5fbf3638633bb6cd44f8700da5124178732f` |
+| `internal/processing/testdata/geometry/reversed.top` | `9fe427f30280c73d96e6a99691f32dfbab78055cd0b68b1259ba7f4918e32f5d` |
+| `internal/processing/testdata/geometry/reversed.tsv` | `48347b10c1705f94d2bdc257cd7f5fbf3638633bb6cd44f8700da5124178732f` |
+| `internal/processing/testdata/geometry/splays-closed.tsv` | `0fef8892f2eca97809f6275acbe05655c151f50ae761a15a6323902191ada0c0` |
+| `internal/processing/testdata/geometry/splays.top` | `7e10e5d2bf5caea427061045da123b31f99029829389cc2f59209e66d230d569` |
+| `internal/processing/testdata/geometry/splays.tsv` | `0fef8892f2eca97809f6275acbe05655c151f50ae761a15a6323902191ada0c0` |
+| `internal/processing/testdata/geometry/undefined-only-closed.tsv` | `ebe29092f241e3012957c9e5d324764178ef82df6a5029c3305844712f3da162` |
+| `internal/processing/testdata/geometry/undefined-only.top` | `53c8a8769f6a3a6a26e3e502e04c9039819dae9464721b9e038246b497ad158a` |
+| `internal/processing/testdata/geometry/undefined-only.tsv` | `ebe29092f241e3012957c9e5d324764178ef82df6a5029c3305844712f3da162` |
+| `internal/processing/testdata/geometry/zero-closed.tsv` | `c58b449105b3a2c308d05ac1dccadd769d5fb14b487e5c0859130d443526c4ca` |
+| `internal/processing/testdata/geometry/zero.top` | `ce4e7e1f0c8b145a13915adc41e76ec1e5ed173345a6de1fe3584555a374f131` |
+| `internal/processing/testdata/geometry/zero.tsv` | `c58b449105b3a2c308d05ac1dccadd769d5fb14b487e5c0859130d443526c4ca` |

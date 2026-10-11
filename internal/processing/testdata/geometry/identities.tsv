@@ -1,0 +1,7 @@
+base	reference:0
+reference:0	placed	1048575	none	0	0	0	0	0	0	0	0	0	0	0
+reference:1	placed	1048575	none	1000	-1000	-1000	0	0	0	0	0	0	0	0
+group:0	placed	65536	reference:0	0	-1000	0	1000	0	1000	0	1000	0	0	0
+group:1	placed	65537	group:0	0	-2500	0	2500	0	1500	0	1500	0	0	0
+group:3	placed	-3	group:1	1000	-2500	0	3500	1000	0	0	1000	0	0	0
+loops	0

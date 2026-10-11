@@ -35,3 +35,5 @@ internal/exporttext/testdata/*.txt -text whitespace=cr-at-eol,-blank-at-eol,-bla
 internal/top/testdata/native-grouping-read.txt -text whitespace=cr-at-eol
 internal/processing/testdata/*.tsv -text whitespace=cr-at-eol
 internal/processing/testdata/*.bin binary
+internal/top/testdata/native-geometry-read.txt -text whitespace=cr-at-eol
+internal/processing/testdata/geometry/*.tsv -text whitespace=cr-at-eol

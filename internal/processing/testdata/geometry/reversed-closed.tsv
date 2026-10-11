@@ -1,0 +1,5 @@
+base	reference:0
+reference:0	placed	65537	none	0	0	0	0	0	0	0	0	0	0	0
+group:0	placed	65536	reference:0	-653	653	383	924	-653	-653	-383	924	0	0	0
+group:1	placed	65536	group:0	-299	653	737	673	354	0	-354	354	0	0	0
+loops	0

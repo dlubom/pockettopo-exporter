@@ -11,7 +11,8 @@ three raw mappings and ordered plan/side Polygons and XSections. It preserves
 original bytes, fields and offsets; unknown markers and unsupported tails remain
 explicitly unparsed. It exports isolated native text with source lineage and loss
 reporting. Native grouped measurement processing preserves every source row;
-station placement and other exporters remain future work.
+isolated reference placement, plan/extended geometry and optional loop closure
+are available. Other exporters remain future work.
 
 ```sh
 go run ./cmd/pockettopo-exporter inspect internal/top/testdata/api-drawings.top --json
@@ -45,7 +46,17 @@ go run ./cmd/pockettopo-exporter process internal/processing/testdata/repeats.to
 
 Processing is isolated and precedes placement/closure. It does not average P05
 text rows. See [the processing contract](docs/SPEC.md#native-grouped-measurement-processing-p06).
-The next increment is **P07: reference placement and geometry**, not implemented. Historical per-field prefix APIs remain supported.
+P07 adds isolated geometry without changing text or grouped processing output:
+
+```sh
+go run ./cmd/pockettopo-exporter geometry internal/processing/testdata/geometry/intersecting.top --json --close-loops
+```
+
+Coordinates use native millimetres (X east/right, Y south/down, H down,
+D extended). Unplaced groups remain explicit; native failures and work limits
+return errors. See [the geometry contract](docs/SPEC.md#isolated-native-geometry-p07).
+The next increment is **P08: explicit template-directory context**, not implemented.
+Historical per-field prefix APIs remain supported.
 
 ## Documentation
 

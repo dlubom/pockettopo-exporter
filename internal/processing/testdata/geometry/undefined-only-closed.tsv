@@ -1,0 +1,5 @@
+base	none
+reference:-1	placed	-2	none	0	0	0	0	0	0	0	0	0	0	0
+group:0	undefined_from	-1	none	0	0	0	0	0	0	0	0	0	0	0
+group:1	placed	65537	reference:-1	0	-1000	0	1000	0	1000	0	1000	0	0	0
+loops	0

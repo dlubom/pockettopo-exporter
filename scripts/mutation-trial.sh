@@ -16,6 +16,7 @@ cat >"$trial/internal/cli/inspect.go" <<'GO'
 package cli
 import "io"
 func process(_ string, _, _ io.Writer) int { return 1 }
+func geometry(_ string, _ bool, _, _ io.Writer) int { return 1 }
 func inspect(_ string, _, _ io.Writer) int { return 1 }
 func export(_, _ string, _, _ io.Writer) int { return 1 }
 GO
@@ -36,6 +37,8 @@ import (
 
 func TestWithoutAssertions(t *testing.T) {
     cli.Run([]string{"--version"}, io.Discard, io.Discard)
+    cli.Run([]string{"geometry", "input.top", "--json"}, io.Discard, io.Discard)
+    cli.Run([]string{"geometry", "input.top", "--json", "--close-loops"}, io.Discard, io.Discard)
     cli.Run([]string{"process", "input.top", "--json"}, io.Discard, io.Discard)
     cli.Run([]string{"inspect", "input.top", "--json"}, io.Discard, io.Discard)
     cli.Run([]string{"export", "input.top", "--format", "text", "--output", "out"}, io.Discard, io.Discard)
@@ -48,7 +51,7 @@ if ! go test -count=1 ./... >baseline.log 2>&1; then
   exit 1
 fi
 "$root/.tools/bin/gremlins" unleash --workers 2 --output "$root/build/mutation-weak.json"
-jq -e '.mutants_total == 25 and .mutants_lived == .mutants_total and .mutants_killed == 0
+jq -e '.mutants_total == 35 and .mutants_lived == .mutants_total and .mutants_killed == 0
   and ([.files[].mutations[]] | length) == .mutants_total
   and all(.files[].mutations[]; .status == "LIVED")' "$root/build/mutation-weak.json"
 gate_status=0

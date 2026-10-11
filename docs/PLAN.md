@@ -8,7 +8,9 @@ Historical PBI numbers remain traceable; they do not imply equal-sized outcomes.
 
 P04d started from P04c17 (`bfa73944e3d3baad00b07e2b6dd5a8c9f9a3682b`) plus
 the documentation reset (`94a3f2e`). P05 builds on verified P04d
-(`e3b3b3a395741757d1cf2527b192bfceeae5fa52`). Existing prefix contracts remain unchanged.
+(`e3b3b3a395741757d1cf2527b192bfceeae5fa52`). P07 builds on verified P06
+(`0e3e63b5e3057eed5c51df1a03048c60ca4b8c16`); P05/P06 and existing prefix
+contracts remain unchanged.
 
 | Area | Implemented behavior | Delivery state |
 | --- | --- | --- |
@@ -21,7 +23,8 @@ the documentation reset (`94a3f2e`). P05 builds on verified P04d
 | P04d | Full supported v3 source document, side drawing, tail accounting, inspect JSON | Implemented; full local gates verified |
 | P05 | Isolated native text CLI, native byte goldens, provenance/loss report, safe new-directory publication | Implemented; full local gates verified |
 | P06 | Native fixed-point grouping, source-row lineage and average-direction processing/JSON | Implemented; full local gates verified |
-| P07–P14 | Geometry, context, other native exports and compatibility milestone | Not implemented |
+| P07 | Isolated reference placement, plan/extended geometry and optional native loop closure | Implemented; full local gates verified |
+| P08–P14 | Directory context, other native exports and compatibility milestone | Not implemented |
 | P15/P16 | Walls SRV / Survex SVX | Subsequent scope |
 
 ### Verification and publication
@@ -245,10 +248,80 @@ exact-SHA hosted CI job.
 **Next useful increment after delivery:** P07 — reference placement and plan
 geometry, refined at a complete behavior boundary. Not implemented in P06.
 
+## P07 — isolated reference placement, geometry and closure
+
+**Status:** implemented; full local gates verified. **Dependency:** P06.
+One complete geometry behavior: native EvalRef/SetupShot/SetupXsect ordering,
+plan and extended coordinates, optional native weighted loop correction.
+No templates, neighboring-file discovery or new export format.
+
+- [x] Capture original-assembly geometry and SideProjection goldens; inspect
+  Survey/Station/Reference/Projection/Loop C# and IL and compare JKTZ prior art.
+- [x] Test first, then add `processing.PlaceGeometry(Document, GeometryOptions)`
+  with immutable source-linked nodes, explicit unplaced groups, corrections,
+  loop residuals and bounded failure. Preserve `GroupMeasurements` and P05.
+- [x] Add `geometry <input.top> --json [--close-loops]`, deterministic isolated
+  schema, input hash, native coordinates and structured processing failures.
+- [x] Add geometry mutation faults without removing existing scopes/controls;
+  run full gates and obtain an independent review. Publication is required below.
+
+Review focus: duplicate/undefined/alias reference IDs; delayed/reversed and
+disconnected legs; splays before/after adjacent shots; projected zero-length
+ancestor failures; intersecting/zero-weight/overflowing loops. Native arithmetic
+wraps; explicit resource/failure diagnostics replace crashes and unbounded work.
+
+### Delivered behavior and evidence
+
+`geometry <input.top> --json [--close-loops]` and `processing.PlaceGeometry`
+place an isolated supported document using native reference/shot ordering,
+plan X/Y/H and extended D coordinates. Source-linked immutable nodes retain
+raw head spans and derived native identities; undefined, zero-splay and
+unplaced groups remain explicit. Optional closure uses native raw-head weights,
+Q30 corrections, reverse loop order and the 10 mm residual tolerance. Checked
+work/iteration ceilings and stable failures replace native crashes or unbounded
+work without returning partial geometry. P05 text bytes, P06 grouping/directions,
+source values and previous prefix/inspection contracts remain preserved.
+See [SPEC](SPEC.md#isolated-native-geometry-p07) and
+[native provenance](../internal/top/testdata/README.md#p07-native-geometry).
+
+C#/IL and independent reflection into the original 1.372 assembly establish
+22 datasets with raw/closed node goldens and independent loop endpoint/order/
+residual goldens, plus 1960 SideProjection outcomes. These cover actual repeated
+heads, aliases/undefined references, deferred placement competition, reverse
+attachment priorities, projection chains, splays and intersecting/fixed/zero-
+weight loops. Native exception cases are frozen separately. All 103 documented
+P05/P06/P07 evidence hashes pass; all 68 new geometry artifacts and the transcript
+match fresh original-program output.
+
+A fresh read-only reviewer found a loop-mark cleanup defect when the second
+ancestor-search arm reaches the common node. A failing regression and a new
+independent native fixture established the repair. Follow-up review checked
+C#/IL, source preservation, geometry/CLI, evidence hashes and mutation survivors,
+and independently ran focused race tests; no substantive findings remain.
+The ordinary gates pass with 99.3% total statement coverage, including full
+race tests, vet, Staticcheck, coverage controls, build and CLI smoke checks.
+The complete campaign passes all 22 groups with at most two private workers:
+all **1141** explicit faults in **27** scopes are KILLED, including all 44 P07
+faults. The four Gremlins shards kill **994/1018** mutants (97.64%); their
+disjoint site union exactly matches unsharded discovery, with no uncovered,
+invalid, timed-out or skipped outcomes. The 24 survivors were reviewed:
+17 equivalent processing boundary/width/sign changes and the seven preserved
+P05 equivalents/cleanup-diagnostic changes.
+The weak-suite control leaves exactly 35 mutants LIVED and rejects the gate;
+compiler/setup failures remain NOT VIABLE. Dispatch controls pass without
+removing any earlier scope or failure control.
+
+**Publication requirement:** commit/push the verified P07 tree on main and confirm
+every hosted CI job for the exact pushed SHA before reporting delivery complete.
+The commit's GitHub checks and delivery response provide publication evidence.
+
+**Next useful increment:** P08 — explicit native template-directory context,
+with deterministic inventory, ordering and isolation tests. Not implemented.
+
 ## Remaining original roadmap
 
-After P05 there are **9 remaining required delivery stages to the native
-milestone**: P06–P14. P01 is a capability/fixture inventory maintained within those stages,
+After P07 there are **7 remaining required delivery stages to the native
+milestone**: P08–P14. P01 is a capability/fixture inventory maintained within those stages,
 not an additional standalone implementation chat. P15 and P16 add two subsequent
 stages for Walls and Survex. P17–P19 and R01–R07 are optional/conditional scope.
 
@@ -263,8 +336,8 @@ routine documentation and individual mutation groups are not separate PBIs.
 | P01 | Native exporter/options and fixture capability matrix | Capture the relevant part with each exporter; finish full inventory by P14 |
 | P04d | Complete supported v3 source read and inspect | Implemented above |
 | P05 | Isolated native text export through CLI, exact goldens and provenance/loss reporting | Implemented above; Update has no text-field effect, and geometry failure differences are explicit |
-| P06 | Native fixed-point angles, consecutive-shot grouping and average directions | Measurement source model; real repeated/reversed/boundary cases |
-| P07 | Reference placement, plan geometry, extended projection and closure | P06; split by complete geometry behavior if necessary |
+| P06 | Native fixed-point angles, consecutive-shot grouping and average directions | Implemented above |
+| P07 | Reference placement, plan geometry, extended projection and closure | Implemented above |
 | P08 | Explicit native template-directory context | P07; deterministic inventory, ordering and isolation tests |
 | P09 | Native Therion DATA and drawing sections, embedded XSections | P04d/P07/P08; complete data/drawing slices if required |
 | P10 | Native graphics DXF, plan/side and options | P04d/P07/P08; native bytes plus coordinate/visual checks |
