@@ -60,7 +60,7 @@ report disagreement; do not generalize to Swiss 1.472. Start at the sibling
 - Preserve embedded dates as recorded values. Their relationship to field dates
   belongs to independent provenance, not an assumption in this parser.
 - Default to one isolated input. Native template/directory context is an
-  explicit later mode with deterministic file inventory, hashes and ordering.
+  explicit P08 mode with deterministic file inventory, hashes and ordering.
 - For each exporter fix settings, selection, grouping, arithmetic, ordering,
   encoding and line endings. Target exact native bytes under those conditions.
   Report semantic equivalence only with an explicit normalization rule.
@@ -383,7 +383,7 @@ All frozen native direction Float32 bits are compared exactly.
 
 Reference placement, SetupShot/SetupXsect projection, closure, geometry-derived
 station orientation are absent from P06; P07 exposes them separately below.
-Template-directory context and other exporters remain absent.
+Other exporters remain absent; explicit template-directory context is separate below.
 A reverse direction is an explicit orientation option, not an inferred native
 placed station. This API therefore also processes inputs whose later native
 Update would fail. P05 keeps its isolated text contract and exact bytes, emitting
@@ -493,3 +493,62 @@ diagnostics on stderr and no analysis JSON on evaluation failure. The command
 uses the same bounded source reader as P06. It does not publish an export package.
 Original-assembly goldens, C#/IL references, captures and hashes are documented
 in [fixture provenance](../internal/top/testdata/README.md#p07-native-geometry).
+
+## Explicit template-directory context (P08)
+
+`context <input.top> --template-directory <dir> --json [--close-loops]` is the
+only directory-scanning command. Inspect, text export, process and geometry
+retain their isolated P05–P07 behavior. Current input is a complete supported
+v3 document; templates decode only v3 trips/measurements/references, matching
+native `DataSet.Read(template=true)`. Preserve full original template bytes;
+ignored drawings/tails are hashed and counted, never interpreted as supported
+full documents. Source records, raw trip indices and source-local spans remain
+unchanged. Embedded dates remain source values, not verified survey dates.
+
+Inventory selects immediate regular files with case-insensitive `.top` suffix,
+excludes the exact current basename even if the selected directory differs,
+ignores subdirectories and other suffixes, and sorts names by UTF-8 byte order.
+Names must be valid UTF-8. Reject selected symlinks/nonregular inputs; pin file
+identity with Lstat/Open/Stat before bounded reads. This is a reproducible read
+snapshot, not an atomic filesystem snapshot: concurrent file-content/directory
+changes require a new capture. Hashes describe bytes actually read. A current
+basename neighbor is excluded without reading it. Current input is last in the
+reported inventory; its source index follows all sorted templates.
+
+Native `DataSet.Load` uses Windows `*.top`, culture-sensitive `Array.Sort`, and
+exact basename comparison. Its .NET 2 wildcard also selects `.topx`; the frozen
+pattern probe confirms this legacy extension behavior. Exact `.top` selection
+and portable byte ordering are explicit deviations. The invariant-culture ASCII
+geometry fixtures agree. Native enumeration/read failures are ignored and may
+retain partially read tables; this mode fails closed, emits no JSON on input/processing failure,
+and returns no partial context. Only v3 templates are accepted. Ceilings include
+1024 selected templates, 100000 scanned directory entries, 64 MiB combined input,
+32767 combined trips and one million combined measurements/references. All are
+inclusive; parser and P07 geometry work/iteration ceilings still apply. Limits
+are operational bounds, not a low-memory guarantee; source tables and geometry
+can retain several copies within them.
+
+`processing.GroupContext` resolves the native Int16 global trip index against
+the combined trip list, separately retaining raw source indices and per-file
+lineage. It groups consecutive/reversed template rows across file boundaries,
+then groups current rows separately. `PlaceContextGeometry` evaluates template
+references/rows first, current references/rows second, carries a real template
+reference base, uses native current-before-template attachment priority, and
+uses the combined first defined From for synthetic template roots. Current
+loops close with `all=false`: template nodes are fixed closure boundaries;
+template loops are not closed. Native projections can still update splays on
+shared template parents. P07 arithmetic, retry ordering and bounded failures
+apply unchanged. Template keys have `template:` prefixes, current keys retain
+P07 names; indices address each phase's concatenated table. Synthetic roots
+have record index -1 and no byte span or source-file identity.
+
+Deterministic schema-1 JSON has profile `native_template_directory`, ordering,
+excluded basename, inventory (names, roles, SHA-256, sizes, consumed/ignored
+bytes and table counts), groups with every member's source index/local row/span
+and reversal, nodes with original identities/spans and source-file/local-record
+lineage, base key, closure state/iterations, and current loop endpoints/weights/
+residuals. Synthetic node lineage is null. No clock, absolute paths or inferred
+source identities are serialized. Output errors exit 1; success exits 0 with
+one compact object and final LF. This schema is a project inspection format,
+not a native export. Other exporters and directory-aware text export are outside
+P08. See [native evidence](../internal/top/testdata/README.md#p08-native-directory-context).

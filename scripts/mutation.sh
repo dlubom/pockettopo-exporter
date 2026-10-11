@@ -100,7 +100,7 @@ run_group() {
     side-marker) scopes=(side-marker) ;;
     document) scopes=(document) ;;
     native-text) scopes=(text) ;;
-    processing) scopes=(processing geometry) ;;
+    processing) scopes=(processing geometry context) ;;
     next-markers) scopes=(plan-next-marker plan-following-marker) ;;
     third-count) scopes=(plan-third-polygon-count) ;;
     third-points) scopes=(plan-third-polygon-points) ;;

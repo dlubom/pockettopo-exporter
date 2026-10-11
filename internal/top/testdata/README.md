@@ -1808,3 +1808,130 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 | `internal/processing/testdata/geometry/zero-closed.tsv` | `c58b449105b3a2c308d05ac1dccadd769d5fb14b487e5c0859130d443526c4ca` |
 | `internal/processing/testdata/geometry/zero.top` | `ce4e7e1f0c8b145a13915adc41e76ec1e5ed173345a6de1fe3584555a374f131` |
 | `internal/processing/testdata/geometry/zero.tsv` | `c58b449105b3a2c308d05ac1dccadd769d5fb14b487e5c0859130d443526c4ca` |
+
+
+## P08 native directory context
+
+`reference-context-probe.cs` reflects into the unchanged original PocketTopo
+1.372 assembly (SHA-256 `048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371`).
+It writes independent literal v3 sources, calls **DataSet.Load** directly,
+then CloseLoops(close, all=false), and records native nodes/corrections and loop
+endpoints/order/residuals. Config's private `actual` backing field is set only
+in process memory; its registry-writing property setter is not invoked.
+Invariant culture is fixed. No Go output or rebuilt C# logic is the geometry
+oracle. Native stdout is frozen byte-for-byte, including CRLF.
+
+The same probe captures the original .NET 2 `Directory.GetFiles("*.top")`
+pattern in `native-pattern.tsv`: `.top`, `.TOP` and `.topx` match; `.top.bak`
+and a `nested.top` directory do not. P08's exact case-insensitive `.top` suffix
+is an explicit portable deviation, alongside UTF-8 byte sorting in place of
+native culture-sensitive sorting. Pattern candidates live only in the ignored
+capture directory; they are not geometry inputs or retained TOP fixtures.
+
+C#/IL: `DataSet.Load/Read` establish selection, Array.Sort, exact current-basename
+exclusion, read-only template tables and SetBoundary. `Survey.Update/EvalRef/
+EvalData/SetupShot/SetupXsect` establish two phases, synthetic/real reference
+bases, cross-file grouping, current attachment priority and shared projections.
+`Station.Read` rebases nonnegative trip indices as unchecked Int16; `Trip.ReadList`
+appends trips globally. `Loop.Setup(all=false)` stops at read-only template
+nodes. Corresponding IL method ends: DataSet.Load 66272, Survey.SetupShot 9186,
+SetupXsect 9420, EvalData 9993, EvalRef 10695, Update 10819, SetBoundary 11090,
+and Loop.Setup 65080. Earlier local JKTZ prior art has no equivalent directory
+context implementation; native evidence defines this slice.
+
+Thirteen directory cases have 26 native raw/closed goldens: empty/current-excluded,
+empty template (including a current-derived synthetic template root), attachment, cross-file reversed repeats, per-file declination,
+template/current grouping boundary, real template base with current reference,
+current attachment priority, unclosed template loop, synthetic template root
+before a current real reference, projection/splay attachment, and an inclined
+current loop with nonzero-height template attachment. Template files
+end in an intentionally invalid drawing byte, proving native templates read only
+tables. Native nodes preserve derived IDs, X/Y/H/D, vectors, correction integers
+and start keys. Comparison normalizes only CRLF to LF in Go test text; original
+golden bytes stay unchanged. P08 loop weights are tested through fixed-boundary
+closure behavior; native loop residuals/endpoints are independently captured.
+
+`internal/cli/testdata/context-crossfile.json` is a **project JSON golden**, not
+native output. Tests independently assert inventory hashes, file order/roles,
+ignored bytes, grouping and per-file local-row/spans. Additional tests cover
+isolated equivalence, inclusive aggregate byte/trip/file limits, raw/accessor
+preservation, malformed sources, unsupported current files, symlinks, invalid
+UTF-8 names, bounded processing failures and JSON/output errors. Linux exercises
+invalid-byte filesystem names; macOS/Windows filename restrictions are explicit
+in that portable test. Existing P05–P07 evidence hashes remain unchanged.
+
+Fresh capture (existing Wine/.NET 2 runtime; use the actual Wine binary):
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  '/Applications/Wine Staging.app/Contents/Resources/wine/bin/wine' \
+  /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo /r:System.Windows.Forms.dll \
+  '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p08\probe-complete.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-context-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  '/Applications/Wine Staging.app/Contents/Resources/wine/bin/wine' build/p08/probe-complete.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p08\native-complete' \
+  > build/p08/native-complete-read.txt 2> build/p08/native-complete-read.err
+```
+
+| File | SHA-256 |
+| --- | --- |
+| `scripts/reference-context-probe.cs` | `8cc7c18c9dd8f37c672153d599a9c40d17e4e82811933bc8a71a83f689a88d72` |
+| `internal/processing/testdata/context/native-pattern.tsv` | `77e51cd8983fe24493b5abc6ba8d10b79cc8e0c5bf28a4e95453396145d1c947` |
+| `internal/top/testdata/native-context-read.txt` | `96a4856e0ffc24ee2eeee9b49c723690b48b11611872a3a2bfdd533ecd5dc1f9` |
+| `internal/cli/testdata/context-crossfile.json` | `3c3071532b9ab3eb5bb7c74f87bed60e863be0ac25508dbaf4683e0ce1fe9741` |
+| `internal/processing/testdata/context/actual-priority/a.top` | `2bff56b1ff186fe5ef6f6338c790c26dc4ad934bfce6df168d2ccccfec5d0cfc` |
+| `internal/processing/testdata/context/actual-priority/current.top` | `c0d8b6fa5f830e7055fd5164e02365b72f9d19529f03b9475b94962ef76e66e3` |
+| `internal/processing/testdata/context/actual-priority-closed.tsv` | `c332bb5694f9d205082d1f0002da0779ae2acf3985aad52519c4487f458796d0` |
+| `internal/processing/testdata/context/actual-priority.tsv` | `c332bb5694f9d205082d1f0002da0779ae2acf3985aad52519c4487f458796d0` |
+| `internal/processing/testdata/context/attach/a.top` | `2bff56b1ff186fe5ef6f6338c790c26dc4ad934bfce6df168d2ccccfec5d0cfc` |
+| `internal/processing/testdata/context/attach/current.top` | `0d2f50718c3cad1683b8a01cbec46facf25bbe24938db5f7a4a61e5dc9bb9b8b` |
+| `internal/processing/testdata/context/attach-closed.tsv` | `5828e2676d578bec1a5b5d7a235d254e54ae6d731a77895e489b290098d28010` |
+| `internal/processing/testdata/context/attach.tsv` | `5828e2676d578bec1a5b5d7a235d254e54ae6d731a77895e489b290098d28010` |
+| `internal/processing/testdata/context/boundary/a.top` | `2bff56b1ff186fe5ef6f6338c790c26dc4ad934bfce6df168d2ccccfec5d0cfc` |
+| `internal/processing/testdata/context/boundary/current.top` | `6491b5d5ba950d0cace20a3536a18e56d3a5c2c694f37f54d2ad450e1dd66264` |
+| `internal/processing/testdata/context/boundary-closed.tsv` | `dd35142ea3f5490f8f367ee5682ccb811c2f847356a085599b8819050b573f38` |
+| `internal/processing/testdata/context/boundary.tsv` | `ac0645eb0446e08f832846351838d38bd709ccce867541fc176c97b8a11deceb` |
+| `internal/processing/testdata/context/crossfile/a.top` | `2bff56b1ff186fe5ef6f6338c790c26dc4ad934bfce6df168d2ccccfec5d0cfc` |
+| `internal/processing/testdata/context/crossfile/b.top` | `b0c4ff6a553ce6fadfd914f924cc5f159fa944f17f2f3ffa12ad1281bd5c4ed7` |
+| `internal/processing/testdata/context/crossfile/current.top` | `0d2f50718c3cad1683b8a01cbec46facf25bbe24938db5f7a4a61e5dc9bb9b8b` |
+| `internal/processing/testdata/context/crossfile-closed.tsv` | `4b3ffd709210f83b9c6ee6f994016d7d4e6b42d663ca28edca5d0a6fb2cfb30e` |
+| `internal/processing/testdata/context/crossfile.tsv` | `4b3ffd709210f83b9c6ee6f994016d7d4e6b42d663ca28edca5d0a6fb2cfb30e` |
+| `internal/processing/testdata/context/declination/a.top` | `a61a07c8c6ae415dd68c6298a11bfb0719e180cfc16ae01d0d1ab021462a1fe6` |
+| `internal/processing/testdata/context/declination/b.top` | `32c235176378ca31c5e45aabb0e0ea1f8178f28a805e61751836250f23cf6660` |
+| `internal/processing/testdata/context/declination/current.top` | `0d2f50718c3cad1683b8a01cbec46facf25bbe24938db5f7a4a61e5dc9bb9b8b` |
+| `internal/processing/testdata/context/declination-closed.tsv` | `9998b200b8192c57294ec90f5d049a2556415d3082642adc9050447140007db3` |
+| `internal/processing/testdata/context/declination.tsv` | `9998b200b8192c57294ec90f5d049a2556415d3082642adc9050447140007db3` |
+| `internal/processing/testdata/context/empty/current.top` | `9b9bc7a5b1a4346a40051128c78452fcdfef148a36d3751705214706386f0477` |
+| `internal/processing/testdata/context/empty-closed.tsv` | `02ec554fb1bdf303c0176ed3484ffc9753bf466d6fb45b7a186dc2ac9f65fbff` |
+| `internal/processing/testdata/context/empty.tsv` | `02ec554fb1bdf303c0176ed3484ffc9753bf466d6fb45b7a186dc2ac9f65fbff` |
+| `internal/processing/testdata/context/emptytemplate/a.top` | `8583408d4ec9f1f09292d74cf8369d08d6696c1aa8704f7a5d41dc96f5955494` |
+| `internal/processing/testdata/context/emptytemplate/current.top` | `9b9bc7a5b1a4346a40051128c78452fcdfef148a36d3751705214706386f0477` |
+| `internal/processing/testdata/context/emptytemplate-closed.tsv` | `02ec554fb1bdf303c0176ed3484ffc9753bf466d6fb45b7a186dc2ac9f65fbff` |
+| `internal/processing/testdata/context/emptytemplate-current/a.top` | `8583408d4ec9f1f09292d74cf8369d08d6696c1aa8704f7a5d41dc96f5955494` |
+| `internal/processing/testdata/context/emptytemplate-current/current.top` | `0d2f50718c3cad1683b8a01cbec46facf25bbe24938db5f7a4a61e5dc9bb9b8b` |
+| `internal/processing/testdata/context/emptytemplate-current-closed.tsv` | `670d20340a8b5eed1861dc988aa22d9b2c300b528ab46a9a7cb644b33e71555f` |
+| `internal/processing/testdata/context/emptytemplate-current.tsv` | `670d20340a8b5eed1861dc988aa22d9b2c300b528ab46a9a7cb644b33e71555f` |
+| `internal/processing/testdata/context/emptytemplate.tsv` | `02ec554fb1bdf303c0176ed3484ffc9753bf466d6fb45b7a186dc2ac9f65fbff` |
+| `internal/processing/testdata/context/projection/a.top` | `f7ede9275c6a18a1917e8fbfea3f8990b22ea5fbe86ea3213e73daaefbd8555b` |
+| `internal/processing/testdata/context/projection/current.top` | `d0b724f6e734cabc6f1de07136ee3c47fc3053bf3aeadc701ff74965de88c194` |
+| `internal/processing/testdata/context/projection-closed.tsv` | `d6bc9422b66ebe5f6592c07abbf344f85a5516c9ba96e748806be1b20c6a22e3` |
+| `internal/processing/testdata/context/projection.tsv` | `d6bc9422b66ebe5f6592c07abbf344f85a5516c9ba96e748806be1b20c6a22e3` |
+| `internal/processing/testdata/context/reference-base/a.top` | `73a38eb47f82c7c89c1b7a13eabba44fb843cc8c447380a785d621c9631199c9` |
+| `internal/processing/testdata/context/reference-base/current.top` | `8a695b35c51edeebd231d1daeb423aba81a82626165a46b67d0495dbd8cc63ec` |
+| `internal/processing/testdata/context/reference-base-closed.tsv` | `9d44ef989251caa062dd2494c9a661c1943be313b33ccc54f87cbcd9161c5c9e` |
+| `internal/processing/testdata/context/reference-base.tsv` | `9d44ef989251caa062dd2494c9a661c1943be313b33ccc54f87cbcd9161c5c9e` |
+| `internal/processing/testdata/context/synthetic-before-reference/a.top` | `2bff56b1ff186fe5ef6f6338c790c26dc4ad934bfce6df168d2ccccfec5d0cfc` |
+| `internal/processing/testdata/context/synthetic-before-reference/current.top` | `7fc54237c4b30e7ec27c1931ccab0f292160c3759ef10d8830e9d33068b7ad86` |
+| `internal/processing/testdata/context/synthetic-before-reference-closed.tsv` | `9908adb10cab6d4903874df5b14b8193f90f10589ff54282d452fefe6633d5cb` |
+| `internal/processing/testdata/context/synthetic-before-reference.tsv` | `ce0037e9e8b6600edcaeee0e74c8d7c3aeb73f7dd02e8757fa751cc657c6c27c` |
+| `internal/processing/testdata/context/template-loop/a.top` | `353a7a2cdb5884178a1552ab70b57e379c298af40631ebab92f90989c21d0aa2` |
+| `internal/processing/testdata/context/template-loop/current.top` | `f71c56d5911939bf2c3ae0c8890c5764f30bec2a3621aa57e914e53c0c526d22` |
+| `internal/processing/testdata/context/template-loop-closed.tsv` | `f0e4499c62f4115a892e24b3984bccb366df980e4a6c87b3ed9ba4d8ac7b5126` |
+| `internal/processing/testdata/context/template-loop.tsv` | `f0e4499c62f4115a892e24b3984bccb366df980e4a6c87b3ed9ba4d8ac7b5126` |
+| `internal/processing/testdata/context/inclined-loop/a.top` | `f4d9e87d811391e6487b5a3be866e10bd05785d2892610a327b526658a6c6845` |
+| `internal/processing/testdata/context/inclined-loop/current.top` | `960cde0476dbd8d0ab144cce757b0a5e70ce4aeef59849ddcfd8e8cb2b4d9809` |
+| `internal/processing/testdata/context/inclined-loop-closed.tsv` | `0fc67ab26f56e815fd9e091d90678bc28cd303bd17fe910dfabf02d4f1b7744a` |
+| `internal/processing/testdata/context/inclined-loop.tsv` | `5a7816898a974c22a3ff203804e2b9e3acc6d6fa14bc54ced0239e8d81a7424e` |

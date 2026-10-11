@@ -1,0 +1,13 @@
+empty OK
+emptytemplate OK
+emptytemplate-current OK
+attach OK
+crossfile OK
+declination OK
+boundary OK
+reference-base OK
+actual-priority OK
+template-loop OK
+synthetic-before-reference OK
+projection OK
+inclined-loop OK

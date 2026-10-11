@@ -37,3 +37,5 @@ internal/processing/testdata/*.tsv -text whitespace=cr-at-eol
 internal/processing/testdata/*.bin binary
 internal/top/testdata/native-geometry-read.txt -text whitespace=cr-at-eol
 internal/processing/testdata/geometry/*.tsv -text whitespace=cr-at-eol
+internal/top/testdata/native-context-read.txt -text whitespace=cr-at-eol
+internal/processing/testdata/context/*.tsv -text whitespace=cr-at-eol

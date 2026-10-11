@@ -7,11 +7,13 @@ import (
 )
 
 const help = `Usage: pockettopo-exporter --help | --version
+  pockettopo-exporter context <input.top> --template-directory <dir> --json [--close-loops]
   pockettopo-exporter inspect <input.top> --json
   pockettopo-exporter geometry <input.top> --json [--close-loops]
   pockettopo-exporter process <input.top> --json
   pockettopo-exporter export <input.top> --format text --output <new-directory>
 
+Evaluate explicit template-directory geometry and source lineage.
 Inspect PocketTopo TOP v3 source data.
 Place native isolated geometry with optional loop closure.
 Process native consecutive measurement groups (isolated input).
@@ -21,6 +23,9 @@ Export isolated native text (metres, 360 degrees) and a provenance/loss report.
 // Run writes normal output to stdout and diagnostics to stderr.
 // It returns 0 on success and 1 on invalid arguments or an output error.
 func Run(args []string, stdout, stderr io.Writer) int {
+	if len(args) > 0 && args[0] == "context" {
+		return runContext(args, stdout, stderr)
+	}
 	if len(args) > 0 && args[0] == "export" {
 		if len(args) != 6 || args[1] == "" || args[2] != "--format" || args[3] != "text" || args[4] != "--output" || args[5] == "" {
 			fmt.Fprint(stderr, help)

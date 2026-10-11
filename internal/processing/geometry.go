@@ -63,6 +63,7 @@ type geometryStation struct {
 	dist, az  int32
 	flags     byte
 	reference bool
+	fixed     bool
 	start     *geometryStation
 	cross     []*geometryStation
 	mark      bool
@@ -81,11 +82,17 @@ func (s *geometryStation) projected() bool { return s.flags&16 != 0 }
 func (s *geometryStation) flipped() bool   { return s.flags&1 != 0 }
 
 type geometryState struct {
-	stations []*geometryStation
-	dir      map[int32]*geometryStation
-	loops    [][2]*geometryStation
-	work     int
-	maxWork  int
+	stations     []*geometryStation
+	dir          map[int32]*geometryStation
+	loops        [][2]*geometryStation
+	work         int
+	maxWork      int
+	templates    map[int32]*geometryStation
+	prefix       string
+	baseRef      *source.Reference
+	baseKey      string
+	rootRows     []Row
+	suppressRoot bool
 }
 
 func (s *geometryState) tick(key string) error {
@@ -117,6 +124,12 @@ func (s *geometryState) shot(n *geometryStation, reverse bool) (bool, error) {
 		parent = s.dir[n.to]
 	}
 	if parent == nil {
+		parent = s.templates[n.from]
+	}
+	if parent == nil && reverse {
+		parent = s.templates[n.to]
+	}
+	if parent == nil {
 		return false, nil
 	}
 	if n.to == parent.node.ID.NativeValue() {
@@ -144,7 +157,9 @@ func (s *geometryState) shot(n *geometryStation, reverse bool) (bool, error) {
 	old := s.dir[n.node.ID.NativeValue()]
 	if old == nil {
 		s.dir[n.node.ID.NativeValue()] = n
-	} else {
+		old = s.templates[n.node.ID.NativeValue()]
+	}
+	if old != nil {
 		s.loops = append(s.loops, [2]*geometryStation{n, old})
 	}
 	n.start = parent
@@ -181,6 +196,9 @@ func (s *geometryState) splay(n *geometryStation) (bool, error) {
 	}
 	parent := s.dir[n.from]
 	if parent == nil {
+		parent = s.templates[n.from]
+	}
+	if parent == nil {
 		return false, nil
 	}
 	if n.dist == 0 {
@@ -209,22 +227,34 @@ func (s *geometryState) splay(n *geometryStation) (bool, error) {
 	return true, nil
 }
 func (s *geometryState) place(d source.Document, grouped Result, corrections map[int]Correction) (string, error) {
+	return s.placePhase(d.References(), grouped, corrections)
+}
+
+func (s *geometryState) key(key string) string { return fmt.Sprintf("%s%s", s.prefix, key) }
+
+func (s *geometryState) placePhase(refs []source.Reference, grouped Result, corrections map[int]Correction) (string, error) {
 	s.stations = nil
 	s.dir = make(map[int32]*geometryStation)
 	s.loops = nil
-	refs := d.References()
 	base := "none"
 	var baseRef source.Reference
-	haveBase := false
+	haveBase := s.baseRef != nil
+	if haveBase {
+		baseRef = *s.baseRef
+		base = s.baseKey
+	}
 	for i, r := range refs {
 		if r.Station().NativeValue() == -1 {
 			continue
 		}
-		n := newGeometryStation(geometryStation{reference: true, node: GeometryNode{Key: fmt.Sprintf("reference:%d", i), Status: "placed", StartKey: "none", ID: r.Station(), SourceSpan: r.Offsets().Record}})
+		n := newGeometryStation(geometryStation{reference: true, node: GeometryNode{Key: s.key(fmt.Sprintf("reference:%d", i)), Status: "placed", StartKey: "none", ID: r.Station(), SourceSpan: r.Offsets().Record}})
 		if !haveBase {
 			baseRef = r
 			haveBase = true
 			base = n.node.Key
+			s.baseRef = new(source.Reference)
+			*s.baseRef = baseRef
+			s.baseKey = base
 		} else {
 			n.node.Position = Position{int32(r.EastMM() - baseRef.EastMM()), int32(baseRef.NorthMM() - r.NorthMM()), baseRef.AltitudeMM() - r.AltitudeMM(), 0}
 		}
@@ -234,19 +264,25 @@ func (s *geometryState) place(d source.Document, grouped Result, corrections map
 		}
 	}
 	if len(s.stations) == 0 {
-		for _, r := range grouped.rows {
-			if r.Source.From().NativeValue() != -1 {
-				n := newGeometryStation(geometryStation{reference: true, node: GeometryNode{Key: "reference:-1", Status: "placed", StartKey: "none", ID: r.Source.From()}})
-				s.stations = append(s.stations, n)
-				s.dir[n.node.ID.NativeValue()] = n
-				break
+		if !s.suppressRoot {
+			roots := grouped.rows
+			if s.rootRows != nil {
+				roots = s.rootRows
+			}
+			for _, r := range roots {
+				if r.Source.From().NativeValue() != -1 {
+					n := newGeometryStation(geometryStation{reference: true, node: GeometryNode{Key: s.key("reference:-1"), Status: "placed", StartKey: "none", ID: r.Source.From()}})
+					s.stations = append(s.stations, n)
+					s.dir[n.node.ID.NativeValue()] = n
+					break
+				}
 			}
 		}
 	}
 	pending, splays := []*geometryStation{}, []*geometryStation{}
 	for _, g := range grouped.groups {
 		row := grouped.rows[g.HeadIndex].Source
-		n := newGeometryStation(geometryStation{head: g.HeadIndex, from: g.From.NativeValue(), to: g.To.NativeValue(), fromID: g.From, dist: row.DistanceMM(), az: int32(row.AzimuthRaw()), flags: row.FlagsRaw(), mark: row.FlagsRaw()&32 != 0, node: GeometryNode{Key: fmt.Sprintf("group:%d", g.HeadIndex), Status: "unplaced", StartKey: "none", ID: g.To, SourceSpan: row.Offsets().Record, Vector: g.Vector, Correction: corrections[g.HeadIndex]}})
+		n := newGeometryStation(geometryStation{head: g.HeadIndex, from: g.From.NativeValue(), to: g.To.NativeValue(), fromID: g.From, dist: row.DistanceMM(), az: int32(row.AzimuthRaw()), flags: row.FlagsRaw(), mark: row.FlagsRaw()&32 != 0, node: GeometryNode{Key: s.key(fmt.Sprintf("group:%d", g.HeadIndex)), Status: "unplaced", StartKey: "none", ID: g.To, SourceSpan: row.Offsets().Record, Vector: g.Vector, Correction: corrections[g.HeadIndex]}})
 		s.stations = append(s.stations, n)
 		if g.Kind == "undefined_from" {
 			n.node.ID = source.NewStationID(0x80000000)

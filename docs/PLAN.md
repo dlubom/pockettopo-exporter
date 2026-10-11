@@ -9,7 +9,8 @@ Historical PBI numbers remain traceable; they do not imply equal-sized outcomes.
 P04d started from P04c17 (`bfa73944e3d3baad00b07e2b6dd5a8c9f9a3682b`) plus
 the documentation reset (`94a3f2e`). P05 builds on verified P04d
 (`e3b3b3a395741757d1cf2527b192bfceeae5fa52`). P07 builds on verified P06
-(`0e3e63b5e3057eed5c51df1a03048c60ca4b8c16`); P05/P06 and existing prefix
+(`0e3e63b5e3057eed5c51df1a03048c60ca4b8c16`). P08 builds on verified P07
+(`bd96ea94057ae7a6721caef94160dedf323aa662`); P05–P07 and existing prefix
 contracts remain unchanged.
 
 | Area | Implemented behavior | Delivery state |
@@ -24,7 +25,8 @@ contracts remain unchanged.
 | P05 | Isolated native text CLI, native byte goldens, provenance/loss report, safe new-directory publication | Implemented; full local gates verified |
 | P06 | Native fixed-point grouping, source-row lineage and average-direction processing/JSON | Implemented; full local gates verified |
 | P07 | Isolated reference placement, plan/extended geometry and optional native loop closure | Implemented; full local gates verified |
-| P08–P14 | Directory context, other native exports and compatibility milestone | Not implemented |
+| P08 | Explicit native template-directory geometry and per-source lineage | Implemented; full local gates verified |
+| P09–P14 | Other native exports and compatibility milestone | Not implemented |
 | P15/P16 | Walls SRV / Survex SVX | Subsequent scope |
 
 ### Verification and publication
@@ -316,12 +318,81 @@ every hosted CI job for the exact pushed SHA before reporting delivery complete.
 The commit's GitHub checks and delivery response provide publication evidence.
 
 **Next useful increment:** P08 — explicit native template-directory context,
-with deterministic inventory, ordering and isolation tests. Not implemented.
+with deterministic inventory, ordering and isolation tests. Implemented below.
+
+## P08 — explicit native template-directory context
+
+**Status:** implemented; full local gates verified. **Dependency:** P07. Work directly on main; preserve
+all isolated P05–P07 APIs and outputs. Only P08 is authorized in this delivery.
+
+**Outcome/contract:** an explicit `context <input.top> --template-directory <dir>
+--json [--close-loops]` command inventories immediate TOP neighbors, excludes
+the current basename, records hashes/order/roles and evaluates native two-phase
+template/current geometry with source-file and local-row lineage. No implicit
+scan; no new exporters. Templates read only v3 tables, preserving ignored bytes.
+Portable UTF-8 byte ordering and case-insensitive `.top` selection are explicit
+choices; native `Array.Sort` is culture-sensitive and its old `*.top` wildcard
+also selects `.topx`, as the original CLR probe confirms. Fail closed on bad templates,
+symlinks, unsupported current sources and aggregate budgets rather than retaining
+native partial reads. Default ceilings: 1024 templates, 64 MiB total input,
+32767 trips, 1 million rows/references. Closure holds templates fixed (`all=false`).
+
+Implementation plan (SPEC remains the durable contract):
+- [x] Capture original-assembly C#/IL-backed templates, cross-file grouping,
+  boundary separation, roots/references, priority, projections and closure goldens.
+- [x] Add tests first, then explicit inventory/context, two-phase processing and
+  CLI with deterministic provenance. Preserve raw IDs/fields/spans per source.
+- [x] Add P08 targeted mutations to the existing complete schedule, retain all
+  controls, run full gates/mutations and independently review the final change.
+- [x] Verify frozen evidence and update contracts/status. Publication is required below.
+
+### Delivered behavior and evidence
+
+The explicit CLI and `processing.GroupContext` / `PlaceContextGeometry` preserve
+per-source raw records while evaluating combined template groups, separate current
+groups, native trip rebasing, reference bases, attachment priorities and current-only
+closure with fixed template nodes. P05–P07 retain their isolated behavior.
+See [SPEC](SPEC.md#explicit-template-directory-context-p08) and
+[fixture provenance](../internal/top/testdata/README.md#p08-native-directory-context).
+
+C#/IL and reflection into the unchanged original assembly establish 13 directory
+cases with 26 raw/closed native geometry goldens, including an inclined loop with
+153 mm raw height residual and 0 mm after closure. A separate original-CLR pattern
+probe confirms legacy `.topx` selection. Exact `.top` selection, UTF-8 ordering,
+strict input failures and resource ceilings are documented portable choices.
+All 57 P08 evidence hashes and 103 preserved P05–P07 hashes verify; all 54 native
+artifacts plus stdout match fresh native capture, with empty stderr.
+
+A fresh read-only reviewer checked C#/IL, source preservation, processing/CLI,
+native evidence, limits and mutation survivors. Follow-up reviews confirm the
+UTF-8 validation, pre-allocation trip ceiling, key representation and stronger
+trip/file/height cases; no substantive findings remain. Uncached focused race
+tests also passed independently.
+
+The final ordinary gates pass with **98.8%** statement coverage, full race tests,
+vet, Staticcheck, coverage controls, build and smoke checks. The built CLI matches
+the project JSON golden and independently captured inclined-loop result. All
+**1175** explicit faults in **28** scopes are KILLED, including all 34 P08 faults.
+The complete 22-group campaign used at most two private workers. Gremlins kills
+**1113/1138** mutants (**97.80%**); the disjoint four-shard site union exactly
+matches unsharded discovery, with no uncovered, invalid, timed-out or skipped
+outcomes. The 25 survivors were independently reviewed: 17 preserved P07
+equivalents, seven preserved P05 equivalents/cleanup diagnostics and one private
+zero-budget diagnostic boundary that still rejects the input. The weak-suite
+control leaves exactly 38 mutants LIVED and rejects the gate; build/setup failures
+remain NOT VIABLE. All dispatch and failure controls pass unchanged.
+
+**Publication requirement:** commit/push the verified P08 tree on main and confirm
+every hosted CI job for the exact pushed SHA before reporting delivery complete.
+The commit's GitHub checks and delivery response provide publication evidence.
+
+**Next useful increment:** P09 — native Therion DATA and drawing sections,
+including embedded XSections. Not implemented. Stop after P08 in this delivery.
 
 ## Remaining original roadmap
 
-After P07 there are **7 remaining required delivery stages to the native
-milestone**: P08–P14. P01 is a capability/fixture inventory maintained within those stages,
+After P08 there are **6 remaining required delivery stages to the native
+milestone**: P09–P14. P01 is a capability/fixture inventory maintained within those stages,
 not an additional standalone implementation chat. P15 and P16 add two subsequent
 stages for Walls and Survex. P17–P19 and R01–R07 are optional/conditional scope.
 
@@ -338,7 +409,7 @@ routine documentation and individual mutation groups are not separate PBIs.
 | P05 | Isolated native text export through CLI, exact goldens and provenance/loss reporting | Implemented above; Update has no text-field effect, and geometry failure differences are explicit |
 | P06 | Native fixed-point angles, consecutive-shot grouping and average directions | Implemented above |
 | P07 | Reference placement, plan geometry, extended projection and closure | Implemented above |
-| P08 | Explicit native template-directory context | P07; deterministic inventory, ordering and isolation tests |
+| P08 | Explicit native template-directory context | Implemented above |
 | P09 | Native Therion DATA and drawing sections, embedded XSections | P04d/P07/P08; complete data/drawing slices if required |
 | P10 | Native graphics DXF, plan/side and options | P04d/P07/P08; native bytes plus coordinate/visual checks |
 | P11 | VisualTopo and passage dimensions | P06/P07/P08 |

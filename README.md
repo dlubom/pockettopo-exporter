@@ -55,7 +55,17 @@ go run ./cmd/pockettopo-exporter geometry internal/processing/testdata/geometry/
 Coordinates use native millimetres (X east/right, Y south/down, H down,
 D extended). Unplaced groups remain explicit; native failures and work limits
 return errors. See [the geometry contract](docs/SPEC.md#isolated-native-geometry-p07).
-The next increment is **P08: explicit template-directory context**, not implemented.
+P08 adds explicit template-directory geometry with a sorted source inventory,
+hashes, ignored-template-byte accounting and per-file lineage:
+
+```sh
+go run ./cmd/pockettopo-exporter context internal/processing/testdata/context/crossfile/current.top --template-directory internal/processing/testdata/context/crossfile --json --close-loops
+```
+
+Templates affect placement; current-only closure holds template geometry fixed.
+See [the context contract](docs/SPEC.md#explicit-template-directory-context-p08)
+for portable ordering, limits and native failure deviations. The next increment
+is **P09: native Therion DATA and drawing sections**, not implemented.
 Historical per-field prefix APIs remain supported.
 
 ## Documentation

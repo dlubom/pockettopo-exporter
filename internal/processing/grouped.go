@@ -1,5 +1,5 @@
-// Package processing reproduces isolated native measurement arithmetic while
-// retaining raw records and lineage. It does not place stations or close loops.
+// Package processing reproduces native measurement arithmetic and geometry
+// while retaining raw records and source lineage.
 package processing
 
 import (
@@ -47,12 +47,17 @@ func GroupMeasurements(d source.Document) (Result, error) {
 	if !d.Supported() {
 		return Result{}, errors.New("processing requires a complete supported TOP v3 document")
 	}
-	trips := d.Trips()
-	measurements := d.Measurements()
+	return groupRows(measurementRows(d.Trips(), d.Measurements(), 0)), nil
+}
+
+func measurementRows(trips []source.Trip, measurements []source.Measurement, tripOffset int) []Row {
 	r := Result{rows: make([]Row, len(measurements))}
 	for i, m := range measurements {
 		decl := int16(0)
 		idx := int(m.TripIndexRaw())
+		if idx >= 0 {
+			idx = int(int16(idx + tripOffset))
+		}
 		if idx >= 0 && idx < len(trips) {
 			decl = trips[idx].DeclinationRaw()
 			if int32(decl) == -32768 {
@@ -64,6 +69,11 @@ func GroupMeasurements(d source.Document) (Result, error) {
 		dx, dy := toRect(dd, int32(real))
 		r.rows[i] = Row{i, m, decl, real, Vector{dx, dy, dh, dd}}
 	}
+	return r.rows
+}
+
+func groupRows(rows []Row) Result {
+	r := Result{rows: rows}
 	for i := 0; i < len(r.rows); {
 		head := r.rows[i]
 		g := Group{HeadIndex: i, Kind: "leg", From: head.Source.From(), To: head.Source.To(), Vector: head.Vector, Declination: head.Declination, members: []Member{{i, false}}}
@@ -109,7 +119,7 @@ func GroupMeasurements(d source.Document) (Result, error) {
 		g.Reverse = averageDirection(g.Vector, g.Declination, true)
 		r.groups = append(r.groups, g)
 	}
-	return r, nil
+	return r
 }
 
 // averageDirection follows GetAvDirection, including unchecked Int64 square

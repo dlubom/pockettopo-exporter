@@ -17,7 +17,7 @@ func (s *geometryState) setupLoop(pair [2]*geometryStation) (geometryClosure, er
 		if a == nil || b == nil {
 			return l, geometryError("closure_ancestor", pair[0].node.Key)
 		}
-		if !a.reference {
+		if !a.reference && !a.fixed {
 			if a.mark {
 				l.stop = [2]*geometryStation{a, a}
 				break
@@ -26,7 +26,7 @@ func (s *geometryState) setupLoop(pair [2]*geometryStation) (geometryClosure, er
 			a = a.start
 			moved = true
 		}
-		if !b.reference {
+		if !b.reference && !b.fixed {
 			if b.mark {
 				l.stop = [2]*geometryStation{b, b}
 				break

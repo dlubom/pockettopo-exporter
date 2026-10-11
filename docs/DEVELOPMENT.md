@@ -32,6 +32,7 @@ go run ./cmd/pockettopo-exporter --version
 go run ./cmd/pockettopo-exporter inspect internal/top/testdata/api-drawings.top --json
 go run ./cmd/pockettopo-exporter export internal/top/testdata/api-drawings.top --format text --output build/drawings-text
 go run ./cmd/pockettopo-exporter geometry internal/processing/testdata/geometry/intersecting.top --json --close-loops
+go run ./cmd/pockettopo-exporter context internal/processing/testdata/context/crossfile/current.top --template-directory internal/processing/testdata/context/crossfile --json --close-loops
 go test ./internal/top -run '^$' -bench '^BenchmarkDocument' -benchmem
 ```
 
@@ -42,8 +43,8 @@ are `coverage.out`, `mutation.json` and `build/`; caches/tools are in ignored
 dependencies. The document group covers P04d source/accounting/inspect faults alongside the
 unchanged earlier groups. The native-text group covers serialization, decimal
 formatting, provenance and safe CLI publication. The weak-suite negative control deliberately stubs
-inspection/export/processing/geometry and exercises version, inspect, process, geometry and export arguments without assertions;
-all 35 generated mutants must live and the quality gate must reject them.
+inspection/export/processing/geometry/context and exercises version, inspect, process, geometry, context and export arguments without assertions;
+all 38 generated mutants must live and the quality gate must reject them.
 Run one sequential campaign or one parallel coordinator at a time. The parallel
 runner snapshots only source/scripts/pinned tools into a private checkout per
 group with private caches/reports. It limits active groups, collects reports and
@@ -87,8 +88,8 @@ the same complete scope, thresholds and controls.
 The previous P05 CI ran 11 mutation groups; the slowest `markers` group took
 about 16 minutes and Gremlins about 13 minutes. P06 uses 22 groups: expensive
 second/third Polygon scopes are separated, mappings and marker pairs stay
-cohesive, and processing has targeted P06 and P07 campaigns in the same group. The unchanged prior 25 explicit
-scopes plus P06 processing and P07 geometry remain exactly-once; all prior faults and thresholds
+cohesive, and processing has targeted P06, P07 and P08 campaigns in the same group. The unchanged prior 25 explicit
+scopes plus P06 processing, P07 geometry and P08 context remain exactly-once; all prior faults and thresholds
 are retained. Gremlins is partitioned into tables, drawings, output and processing
 by source file, with all internal production files assigned to one shard and
 unknown new packages rejected. Every shard still discovers coverage with the

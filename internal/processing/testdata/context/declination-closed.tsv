@@ -1,0 +1,4 @@
+base	none
+template:reference:-1	placed	65536	none	0	0	0	0	0	0	0	0	0	0	0
+template:group:0	placed	65537	template:reference:-1	1252	-1522	0	2000	1252	1522	0	2000	0	0	0
+group:0	placed	65538	template:group:0	1252	-2522	0	3000	0	1000	0	1000	0	0	0
