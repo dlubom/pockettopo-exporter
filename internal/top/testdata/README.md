@@ -1499,3 +1499,87 @@ and stops without guessing a payload or crossing into the next drawing.
 The source API, not inspection JSON, exposes original raw fields and spans.
 The JSON deliberately summarizes counts and accounting without dumping vertices.
 No text/geometry/export compatibility is claimed by these readback probes.
+
+## P05 native text export
+
+`scripts/reference-text-probe.cs` invokes the original PocketTopo 1.372 assembly
+through reflection, never a rebuilt C# implementation. Environment: macOS arm64,
+existing Wine staging / Microsoft .NET 2.0 x86 installation; EXE SHA-256
+`048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371` was verified.
+Config fields are set directly (no registry writes): metric=true, fullCircle=360,
+actualFile=the isolated fixture basename. CurrentCulture/CurrentUICulture are
+InvariantCulture. Trip.Reset precedes each new DataSet. DataSet.Read(path,false),
+not DataSet.Load, ensures zero template/trip/reference/data boundaries and no
+neighboring scan. Native StreamWriter emits UTF-8 without BOM and Windows CRLF.
+
+C# and matching `decompiled/PocketTopo.il` were checked for Exporter.WriteText
+(IL 84-234), Survey.WriteText (12637-12748), Update (10700-10819), EvalRef/EvalData,
+SetupShot/SetupXsect, Station.SetBox and text helpers (44460-44816), Trip.WriteTxt
+(35589-35682), Reference.WriteText (46503-46570), MetricGrid and Angle.ToUnit/
+ToUnsigned. Native text consumes the raw tables, not averaged geometry. The
+first mixed triple crosses trip boundaries and includes a reversal; Update sets
+the first row's derived (dx,dy) to (-290,330), but does not change any text field.
+The probe compares the entire original table writers before/after Update.
+The raw source IDs, flags and offsets remain independent of derived IDs/vectors.
+
+Goldens in `internal/exporttext/testdata/` are copied **byte-for-byte** from
+original Exporter.WriteText. Inputs are independently constructed by BinaryWriter
+in the probe, never by the Go reader/exporter:
+
+| Fixture | Native case |
+| --- | --- |
+| empty | Empty complete v3, all section separators, writer trailer |
+| mixed | Real consecutive repeat/reversal across trips, later separate repeated pair, splay, projection after a normal shot, disconnected/anonymous/reserved rows, duplicate references, leap day/time, Auto and date endpoints, Unicode/CR/LF/quotes/backslashes, sentinel distance, out-of-range trip labels |
+| rounding | Signed distance/angle boundaries and blank distance; midpoint reference rounding and large Int64 coordinate precision |
+| flags | All 256 raw flags and native flag precedence; undefined-from rows deliberately bypass geometry, without claiming grouping coverage |
+| numbers | 512 literal measurements and 512 Int64 references from a fixed unchecked LCG, including varied signs/large magnitudes and real binary-to-15-digit midpoint cases |
+| api-references / api-drawings | Previously frozen complete native source fixtures; only new text goldens are added |
+| update-error | First projected shot; native Update throws NullReferenceException; original Exporter catches it and leaves only its 27-byte header. Its `.txt` is **failure evidence**, not a successful export golden. Go's explicit geometry-failure deviation is tested separately. |
+
+The numeric golden initially detected eleven large-reference differences from
+Go's ties-to-even significant-digit conversion. The exporter now rounds the exact
+binary rational to 15 significant digits with midpoint-away-from-zero, then
+applies native fixed decimal rounding. All seven successful native text goldens
+are tested without normalization. Earlier TOP fixtures and native transcripts
+are unchanged. Synthetic drawings stay empty here; existing api-drawings supplies
+real plan/side omission coverage. Text does not infer sketch ownership or CRS.
+
+Actual final capture commands (run in the repository; the directory is disposable):
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo /r:System.Windows.Forms.dll \
+  '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-text-probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-text-probe.cs' \
+  > build/text-compile-final.log 2>&1
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/reference-text-probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\text-probe-final' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\top\testdata' \
+  > build/native-text-read-final.txt 2> build/native-text-read-final.err
+```
+
+The final native stderr is empty. Full original stdout is preserved as
+`native-text-read.txt` (CRLF). Existing api-references/api-drawings source hashes
+remain those documented above. Hashes of new evidence and fixtures:
+
+| File | SHA-256 |
+| --- | --- |
+| `scripts/reference-text-probe.cs` | `ecb9753f8aa96d549e88bbbfd30f803e3816590e16b14f4297de482e946f6ee4` |
+| `internal/top/testdata/native-text-read.txt` | `e167f58c8c215f1d8c611bf32f4a690a88acfe4055ee0509c2d1fd1697f69be1` |
+| `internal/exporttext/testdata/api-drawings.txt` | `aed3d7370058143fd36c9da896475bf692a44e79fb570c6ef71ded332433fa2c` |
+| `internal/exporttext/testdata/api-references.txt` | `83fe5e5e3273464fd3b250c51f3ebfc7e411c7f30f0a29de2cc0c54461743a69` |
+| `internal/exporttext/testdata/empty.top` | `9b9bc7a5b1a4346a40051128c78452fcdfef148a36d3751705214706386f0477` |
+| `internal/exporttext/testdata/empty.txt` | `9c87418ee11f0b5129609d1cb08ea9286d0ae99fa2665261697898f088f50390` |
+| `internal/exporttext/testdata/flags.top` | `35c46684f69e99665d136dc09aee09f9dc7f3b72e6df56592426820f5f41b04a` |
+| `internal/exporttext/testdata/flags.txt` | `c82948f048339b955d637dc88b8898adae926313239d684f002f8cdd8098e9f2` |
+| `internal/exporttext/testdata/mixed.top` | `2e457ac33b89e5a329424f6fa5389779bd70862bf6424fc00cd28fb4de5d9871` |
+| `internal/exporttext/testdata/mixed.txt` | `98106093cc0089cf0a5fb50d2306d41fe1b6c2ae66d6b31435db3d92120ee99f` |
+| `internal/exporttext/testdata/numbers.top` | `25e5a1211b47e778613283a095ae5fc67978ccc53296f716b4fad282b1e0b152` |
+| `internal/exporttext/testdata/numbers.txt` | `c5b1b66ef02526dc34f1de5242292b8b38a43d1931dde21f48b695cd41e8ffd3` |
+| `internal/exporttext/testdata/rounding.top` | `b1b86270101929f5d8ba1bfe9a8208982b41032ca2933feabe41338b177a5379` |
+| `internal/exporttext/testdata/rounding.txt` | `173d798039576472d4951847921223298fc8184e13eb1793466a713a9216bb98` |
+| `internal/exporttext/testdata/update-error.top` | `62f13f08b0173bfef45f9f8de2f9f0c335746ed81665e52246488dea8b71c1df` |
+| `internal/exporttext/testdata/update-error.txt` | `b2489a6e29d3db57524e6e02e1cc9e483fb43f7cc3ac4af608306eae37dbfc38` |

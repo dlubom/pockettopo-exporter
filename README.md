@@ -9,7 +9,8 @@ omissions. PocketTopo is a development reference, not a runtime dependency.
 The CLI reads supported **TOP v3** source data: trips, measurements, references,
 three raw mappings and ordered plan/side Polygons and XSections. It preserves
 original bytes, fields and offsets; unknown markers and unsupported tails remain
-explicitly unparsed. No geometry or exporter is implemented yet.
+explicitly unparsed. It exports isolated native text with source lineage and loss
+reporting; geometry and other exporters remain future work.
 
 ```sh
 go run ./cmd/pockettopo-exporter inspect internal/top/testdata/api-drawings.top --json
@@ -22,10 +23,20 @@ incomplete, I/O and output failures. See [SPEC](docs/SPEC.md#complete-v3-source-
 for the tail policy and source API. Inputs are never rewritten or scanned for
 neighboring files.
 
+Native text export uses metres, a 360-degree circle and exact UTF-8/CRLF bytes.
+The output directory must be new; it contains `survey.txt` and `report.json`.
+
+```sh
+go run ./cmd/pockettopo-exporter export internal/top/testdata/api-drawings.top --format text --output build/drawings-text
+```
+
+See [the text contract](docs/SPEC.md#isolated-native-text-export-p05) for native
+Update independence, its explicit failure deviation, publication and losses.
+
 Start with [the current state and next work item](docs/PLAN.md). Work directly on
-`main`, delivering one complete, reviewable behavior per increment. **P04d**
-closes source reading and inspection; the next increment is **P05: native text
-export**. Historical per-field prefix APIs remain supported.
+`main`, delivering one complete, reviewable behavior per increment. **P05**
+adds usable native text export. The next increment is **P06: native grouped
+measurement processing**. Historical per-field prefix APIs remain supported.
 
 ## Documentation
 

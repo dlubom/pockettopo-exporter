@@ -1,0 +1,23 @@
+empty Update=True text_fields_unchanged=True rows=0
+empty bytes=24
+mixed Update=True text_fields_unchanged=True rows=11
+mixed first_derived_dx=-290 first_derived_dy=330
+mixed bytes=1186
+rounding Update=True text_fields_unchanged=True rows=22
+rounding first_derived_dx=0 first_derived_dy=0
+rounding bytes=1949
+flags Update=True text_fields_unchanged=True rows=256
+flags first_derived_dx=0 first_derived_dy=0
+flags bytes=17267
+numbers Update=True text_fields_unchanged=True rows=512
+numbers first_derived_dx=0 first_derived_dy=0
+numbers bytes=66051
+update-error Update error=NullReferenceException
+update-error Update=False text_fields_unchanged=True rows=1
+update-error bytes=27
+api-references Update=True text_fields_unchanged=True rows=1
+api-references first_derived_dx=999 first_derived_dy=35
+api-references bytes=347
+api-drawings Update=True text_fields_unchanged=True rows=2
+api-drawings first_derived_dx=0 first_derived_dy=10000
+api-drawings bytes=235

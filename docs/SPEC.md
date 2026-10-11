@@ -77,9 +77,9 @@ Keep responsibilities separate, introducing packages only as needed:
 
 1. `internal/top`: bounded decoding, offsets, validation and structured errors.
 2. `internal/source`: immutable raw records and original-byte provenance.
-3. Future processing: native arithmetic, grouping, geometry and context, with
+3. Processing when required: native arithmetic, grouping, geometry and context, with
    source-row lineage retained separately from computed values.
-4. Future exporters: format selection/serialization and explicit loss reporting.
+4. `internal/exporttext` and future exporters: format selection/serialization and explicit loss reporting.
 5. `internal/cli`: argument, file, diagnostics and output-publication boundaries.
 
 Existing prefix APIs retain their stopping positions, limits and error order.
@@ -161,7 +161,7 @@ commands live in [testdata/README](../internal/top/testdata/README.md#p04d-compl
 `inspect <input.top> --json` reads exactly one named input, bounded to 64 MiB plus
 one detection byte. No neighboring-file scan, geometry, or vertex dump is done.
 `--help`, `-h` and `--version` keep their existing success/exit behavior; help now
-lists inspection. Export remains unavailable.
+lists inspection. Help also lists native text export.
 
 The deterministic JSON object contains `schema_version: 1`, `tool_version: "dev"`,
 `source` (`sha256`, `size_bytes`, `top_version`), `status` (`supported`,
@@ -180,6 +180,103 @@ zero body/consumed bytes, all bytes unparsed and the precise parse-error offset.
 have status `unsupported`; unknown markers/tails have structured diagnostics.
 Argument/I/O/oversized-input failures produce no JSON, since complete input
 analysis is unavailable. An oversized prefix is never hashed as a complete file.
+
+## Isolated native text export (P05)
+
+`export <input.top> --format text --output <new-directory>` reads only the
+explicit input, using P04d's 64 MiB input ceiling, complete-body and tail policy.
+Malformed, unsupported, incomplete and oversized inputs fail before output
+creation. No template directory or neighboring file is read. The fixed P05
+profile is metres, a 360-degree circle, invariant culture, UTF-8 without BOM and
+CRLF on every platform. Other native settings remain for capability expansion.
+The title is the input basename without its last extension; empty/invalid UTF-8
+or control-character titles are rejected as an explicit stricter boundary.
+
+`exporttext.Build` keeps every trip, reference and measurement in original table
+order. Repeated, reversed, disconnected, invisible and anonymous rows are not
+filtered or averaged. Isolated trip/reference/data boundaries are zero. Positive
+trip indices print as source index plus one even if out of range, with an
+unresolved-index report entry; negative indices print blank. Reserved IDs use
+native display semantics while raw bits and internal identity remain distinct
+in the report. Distances are metres with three decimals; angles use the raw
+unsigned azimuth or signed inclination with two decimals. Auto trip declination
+prints zero and recorded ticks print a calendar date without asserting a field
+date. Measurement distance Int32 minimum and reference coordinate minimum
+sentinels become blanks. References use native MetricGrid metre values with two
+decimals. The .NET Framework 2.0 format retains 15 significant decimal digits,
+rounds decimal midpoints away from zero and suppresses negative zero; Go's
+ordinary fixed formatting is not used as an oracle.
+
+Station flag priority is invisible `~`, projected `=`, flipped `<`, special `.`,
+then blank. Native comments replace quotes first, then double backslashes,
+replace CR with literal `\r`, and remove LF. A present empty measurement comment
+prints `""`; empty trip/reference comments are absent. These quirks are preserved,
+not repaired. Independent original-program bytes cover empty sections, Unicode,
+all 256 flag values, actual repeated/reversed rows, signed/rounding boundaries,
+sentinels, large references, duplicate/anonymous identities and drawings.
+
+### Text dependency on Survey.Update
+
+Native `Survey.WriteText` calls `Update` before writing tables. C# and IL confirm
+that Update's EvalRef, Trip.Evaluate, EvalData, SetupShot, SetupXsect and SetBox
+modify derived identities, links, vectors, coordinates, bounds and cached
+_declination_, while text reads source from/to/dist/azimuth/inclination/flags/
+trip/comment, reference num/loc/comment and trip date/declCorr/automatic/comment.
+The fields consumed by text are unchanged. The independent native probe compares
+the entire table text before/after Update, including real grouped/reversed shots:
+the first mixed row's derived vector is (-290, 330), but all eleven original rows
+and their individual distances/angles remain in the golden.
+
+P05 therefore elides derived geometry explicitly, without promoting P06/P07
+arithmetic or geometry. It does **not** reproduce native Update execution failures:
+`update-error.top` demonstrates a first projected shot causing a native
+NullReferenceException without changing text fields. P05 can serialize those
+preserved fields, and every report declares this deviation. Byte compatibility
+is claimed for the fixed profile when native Update completes, not equivalence
+of geometry or native failure behavior. There is no loop closure or magnetic
+correction in text. This is an evidence-based text dependency analysis, not an
+assumption that other exporters may bypass Update.
+
+### Publication and report
+
+The explicit output directory must not exist. `Mkdir` reserves it exclusively;
+each artifact is created exclusively as a temporary file inside it, written,
+synced and closed, then hard-linked to its final name without replacement.
+`report.json` is published last. Filesystems lacking hard-link support fail
+explicitly. Existing files/directories/symlinks and concurrent final-file entries
+are never overwritten. On failure, remove only files this invocation created
+and the directory if empty; retire removed temporary names and check recorded
+file identities before cleanup. Report cleanup failures and leave foreign entries.
+Identity checking and unlink are separate filesystem operations; arbitrary
+same-user pathname replacement during that interval is outside this guarantee.
+The reserved output directory must not be actively modified during export.
+No recursive removal or source rewrite is performed. This is not an atomic
+multi-file transaction: process termination can leave an incomplete new directory;
+absence of a complete report means the package is incomplete. No filesystem
+crash-durability guarantee is claimed. A notification failure returns exit 1 but
+keeps complete files and explicitly reports that publication already succeeded.
+
+Exit 0 requires successful input analysis, serialization, publication and stdout
+notification. All failures exit 1 with diagnostics on stderr. Inspect JSON,
+version and historical prefix contracts are preserved; help lists export.
+
+`survey.txt` contains exactly the native text bytes. Deterministic schema-1
+`report.json` contains tool/format/profile/isolated-context/title, complete source
+SHA-256/size/TOP version/tail classification, text SHA-256/size, the explicit
+Update policy, and one lineage record for every source table row (zero-based
+index, original byte span, one-based output line, relevant raw values and
+raw/native/display identities). There are no clocks, absolute paths or output
+paths. Counts/details report dates/declination and numeric precision, sentinel
+blanks, unrendered roll/flag metadata, removed comment LF, hidden reserved IDs,
+unresolved trip indices, omitted drawing elements, mappings and trailer.
+Original comments/drawings remain in the hashed TOP source, not in a recovered
+or rewritten source file. A source hash requires retaining that original file.
+
+Text output has a separate inclusive 128 MiB ceiling. Source table allocations
+and report lineage remain bounded by P04d input/table limits, but can use much
+more memory than the input; this is not a low-memory whole-corpus guarantee.
+See [native evidence](../internal/top/testdata/README.md#p05-native-text-export)
+for commands, hashes, controlled context and independent goldens.
 
 ## Native semantics that future work must preserve
 

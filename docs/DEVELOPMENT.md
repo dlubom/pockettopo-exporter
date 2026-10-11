@@ -28,6 +28,7 @@ gofmt -w cmd internal
 go run ./cmd/pockettopo-exporter --help
 go run ./cmd/pockettopo-exporter --version
 go run ./cmd/pockettopo-exporter inspect internal/top/testdata/api-drawings.top --json
+go run ./cmd/pockettopo-exporter export internal/top/testdata/api-drawings.top --format text --output build/drawings-text
 go test ./internal/top -run '^$' -bench '^BenchmarkDocument' -benchmem
 ```
 
@@ -36,9 +37,10 @@ uncached race tests, coverage, build and CLI smoke behavior. Generated outputs
 are `coverage.out`, `mutation.json` and `build/`; caches/tools are in ignored
 `.cache/` and `.tools/`. There is no `go.sum` because there are no module
 dependencies. The document group covers P04d source/accounting/inspect faults alongside the
-unchanged earlier groups. The weak-suite negative control deliberately stubs
-inspection and exercises both version and inspect arguments without assertions;
-all nine generated mutants must live and the quality gate must reject them.
+unchanged earlier groups. The native-text group covers serialization, decimal
+formatting, provenance and safe CLI publication. The weak-suite negative control deliberately stubs
+inspection/export and exercises version, inspect and export arguments without assertions;
+all 18 generated mutants must live and the quality gate must reject them.
 Run one local mutation campaign at a time: reports/cache paths
 are shared. CI parallelism uses separate checkouts and caches.
 

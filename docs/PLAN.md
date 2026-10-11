@@ -6,8 +6,9 @@ Historical PBI numbers remain traceable; they do not imply equal-sized outcomes.
 
 ## Current implementation — 2026-10-11
 
-P04d starts from P04c17 (`bfa73944e3d3baad00b07e2b6dd5a8c9f9a3682b`) plus
-the documentation reset (`94a3f2e`). Existing prefix contracts remain unchanged.
+P04d started from P04c17 (`bfa73944e3d3baad00b07e2b6dd5a8c9f9a3682b`) plus
+the documentation reset (`94a3f2e`). P05 builds on verified P04d
+(`e3b3b3a395741757d1cf2527b192bfceeae5fa52`). Existing prefix contracts remain unchanged.
 
 | Area | Implemented behavior | Delivery state |
 | --- | --- | --- |
@@ -18,7 +19,8 @@ the documentation reset (`94a3f2e`). Existing prefix contracts remain unchanged.
 | P04c14/P04c15 | Bounded ordered plan Polygon/XSection loops, explicit stops | Implemented |
 | P04c16/P04c17 | Side mapping and first raw side marker prefix APIs | Preserved historical contracts |
 | P04d | Full supported v3 source document, side drawing, tail accounting, inspect JSON | Implemented; full local gates verified |
-| P05–P14 | Native exports, processing, context and compatibility milestone | Not implemented |
+| P05 | Isolated native text CLI, native byte goldens, provenance/loss report, safe new-directory publication | Implemented; full local gates verified |
+| P06–P14 | Processing, context, other native exports and compatibility milestone | Not implemented |
 | P15/P16 | Walls SRV / Survex SVX | Subsequent scope |
 
 ### Verification and publication
@@ -39,12 +41,12 @@ and full mutation scope remain authoritative in DEVELOPMENT/scripts; no earlier
 SHA substitutes for the final pushed revision. The commit's GitHub checks and
 delivery response provide publication evidence.
 
-The current user request authorizes direct work, commit and push on `main`.
-No branch/worktree/PR or exporter implementation is part of P04d.
+The P04d request authorized direct work, commit and push on `main`.
+No branch/worktree/PR or exporter implementation was part of P04d.
 
 ## P04d — complete v3 source reading and inspection
 
-**Status:** implemented and locally verified; ready for P05 after exact-SHA CI.
+**Status:** implemented and verified, including exact-SHA CI; preserved by P05.
 **Outcome:** a user can inspect a TOP v3 file and know what was read, whether it
 is complete/supported, and which bytes remain unexplained. This closes the
 original P03 inspection and P04 complete-file goals.
@@ -118,9 +120,10 @@ Record native boundary findings in SPEC/evidence before relying on them. A new
 dependency that changes the outcome or adds geometry/export work requires
 revising this PBI explicitly, not returning to arbitrary one-field tasks.
 
-## Next recommended item: P05 — native text export
+## P05 — native text export
 
-**Status:** specified; not implemented. **Dependency:** P04d. Deliver a usable
+**Status:** implemented and locally verified. **Dependency:** P04d.
+Delivers a usable
 `export` CLI for the native text format with exact original-program goldens,
 explicit isolated-input context, deterministic output/provenance/loss reporting
 and safe output publication. Research `Exporter.WriteText`, `Survey.WriteText`,
@@ -129,26 +132,64 @@ independent native probes before implementing. Promote only demonstrated P06/P07
 prerequisites; do not assume all geometry is necessary or bypass Update silently.
 Do not bundle other exporters or template-directory behavior.
 
-**Ready handoff prompt:**
+### Delivered behavior and verification
 
-> Implement only P05 from docs/PLAN.md: a usable native PocketTopo 1.372 text
-> export through the CLI, building on P04d. Read AGENTS.md, README.md, SPEC, PLAN
-> and DEVELOPMENT; verify the checkout and work directly on main. Establish
-> Exporter.WriteText/Survey.WriteText/Station.WriteText and the text-relevant
-> Survey.Update semantics in original C#/IL plus independent native probes.
-> Implement only demonstrated processing prerequisites, preserve raw source
-> identities/bytes and all P04d/prefix contracts. Deliver exact isolated-input
-> native goldens, safe explicit output publication and provenance/loss reporting,
-> with normal/boundary/failure cases, full quality/mutation gates, independent
-> review and updated documentation. Do not add other exporters or directory
-> context. After verification, commit/push main and confirm green CI for its
-> exact SHA. Stop after P05; report behavior, limitations and the next useful
-> behavior-sized increment.
+`export <input.top> --format text --output <new-directory>` produces native
+`survey.txt` plus deterministic schema-1 `report.json` in one explicit isolated
+context. The fixed profile is metres/360 degrees/invariant culture/UTF-8 without
+BOM/CRLF. Every source row survives, with byte-span/output-line lineage,
+raw/native/display identities, source and output hashes, transformations and
+omissions. P04d and prefix APIs remain unchanged. Existing output paths are
+refused; files are synced and closed before no-replace hard-link publication,
+report last. Cleanup retires temporary names and checks original file identity.
+
+C# and IL plus seven independent successful native byte goldens establish text
+formatting and Update independence. These include actual repeat/reversal across
+trips, all 256 flags and 512 large Int64 references. The probe also preserves
+native Update failure output: a first projected shot throws and leaves a header.
+P05 explicitly elides geometry and does not reproduce native geometry exceptions;
+its compatibility claim applies when native Update completes. No P06/P07
+processing, other exporter or template-directory mode was needed or added.
+See [SPEC](SPEC.md#isolated-native-text-export-p05) and
+[native provenance](../internal/top/testdata/README.md#p05-native-text-export).
+
+A fresh read-only reviewer checked native C#/IL, all new behavior and gates,
+finding one substantive cleanup ownership defect. Recreated temporary/final
+path regressions failed before the repair and pass afterward. Follow-up survivor
+review strengthened input-read error preservation and exact-limit diagnostics.
+No substantive findings remain. Seven final Gremlins survivors were reviewed:
+five equivalent padding/numeric branches and two noncritical cleanup-diagnostic
+variants, with no critical survivor.
+
+Final local verification passed: `check.sh` (race, vet, Staticcheck, coverage
+controls, build and CLI checks; 99.5% statement coverage), all 621 Gremlins
+mutants (614 killed, 7 lived; 98.87%; no invalid/uncovered/timed-out outcomes),
+and all 1,057 explicit compile-and-test faults in 25 scopes. Full scope was
+verified with the complete campaign plus focused native-text/Gremlins reruns
+after correcting a noncompiling planned fault and strengthening tests. All 18
+weak-suite mutants live and the gate rejects them; compiler/setup failure and
+exactly-once dispatch/pruning controls also pass. Seven native byte goldens,
+all 16 new evidence hashes, local documentation links and staged whitespace
+checks pass. The built CLI independently matches the api-drawings text golden
+and both report hashes. The commit's exact-SHA GitHub checks and delivery
+response provide publication evidence; no earlier SHA substitutes for it.
+
+### Next recommended item: P06 — native grouped measurement processing
+
+Deliver native fixed-point vectors and consecutive matching/reversed-shot groups
+with their complete source-row lineage and native average directions. Establish
+real repeated/reversed/across-trip and 0/360-degree cases against original
+EvalData/Angle/GetAvDirection in C#/IL and independent probes. Keep raw source
+records separate from processing and preserve P05 text bytes; they deliberately
+emit all individual source rows. Do not include placement, closure, template
+context or another exporter. Finalize the useful API/inspection boundary in P06
+without splitting arithmetic fields into separate PBIs. Stop after P06 when it
+is explicitly requested; this P05 chat stops here after publication.
 
 ## Remaining original roadmap
 
-After P04d there are **10 remaining required delivery stages to the native
-milestone**: P05–P14. P01 is a capability/fixture inventory maintained within those stages,
+After P05 there are **9 remaining required delivery stages to the native
+milestone**: P06–P14. P01 is a capability/fixture inventory maintained within those stages,
 not an additional standalone implementation chat. P15 and P16 add two subsequent
 stages for Walls and Survex. P17–P19 and R01–R07 are optional/conditional scope.
 
@@ -162,7 +203,7 @@ routine documentation and individual mutation groups are not separate PBIs.
 | --- | --- | --- |
 | P01 | Native exporter/options and fixture capability matrix | Capture the relevant part with each exporter; finish full inventory by P14 |
 | P04d | Complete supported v3 source read and inspect | Implemented above |
-| P05 | First usable isolated native text export through CLI, exact goldens and provenance/loss reporting | P04d; establish text-relevant `Survey.Update` effects and promote only demonstrated P06/P07 prerequisites |
+| P05 | Isolated native text export through CLI, exact goldens and provenance/loss reporting | Implemented above; Update has no text-field effect, and geometry failure differences are explicit |
 | P06 | Native fixed-point angles, consecutive-shot grouping and average directions | Measurement source model; real repeated/reversed/boundary cases |
 | P07 | Reference placement, plan geometry, extended projection and closure | P06; split by complete geometry behavior if necessary |
 | P08 | Explicit native template-directory context | P07; deterministic inventory, ordering and isolation tests |
