@@ -59,7 +59,16 @@ func exportError(stderr io.Writer, err error) int {
 // publication; report.json is linked last and marks a complete package.
 // This is checked publication, not a transactional directory rename: a process
 // crash can leave an incomplete directory which must not be reused automatically.
-func publish(output string, r exporttext.Result) (err error) {
+func publish(output string, r exporttext.Result) error {
+	return publishResult(output, publicationResult{r.Text, r.Report})
+}
+
+type publicationResult struct {
+	Text   []byte
+	Report any
+}
+
+func publishResult(output string, r publicationResult) (err error) {
 	if err = os.Mkdir(output, 0700); err != nil {
 		return err
 	}

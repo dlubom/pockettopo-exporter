@@ -9,7 +9,7 @@ import (
 )
 
 func TestRun(t *testing.T) {
-	const usage = "Usage: pockettopo-exporter --help | --version\n  pockettopo-exporter context <input.top> --template-directory <dir> --json [--close-loops]\n  pockettopo-exporter inspect <input.top> --json\n  pockettopo-exporter geometry <input.top> --json [--close-loops]\n  pockettopo-exporter process <input.top> --json\n  pockettopo-exporter export <input.top> --format text --output <new-directory>\n\n" +
+	const usage = "Usage: pockettopo-exporter --help | --version\n  pockettopo-exporter context <input.top> --template-directory <dir> --json [--close-loops]\n  pockettopo-exporter inspect <input.top> --json\n  pockettopo-exporter geometry <input.top> --json [--close-loops]\n  pockettopo-exporter process <input.top> --json\n  pockettopo-exporter export <input.top> --format text --output <new-directory>\n  pockettopo-exporter export <input.top> --format therion --output <new-directory> [--template-directory <dir>] [--close-loops]\n\n" +
 		"Evaluate explicit template-directory geometry and source lineage.\nInspect PocketTopo TOP v3 source data.\nPlace native isolated geometry with optional loop closure.\nProcess native consecutive measurement groups (isolated input).\n" +
 		"Export isolated native text (metres, 360 degrees) and a provenance/loss report.\n"
 	for _, tc := range []struct {

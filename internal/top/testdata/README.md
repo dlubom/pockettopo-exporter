@@ -1935,3 +1935,165 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
 | `internal/processing/testdata/context/inclined-loop/current.top` | `960cde0476dbd8d0ab144cce757b0a5e70ce4aeef59849ddcfd8e8cb2b4d9809` |
 | `internal/processing/testdata/context/inclined-loop-closed.tsv` | `0fc67ab26f56e815fd9e091d90678bc28cd303bd17fe910dfabf02d4f1b7744a` |
 | `internal/processing/testdata/context/inclined-loop.tsv` | `5a7816898a974c22a3ff203804e2b9e3acc6d6fa14bc54ced0239e8d81a7424e` |
+
+## P09 native Therion interchange
+
+`scripts/reference-therion-probe.cs` invokes the unchanged original PocketTopo
+1.372 assembly through reflection. Only the capture harness and literal fixtures
+are compiled, never recovered exporter/geometry code. The executable SHA-256 is
+`048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371`.
+Distinct static pens are initialized for native raw-color decoding; no GUI,
+registry setters or original file writes are used. Isolated cases use Read,
+explicit context cases use Load in controlled directories; CloseLoops(close,false)
+precedes the original Therion.WriteExport. Original stdout is retained verbatim.
+
+C#/IL references: Therion.WriteExport/WriteThSketch; Survey.WriteTherion,
+WriteThSketch1/2, First, GetRef, SearchById, EvalRef/EvalData/SetupShot/SetupXsect;
+Trip.WriteThe; Reference.WriteThRef; Station.WriteTherion/WriteThStation/
+WriteThShot/WriteThXSect/GetAvDirection; Polygon.Read/WriteTherion;
+XSection.SetBox/Read/WriteTherion; ID.CompareTo. IL confirms Float32 angular
+multiplication, Int32 add/sub/neg before conv.r8, first-owner lookup versus latest
+label ownership, and the final ray tab. Earlier JKTZ drawings/export work was
+reviewed as prior art; its SVG and corrected survey formats do not implement
+this native interchange and were not used as the byte oracle.
+
+The **89 independent native byte goldens** include features/flags, repeated and
+reversed shots across trips, invalid/exact-bound trip indices, undefined-FROM
+repeats, an unplaced self-pair, raw references and comments, all 256 raw colors,
+empty/singleton/multiple-point Polygons, Int32 extreme centers/points/directions,
+unresolved/empty/horizontal/directed XSections and overflowing ID sorting.
+The preserved P07 geometry and P08 context datasets exercise delayed/reversed
+placement, duplicate/alias identities, projected chains, splays, competing
+references, loops and closure. P09 native context cases add template-bound rays,
+nonzero template origin for Polygons, leading undefined-FROM rows and empty current rows, current-only closure rebuilding,
+and a valid-trip reversed pair across the template/current DATA boundary.
+
+Native arithmetic/failure geometry cases raise OverflowException or
+NullReferenceException before serialization. The original markfail closed case
+also fails, as recorded separately in stdout; successful bytes are never invented
+for these failures. Native export exceptions are swallowed by the original;
+this implementation instead fails explicitly before publication. Reproduced byte
+identity applies to successful supported/bounded inputs, not arbitrary native
+partial-file behavior or destination-application acceptance.
+
+Fresh capture (existing Wine/.NET 2 runtime):
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  '/Applications/Wine Staging.app/Contents/Resources/wine/bin/wine' \
+  /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo /r:System.Windows.Forms.dll /r:System.Drawing.dll \
+  '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p09\probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-therion-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  '/Applications/Wine Staging.app/Contents/Resources/wine/bin/wine' build/p09/probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p09\native' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter' \
+  > build/p09/native-read.txt 2> build/p09/native-read.err
+```
+
+The following inputs/outputs/probe/transcript are frozen native evidence. Earlier
+P05–P08 artifacts are unchanged; all 160 documented hashes were verified.
+
+| File | SHA-256 |
+| --- | --- |
+| `scripts/reference-therion-probe.cs` | `a10701d712fb1eae0cebcca288cfd8992f452d29e64c3ddf3b105e3419d477f3` |
+| `internal/top/testdata/native-therion-read.txt` | `bab9642b4ae1b048773eef0653773d9c7f8479420348f63dc008f4c5243031fd` |
+| `internal/exporttherion/testdata/boundary-data/a.top` | `6a4104e1695a776b872ed273b77352a8e245bc2fd2f51bff5778534f6c5504ba` |
+| `internal/exporttherion/testdata/boundary-data/current.top` | `29b5f556593f36e1a775aa9c5a4ccf48668c2cd44e8e926f9d2f3fd5a70b184d` |
+| `internal/exporttherion/testdata/context-actual-priority-closed.txt` | `b0610b7dacd519765822db7e5645946d5f6ec9883bdce0af3425be0d406269b9` |
+| `internal/exporttherion/testdata/context-actual-priority.txt` | `b0610b7dacd519765822db7e5645946d5f6ec9883bdce0af3425be0d406269b9` |
+| `internal/exporttherion/testdata/context-attach-closed.txt` | `a1ca4f9b9b20eba850c8b983e7e53253bf0460a835cc445b00f6a3da1ea59ddd` |
+| `internal/exporttherion/testdata/context-attach.txt` | `a1ca4f9b9b20eba850c8b983e7e53253bf0460a835cc445b00f6a3da1ea59ddd` |
+| `internal/exporttherion/testdata/context-boundary-closed.txt` | `692d0bfb321e64a5509ebd48818f0aa9a9c289b4b730bbfbb277ebf8aac940f1` |
+| `internal/exporttherion/testdata/context-boundary.txt` | `87a686dbd5dec9afa66fa39b0067e126f5c9cfee4cbdeff1b459d44691356a02` |
+| `internal/exporttherion/testdata/context-crossfile-closed.txt` | `3a42a7fcbb5805bbd84e84b186dcea6482934acb37837e169a5f02e39543772f` |
+| `internal/exporttherion/testdata/context-crossfile.txt` | `3a42a7fcbb5805bbd84e84b186dcea6482934acb37837e169a5f02e39543772f` |
+| `internal/exporttherion/testdata/context-declination-closed.txt` | `c8b445b51d44dd2b0cd9271cfecd8acf0ccbe34fef7038bfd74316bfe433e73b` |
+| `internal/exporttherion/testdata/context-declination.txt` | `c8b445b51d44dd2b0cd9271cfecd8acf0ccbe34fef7038bfd74316bfe433e73b` |
+| `internal/exporttherion/testdata/context-empty-closed.txt` | `df0a4aaf9bb61eb45776faca74f6da893d9c44e061261e087278c251721851a5` |
+| `internal/exporttherion/testdata/context-empty.txt` | `df0a4aaf9bb61eb45776faca74f6da893d9c44e061261e087278c251721851a5` |
+| `internal/exporttherion/testdata/context-emptytemplate-closed.txt` | `df0a4aaf9bb61eb45776faca74f6da893d9c44e061261e087278c251721851a5` |
+| `internal/exporttherion/testdata/context-emptytemplate-current-closed.txt` | `c051bad6f2650de3234f0d9692563ea62568cf53f6eb5678629a7308927debb9` |
+| `internal/exporttherion/testdata/context-emptytemplate-current.txt` | `c051bad6f2650de3234f0d9692563ea62568cf53f6eb5678629a7308927debb9` |
+| `internal/exporttherion/testdata/context-emptytemplate.txt` | `df0a4aaf9bb61eb45776faca74f6da893d9c44e061261e087278c251721851a5` |
+| `internal/exporttherion/testdata/context-inclined-loop-closed.txt` | `c21d0c38dece10fd384500b923bbacd9c8eb36cee6d91880d64a2c339283c9c3` |
+| `internal/exporttherion/testdata/context-inclined-loop.txt` | `2dd4772e00f292e8ea5681585b09d53d92ce504ab623bc7dfe88d2b5aa791a5a` |
+| `internal/exporttherion/testdata/context-projection-closed.txt` | `c2c4213367220e60ea6832d663da8fd6da01c6b8036382918d9d3263d01a205a` |
+| `internal/exporttherion/testdata/context-projection.txt` | `c2c4213367220e60ea6832d663da8fd6da01c6b8036382918d9d3263d01a205a` |
+| `internal/exporttherion/testdata/context-reference-base-closed.txt` | `03a96cffd60374f57bc0c2caca6a8ebf9321521dfc9ccd79f51550c29f5ee9a6` |
+| `internal/exporttherion/testdata/context-reference-base.txt` | `03a96cffd60374f57bc0c2caca6a8ebf9321521dfc9ccd79f51550c29f5ee9a6` |
+| `internal/exporttherion/testdata/context-synthetic-before-reference-closed.txt` | `1bbe356412815c8d705c1fc91e4614fd8281cd829810f8097c674a93416738f7` |
+| `internal/exporttherion/testdata/context-synthetic-before-reference.txt` | `eaf89130971ed6d4ece4377a7480d8b9d196bc4fd4408b1216dfa9c413707e12` |
+| `internal/exporttherion/testdata/context-template-loop-closed.txt` | `b8cad398596d0e83141b52461005f05bbd828b629ed1816d54953df140d87a04` |
+| `internal/exporttherion/testdata/context-template-loop.txt` | `b8cad398596d0e83141b52461005f05bbd828b629ed1816d54953df140d87a04` |
+| `internal/exporttherion/testdata/empty-current-drawing/a.top` | `0de651a74244bd736e08dcbf005021e0b7d8b89a29da3aca432a38d98a601413` |
+| `internal/exporttherion/testdata/empty-current-drawing/current.top` | `1883e4b325d6d11d9ccde6d715bc6546ac4eaa74f8dff62538f76b7341804ed6` |
+| `internal/exporttherion/testdata/extreme-closed.txt` | `0722f3b2b299a783bfb0876ac0476e48ee8e0b15519a0910e8645cfe6ffba882` |
+| `internal/exporttherion/testdata/extreme.top` | `08fe9d6c1fd44e3d17fbfa4565bd446f32bf7e05f70ff47f1348b8632fe8ab60` |
+| `internal/exporttherion/testdata/extreme.txt` | `0722f3b2b299a783bfb0876ac0476e48ee8e0b15519a0910e8645cfe6ffba882` |
+| `internal/exporttherion/testdata/features-closed.txt` | `c08e09e52631d8ae395b36b5f13a824ec676421690eb0415188452b50b81803d` |
+| `internal/exporttherion/testdata/features.top` | `a45ccc23506bf25ed41d16e82438723cc1a6dd69f70d62a8a7916a8bb29fc86c` |
+| `internal/exporttherion/testdata/features.txt` | `77c03fe9df56a24dc884c455e468e5d831cf658b0f6345d5972ecb78c8690c48` |
+| `internal/exporttherion/testdata/geometry-chain-closed.txt` | `fbbcb442eef85f6a8f8108e4c1bcd5c97ed34d52dee101fd7b2241f420aa0ab7` |
+| `internal/exporttherion/testdata/geometry-chain.txt` | `fbbcb442eef85f6a8f8108e4c1bcd5c97ed34d52dee101fd7b2241f420aa0ab7` |
+| `internal/exporttherion/testdata/geometry-common-cleanup-closed.txt` | `021fa05daf58dc49c116b1e53546b350b59bb6287edc6c3179d6501c8f026fc6` |
+| `internal/exporttherion/testdata/geometry-common-cleanup.txt` | `c3fbc53549fe1d6632eb699a9b60891b45d0169410b0c91e52ef914e0d5971b5` |
+| `internal/exporttherion/testdata/geometry-delayed-closed.txt` | `b21f429b80df5586095a24306e19765c012c76a3be698b543f8c28c1da3a4da8` |
+| `internal/exporttherion/testdata/geometry-delayed.txt` | `b21f429b80df5586095a24306e19765c012c76a3be698b543f8c28c1da3a4da8` |
+| `internal/exporttherion/testdata/geometry-empty-closed.txt` | `df0a4aaf9bb61eb45776faca74f6da893d9c44e061261e087278c251721851a5` |
+| `internal/exporttherion/testdata/geometry-empty.txt` | `df0a4aaf9bb61eb45776faca74f6da893d9c44e061261e087278c251721851a5` |
+| `internal/exporttherion/testdata/geometry-fixedloop-closed.txt` | `157559c05f411ca9abee62f5c79961a81c45837341e747f9644b451cff2785f2` |
+| `internal/exporttherion/testdata/geometry-fixedloop.txt` | `63e4ae3ec75a92c6c95029bb4c8d06866e4be36443164cecf2c153634a213073` |
+| `internal/exporttherion/testdata/geometry-identities-closed.txt` | `c055721e8f3767f110cb0dc88062399794fbf46033d6e905c0e67c8bf6b601cd` |
+| `internal/exporttherion/testdata/geometry-identities.txt` | `c055721e8f3767f110cb0dc88062399794fbf46033d6e905c0e67c8bf6b601cd` |
+| `internal/exporttherion/testdata/geometry-intersecting-closed.txt` | `6ac562035a0fd7669b963b8a2838e16c1955b4803815383b3ce776a42011a104` |
+| `internal/exporttherion/testdata/geometry-intersecting.txt` | `fa2909030ec4b26d10fef4eb3558e0e78414e933944eb13e6cce020309793ffe` |
+| `internal/exporttherion/testdata/geometry-loop-closed.txt` | `b0841acff03db8b59ecfae6687d923ca85d0dc8b5fc3df0aef1e4feee405828e` |
+| `internal/exporttherion/testdata/geometry-loop.txt` | `0be613ddab71867be9f0e2e98ad419e60550945c1bd70e2d897e74f5a87f1685` |
+| `internal/exporttherion/testdata/geometry-markfail.txt` | `0be613ddab71867be9f0e2e98ad419e60550945c1bd70e2d897e74f5a87f1685` |
+| `internal/exporttherion/testdata/geometry-ordering-closed.txt` | `875a722795de93b217640ddfae67223ff9dba1bc3b12751548e051d115143979` |
+| `internal/exporttherion/testdata/geometry-ordering.txt` | `b5f71762e1e88d932d8766486a3f23075a10d22ef5df3fd6af93c17dc216de1f` |
+| `internal/exporttherion/testdata/geometry-phase-priority-closed.txt` | `804a3993e43c2e0eeb531ef6017ae1918b7f7c03aa265cc8046010d1863c8875` |
+| `internal/exporttherion/testdata/geometry-phase-priority.txt` | `23fe6fc45ce9bbe011ac9d62767620476c79620fd1cb2c744153bac869ed5f39` |
+| `internal/exporttherion/testdata/geometry-priority-closed.txt` | `da9edff7967d544cccdb0901d68506d5b0427d4586c72edaf4d063537982e183` |
+| `internal/exporttherion/testdata/geometry-priority.txt` | `be25de8015ab60a8ccb547df240920555946c70d21c4de210bd20ef1e4ec0b83` |
+| `internal/exporttherion/testdata/geometry-projected-closed.txt` | `3c6b9e07df5815a66a58b18f29244723e484f1bf42bff130e36af569d26e625c` |
+| `internal/exporttherion/testdata/geometry-projected.txt` | `3c6b9e07df5815a66a58b18f29244723e484f1bf42bff130e36af569d26e625c` |
+| `internal/exporttherion/testdata/geometry-projection-chain-closed.txt` | `7892f1dbd9c9c6561c6ef2249056b33eeab9d2d0fb1ae97590974475b7e4da7a` |
+| `internal/exporttherion/testdata/geometry-projection-chain.txt` | `7892f1dbd9c9c6561c6ef2249056b33eeab9d2d0fb1ae97590974475b7e4da7a` |
+| `internal/exporttherion/testdata/geometry-references-closed.txt` | `c409db8f05bbfbd79acd7e2f42eec77b6a7447ee8d336385e99b6a3e6c3a32cc` |
+| `internal/exporttherion/testdata/geometry-references.txt` | `c409db8f05bbfbd79acd7e2f42eec77b6a7447ee8d336385e99b6a3e6c3a32cc` |
+| `internal/exporttherion/testdata/geometry-repeatloop-closed.txt` | `b8949780b0216a178f4a50e347cbf7e66cc1bce8356f684a9f339504671824bc` |
+| `internal/exporttherion/testdata/geometry-repeatloop.txt` | `2ada3201949308447e21af1adfba413f6f05efa608ed7a8cd1d50d491fbc30bb` |
+| `internal/exporttherion/testdata/geometry-reversed-closed.txt` | `9a6fcd167cb7dd71b2e535a15456b22906d53b74f8ac5e71d5bb227e2ef63194` |
+| `internal/exporttherion/testdata/geometry-reversed.txt` | `9a6fcd167cb7dd71b2e535a15456b22906d53b74f8ac5e71d5bb227e2ef63194` |
+| `internal/exporttherion/testdata/geometry-splays-closed.txt` | `1794c7148edf51a896e83b7446b38198cffd9cdfb11fe607e24a39c450543241` |
+| `internal/exporttherion/testdata/geometry-splays.txt` | `1794c7148edf51a896e83b7446b38198cffd9cdfb11fe607e24a39c450543241` |
+| `internal/exporttherion/testdata/geometry-undefined-only-closed.txt` | `426ac8489888f4094965d1914cfb1de871cb7074f0d009bb2ef4bdf5631925c2` |
+| `internal/exporttherion/testdata/geometry-undefined-only.txt` | `426ac8489888f4094965d1914cfb1de871cb7074f0d009bb2ef4bdf5631925c2` |
+| `internal/exporttherion/testdata/geometry-zero-closed.txt` | `fd7087737dc71d7dfc052446f0195c1719b25419f59f95d9c91a1c8607b508b0` |
+| `internal/exporttherion/testdata/geometry-zero.txt` | `fd7087737dc71d7dfc052446f0195c1719b25419f59f95d9c91a1c8607b508b0` |
+| `internal/exporttherion/testdata/nativecontext-boundary-data-closed.txt` | `a86c44e974d6d24cbfc9023d2a9608bdf63f3312e470bfee91d0cde29f25fafa` |
+| `internal/exporttherion/testdata/nativecontext-boundary-data.txt` | `a6be226f3faae61918d9d5b1c16ff1531dd1762df3102e7c871f560ebcf5fc99` |
+| `internal/exporttherion/testdata/nativecontext-empty-current-drawing-closed.txt` | `fbf8bb48cd9d8dbe388e67dc424384e31de9703beadb92cac7a7f935a713f5b5` |
+| `internal/exporttherion/testdata/nativecontext-empty-current-drawing.txt` | `fbf8bb48cd9d8dbe388e67dc424384e31de9703beadb92cac7a7f935a713f5b5` |
+| `internal/exporttherion/testdata/nativecontext-template-rays-closed.txt` | `6f0efe0fb8d7aa58fd43891e316cac5c2a1ab55333fba65e8ac85afc21ad961e` |
+| `internal/exporttherion/testdata/nativecontext-template-rays.txt` | `6f0efe0fb8d7aa58fd43891e316cac5c2a1ab55333fba65e8ac85afc21ad961e` |
+| `internal/exporttherion/testdata/template-rays/a.top` | `0de651a74244bd736e08dcbf005021e0b7d8b89a29da3aca432a38d98a601413` |
+| `internal/exporttherion/testdata/template-rays/current.top` | `358bd3694e7896ce2dddaa079dd7abe5881974a436c2a76c0952e28b173377f6` |
+| `internal/exporttherion/testdata/text-api-drawings-closed.txt` | `15067da88f1952f1c0a02cf637dd5995d2d5d31700ef3ca15c41a1ef3a7b5cda` |
+| `internal/exporttherion/testdata/text-api-drawings.txt` | `15067da88f1952f1c0a02cf637dd5995d2d5d31700ef3ca15c41a1ef3a7b5cda` |
+| `internal/exporttherion/testdata/text-api-references-closed.txt` | `61d11aaca2d280c93bc827153d633a5edeb0ddf80a6b53d30f586c76c117d815` |
+| `internal/exporttherion/testdata/text-api-references.txt` | `61d11aaca2d280c93bc827153d633a5edeb0ddf80a6b53d30f586c76c117d815` |
+| `internal/exporttherion/testdata/text-empty-closed.txt` | `df0a4aaf9bb61eb45776faca74f6da893d9c44e061261e087278c251721851a5` |
+| `internal/exporttherion/testdata/text-empty.txt` | `df0a4aaf9bb61eb45776faca74f6da893d9c44e061261e087278c251721851a5` |
+| `internal/exporttherion/testdata/text-flags-closed.txt` | `132032fa2cd50bb0158c9b62b721e647f2d4cfb2cf6aa4cc77db0849147a7bf9` |
+| `internal/exporttherion/testdata/text-flags.txt` | `132032fa2cd50bb0158c9b62b721e647f2d4cfb2cf6aa4cc77db0849147a7bf9` |
+| `internal/exporttherion/testdata/text-mixed-closed.txt` | `6889830a3c72229dc7116709663be8f85e313e77719ac1f82cabf2da16b1f362` |
+| `internal/exporttherion/testdata/text-mixed.txt` | `0c618a79ea5157fdfc3ba98a4e8bd2cc0ed5ea6ce63c8a3dd4fb2992448abef2` |
+| `internal/exporttherion/testdata/text-numbers-closed.txt` | `56eea31cb09032422cc39190002cd48e6314fe978de5e4cc06b36cf443e3d233` |
+| `internal/exporttherion/testdata/text-numbers.txt` | `56eea31cb09032422cc39190002cd48e6314fe978de5e4cc06b36cf443e3d233` |
+| `internal/exporttherion/testdata/text-rounding-closed.txt` | `3834e994a246387e6de1611aad29b82126d9cf183c40b079ff59a92961a2c1a9` |
+| `internal/exporttherion/testdata/text-rounding.txt` | `3834e994a246387e6de1611aad29b82126d9cf183c40b079ff59a92961a2c1a9` |

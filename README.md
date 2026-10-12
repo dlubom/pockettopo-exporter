@@ -12,7 +12,8 @@ original bytes, fields and offsets; unknown markers and unsupported tails remain
 explicitly unparsed. It exports isolated native text with source lineage and loss
 reporting. Native grouped measurement processing preserves every source row;
 isolated reference placement, plan/extended geometry and optional loop closure
-are available. Other exporters remain future work.
+are available. Native Therion interchange includes DATA, plan/elevation drawings
+and embedded XSections, with explicit template context and optional closure.
 
 ```sh
 go run ./cmd/pockettopo-exporter inspect internal/top/testdata/api-drawings.top --json
@@ -64,8 +65,19 @@ go run ./cmd/pockettopo-exporter context internal/processing/testdata/context/cr
 
 Templates affect placement; current-only closure holds template geometry fixed.
 See [the context contract](docs/SPEC.md#explicit-template-directory-context-p08)
-for portable ordering, limits and native failure deviations. The next increment
-is **P09: native Therion DATA and drawing sections**, not implemented.
+for portable ordering, limits and native failure deviations. P09 adds native
+Therion interchange (`survey.txt`) and a deterministic provenance/loss report:
+
+```sh
+go run ./cmd/pockettopo-exporter export internal/exporttherion/testdata/features.top --format therion --output build/therion
+go run ./cmd/pockettopo-exporter export internal/exporttherion/testdata/template-rays/current.top --format therion --output build/therion-context --template-directory internal/exporttherion/testdata/template-rays --close-loops
+```
+
+The native format contains FIX, TRIP/DATA, PLAN and ELEVATION, colored Polylines
+and embedded XSection station/ray/CONNECT records. It is PocketTopo interchange,
+not a standalone Therion project. See [the Therion contract](docs/SPEC.md#native-therion-interchange-p09)
+for trip filtering, native ordering, strict limits and losses.
+The next increment is **P10: native graphics DXF**, not implemented.
 Historical per-field prefix APIs remain supported.
 
 ## Documentation

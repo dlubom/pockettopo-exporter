@@ -552,3 +552,79 @@ source identities are serialized. Output errors exit 1; success exits 0 with
 one compact object and final LF. This schema is a project inspection format,
 not a native export. Other exporters and directory-aware text export are outside
 P08. See [native evidence](../internal/top/testdata/README.md#p08-native-directory-context).
+
+## Native Therion interchange (P09)
+
+`export <input.top> --format therion --output <new-directory>
+[--template-directory <dir>] [--close-loops]` publishes `survey.txt` and
+`report.json`, using P05's checked no-replace publication. Options can follow
+output in either order, each once. Default input is isolated; explicit context
+reuses P08's complete inventory, byte/table/file ceilings and fail-closed reads.
+Both Therion modes use the context processing ceiling of 32767 total trips and
+one million total measurement/reference rows; this is stricter than the P04d
+reader, while P05–P08 APIs retain their own existing ceilings.
+The serializer `exporttherion.Build` takes the immutable current document,
+explicit template table prefixes and P07 geometry options. Unsupported input,
+native geometry failures and output/ordering limits return no partial result.
+P05 text and P06/P07/P08 output schemas retain their existing behavior.
+
+Exact profile: PocketTopo 1.372; metres/degrees; invariant decimal formatting;
+UTF-8 without BOM; CRLF. Native export emits current raw FIX references, then
+TRIP/DATE/DECLINATION/DATA for every current trip, then PLAN and ELEVATION.
+Recorded dates remain unverified; Auto declination is zero. DATA selects raw
+consecutive matching/reversed heads (`First(..., true)`), even across the last
+template/current boundary, then filters by the head's trip. Negative/out-of-range
+trip heads and zero splays emit no DATA row. Undefined-FROM rows have zero derived
+direction; consecutive such rows can still be suppressed by First. Raw rows
+remain linked to their local source indices and byte spans. Directions use the
+placed grouped vector and original head declination, including native Float32
+multiplication before degree conversion; the head Flip selects `<` or `>`.
+Closure changes drawing placement, not raw source observations.
+
+STATIONS traverses the native successful prepend order, selecting the latest
+placed occurrence per identity, then inserts using SortedList's native unchecked
+Int32 subtraction comparer. This can differ from mathematical ordering at extreme
+IDs. SHOTS follows that same successful order, followed by each station's splay
+attachment order. Templates are omitted from the current centerline, while
+current legs may start at template coordinates. Directory lookup instead retains
+the first current identity, falling back to the first template identity. These
+ownership rules are separate and remain source-linked in the report.
+
+Drawings run native phases 1, 2 and 0: XSection station labels after STATIONS,
+XSection rays after SHOTS, then ordered Polylines/CONNECT records. The origin is
+GetRef's first defined current FROM, or the first combined FROM when current
+measurements are empty. The origin uses directory ownership, not the first FIX
+or the label winner. Mappings/scales do not affect export coordinates. All point
+additions/negations wrap in Int32 before conversion to three-decimal metres.
+Colors 1/2/3/4/5/7 map to BLACK/GRAY/BROWN/BLUE/RED/ORANGE; every other raw value
+maps to GREEN. Empty/singleton Polygons still emit their native header/points.
+
+XSections resolve through the current/template directory. Unresolved stations
+emit nothing and are reported. Resolved sections emit a label and CONNECT even
+without rays. Direction -1 uses the station's attached grouped DX/DY; all other
+Int32 directions use native ToRect(DD, raw head azimuth minus direction) and DH.
+The final coordinate of each native ray has an intentional trailing tab. The
+side drawing uses D/H for centerline and connectors, while horizontal embedded
+rays retain their native DX/DY projection. Rebuilding current closure retains
+template splays and replaces current splays without duplicate stale snapshots.
+
+The byte ceiling is 128 MiB inclusive, checked during ray/point expansion; native
+SortedList ordering has a 10 million combined binary-search and insertion-work
+ceiling. Existing P07 work/
+closure bounds apply before serialization. These explicit failures replace native
+partial files, swallowed exceptions or unbounded work. Publication occurs only
+after complete serialization. A terminal-notification failure preserves the
+already published package.
+
+Report schema 1 records tool/profile/options, current source/output hashes,
+size, trip/reference source spans and output lines, DATA members/reversal and
+omission reasons, drawing raw color/ID/direction/spans and every emitted line,
+and geometry keys with local file/record lineage. Synthetic roots have source and
+record indices -1. CLI input inventory hashes full files, including ignored
+native-template bytes; library template entries additionally hash the exact
+consumed table prefix. Native comments, roll, unrendered flags, mappings/trailer,
+rounded directions, hidden station labels and default color mapping are explicit
+losses. No CRS, entrance, stroke meaning or cross-section cropping is inferred.
+Native byte identity does not establish destination-application acceptance or a
+ready-made `.th`/`.th2` project. Independent capture and provenance are in
+[testdata/README](../internal/top/testdata/README.md#p09-native-therion-interchange).

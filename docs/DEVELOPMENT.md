@@ -12,7 +12,7 @@ From the repository root:
 
 ```sh
 bash scripts/tools.sh
-bash scripts/check.sh
+GOMAXPROCS=2 GOFLAGS=-p=1 bash scripts/check.sh # bounded local ordinary gates
 bash scripts/mutation.sh                 # sequential full campaign
 bash scripts/mutations-parallel.sh       # full local campaign; default 3 private workers
 POCKETTOPO_MUTATION_JOBS=2 bash scripts/mutations-parallel.sh
@@ -33,6 +33,7 @@ go run ./cmd/pockettopo-exporter inspect internal/top/testdata/api-drawings.top 
 go run ./cmd/pockettopo-exporter export internal/top/testdata/api-drawings.top --format text --output build/drawings-text
 go run ./cmd/pockettopo-exporter geometry internal/processing/testdata/geometry/intersecting.top --json --close-loops
 go run ./cmd/pockettopo-exporter context internal/processing/testdata/context/crossfile/current.top --template-directory internal/processing/testdata/context/crossfile --json --close-loops
+go run ./cmd/pockettopo-exporter export internal/exporttherion/testdata/features.top --format therion --output build/therion
 go test ./internal/top -run '^$' -bench '^BenchmarkDocument' -benchmem
 ```
 
@@ -41,10 +42,10 @@ uncached race tests, coverage, build and CLI smoke behavior. Generated outputs
 are `coverage.out`, `mutation.json` and `build/`; caches/tools are in ignored
 `.cache/` and `.tools/`. There is no `go.sum` because there are no module
 dependencies. The document group covers P04d source/accounting/inspect faults alongside the
-unchanged earlier groups. The native-text group covers serialization, decimal
+unchanged earlier groups. The native-text group covers text and Therion serialization, decimal
 formatting, provenance and safe CLI publication. The weak-suite negative control deliberately stubs
 inspection/export/processing/geometry/context and exercises version, inspect, process, geometry, context and export arguments without assertions;
-all 38 generated mutants must live and the quality gate must reject them.
+all 42 generated mutants must live and the quality gate must reject them.
 Run one sequential campaign or one parallel coordinator at a time. The parallel
 runner snapshots only source/scripts/pinned tools into a private checkout per
 group with private caches/reports. It limits active groups, collects reports and
@@ -54,6 +55,17 @@ cleanup. It prunes each private cache after
 completed campaigns by default; set `POCKETTOPO_MUTATION_PRUNE_CACHE=false` only
 when disk space permits. This runner never changes Git branches/worktrees.
 CI parallelism uses separate checkouts and caches.
+
+## Workstation and hosted execution
+
+Prefer bounded ordinary checks locally (`GOMAXPROCS=2 GOFLAGS=-p=1`) and the
+existing GitHub Actions mutation matrix for heavy campaigns. This delivery follows
+the 2026-10-12 request after a workstation freeze: no further local full mutation
+runs are required. Retain the complete matrix, all targeted scopes, thresholds,
+negative controls and aggregate gate. Before reporting publication complete,
+verify every job for the exact pushed SHA; successful older local/hosted results
+are not substitutes for final fixture/test changes. The local mutation commands
+remain available for explicitly requested diagnosis.
 
 ## Quality gates
 
@@ -91,7 +103,7 @@ second/third Polygon scopes are separated, mappings and marker pairs stay
 cohesive, and processing has targeted P06, P07 and P08 campaigns in the same group. The unchanged prior 25 explicit
 scopes plus P06 processing, P07 geometry and P08 context remain exactly-once; all prior faults and thresholds
 are retained. Gremlins is partitioned into tables, drawings, output and processing
-by source file, with all internal production files assigned to one shard and
+by source file, with all internal production files assigned to one shard (Therion joins output) and
 unknown new packages rejected. Every shard still discovers coverage with the
 full suite, uses all prior operators, the fail-closed adapter and the same >=90%
 JSON gate. Full/sharded mutation inventories are compared during delivery.

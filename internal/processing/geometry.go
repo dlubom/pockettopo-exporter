@@ -50,23 +50,25 @@ type GeometryResult struct {
 	Iterations int
 	nodes      []GeometryNode
 	loops      []GeometryLoop
+	therion    TherionGeometry
 }
 
 func (r GeometryResult) Nodes() []GeometryNode { return slices.Clone(r.nodes) }
 func (r GeometryResult) Loops() []GeometryLoop { return slices.Clone(r.loops) }
 
 type geometryStation struct {
-	node      GeometryNode
-	from, to  int32
-	fromID    source.StationID
-	head      int
-	dist, az  int32
-	flags     byte
-	reference bool
-	fixed     bool
-	start     *geometryStation
-	cross     []*geometryStation
-	mark      bool
+	node       GeometryNode
+	from, to   int32
+	fromID     source.StationID
+	head       int
+	dist, az   int32
+	flags      byte
+	reference  bool
+	fixed      bool
+	start      *geometryStation
+	nextActual *geometryStation
+	cross      []*geometryStation
+	mark       bool
 }
 
 func (s *geometryStation) fwAzimuth() int32 {
@@ -82,6 +84,7 @@ func (s *geometryStation) projected() bool { return s.flags&16 != 0 }
 func (s *geometryStation) flipped() bool   { return s.flags&1 != 0 }
 
 type geometryState struct {
+	actual       *geometryStation
 	stations     []*geometryStation
 	dir          map[int32]*geometryStation
 	loops        [][2]*geometryStation
@@ -165,6 +168,7 @@ func (s *geometryState) shot(n *geometryStation, reverse bool) (bool, error) {
 	n.start = parent
 	n.node.StartKey = parent.node.Key
 	n.node.Status = "placed"
+	n.nextActual, s.actual = s.actual, n
 	adjacent, e := nextTo(parent.node.ID.NativeValue(), n.node.ID.NativeValue())
 	if e != nil {
 		return false, geometryError("arithmetic_overflow", n.node.Key)
@@ -234,6 +238,7 @@ func (s *geometryState) key(key string) string { return fmt.Sprintf("%s%s", s.pr
 
 func (s *geometryState) placePhase(refs []source.Reference, grouped Result, corrections map[int]Correction) (string, error) {
 	s.stations = nil
+	s.actual = nil
 	s.dir = make(map[int32]*geometryStation)
 	s.loops = nil
 	base := "none"
@@ -259,6 +264,7 @@ func (s *geometryState) placePhase(refs []source.Reference, grouped Result, corr
 			n.node.Position = Position{int32(r.EastMM() - baseRef.EastMM()), int32(baseRef.NorthMM() - r.NorthMM()), baseRef.AltitudeMM() - r.AltitudeMM(), 0}
 		}
 		s.stations = append(s.stations, n)
+		n.nextActual, s.actual = s.actual, n
 		if s.dir[r.Station().NativeValue()] == nil {
 			s.dir[r.Station().NativeValue()] = n
 		}
@@ -273,6 +279,7 @@ func (s *geometryState) placePhase(refs []source.Reference, grouped Result, corr
 				if r.Source.From().NativeValue() != -1 {
 					n := newGeometryStation(geometryStation{reference: true, node: GeometryNode{Key: s.key("reference:-1"), Status: "placed", StartKey: "none", ID: r.Source.From()}})
 					s.stations = append(s.stations, n)
+					n.nextActual, s.actual = s.actual, n
 					s.dir[n.node.ID.NativeValue()] = n
 					break
 				}

@@ -387,12 +387,74 @@ every hosted CI job for the exact pushed SHA before reporting delivery complete.
 The commit's GitHub checks and delivery response provide publication evidence.
 
 **Next useful increment:** P09 — native Therion DATA and drawing sections,
-including embedded XSections. Not implemented. Stop after P08 in this delivery.
+including embedded XSections. Implemented below.
+
+## P09 — native Therion DATA and drawing sections
+
+**Status:** implemented; local ordinary gates verified. **Dependency:** P04d/P07/P08.
+Only P09 is authorized. Work on main; preserve isolated text, grouped measurements,
+geometry and explicit directory context. Final hosted mutation/CI confirmation is
+required before reporting publication complete.
+
+`export <input.top> --format therion --output <new-directory>
+[--template-directory <dir>] [--close-loops]` publishes native Therion interchange
+`survey.txt` and a deterministic provenance/loss report. It reproduces FIX,
+TRIP/DATA, PLAN/ELEVATION, native label/shot order, colored Polylines and embedded
+XSection labels/rays/CONNECT records. Existing P05 publication is reused. See
+[SPEC](SPEC.md#native-therion-interchange-p09) and
+[native provenance](../internal/top/testdata/README.md#p09-native-therion-interchange).
+
+- [x] Capture original-assembly goldens and confirm C#/IL, including trip/head
+  filtering, references, all colors, lookup/order, XSections, context and closure.
+- [x] Test first, then implement separate processing projection, serialization
+  and CLI; preserve raw values, local-file lineage and P05–P08 contracts.
+- [x] Add 43 targeted P09 faults to the unchanged 22-group schedule; preserve
+  all earlier scopes, thresholds, negative and scheduling controls.
+- [x] Verify frozen evidence, obtain independent reviews, update current contracts
+  and run bounded local ordinary gates. Publication requirement is below.
+
+### Delivered behavior and evidence
+
+There are **89 independent successful native byte goldens** and **99** frozen P09
+probe/input/output/transcript hashes. All **160** documented P05–P08 hashes remain
+unchanged. Cases include repeated/reversed heads across trips and the template
+boundary, undefined-FROM rows before a nonzero origin, unplaced self-pairs,
+invalid trip indices, aliases/duplicate IDs, all 256 colors, empty/singleton
+Polygons, wrapped coordinates, nonzero plan/side Polygon origins, and unresolved,
+empty, horizontal/directed and template-bound XSections. Successful outputs and
+native exception cases are accounted for separately. Native interchange is not
+a ready-made Therion project; input/output/work limits and omissions are explicit.
+
+Independent review found and verified repairs for ray-budget stopping, repeated
+trip-slice cloning, output-line ownership and synthetic-root/source identity JSON.
+Follow-up review checked source preservation, C#/IL, hashes, native closure/ray
+ordering, strict limits and survivors. Package-scoped native acceptance tests now
+exercise derived directions, raw-azimuth rays and undefined-origin selection.
+
+The completed pre-refinement local campaign passed all **22** groups with one
+private worker: **1218/1218** targeted faults were KILLED; Gremlins killed
+**1253/1296**, with all 43 survivors reviewed. Its disjoint shard union matched
+unsharded discovery, and no uncovered, invalid, timed-out or skipped outcomes
+were accepted. The review identified fixture/assertion gaps, subsequently filled
+using fresh native evidence and package-level consumer assertions. These final
+test/fixture refinements require a new hosted campaign; the older local counts
+are not evidence for the final test tree. The weak-suite control left all **42**
+mutants LIVED and rejected the gate; build/setup errors remained NOT VIABLE.
+Scheduling controls retained all scopes and failure propagation.
+
+**Publication requirement:** commit/push P09 on main and verify every hosted CI
+job, including all 22 mutation groups and three platforms, for the exact pushed
+SHA. Following the 2026-10-12 workstation request, final heavy mutations run on
+GitHub Actions. The commit's checks and delivery response retain publication
+proof; do not substitute an earlier SHA or local snapshot.
+
+**Next useful increment:** P10 — native graphics DXF with plan/side options,
+independent native bytes and coordinate checks. Not implemented. Stop after P09.
 
 ## Remaining original roadmap
 
-After P08 there are **6 remaining required delivery stages to the native
-milestone**: P09–P14. P01 is a capability/fixture inventory maintained within those stages,
+After P09 there are **5 remaining required delivery stages to the native
+milestone**: P10–P14. P01 is a capability/fixture inventory maintained within those stages,
 not an additional standalone implementation chat. P15 and P16 add two subsequent
 stages for Walls and Survex. P17–P19 and R01–R07 are optional/conditional scope.
 
@@ -410,7 +472,7 @@ routine documentation and individual mutation groups are not separate PBIs.
 | P06 | Native fixed-point angles, consecutive-shot grouping and average directions | Implemented above |
 | P07 | Reference placement, plan geometry, extended projection and closure | Implemented above |
 | P08 | Explicit native template-directory context | Implemented above |
-| P09 | Native Therion DATA and drawing sections, embedded XSections | P04d/P07/P08; complete data/drawing slices if required |
+| P09 | Native Therion DATA and drawing sections, embedded XSections | Implemented above |
 | P10 | Native graphics DXF, plan/side and options | P04d/P07/P08; native bytes plus coordinate/visual checks |
 | P11 | VisualTopo and passage dimensions | P06/P07/P08 |
 | P12 | Toporobot and dialog options | P06/P07/P08 |

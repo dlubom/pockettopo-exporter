@@ -39,3 +39,5 @@ internal/top/testdata/native-geometry-read.txt -text whitespace=cr-at-eol
 internal/processing/testdata/geometry/*.tsv -text whitespace=cr-at-eol
 internal/top/testdata/native-context-read.txt -text whitespace=cr-at-eol
 internal/processing/testdata/context/*.tsv -text whitespace=cr-at-eol
+internal/top/testdata/native-therion-read.txt -text whitespace=cr-at-eol
+internal/exporttherion/testdata/*.txt -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof

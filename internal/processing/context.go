@@ -62,6 +62,10 @@ func GroupContext(d source.Document, templates []source.ReferencePrefix) (Contex
 // PlaceContextGeometry mirrors Update's two phases, then CloseLoops(all=false).
 // Only current loops close, with template nodes fixed as closure boundaries.
 func PlaceContextGeometry(d source.Document, templates []source.ReferencePrefix, options GeometryOptions) (GeometryResult, error) {
+	return placeContextGeometry(d, templates, options, false)
+}
+
+func placeContextGeometry(d source.Document, templates []source.ReferencePrefix, options GeometryOptions, capture bool) (GeometryResult, error) {
 	if options.MaxWork < 0 || options.MaxIterations < 0 {
 		return GeometryResult{}, geometryError("invalid_limits", "options")
 	}
@@ -118,6 +122,17 @@ func PlaceContextGeometry(d source.Document, templates []source.ReferencePrefix,
 				corrections[n.head] = n.node.Correction
 			}
 		}
+		// Native current heads are reused and their next links reset. Drop the old
+		// current phase crosses before replacing heads; keep original template rays.
+		for _, n := range templateNodes {
+			kept := n.cross[:0]
+			for _, c := range n.cross {
+				if c.fixed {
+					kept = append(kept, c)
+				}
+			}
+			n.cross = kept
+		}
 		base, e = state.place(d, groups.Current, corrections)
 		if e != nil {
 			return GeometryResult{}, e
@@ -135,6 +150,9 @@ func PlaceContextGeometry(d source.Document, templates []source.ReferencePrefix,
 		}
 		a, b := pair[0].node.Position, pair[1].node.Position
 		r.loops = append(r.loops, GeometryLoop{pair[0].node.Key, pair[1].node.Key, l.weight, Position{a.X - b.X, a.Y - b.Y, a.H - b.H, a.D - b.D}})
+	}
+	if capture {
+		r.therion = state.therionView(groups, templateNodes)
 	}
 	return r, nil
 }

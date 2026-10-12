@@ -12,6 +12,7 @@ const help = `Usage: pockettopo-exporter --help | --version
   pockettopo-exporter geometry <input.top> --json [--close-loops]
   pockettopo-exporter process <input.top> --json
   pockettopo-exporter export <input.top> --format text --output <new-directory>
+  pockettopo-exporter export <input.top> --format therion --output <new-directory> [--template-directory <dir>] [--close-loops]
 
 Evaluate explicit template-directory geometry and source lineage.
 Inspect PocketTopo TOP v3 source data.
@@ -27,6 +28,9 @@ func Run(args []string, stdout, stderr io.Writer) int {
 		return runContext(args, stdout, stderr)
 	}
 	if len(args) > 0 && args[0] == "export" {
+		if len(args) >= 4 && args[2] == "--format" && args[3] == "therion" {
+			return runTherion(args, stdout, stderr)
+		}
 		if len(args) != 6 || args[1] == "" || args[2] != "--format" || args[3] != "text" || args[4] != "--output" || args[5] == "" {
 			fmt.Fprint(stderr, help)
 			return 1
