@@ -70,6 +70,9 @@ func placeContextGeometry(d source.Document, templates []source.ReferencePrefix,
 }
 
 func placeContextGeometryView(d source.Document, templates []source.ReferencePrefix, options GeometryOptions, capture, graphics bool) (GeometryResult, error) {
+	return placeContextGeometryViews(d, templates, options, capture, graphics, false)
+}
+func placeContextGeometryViews(d source.Document, templates []source.ReferencePrefix, options GeometryOptions, capture, graphics, visual bool) (GeometryResult, error) {
 	if options.MaxWork < 0 || options.MaxIterations < 0 {
 		return GeometryResult{}, geometryError("invalid_limits", "options")
 	}
@@ -162,6 +165,12 @@ func placeContextGeometryView(d source.Document, templates []source.ReferencePre
 	}
 	if graphics {
 		r.graphics = state.graphicsView(groups, templateNodes, templateActual)
+	}
+	if visual {
+		r.visual, e = state.visualTopoView(d, templates, groups)
+		if e != nil {
+			return GeometryResult{}, e
+		}
 	}
 	return r, nil
 }

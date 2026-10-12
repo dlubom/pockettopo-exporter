@@ -1,0 +1,3 @@
+Version 5.02
+Param Deca Degd Clino Degd 0.0000 Dir,Dir,Dir Inc Std
+1_1        1_0                       2.00  180.00    0.00   0.00   0.00   0.00   0.00 N I 

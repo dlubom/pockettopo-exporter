@@ -51,6 +51,7 @@ type GeometryResult struct {
 	nodes      []GeometryNode
 	loops      []GeometryLoop
 	therion    TherionGeometry
+	visual     VisualTopoGeometry
 	graphics   GraphicsGeometry
 }
 

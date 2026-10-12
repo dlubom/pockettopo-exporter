@@ -1,0 +1,4 @@
+Version 5.02
+Param Deca Gra Clino Gra 0.0000 Dir,Dir,Dir Inc Std
+0          1                        10.00    0.00    0.00   0.00   0.00   0.00   0.00 N I 
+1          2                        10.00  100.00    0.00   0.00   0.00   0.00   0.00 I I ;flipped extended segment;

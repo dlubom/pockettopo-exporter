@@ -712,4 +712,91 @@ sync/close each artifact, no-replace links and ownership anchors, report last.
 Errors return no Build result and publish nothing; notification failures preserve
 a completed package. Existing text/Therion artifact names and behavior remain.
 See [native evidence](../internal/top/testdata/README.md#p10-native-graphics-dxf).
-P11 and later native exporters are planned only.
+P12 and later native exporters are planned only.
+
+## Native VisualTopo and passage dimensions (P11)
+
+`export <input.top> --format visualtopo --output <new-directory>` writes
+`survey.tro` and schema-1 `report.json`. Optional `--angle-unit degrees|grads`
+selects the native 360/400 circle (default degrees); distances always use metres.
+`--template-directory <dir>` and `--close-loops` reuse P08 context and current-only
+closure. There is no implicit directory discovery. P05–P10 contracts are unchanged.
+
+`processing.PrepareVisualTopo` is a detached derived snapshot. It captures native
+`GetStations(false)`: placed current heads and current references, excluding
+unplaced/undefined heads, standalone splays, synthetic roots and template stations.
+The actual-list input order and .NET 2 middle-pivot quicksort matter for duplicate
+IDs. Comparisons retain unchecked native Int32 subtraction, and equal-key swaps
+match the pinned runtime. Sorting consumes the existing geometry work budget;
+invalid comparer scans return `native_failure` instead of a Go panic. Templates
+can affect current placement and attached rays without appearing as output heads.
+
+The header is `Version 5.02`. Only the earliest-index current reference produces
+`Trou`/`Entree`, using native E/N divided by 1,000,000 (three decimals), altitude
+integer metres truncated toward zero and the literal `SWISS`. That label does not
+establish the source CRS. An empty reference comment becomes `?`; nonempty comments
+are emitted verbatim, including embedded delimiters or newlines. IDs use native
+display names with dots replaced by underscores; reserved empty labels and duplicate
+names do not establish identity. No verified survey dates are inferred.
+
+Data order includes sorted references for adjacency and trip fallback, although
+references do not have data lines. A missing trip consults only the immediately
+following sorted station's trip. Raw automatic-declination sentinel -32768 has
+native effective declination zero. Parameter changes emit `Param Deca Degd/Gra
+Clino Degd/Gra... Dir,Dir,Dir Inc Std`; declination is sign-reversed and converted
+to truncated degrees/minutes/seconds even in the 400-circle profile. The first ID
+is the endpoint opposite the placed station. Grouped placed vectors feed native
+`GetAvDirection(rev=false)`, retaining native Float32 arithmetic, even for reversed
+placement. Length is formatted as Double(Float32 millimetres)/1000; angle fields
+retain the native Single expression and seven-significant-digit decimal formatting
+before fixed two decimals. Negative zero is suppressed. The first `I`/`N` compares
+head Flip with its start's Flip; the second flag is always `I`.
+
+Passage dimensions are native derived LRUD, not independently measured wall
+extents. The axis is `AngleBisector` of positive-distance head forward azimuth and
+only the next sorted item when its native ID is exactly `head.num.Next()` and its
+raw distance is positive. Forward azimuth uses raw head azimuth, adding 32768 for
+reversed placement; the bisector narrows the delta to Int16 and shifts signed by
+one. Left/right target axis minus/plus 16384; up/down target inclination plus/minus
+16384. Each attached raw splay is projected to a 1000-unit direction with the
+native Q30 sine table. The first largest dot product **strictly above 500000** wins;
+length does not choose the ray, and equal alignment retains the first ray. The
+reported dimension is wrapped Int32(Int64(raw distance)*dot/1,000,000), narrowed
+to Float32 then formatted in metres with two decimals. No candidate emits zero.
+With both forward directions unavailable, the Int32 sentinel wraps for left/right
+but remains sentinel for up/down; this native asymmetry is preserved.
+
+Native `Encoding.Default` is host-dependent. P11 pins the demonstrated original
+.NET 2/Wine Windows-1252 best-fit/replacement profile with no BOM and exact CRLF.
+Exhaustive original-runtime tables define BMP conversion and .NET 2 trimming;
+supplementary characters produce two replacement bytes. This is not a claim of
+matching every Windows locale. Shot comments are trimmed, CR/LF replaced by spaces
+and semicolons by commas; present empty comments still emit `;;`. Unicode loss is
+explicit and original decoded text remains in the report. Binary source bytes are
+retained in the immutable document and identified by input hashes.
+
+`exportvisualtopo.Build` runs bounded geometry before serialization and returns
+no partial result on failure. Output is limited to 128 MiB, checked after native
+encoding, with exact-limit acceptance. Geometry work/iteration and context/table
+limits remain P07/P08 limits; original suppressed exceptions become explicit CLI
+failures. Existing no-replace publication writes/syncs/closes `survey.tro`, then
+publishes `report.json` last; notification failures preserve complete output.
+
+The report includes source/output hashes, byte size, angular/context/closure
+profile, sorted CLI input inventory with consumed/ignored bytes, original rows,
+trips and references (source-local indexes, spans and raw values), current groups
+and every grouped member/reversal, flattened template row lineage/group members
+and table-prefix hashes. Current group nodes retain raw/native/display identity,
+placement, wrapped vectors and corrections separately from source rows. Output
+line/parameter changes, effective declination, passage axis, all candidate ray keys,
+selected ray keys/dots/millimetres and semantic omission reasons are explicit.
+Template group keys resolve through flattened template row indexes and their
+source/local-row lineage. Zero output lines denote omissions. Source drawings,
+mappings, roll, unrendered flags, trip comments/dates and TOP trailers have no
+VisualTopo representation; losses are listed. The report does not reconstruct the
+original TOP file, which remains the authoritative hashed input.
+
+Original C#/IL, the pinned .NET sorting helper, **194 native byte goldens**,
+**4105 Single-format cases**, exhaustive encoding/trim tables, hashes and the
+unsuppressed native completion transcript are documented in
+[fixture provenance](../internal/top/testdata/README.md#p11-native-visualtopo-and-passage-dimensions).

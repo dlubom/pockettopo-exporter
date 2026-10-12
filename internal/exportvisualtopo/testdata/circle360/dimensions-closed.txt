@@ -1,0 +1,11 @@
+Version 5.02
+Trou Café a ? ??,ref,123.457,-987.654,-1,SWISS
+Entree 1_0
+Param Deca Degd Clino Degd- 6.4642 Dir,Dir,Dir Inc Std
+1_0        1_1                       1.00  360.00    0.00   1.00   1.00   1.01   1.01 N I ;Cafe é a ? ??,  next;
+Param Deca Degd Clino Degd 6.4642 Dir,Dir,Dir Inc Std
+1_1        1_2                       1.00    0.00    0.00   0.00   0.00   0.00   0.00 I I 
+Param Deca Degd Clino Degd 0.0000 Dir,Dir,Dir Inc Std
+1_2        1_3                       0.00    0.00    0.00   4.00   5.00   0.00   0.00 I I ;;
+1_3        1_4                       0.00    0.00    0.00   0.00   0.00   0.00   0.00 N I 
+1_4        1_5                       1.00  180.00    0.00   0.00   0.00   0.00   0.00 N I ;;

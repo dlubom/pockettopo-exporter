@@ -31,7 +31,7 @@ gremlins_shard() {
   case "$1" in
     internal/source/*|internal/top/prefix.go|internal/top/measurements.go|internal/top/references.go) printf tables ;;
     internal/top/*) printf drawings ;;
-    internal/cli/*|internal/exporttext/*|internal/exporttherion/*|internal/exportdxf/*|internal/nativefmt/*) printf output ;;
+    internal/cli/*|internal/exporttext/*|internal/exporttherion/*|internal/exportdxf/*|internal/exportvisualtopo/*|internal/nativefmt/*) printf output ;;
     internal/processing/*) printf processing ;;
     *) printf 'Unassigned Gremlins source file: %s\n' "$1" >&2; return 2 ;;
   esac
@@ -99,7 +99,7 @@ run_group() {
     side-mapping) scopes=(side-mapping) ;;
     side-marker) scopes=(side-marker) ;;
     document) scopes=(document) ;;
-    native-text) scopes=(text therion dxf) ;;
+    native-text) scopes=(text therion dxf visualtopo) ;;
     processing) scopes=(processing geometry context) ;;
     next-markers) scopes=(plan-next-marker plan-following-marker) ;;
     third-count) scopes=(plan-third-polygon-count) ;;

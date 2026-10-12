@@ -47,3 +47,10 @@ internal/exporttherion/testdata/*.txt -text whitespace=cr-at-eol,-blank-at-eol,-
 *.png binary
 internal/exportdxf/testdata/*.txt -text whitespace=cr-at-eol
 internal/exportdxf/testdata/cases.tsv -text whitespace=cr-at-eol
+
+# P11 native VisualTopo bytes, runtime character maps and scalar oracle.
+*.tro binary
+internal/exportvisualtopo/testdata/circle*/*.txt -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof
+internal/exportvisualtopo/testdata/*.bin binary
+internal/exportvisualtopo/testdata/*.tsv -text whitespace=cr-at-eol
+internal/top/testdata/native-visualtopo-read.txt -text whitespace=cr-at-eol

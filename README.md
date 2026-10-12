@@ -88,7 +88,19 @@ It publishes `survey.dxf` and `report.json`; default scale is 500 and shots,
 rays and labels are enabled. All native graphics option bits, layers, GEO and
 metre/feet grids are available. See [the DXF contract](docs/SPEC.md#native-graphics-dxf-p10)
 for masks, provenance, native numeric behavior and explicit bounded failures.
-The next increment is **P11: VisualTopo and passage dimensions**, planned only.
+P11 adds native VisualTopo 5.02 with direction-selected passage dimensions:
+
+```sh
+go run ./cmd/pockettopo-exporter export internal/exportvisualtopo/testdata/dimensions.top --format visualtopo --output build/visualtopo
+go run ./cmd/pockettopo-exporter export internal/exportvisualtopo/testdata/template-rays/current.top --format visualtopo --output build/visualtopo-context --angle-unit grads --template-directory internal/exportvisualtopo/testdata/template-rays --close-loops
+```
+
+It publishes `survey.tro` and `report.json`, with metres, degrees by default,
+and a fixed native Windows-1252 profile. Dimensions select attached raw splays
+by alignment, preserving native ties and zero cases. See [the VisualTopo
+contract](docs/SPEC.md#native-visualtopo-and-passage-dimensions-p11) for ordering,
+encoding, provenance and losses. The next increment is **P12: Toporobot and
+dialog options**, planned only.
 Historical per-field prefix APIs remain supported.
 
 ## Documentation

@@ -28,7 +28,8 @@ P05–P08 and existing prefix contracts remain unchanged.
 | P08 | Explicit native template-directory geometry and per-source lineage | Implemented; full local gates verified |
 | P09 | Native Therion DATA, drawings and embedded XSections with provenance | Implemented; local ordinary gates verified; exact-SHA hosted gates required |
 | P10 | Native graphics DXF, plan/side/options, provenance and bounded native failures | Implemented; local ordinary gates and independent review verified; exact-SHA hosted gates required |
-| P11–P14 | Remaining native exports and compatibility milestone | Planned only |
+| P11 | Native VisualTopo 5.02, direction-selected passage dimensions, explicit context and provenance | Implemented; exact-SHA hosted gates required |
+| P12–P14 | Remaining native exports and compatibility milestone | Planned only |
 | P15/P16 | Walls SRV / Survex SVX | Subsequent scope |
 
 ### Verification and publication
@@ -533,12 +534,53 @@ nonzero origin fallback, label layers, exact ray thresholds and positive/negativ
 survey grids. Existing 224 P10 golden bytes remain unchanged. Independent review
 classifies prior/equivalent survivors; final hosted results remain required.
 
-**Next useful increment:** P11 — VisualTopo and passage dimensions, planned only.
+**Next useful increment:** P11 is delivered below; P12 remains planned only.
+
+## P11 — native VisualTopo and passage dimensions
+
+**Status:** implemented; local gates and independent review verified;
+exact-SHA hosted gates are required before publication is reported complete.
+**Dependency:** P06/P07/P08. P05–P10 and existing prefix APIs remain unchanged.
+P12 remains planned only; this delivery ends after P11.
+
+`export <input.top> --format visualtopo --output <new-directory>` publishes native
+`survey.tro` and a deterministic schema-1 provenance/loss report. The default
+profile is metres/360-circle/Windows-1252 best fit/invariant culture/CRLF;
+`--angle-unit grads`, explicit `--template-directory` and current-only
+`--close-loops` are supported. Native sorted placed heads, reference headers,
+trip fallback, Float32 formatting, Flip/comment conventions and LRUD selectivity
+are established with original C#/IL and 194 independently checked native byte
+goldens. Exhaustive native encoding/trim tables and 4105 Single-format goldens
+pin runtime behavior. Duplicate 17/32/65-head fixtures verify .NET 2 sorting ties.
+See [SPEC](SPEC.md#native-visualtopo-and-passage-dimensions-p11) and
+[native provenance](../internal/top/testdata/README.md#p11-native-visualtopo-and-passage-dimensions).
+
+Implementation plan (Go standard library; native behavior defines the contract):
+- [x] Capture original WriteExport/WriteList/GetStations/WriteXSections evidence,
+  both angular profiles, context/closure, dimensions, encoding and sorting.
+- [x] Add detached VisualTopo processing and raw-ray LRUD, verified against
+  independent native goldens; retain previous geometry/export contracts.
+- [x] Add bounded serialization, current/template member and candidate-ray
+  provenance, semantic omissions and existing safe no-replace publication.
+- [x] Extend full Gremlins/explicit scope with 53 P11 faults and preserve
+  exactly-once scheduling, exact weak-suite cardinality and failure controls.
+- [x] Independent review; repair trip-table cloning and splay omission reasons;
+  verify all native bytes, ordinary gates and local negative/dispatch controls.
+**Publication gate:** commit/push on main and confirm every GitHub Actions job
+for the exact SHA. The final handoff records the delivered commit and CI run.
+
+Heavy mutation campaigns use the existing GitHub Actions matrix. The weak-suite
+negative control now requires exactly 50 exercised live mutants, rejects its
+quality score and preserves build/setup-failure controls. Local ordinary checks
+use `GOMAXPROCS=2 GOFLAGS=-p=1`. Published CI results, including every mutation
+scope/shard and the aggregate, must belong to the final delivered SHA.
+
+**Next useful increment:** P12 — Toporobot and dialog options, planned only.
 
 ## Remaining original roadmap
 
-After P10 there are **4 remaining required delivery stages to the native
-milestone**: P11–P14. P01 is a capability/fixture inventory maintained within those stages,
+After P11 there are **3 remaining required delivery stages to the native
+milestone**: P12–P14. P01 is a capability/fixture inventory maintained within those stages,
 not an additional standalone implementation chat. P15 and P16 add two subsequent
 stages for Walls and Survex. P17–P19 and R01–R07 are optional/conditional scope.
 
@@ -558,7 +600,7 @@ routine documentation and individual mutation groups are not separate PBIs.
 | P08 | Explicit native template-directory context | Implemented above |
 | P09 | Native Therion DATA and drawing sections, embedded XSections | Implemented above |
 | P10 | Native graphics DXF, plan/side and options | Implemented above; native byte, coordinate and visual evidence |
-| P11 | VisualTopo and passage dimensions | P06/P07/P08 |
+| P11 | Native VisualTopo and passage dimensions | Implemented above |
 | P12 | Toporobot and dialog options | P06/P07/P08 |
 | P13 | Native 3D DXF | P07/P08; degenerate and bounded-failure cases |
 | P14 | Close native capability matrix and validate distribution | P05/P09–P13, pinned corpus and complete gates |

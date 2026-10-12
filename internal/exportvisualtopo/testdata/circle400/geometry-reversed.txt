@@ -1,0 +1,5 @@
+Version 5.02
+Trou fix,0.000,0.000,0,SWISS
+Entree 1_1
+Param Deca Gra Clino Gra 0.0000 Dir,Dir,Dir Inc Std
+1_1        1_0                       1.00  250.00  -25.03   0.00   0.00   0.00   0.35 N I 

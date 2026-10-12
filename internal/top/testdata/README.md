@@ -2180,3 +2180,96 @@ SHA-256 `7a09d7d7cbd7ad334e65f6c49e5e6c10120a4dff1b923fb05294399f0f882837`.
 The probe's optional fourth argument `additions` captures only these new cases;
 its default captures all cases. `native-read.txt` preserves the original capture
 transcript; the two captured transcripts together account for the current corpus.
+
+## P11 native VisualTopo and passage dimensions
+
+Primary research reads `analysis/ANALYSIS.txt`, `VisualTopoExp.WriteList/WriteData/
+WriteXSections/WriteXSection/WriteParam/WriteExport`, `Survey.GetStations`,
+`Station.CompareTo/FwAzimuth/GetAvDirection`, `ID.CompareTo/Next` and
+`Angle.AngleBisector/ToRect` in the unchanged sibling C# and IL. The native exporter
+uses `Encoding.Default`, Float32 averages and runtime `Array.Sort`, not drawing
+bounds to establish dimensions. Earlier JKTZ `src/jktz/pockettopo/export.py` was
+reviewed as prior art: it implements bounded SRV/SVX conversions, so its formatting
+and policies are not reused as a VisualTopo oracle.
+
+`scripts/reference-visualtopo-probe.cs` compiles only reflection/fixture code;
+all geometry, sorting and export routines execute from the original PocketTopo
+1.372 EXE (`048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371`).
+It captures Read or explicit Load, current-only CloseLoops and VisualTopoExp.WriteExport
+for 360 and 400 circles. Since WriteExport suppresses exceptions, every file is
+also byte-checked against native WriteList using the same encoding with exceptions
+exposed. The final transcript ends `P11 native capture complete`; native stderr is
+empty. Listed native geometry failures have no golden and are tested as explicit
+Go failures. No incomplete or caught partial file is accepted as a golden.
+
+There are **194** frozen native byte goldens, covering native prior fixtures,
+isolated/template contexts, closure, references, repeated/reversed readings,
+missing/automatic/mixed trips, zero/invisible/projected cases, raw flags and
+station identity aliases. New `dimensions.top` is independently written by the
+probe and contains actual side/up/down splays, competing alignment/distance,
+equal-angle different-length rays, zero legs, Flip changes, present empty comments,
+Unicode/supplementary text, CR/LF/semicolon normalization and native reference
+coordinate/altitude scaling. `duplicates17/32/65.top` inserts a real splay between
+every repeated pair, producing that many independent native heads with duplicate
+IDs; `row=<index>` comments distinguish runtime sorting order. These cases prove
+both small and larger tie partitions and immediate sorted adjacency.
+
+The installed original .NET 2 runtime's `mscorlib.dll` has SHA-256
+`12bc52d0e0271a586f5740a9eddcd867b6f21b68274d3f65ed7a65f43e996b8d`.
+Independent ILSpy inspection of `Array.Sort<T>/ArraySortHelper<T>` confirms that
+Station's nongeneric IComparable selects plain middle-pivot quicksort, with
+unchecked subtraction comparisons and smaller-partition recursion at every size.
+Go's generic sort or stable sorting would change ties. Native duplicate goldens
+independently validate the implemented order.
+
+`cp1252.bin` maps every individual BMP UTF-16 code unit through original
+`Encoding.Default.GetBytes`; all 65,536 outputs have exactly one byte. `trim.bin`
+records original `.NET 2 String.Trim` for all BMP characters. Native host codepage
+is **1252** and the captured supplementary character produces `3F-3F`. These are
+fixed native-host profiles, not assumptions about every Windows locale.
+`single-format.tsv` captures 4105 original-runtime Single `f2` results, including
+seed-11 angular-range values, decimal boundaries, large precision midpoints,
+negative zero and nonfinite values. The 1,000,000.5 case independently demonstrates
+seven-significant-digit, away-from-zero midpoint rounding before fixed decimals.
+The existing exhaustive Q30 angle golden also supports exact dot threshold tests
+(1000-unit rays at -5461 and -5468 produce dot 500000 and 501000).
+
+Fresh capture (existing Wine/.NET 2; the compiler launcher can retain background
+processes after writing its EXE, so capture completion is checked independently):
+
+```sh
+mkdir -p build/p11
+WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  '/Applications/Wine Staging.app/Contents/Resources/wine/bin/wine' \
+  /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo /r:System.Windows.Forms.dll /r:System.Drawing.dll \
+  '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p11\probe-complete.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-visualtopo-probe.cs'
+WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  '/Applications/Wine Staging.app/Contents/Resources/wine/bin/wine' build/p11/probe-complete.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p11\complete-native' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter' \
+  > build/p11/complete-native-read.txt 2> build/p11/complete-native-read.err
+shasum -a 256 -c internal/exportvisualtopo/testdata/SHA256SUMS
+```
+
+The manifest pins **216** native fixture/probe/transcript/reference hashes.
+P05–P10 frozen bytes and probes remain unchanged. Representative hashes:
+
+| Artifact | SHA-256 |
+| --- | --- |
+| `scripts/reference-visualtopo-probe.cs` | `99db1a9987c674d9a4196340f086f0d2a6a90029592afa2ba4146926b013a2a6` |
+| `internal/top/testdata/native-visualtopo-read.txt` | `2af7702781c8febb832d002e7749c89b6b6f4646f9bfdafe6398440a3c2d7874` |
+| `internal/exportvisualtopo/testdata/cp1252.bin` | `7c1d0cbe71f69c4660bbc7ea5bca1a48ebeedb5740742cc5d297b141c1e653c6` |
+| `internal/exportvisualtopo/testdata/trim.bin` | `97702b91e3418944f34fd35579033a26cd8c78ec5677bc504f849d772d4bc082` |
+| `internal/exportvisualtopo/testdata/single-format.tsv` | `5076ea28daba0609b8a50ecb66f9703cacd20b6e94379d11466db9089e11cfda` |
+
+Independent read-only review checked C#/IL, runtime sorting, fixtures, processing,
+serialization, provenance and CLI publication. It found repeated trip-table cloning
+inside traversal and a splay omission overwritten by geometry status; both were
+repaired and verified with fresh tests. Full mutation coverage extends existing
+output/processing shards and adds 53 explicit P11 faults without removing previous
+scopes or failure controls. Heavy campaigns run in GitHub Actions for the exact
+published SHA; local ordinary gates and small negative/dispatch controls retain
+bounded workstation settings.

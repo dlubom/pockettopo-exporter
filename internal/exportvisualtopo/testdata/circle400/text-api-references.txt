@@ -1,0 +1,5 @@
+Version 5.02
+Trou ujemne E/N/Z; zadnego przypisania CRS,-4000.000,-5000.000,-1,SWISS
+Entree 0
+Param Deca Gra Clino Gra 1.5958 Dir,Dir,Dir Inc Std
+0          1                         1.00   99.99    0.00   0.00   0.00   0.00   0.00 N I 

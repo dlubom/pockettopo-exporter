@@ -1,0 +1,7 @@
+Version 5.02
+Trou fix,0.000,0.000,0,SWISS
+Entree 1_1
+Param Deca Degd Clino Degd 0.0000 Dir,Dir,Dir Inc Std
+1_1        1_0                       1.00    0.00    0.00   0.00   0.00   0.00   0.00 N I 
+1_1        1_2                       1.00  225.00  -22.53   0.00   0.00   0.00   0.00 N I 
+1_0        1_2                       2.00   90.00    0.00   0.00   0.00   0.00   0.00 N I 
