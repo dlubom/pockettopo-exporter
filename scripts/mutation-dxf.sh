@@ -90,7 +90,7 @@ mutate directed-dash "$p" 'magnitude*7 > c.Distance*5' 'magnitude*5 > c.Distance
 mutate absolute-ray "$p" 'magnitude = -magnitude' 'magnitude = magnitude'
 mutate abs-overflow "$p" 'if dy == math.MinInt32 {' 'if false {'
 mutate general-exponent "$n" 'exponent >= 15 || exponent < -4' 'exponent >= 15 || exponent < -5'
-mutate general-significant "$n" 'places := 14 - exponent' 'places := 15 - exponent'
+mutate general-significant "$n" 'places := 14 - exponent' 'places := 13 - exponent'
 mutate general-trim "$n" 'digits = strings.TrimRight(digits, "0")' 'digits = digits'
 mutate cli-scale "$c" 'opt.Scale = int32(n)' 'opt.Scale = 500'
 mutate cli-mask "$c" 'opt.Mask = uint16(n)' 'opt.Mask = 14'
