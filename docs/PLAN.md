@@ -4,14 +4,14 @@ This is the single current backlog and handoff. [SPEC](SPEC.md) defines product
 contracts; [DEVELOPMENT](DEVELOPMENT.md) defines verification and delivery.
 Historical PBI numbers remain traceable; they do not imply equal-sized outcomes.
 
-## Current implementation — 2026-10-11
+## Current implementation — 2026-10-12
 
 P04d started from P04c17 (`bfa73944e3d3baad00b07e2b6dd5a8c9f9a3682b`) plus
 the documentation reset (`94a3f2e`). P05 builds on verified P04d
 (`e3b3b3a395741757d1cf2527b192bfceeae5fa52`). P07 builds on verified P06
 (`0e3e63b5e3057eed5c51df1a03048c60ca4b8c16`). P08 builds on verified P07
-(`bd96ea94057ae7a6721caef94160dedf323aa662`); P05–P07 and existing prefix
-contracts remain unchanged.
+(`bd96ea94057ae7a6721caef94160dedf323aa662`). P09 builds on verified P08;
+P05–P08 and existing prefix contracts remain unchanged.
 
 | Area | Implemented behavior | Delivery state |
 | --- | --- | --- |
@@ -26,7 +26,8 @@ contracts remain unchanged.
 | P06 | Native fixed-point grouping, source-row lineage and average-direction processing/JSON | Implemented; full local gates verified |
 | P07 | Isolated reference placement, plan/extended geometry and optional native loop closure | Implemented; full local gates verified |
 | P08 | Explicit native template-directory geometry and per-source lineage | Implemented; full local gates verified |
-| P09–P14 | Other native exports and compatibility milestone | Not implemented |
+| P09 | Native Therion DATA, drawings and embedded XSections with provenance | Implemented; local ordinary gates verified; exact-SHA hosted gates required |
+| P10–P14 | Other native exports and compatibility milestone | Not implemented |
 | P15/P16 | Walls SRV / Survex SVX | Subsequent scope |
 
 ### Verification and publication
