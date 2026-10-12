@@ -52,9 +52,27 @@ class ReferenceDXFProbe {
   dxf.GetMethod("WriteDXF",f).Invoke(null,new object[]{output,survey,(opt&1)!=0?side:plan,scale,options});
   byte[] b=File.ReadAllBytes(output);Console.WriteLine(name+(close?"-closed":"")+" bytes="+b.Length+" complete="+File.ReadAllText(output).EndsWith("EOF\r\n")+" scale="+scale+" options="+opt+" metric="+metric);
  }
+
+ static byte[] GridBounds(bool current,bool context){using(MemoryStream m=new MemoryStream()){BinaryWriter w=new BinaryWriter(m);w.Write(new byte[]{84,111,112,3});w.Write(0);w.Write(context?1:0);
+  if(context){w.Write((uint)(current?65536:65537));w.Write((uint)(current?65539:65538));w.Write(current?5000:1666);w.Write((short)(current?0:16384));w.Write((short)0);w.Write((byte)0);w.Write((byte)0);w.Write((short)-1);}
+  w.Write(current&&context?0:2);if(!(current&&context)){w.Write((uint)65536);w.Write(10000L);w.Write(20000L);w.Write(3000);w.Write("base");w.Write((uint)65537);w.Write(8501L);w.Write(22501L);w.Write(4501);w.Write("negative bounds");}
+  for(int i=0;i<2;i++){w.Write(0);w.Write(0);w.Write(500);}w.Write((byte)0);w.Write(0);w.Write(0);w.Write(500);w.Write((byte)0);w.Write(0);return m.ToArray();}}
+ static void Additions(){
+  foreach(bool close in new bool[]{false,true})foreach(int side in new int[]{0,1}){
+   foreach(int opt in new int[]{14,1024})Run("nativecontext-template-rays-o"+(opt|side),Path.Combine(repo,"internal/exportdxf/testdata/template-rays/current.top"),true,close,500,opt|side,true);
+   Run("nativecontext-empty-current-drawing-o"+(14|side),Path.Combine(repo,"internal/exportdxf/testdata/empty-current-drawing/current.top"),true,close,500,14|side,true);
+  }
+  string bounds=Path.Combine(root,"grid-negative.top");File.WriteAllBytes(bounds,GridBounds(true,false));
+  string dir=Path.Combine(root,"grid-template-bounds");Directory.CreateDirectory(dir);File.WriteAllBytes(Path.Combine(dir,"a.top"),GridBounds(false,true));string cp=Path.Combine(dir,"current.top");File.WriteAllBytes(cp,GridBounds(true,true));
+  foreach(bool close in new bool[]{false,true})foreach(bool metric in new bool[]{false,true})foreach(int opt in new int[]{1024,1040})foreach(int side in new int[]{0,1}){
+   Run("grid-negative-"+(metric?"metres":"feet")+"-o"+(opt|side),bounds,false,close,500,opt|side,metric);
+   Run("nativecontext-grid-template-bounds-"+(metric?"metres":"feet")+"-o"+(opt|side),cp,true,close,500,opt|side,metric);
+  }
+ }
  static int Main(string[] args){try{Thread.CurrentThread.CurrentCulture=CultureInfo.InvariantCulture;Thread.CurrentThread.CurrentUICulture=CultureInfo.InvariantCulture;
   a=Assembly.LoadFrom(args[0]);sv=a.GetType("PocketTopo.Survey");ds=a.GetType("PocketTopo.DataSet");dr=a.GetType("PocketTopo.Drawing");mp=a.GetType("PocketTopo.Mapping");tr=a.GetType("PocketTopo.Trip");root=args[1];repo=args[2];Directory.CreateDirectory(root);manifest=new StreamWriter(Path.Combine(root,"cases.tsv"));manifest.WriteLine("name\tinput\tcontext\tclose\toptions\tscale\tgrid_unit\toutput");
   Type form=a.GetType("PocketTopo.MainForm");foreach(string color in new string[]{"black","gray","brown","blue","green","red","orange","lgray","shotRd","shotOr","shotDa","shotXs","shotXOr","dashed"}){Pen pen=new Pen(Color.Black);if(color=="shotDa"||color=="dashed")pen.DashStyle=DashStyle.Dash;form.GetField(color,f).SetValue(null,pen);}
+  if(args.Length>3&&args[3]=="additions"){Additions();manifest.Close();return 0;}
   string features=Path.Combine(root,"features.top");File.WriteAllBytes(features,Features());
   string large=Path.Combine(root,"large-reference.top");File.WriteAllBytes(large,Features(long.MaxValue,long.MinValue));foreach(int scale in new int[]{1,3,100000})foreach(int side in new int[]{0,1})Run("large-reference-scale"+scale+"-"+side,large,false,false,scale,514|side,true);
   string zero=Path.Combine(root,"zero-polygons.top");File.WriteAllBytes(zero,LiteralWithZeroPolygons());
@@ -69,7 +87,7 @@ class ReferenceDXFProbe {
   }
   Run("missing-reference-geo",Path.Combine(repo,"internal/processing/testdata/geometry/chain.top"),false,false,1,512|2,true);
   Run("empty-geo",Path.Combine(repo,"internal/processing/testdata/geometry/empty.top"),false,false,1,512,true);
-  manifest.Close();using(StreamWriter num=new StreamWriter(Path.Combine(root,"native-numbers.txt"))){foreach(double x in new double[]{1.0/3,1e-5,1e-4,1e14,1e15,(double)long.MaxValue,(double)long.MinValue,100005.0/3,-0.0})num.WriteLine(x.ToString("R",CultureInfo.InvariantCulture)+"\t"+x.ToString(CultureInfo.InvariantCulture));}
+  Additions();manifest.Close();using(StreamWriter num=new StreamWriter(Path.Combine(root,"native-numbers.txt"))){foreach(double x in new double[]{1.0/3,1e-5,1e-4,1e14,1e15,(double)long.MaxValue,(double)long.MinValue,100005.0/3,-0.0})num.WriteLine(x.ToString("R",CultureInfo.InvariantCulture)+"\t"+x.ToString(CultureInfo.InvariantCulture));}
   return 0;
  }catch(Exception e){Console.Error.WriteLine(e);return 1;}}
 }

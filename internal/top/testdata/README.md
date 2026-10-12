@@ -2117,8 +2117,8 @@ It initializes distinct native static pen identities, including DASH styles.
 No recovered exporter or geometry code is compiled. Native DXF source inputs,
 partial outputs and successful output bytes are preserved under
 `internal/exportdxf/testdata/`. The native manifest `cases.tsv` identifies source,
-explicit context, closure, native options, scale and grid unit for all **224** cases:
-**217 complete** byte goldens and **7 partial** native failures. Golden tests
+explicit context, closure, native options, scale and grid unit for all **268** cases:
+**261 complete** byte goldens and **7 partial** native failures. Golden tests
 compare every complete byte stream and require all partial cases to fail before
 publication. These are not claims of arbitrary destination CAD acceptance.
 
@@ -2154,9 +2154,9 @@ python3 scripts/check-native-dxf.py --root internal/exportdxf/testdata \
 ```
 
 The native probe completed with exit 0 and empty stderr. `SHA256SUMS` contains
-242 exact source/probe/manifest/transcript/golden/visual hashes. The checksum
-manifest itself is `539da4c3e9007f7f11e07c47a27921c62784cdd2662e22ac3a84f65ec10bc2a2`;
-probe `284a7884c96d87bee38987edcb51f57fe1fe10cd4126593d506f04f0b934216e`;
+290 exact source/probe/manifest/transcript/golden/visual hashes. The checksum
+manifest itself is `13a785467e70bae637e53ff71ee8f38c0c877d7b0653c35d93239aa9fbb1dfa0`;
+probe `05073ba6be151b6fbb0121546f8ed00da1dfa32994184fc9888fc91e13be1600`;
 transcript `2833259d26f3d76ba47d59706ace8322ac32662fa2cc3791c8e1c2a6f6ed928e`.
 
 Independent Python checks consume frozen native bytes, not Go output. They check
@@ -2167,3 +2167,16 @@ connector (22.552, 13.316) to (20.542, 11.306), DASH and scale3 general formatti
 and its rendered PNG show native template-rays plan/side and were visually
 inspected independently; this is a native-coordinate preview, not an Inkscape
 DXF import test. The three original streams and every earlier fixture stay frozen.
+
+The 44 follow-up goldens add no-ENA template/current selection, nonzero source
+origin fallback, negative grid bounds/truncation and independent current/template
+grid limits. They use literal `grid-negative.top` and `grid-template-bounds/`
+sources plus the existing template-rays/empty-current sources. Native metre
+first line (-6, 8) to (-6, -4) and feet (-6.08, 9.12) to (-6.08, -6.08) establish
+negative truncation/margins. Current-only template-context grid has 10 lines;
+including templates has 16. The source bounds are (-1499, -2501, -1501, 0).
+All original 224 DXF hashes remain unchanged. `native-additions-read.txt` has
+SHA-256 `7a09d7d7cbd7ad334e65f6c49e5e6c10120a4dff1b923fb05294399f0f882837`.
+The probe's optional fourth argument `additions` captures only these new cases;
+its default captures all cases. `native-read.txt` preserves the original capture
+transcript; the two captured transcripts together account for the current corpus.

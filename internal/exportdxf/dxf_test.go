@@ -9,6 +9,7 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"pockettopo-exporter/internal/nativefmt"
 	"pockettopo-exporter/internal/processing"
 	"pockettopo-exporter/internal/source"
 	"pockettopo-exporter/internal/top"
@@ -172,6 +173,9 @@ func TestDXFProvenanceAndCoordinates(t *testing.T) {
 	}
 	if !strings.Contains(r.Report.Losses[1], "unrecognized colors become green") {
 		t.Fatal("color normalization loss")
+	}
+	if r.Report.Context != "isolated-input" {
+		t.Fatal("isolated report context")
 	}
 	if r.Report.Schema != 1 || r.Report.Format != "pockettopo-1.372-graphics-dxf" || r.Report.Tool != "dev" || r.Report.Drawing != "plan" || r.Report.SourceSize != len(d.Bytes()) || r.Report.OutputSize != len(r.DXF) || len(r.Report.Losses) != 5 || r.Report.Tail != d.TailKind() {
 		t.Fatal("report profile", r.Report)
@@ -352,5 +356,100 @@ func TestDXFContextRawLineage(t *testing.T) {
 	}
 	if templateRef != 4 || r.Report.Context != "explicit-template-directory" {
 		t.Fatal("template inventory", templateRef, r.Report.Context)
+	}
+}
+
+func TestDXFEmptyEntityBudget(t *testing.T) {
+	d := document(t, "../processing/testdata/geometry/empty.top")
+	opt := Options{Scale: 500}
+	full, e := Build(d, nil, opt)
+	if e != nil {
+		t.Fatal(e)
+	}
+	r, e := build(d, nil, opt, limits{len(full.DXF), 0})
+	if e != nil || !bytes.Equal(full.DXF, r.DXF) || len(r.Report.Entities) != 0 || r.Report.Context != "isolated-input" {
+		t.Fatal("inclusive zero entity budget", e)
+	}
+}
+func TestDXFLabelFallbackLayers(t *testing.T) {
+	for _, tc := range []struct {
+		mask  uint16
+		layer string
+	}{{0, "Sketch"}, {ShotLayer, "Shots"}, {LabelLayer, "Label"}, {ShotLayer | LabelLayer, "Label"}, {RayLayer, "Sketch"}} {
+		r := Report{}
+		w := writer{opt: Options{Scale: 500, Mask: tc.mask}, lim: defaultLimits, lineNumber: 1, report: &r}
+		w.text(1000, 2000, "1.0", 0, 0)
+		if !strings.Contains(w.b.String(), "8\r\n"+tc.layer+"\r\n40\r\n1\r\n") {
+			t.Fatal("native text fallback", tc, w.b.String())
+		}
+	}
+}
+func TestDXFGridRangeAndRemainingBudget(t *testing.T) {
+	for _, side := range []bool{false, true} {
+		for _, feet := range []bool{false, true} {
+			for _, negative := range []bool{false, true} {
+				lo, hi := int32(5000), int32(6000)
+				if negative {
+					lo, hi = -6000, -5000
+				}
+				bounds := processing.GraphicsBounds{Min: processing.Position{X: lo, Y: lo, H: lo, D: lo}, Max: processing.Position{X: hi, Y: hi, H: hi, D: hi}}
+				opt := Options{Scale: 500, Feet: feet, Mask: Grid}
+				if side {
+					opt.Mask |= Side
+				}
+				r := Report{}
+				w := writer{opt: opt, view: processing.GraphicsGeometry{CurrentBounds: bounds}, lim: defaultLimits, lineNumber: 1, report: &r}
+				if e := w.grid(); e != nil {
+					t.Fatal(e)
+				}
+				// Independent C#/IL arithmetic: truncate toward zero, extend by two steps.
+				step := int32(1000)
+				if feet {
+					step = 1520
+				}
+				lower, upper := lo/step*step-2*step, hi/step*step+2*step
+				lines := strings.Split(w.b.String(), "\r\n")
+				if lines[7] != nativefmt.General(float64(lower)/500) || lines[9] != nativefmt.General(float64(-lower)/500) || lines[11] != lines[7] || lines[13] != nativefmt.General(float64(-upper)/500) {
+					t.Fatal("grid native first coordinates", side, feet, negative, lines[:16])
+				}
+				expected := 2 * (int(upper-lower)/int(step) + 1)
+				if len(r.Entities) != expected {
+					t.Fatal("grid count", len(r.Entities), expected)
+				}
+			}
+		}
+	}
+	for _, limit := range []int{11, 12} {
+		r := Report{Entities: []Entity{{Kind: "POINT"}, {Kind: "POINT"}}}
+		w := writer{opt: Options{Scale: 500}, lim: limits{134217728, limit}, lineNumber: 1, report: &r}
+		e := w.grid()
+		if limit == 11 {
+			if e == nil || w.b.Len() != 0 {
+				t.Fatal("remaining entity preflight", e, w.b.Len())
+			}
+		} else if e != nil || len(r.Entities) != 12 {
+			t.Fatal("exact remaining entity budget", e)
+		}
+	}
+	p := processing.Position{X: 2147481000, Y: 2147481000, H: 2147481000, D: 2147481000}
+	r := Report{}
+	w := writer{opt: Options{Scale: 500}, lim: defaultLimits, lineNumber: 1, report: &r, view: processing.GraphicsGeometry{CurrentBounds: processing.GraphicsBounds{Min: p, Max: p}}}
+	if e := w.grid(); e == nil || !strings.Contains(e.Error(), "overflow") || w.b.Len() != 0 {
+		t.Fatal("small-cardinality overflowing native increment", e)
+	}
+}
+
+func TestDXFSideDashDistanceThreshold(t *testing.T) {
+	for _, tc := range []struct {
+		distance, dd, dh int32
+		dash             bool
+	}{{1000, 1000, 0, false}, {1000, 500, 0, true}, {1, 0, 0, false}, {32, 16, 16, false}} {
+		r := Report{}
+		w := writer{opt: Options{Scale: 500, Mask: Side | Rays}, lim: defaultLimits, lineNumber: 1, report: &r}
+		n := processing.GraphicsStation{To: -1, Distance: tc.distance, Node: processing.GeometryNode{StartKey: "root", Position: processing.Position{D: tc.dd, H: -tc.dh}, Vector: processing.Vector{DH: tc.dh}}}
+		w.stationEntity(n, ray, dashRay, map[string]processing.Position{"root": {}})
+		if strings.Contains(w.b.String(), "DASH") != tc.dash {
+			t.Fatal("native squared distance threshold", tc, w.b.String())
+		}
 	}
 }

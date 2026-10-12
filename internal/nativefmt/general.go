@@ -33,7 +33,7 @@ func General(value float64) string {
 	if exponent >= 15 || exponent < -4 {
 		mantissa := digits[:1]
 		if len(digits) > 1 {
-			mantissa += "." + digits[1:]
+			mantissa = strings.Join([]string{mantissa, ".", digits[1:]}, "")
 		}
 		sign := "+"
 		if exponent < 0 {
@@ -41,12 +41,12 @@ func General(value float64) string {
 		}
 		e := strconv.Itoa(abs(exponent))
 		if len(e) < 2 {
-			e = "0" + e
+			e = strings.Join([]string{"0", e}, "")
 		}
 		if negative {
-			mantissa = "-" + mantissa
+			mantissa = strings.Join([]string{"-", mantissa}, "")
 		}
-		return mantissa + "E" + sign + e
+		return strings.Join([]string{mantissa, "E", sign, e}, "")
 	}
 	if strings.Contains(decimal, ".") {
 		decimal = strings.TrimRight(strings.TrimRight(decimal, "0"), ".")

@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"pockettopo-exporter/internal/exportdxf"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -170,3 +171,40 @@ func TestDXFCLIContextAndFeetGolden(t *testing.T) {
 type dxfFailingWriter struct{}
 
 func (dxfFailingWriter) Write([]byte) (int, error) { return 0, fmt.Errorf("output failed") }
+
+func TestDXFCLIDefaultAndBoundaryOptions(t *testing.T) {
+	for _, extra := range [][]string{nil, {"--scale", "1"}, {"--scale", "100000"}, {"--dxf-options", "4094"}} {
+		target := filepath.Join(t.TempDir(), "out")
+		args := append([]string{"export", "../exportdxf/testdata/features.top", "--format", "dxf", "--output", target}, extra...)
+		var out, err bytes.Buffer
+		if Run(args, &out, &err) != 0 {
+			t.Fatal("inclusive native CLI boundary", args, err.String())
+		}
+		b, e := os.ReadFile(filepath.Join(target, "report.json"))
+		if e != nil {
+			t.Fatal(e)
+		}
+		var r exportdxf.Report
+		if e = json.Unmarshal(b, &r); e != nil {
+			t.Fatal(e)
+		}
+		scale := int32(500)
+		mask := uint16(14)
+		if len(extra) > 0 {
+			if extra[0] == "--scale" {
+				n, _ := strconv.Atoi(extra[1])
+				scale = int32(n)
+			} else {
+				mask = 4094
+			}
+		}
+		if r.Options.Scale != scale || r.Options.Mask != mask || r.Drawing != "plan" || r.Options.Feet || r.Options.Geometry.CloseLoops || r.Context != "isolated-input" {
+			t.Fatal("resolved CLI profile", r)
+		}
+	}
+	// An empty explicit template directory must not silently select isolation.
+	var out, err bytes.Buffer
+	if Run([]string{"export", "../exportdxf/testdata/features.top", "--format", "dxf", "--output", filepath.Join(t.TempDir(), "out"), "--template-directory", ""}, &out, &err) != 1 {
+		t.Fatal("empty context option accepted")
+	}
+}

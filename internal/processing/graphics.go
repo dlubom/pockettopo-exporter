@@ -85,8 +85,8 @@ func (s *geometryState) graphicsView(groups ContextGroups, templates []*geometry
 		}
 	}
 	if s.baseRef != nil {
-		base := *s.baseRef
-		r.Base = &base
+		r.Base = new(source.Reference)
+		*r.Base = *s.baseRef
 	}
 	r.CurrentBounds = graphicsBounds(r.Actual)
 	r.TemplateBounds = graphicsBounds(r.Template)

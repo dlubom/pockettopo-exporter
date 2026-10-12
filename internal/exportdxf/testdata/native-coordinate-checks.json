@@ -1,5 +1,5 @@
 {
-  "complete_outputs": 217,
+  "complete_outputs": 261,
   "partial_outputs": 7,
   "first_sketch_point": [
     2.01,
@@ -21,6 +21,16 @@
       11.306
     ]
   ],
+  "negative_bound_grid_start": [
+    -6.0,
+    8.0
+  ],
+  "negative_bound_feet_grid_start": [
+    -6.08,
+    9.12
+  ],
+  "current_only_grid_lines": 10,
+  "current_and_template_grid_lines": 16,
   "all_raw_colors": 256,
   "sketch_single_points": 128,
   "sketch_polylines": 128

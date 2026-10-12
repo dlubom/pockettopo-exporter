@@ -498,7 +498,7 @@ or survey dates. Report raw fields separately from derived coordinates.
 
 ### Delivered behavior and verification
 
-The separate graphics view and serializer reproduce all **217 complete native
+The separate graphics view and serializer reproduce all **261 complete native
 byte goldens**; **7 native partial outputs** return explicit errors before
 publication. The unchanged original assembly, C#/IL, all native option bits,
 plan/side, source colors, XSections, scale/number formatting, metric/feet grids,
@@ -510,7 +510,7 @@ Independent review identified table cloning per provenance row and last-entity
 footer ownership; both were repaired and protected by regressions. The final
 review also strengthened nonzero-roll/reversed-member and strict dash-boundary
 fixtures, confirming the fixtures contain the cases asserted. No substantive
-production findings remain. All **242** new checksums verify; **308** preexisting
+production findings remain. All **290** new checksums verify; **308** preexisting
 raw/golden/probe files remain byte-for-byte unchanged. Local check.sh passes
 with race, vet, Staticcheck, coverage controls, build/smoke and **98.7%** statement
 coverage. All **46** weak-suite mutants LIVED and the quality gate rejected the
@@ -519,6 +519,17 @@ exactly-once scopes, report/error propagation and private worker limits.
 P10 adds **60** explicit faults in the existing native-text group and assigns
 new graphics production files to the output/processing Gremlins shards. The
 complete heavy campaign runs on GitHub Actions, including all earlier scopes.
+Its first run rejected nonviable generated string/address mutants and uncovered
+global-initializer sites, as required. Equivalent operations now use the existing
+P09 allocation/string idioms and literal native option constants. No operator,
+exclusion or gate was weakened; a full dry discovery finds **1588 RUNNABLE** sites
+and zero uncovered sites. The initial explicit side-dash fault also correctly
+failed compilation rather than counting as KILLED; its replacement retains the
+height variable while zeroing its contribution. Package-owned tests and 44 new
+native goldens strengthen default/boundary options, no-template-export masks,
+nonzero origin fallback, label layers, exact ray thresholds and positive/negative
+survey grids. Existing 224 P10 golden bytes remain unchanged. Independent review
+classifies prior/equivalent survivors; final hosted results remain required.
 
 **Next useful increment:** P11 — VisualTopo and passage dimensions, planned only.
 

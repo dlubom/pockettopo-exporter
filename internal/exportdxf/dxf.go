@@ -12,18 +12,18 @@ import (
 
 // Options are the original DXFWriter.Options bit values.
 const (
-	Side uint16 = 1 << iota
-	Shots
-	Rays
-	Labels
-	Templates
-	ShotLayer
-	RayLayer
-	LabelLayer
-	ColorLayers
-	Geo
-	Grid
-	GridLayer
+	Side        uint16 = 1
+	Shots       uint16 = 2
+	Rays        uint16 = 4
+	Labels      uint16 = 8
+	Templates   uint16 = 16
+	ShotLayer   uint16 = 32
+	RayLayer    uint16 = 64
+	LabelLayer  uint16 = 128
+	ColorLayers uint16 = 256
+	Geo         uint16 = 512
+	Grid        uint16 = 1024
+	GridLayer   uint16 = 2048
 )
 
 type Options struct {
@@ -121,7 +121,7 @@ type Result struct {
 }
 type limits struct{ bytes, entities int }
 
-var defaultLimits = limits{128 * 1024 * 1024, 1_000_000}
+var defaultLimits = limits{134217728, 1_000_000}
 
 func Build(d source.Document, templates []source.ReferencePrefix, opt Options) (Result, error) {
 	return build(d, templates, opt, defaultLimits)
@@ -140,7 +140,8 @@ func build(d source.Document, templates []source.ReferencePrefix, opt Options, l
 		name = "side"
 		drawing, _ = d.Side()
 	}
-	report := Report{Schema: 1, Format: "pockettopo-1.372-graphics-dxf", Tool: "dev", Context: "isolated-input", Drawing: name, SourceHash: fmt.Sprintf("%x", sha256.Sum256(d.Bytes())), SourceSize: len(d.Bytes()), Tail: d.TailKind(), Options: opt, Inputs: []InputInfo{}, Rows: []Row{}, References: []Reference{}, Geometry: []GeometryNode{}, Drawings: []DrawingRecord{}, Entities: []Entity{}, Losses: []string{
+	report := new(Report)
+	*report = Report{Schema: 1, Format: "pockettopo-1.372-graphics-dxf", Tool: "dev", Context: "isolated-input", Drawing: name, SourceHash: fmt.Sprintf("%x", sha256.Sum256(d.Bytes())), SourceSize: len(d.Bytes()), Tail: d.TailKind(), Options: opt, Inputs: []InputInfo{}, Rows: []Row{}, References: []Reference{}, Geometry: []GeometryNode{}, Drawings: []DrawingRecord{}, Entities: []Entity{}, Losses: []string{
 		"Native AC1002 graphics DXF; header INSUNITS=4 remains millimetres at every scale. Coordinates are native wrapped Int32 divided by scale, with Framework 15-significant-digit formatting; scale does not alter the header.",
 		"Only the selected current drawing is exported; template drawings and other view are omitted. Mapping offsets/scales, comments, roll, trip metadata, dates and TOP trailer are not rendered; raw source is identified by hash and spans. All raw colors normalize to seven native pens; unrecognized colors become green.",
 		"Native options filter shots/rays/labels/templates and change layers; invisible legs retain native station circles/labels. Unplaced/undefined/zero-splay nodes and unresolved XSections emit no geometry.",
@@ -154,11 +155,11 @@ func build(d source.Document, templates []source.ReferencePrefix, opt Options, l
 	if e != nil {
 		return Result{}, e
 	}
-	addRows(&report, groups, templates, d)
+	addRows(report, groups, templates, d)
 	for _, n := range v.Positions {
 		report.Geometry = append(report.Geometry, GeometryNode{n.Key, n.Status, n.StartKey, Identity{n.ID.Raw(), n.ID.NativeValue(), n.ID.String()}, n.SourceSpan, n.Position, n.Vector, n.Correction})
 	}
-	w := writer{opt: opt, view: v, lim: lim, lineNumber: 1, report: &report}
+	w := writer{opt: opt, view: v, lim: lim, lineNumber: 1, report: report}
 	for _, line := range strings.Split(header, "\n") {
 		w.lineValue(line)
 	}
@@ -172,7 +173,7 @@ func build(d source.Document, templates []source.ReferencePrefix, opt Options, l
 		positions[n.Key] = n.Position
 	}
 	for i, el := range drawing.Elements() {
-		w.owner = "drawing:" + strconv.Itoa(i)
+		w.owner = strings.Join([]string{"drawing:", strconv.Itoa(i)}, "")
 		rec := DrawingRecord{Element: i}
 		if p, ok := el.Polygon(); ok {
 			rec.Kind = "polygon"
@@ -275,7 +276,7 @@ func build(d source.Document, templates []source.ReferencePrefix, opt Options, l
 	b := []byte(w.b.String())
 	report.OutputHash = fmt.Sprintf("%x", sha256.Sum256(b))
 	report.OutputSize = len(b)
-	return Result{b, report}, nil
+	return Result{b, *report}, nil
 }
 func addRows(r *Report, g processing.ContextGroups, templates []source.ReferencePrefix, d source.Document) {
 	// Accessors clone their slices. Read each source once, outside group/member loops.
@@ -293,7 +294,7 @@ func addRows(r *Report, g processing.ContextGroups, templates []source.Reference
 		for _, group := range item.groups {
 			key := fmt.Sprintf("group:%d", group.HeadIndex)
 			if item.template {
-				key = "template:" + key
+				key = strings.Join([]string{"template:", key}, "")
 			}
 			for _, member := range group.Members() {
 				l := item.lineage[member.RowIndex]

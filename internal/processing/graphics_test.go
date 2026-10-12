@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"pockettopo-exporter/internal/source"
 	"pockettopo-exporter/internal/top"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -55,12 +56,42 @@ func TestGraphicsNativeSnapshot(t *testing.T) {
 					t.Fatal("native template context", g)
 				}
 			}
+			expectedOrigin := Position{X: 10271, Y: -5653, H: -1707, D: 707}
+			if name == "empty-current-drawing/current" {
+				expectedOrigin = Position{X: 10000, Y: -5000, H: -1000}
+			}
+			if strings.Contains(name, "/") && g.Origin != expectedOrigin {
+				t.Fatal("native nonzero origin", name, g.Origin)
+			}
+			sourceRows := d.Measurements()
+			templateRows := []source.Measurement{}
+			for _, p := range templates {
+				templateRows = append(templateRows, p.Measurements()...)
+			}
+			checkRaw := func(n GraphicsStation) {
+				key := strings.TrimPrefix(n.Node.Key, "template:")
+				if strings.HasPrefix(key, "group:") {
+					index, e := strconv.Atoi(strings.TrimPrefix(key, "group:"))
+					if e != nil {
+						t.Fatal(e)
+					}
+					rr := sourceRows
+					if strings.HasPrefix(n.Node.Key, "template:") {
+						rr = templateRows
+					}
+					m := rr[index]
+					if n.To != m.To().NativeValue() || n.Distance != m.DistanceMM() || n.Azimuth != int32(m.AzimuthRaw()) || n.Inclination != m.InclinationRaw() || n.Flags != m.FlagsRaw() {
+						t.Fatal("source head fields", n)
+					}
+				}
+			}
 			positions := map[string]GeometryNode{}
 			for _, n := range g.Positions {
 				positions[n.Key] = n
 			}
 			for _, list := range [][]GraphicsStation{g.Actual, g.Template, g.Lookup} {
 				for _, n := range list {
+					checkRaw(n)
 					if n.Node != positions[n.Node.Key] {
 						t.Fatal("detached node")
 					}
@@ -70,6 +101,7 @@ func TestGraphicsNativeSnapshot(t *testing.T) {
 						}
 					}
 					for _, c := range n.Cross {
+						checkRaw(c)
 						if c.To != -1 || c.Node.Status != "placed" || c.Node.StartKey != n.Node.Key {
 							t.Fatal("native cross attachment", c)
 						}
@@ -141,5 +173,16 @@ func TestGraphicsBoundsAndRays(t *testing.T) {
 	c.Azimuth = 0
 	if _, _, _, e = GraphicsRay(c, 0, 0, 0); e == nil {
 		t.Fatal("native Abs overflow")
+	}
+}
+
+func TestGraphicsDirectedRayStrictThreshold(t *testing.T) {
+	c := GraphicsStation{Distance: 700, Node: GeometryNode{Vector: Vector{DD: 500}}}
+	if _, _, dash, e := GraphicsRay(c, 0, 0, 0); e != nil || dash {
+		t.Fatal("native strict projected threshold", dash, e)
+	}
+	c.Distance = 699
+	if _, _, dash, e := GraphicsRay(c, 0, 0, 0); e != nil || !dash {
+		t.Fatal("native adjacent projected threshold", dash, e)
 	}
 }

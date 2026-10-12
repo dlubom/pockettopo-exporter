@@ -104,8 +104,21 @@ def main():
     assert coord(connectors[0], 1) == [20.542, 11.306]
     assert connectors[0]["6"] == "DASH"
     assert coord(entities(root / "features-scale3-0.dxf")[0]) == [335, 1001.66666666667]
+    negative_grid = [e for e in entities(root / "grid-negative-metres-o1024.dxf") if e["type"] == "LINE"]
+    negative_feet = [e for e in entities(root / "grid-negative-feet-o1024.dxf") if e["type"] == "LINE"]
+    actual_grid = [e for e in entities(root / "nativecontext-grid-template-bounds-metres-o1024.dxf") if e["type"] == "LINE"]
+    template_grid = [e for e in entities(root / "nativecontext-grid-template-bounds-metres-o1040.dxf") if e["type"] == "LINE"]
+    assert len(negative_grid) == 13
+    assert coord(negative_grid[0]) == [-6.0, 8.0]
+    assert coord(negative_grid[0], 1) == [-6.0, -4.0]
+    assert coord(negative_feet[0]) == [-6.08, 9.12]
+    assert len(actual_grid) == 10 and len(template_grid) == 16
+    assert coord(actual_grid[0]) == [-4.0, 14.0]
+    assert coord(actual_grid[0], 1) == [-4.0, 6.0]
+    assert coord(template_grid[0]) == [-6.0, 14.0]
+    assert coord(template_grid[0], 1) == [-6.0, -4.0]
     report = dict(counts)
-    report.update({"first_sketch_point": coord(plain[0]), "first_geographic_point": coord(geo[0]), "metre_grid_step": 2, "foot_grid_step": 3.04, "template_connector": [coord(connectors[0]), coord(connectors[0], 1)], "all_raw_colors": 256, "sketch_single_points": 128, "sketch_polylines": 128})
+    report.update({"first_sketch_point": coord(plain[0]), "first_geographic_point": coord(geo[0]), "metre_grid_step": 2, "foot_grid_step": 3.04, "template_connector": [coord(connectors[0]), coord(connectors[0], 1)], "negative_bound_grid_start": coord(negative_grid[0]), "negative_bound_feet_grid_start": coord(negative_feet[0]), "current_only_grid_lines": len(actual_grid), "current_and_template_grid_lines": len(template_grid), "all_raw_colors": 256, "sketch_single_points": 128, "sketch_polylines": 128})
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, indent=2) + "\n")
     preview(root, args.preview)
