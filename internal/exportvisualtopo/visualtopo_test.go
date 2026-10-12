@@ -107,7 +107,7 @@ func TestVisualTopoReportAndLimits(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	if r.Report.Schema != 1 || r.Report.Format != "pockettopo-1.372-visualtopo" || r.Report.Circle != 360 || r.Report.OutputSize != len(r.Text) || r.Report.SourceHash != fmt.Sprintf("%x", sha256.Sum256(d.Bytes())) || r.Report.OutputHash != fmt.Sprintf("%x", sha256.Sum256(r.Text)) || len(r.Report.Rows) != 17 || len(r.Report.Groups) != 17 || len(r.Report.References) != 1 || len(r.Report.Trips) != 3 || len(r.Report.Losses) < 5 {
+	if r.Report.Schema != 1 || r.Report.Format != "pockettopo-1.372-visualtopo" || r.Report.Context != "isolated-input" || r.Report.Circle != 360 || r.Report.OutputSize != len(r.Text) || r.Report.SourceHash != fmt.Sprintf("%x", sha256.Sum256(d.Bytes())) || r.Report.OutputHash != fmt.Sprintf("%x", sha256.Sum256(r.Text)) || len(r.Report.Rows) != 17 || len(r.Report.Groups) != 17 || len(r.Report.References) != 1 || len(r.Report.Trips) != 3 || len(r.Report.Losses) < 5 {
 		t.Fatal("report metadata", r.Report)
 	}
 	for i, row := range r.Report.Rows {
@@ -210,12 +210,7 @@ func TestVisualTopoFormattingBoundaries(t *testing.T) {
 	if singleFixed(float32(10000005)) != "10000010.00" {
 		t.Fatal("large Single rounding")
 	}
-	defer func() {
-		if recover() == nil {
-			t.Fatal("invalid frozen table accepted")
-		}
-	}()
-	mustTable("testdata/missing.bin")
+
 }
 
 func TestVisualTopoOmissionAndTemplateLineage(t *testing.T) {
@@ -267,8 +262,46 @@ func TestVisualTopoOmissionAndTemplateLineage(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
+	if d.Trips()[0].Ticks() == 0 {
+		t.Fatal("fixture has no nonzero native ticks")
+	}
+	for i, tr := range d.Trips() {
+		got := r.Report.Trips[i]
+		if got.Source != 0 || got.Index != i || got.Ticks != tr.Ticks() || got.Span != tr.Offsets().Record || got.Declination != tr.DeclinationRaw() || got.Comment != tr.Comment() {
+			t.Fatal("raw native trip provenance", i, got)
+		}
+	}
 	g := r.Report.Groups[0]
 	if len(g.Members) != 3 || !g.Members[2].Reversed || g.Members[2].RowIndex != 2 || g.Node.ID.Native != 65537 || g.ParameterLine != 0 || g.Declination != 1234 {
 		t.Fatal("repeat and trip provenance", g)
+	}
+}
+
+func TestVisualTopoNativeCharacterTables(t *testing.T) {
+	if len(codepage) != 65536 || len(whitespace) != 65536 {
+		t.Fatal("native table size")
+	}
+	for i := 0; i < 65536; i++ {
+		if i >= 0xd800 && i <= 0xdfff {
+			continue
+		}
+		s := string(rune(i))
+		want := []byte{codepage[i]}
+		if got := encode(s); !bytes.Equal(got, want) {
+			t.Fatalf("native encoding U+%04X", i)
+		}
+		wantTrim := s
+		if whitespace[i] != 0 {
+			wantTrim = ""
+		}
+		if wantTrim == ";" {
+			wantTrim = ","
+		}
+		if got := comment(s); got != wantTrim {
+			t.Fatalf("native trim U+%04X", i)
+		}
+	}
+	if string(encode("😀")) != "??" || string(encode("\uffff")) != "?" {
+		t.Fatal("native BMP/supplementary encoding")
 	}
 }

@@ -54,7 +54,7 @@ func (s *geometryState) visualTopoView(d source.Document, templates []source.Ref
 	refs := d.References()
 	r := VisualTopoGeometry{Stations: []VisualTopoStation{}, Nodes: []GeometryNode{}}
 	for n := s.actual; n != nil; n = n.nextActual {
-		v := VisualTopoStation{Node: n.node, Head: n.head, ReferenceIndex: -1, Distance: n.dist, ForwardAzimuth: n.fwAzimuth(), From: n.fromID, To: source.NewStationID(uint32(n.to)), Flipped: n.flipped(), Trip: -1, Rays: []PassageRay{}}
+		v := VisualTopoStation{Node: n.node, Head: n.head, ReferenceIndex: -1, Distance: n.dist, ForwardAzimuth: n.fwAzimuth(), From: source.NewStationID(0x80000000), To: source.NewStationID(0x80000000), Flipped: n.flipped(), Trip: -1, Rays: []PassageRay{}}
 		if n.start != nil {
 			v.StartFlipped = n.start.flipped()
 		}
@@ -79,7 +79,7 @@ func (s *geometryState) visualTopoView(d source.Document, templates []source.Ref
 			}
 			v.From = row.Source.From()
 			v.To = row.Source.To()
-			if v.Declination == -32768 {
+			if int32(v.Declination) == -32768 {
 				v.Declination = 0
 			}
 			v.Direction = averageDirection(n.node.Vector, row.Declination, false)
@@ -108,6 +108,12 @@ func (s *geometryState) visualTopoView(d source.Document, templates []source.Ref
 func nativeStationSort(a []VisualTopoStation, left, right int, s *geometryState) error {
 	swap := func(i, j int) { a[i], a[j] = a[j], a[i] }
 	for left < right {
+		if e := s.tick("visualtopo-partition"); e != nil {
+			return e
+		}
+		if left < 0 || right >= len(a) || left > right {
+			return fmt.Errorf("native_failure (VisualTopo sort range)")
+		}
 		i, j := left, right
 		middle := i + (j-i)/2
 		pivot := a[middle].Node.ID.NativeValue()
@@ -144,6 +150,9 @@ func nativeStationSort(a []VisualTopoStation, left, right int, s *geometryState)
 			}
 			i++
 			j--
+		}
+		if i <= left && j >= right {
+			return fmt.Errorf("native_failure (VisualTopo sort stalled)")
 		}
 		if j-left <= right-i {
 			if left < j {

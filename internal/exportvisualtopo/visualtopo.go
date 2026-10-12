@@ -126,7 +126,7 @@ type writer struct {
 }
 
 func (w *writer) write(s string) {
-	b := encode(s + "\r\n")
+	b := encode(strings.Join([]string{s, "\r\n"}, ""))
 	if len(b) > w.limit-len(w.b) {
 		w.failed = true
 		return
@@ -251,11 +251,13 @@ func build(d source.Document, templates []source.ReferencePrefix, opt Options, l
 		if strings.HasPrefix(n.Key, "group:") {
 			head, e := strconv.Atoi(strings.TrimPrefix(n.Key, "group:"))
 			if e == nil {
-				rec := &report.Groups[heads[head]]
+				index := heads[head]
+				rec := report.Groups[index]
 				rec.Node = geometryNode(n)
 				if n.Status != "placed" {
 					rec.Omission = n.Status
 				}
+				report.Groups[index] = rec
 			}
 		}
 	}
@@ -276,11 +278,11 @@ func build(d source.Document, templates []source.ReferencePrefix, opt Options, l
 		}
 		line := w.line
 		w.write(fmt.Sprintf("Trou %s,%s,%s,%d,SWISS", c, nativefmt.Fixed(float64(r.EastMM())/1000000, 3), nativefmt.Fixed(float64(r.NorthMM())/1000000, 3), r.AltitudeMM()/1000))
-		w.write("Entree " + strings.ReplaceAll(s.Node.ID.String(), ".", "_"))
+		w.write(strings.Join([]string{"Entree ", strings.ReplaceAll(s.Node.ID.String(), ".", "_")}, ""))
 		for i := range report.References {
-			r := &report.References[i]
+			r := report.References[i]
 			if r.Source == len(templates) && r.Index == s.ReferenceIndex {
-				r.HeaderLine = line
+				report.References[i].HeaderLine = line
 			}
 		}
 	}
@@ -306,7 +308,7 @@ func build(d source.Document, templates []source.ReferencePrefix, opt Options, l
 		}
 		str := fmt.Sprintf("%-10s %-10s           ", strings.ReplaceAll(from.String(), ".", "_"), strings.ReplaceAll(s.Node.ID.String(), ".", "_"))
 		dir := s.Direction
-		str += fixed(float64(dir.DistanceMM)/1000, 9) + single(dir.AzimuthRadians*float32(opt.Circle)/float32(6.2831855), 7) + single(dir.InclinationRadians*float32(opt.Circle)/float32(6.2831855), 7)
+		str = strings.Join([]string{str, fixed(float64(dir.DistanceMM)/1000, 9), single(dir.AzimuthRadians*float32(opt.Circle)/float32(6.2831855), 7), single(dir.InclinationRadians*float32(opt.Circle)/float32(6.2831855), 7)}, "")
 		a, b := int32(math.MinInt32), int32(math.MinInt32)
 		if s.Distance > 0 {
 			a = s.ForwardAzimuth
@@ -320,18 +322,19 @@ func build(d source.Document, templates []source.ReferencePrefix, opt Options, l
 		axis := processing.PassageAxis(a, b)
 		dims := processing.PassageDimensions(axis, s.Rays)
 		for _, v := range dims {
-			str += fixed(float64(float32(v.MM))/1000, 6)
+			str = strings.Join([]string{str, fixed(float64(float32(v.MM))/1000, 6)}, "")
 		}
 		flag := "N"
 		if s.Flipped != s.StartFlipped {
 			flag = "I"
 		}
-		str += flag + " I "
+		str = strings.Join([]string{str, flag, " I "}, "")
 		m := rows[s.Head]
 		if m.HasComment() {
-			str += ";" + comment(m.Comment()) + ";"
+			str = strings.Join([]string{str, ";", comment(m.Comment()), ";"}, "")
 		}
-		rec := &report.Groups[heads[s.Head]]
+		index := heads[s.Head]
+		rec := report.Groups[index]
 		rec.Declination = decl
 		rec.ParameterLine = paramLine
 		rec.Line = w.line
@@ -339,6 +342,7 @@ func build(d source.Document, templates []source.ReferencePrefix, opt Options, l
 		rec.Axis = axis
 		rec.Dimensions = dims
 		rec.Rays = s.Rays
+		report.Groups[index] = rec
 		w.write(str)
 	}
 	if w.failed {

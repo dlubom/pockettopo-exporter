@@ -1,7 +1,7 @@
 package exportvisualtopo
 
 import (
-	"embed"
+	_ "embed"
 	"strings"
 	"unicode/utf16"
 )
@@ -9,18 +9,12 @@ import (
 // Tables are exhaustively captured from the original .NET 2 runtime, not
 // inferred Unicode mappings. The fixed native host uses Windows-1252 best fit.
 //
-//go:embed testdata/cp1252.bin testdata/trim.bin
-var nativeTables embed.FS
-var codepage = mustTable("testdata/cp1252.bin")
-var whitespace = mustTable("testdata/trim.bin")
+//go:embed testdata/cp1252.bin
+var codepage []byte
 
-func mustTable(path string) []byte {
-	b, e := nativeTables.ReadFile(path)
-	if e != nil || len(b) != 65536 {
-		panic("invalid frozen native character table")
-	}
-	return b
-}
+//go:embed testdata/trim.bin
+var whitespace []byte
+
 func encode(s string) []byte {
 	b := make([]byte, 0, len(s))
 	for _, r := range s {

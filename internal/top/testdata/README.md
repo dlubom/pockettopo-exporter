@@ -2273,3 +2273,16 @@ output/processing shards and adds 53 explicit P11 faults without removing previo
 scopes or failure controls. Heavy campaigns run in GitHub Actions for the exact
 published SHA; local ordinary gates and small negative/dispatch controls retain
 bounded workstation settings.
+
+P11 mutation follow-up retains all earlier evidence bytes. The first hosted
+campaign exposed a missing nonzero-trip-tick assertion, package-local snapshot
+coverage gaps and rejected NOT VIABLE outcomes. Corrections use the existing
+positive-tick native fixture, all 194 byte goldens also exercised by the processing
+package, exact trip-bound/index assertions, inherited reference endpoint sentinels,
+unique/wrapped-ID sort cases, diagonal dot-product selection and all valid BMP
+characters against the captured conversion table. String assembly uses normal
+join operations and report records use value updates; native tables are embedded
+directly. Sort range/progress checks bound altered control flow. No NOT VIABLE
+outcome is accepted and no operator/scope/threshold is removed. Equivalent
+partition ordering/singleton swaps, zero-distance sentinels and unused codepoint
+trim boundaries are distinguished from observable mutation gaps.

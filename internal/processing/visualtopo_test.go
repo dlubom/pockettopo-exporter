@@ -1,6 +1,7 @@
 package processing
 
 import (
+	"encoding/binary"
 	"math"
 	"os"
 	"pockettopo-exporter/internal/source"
@@ -84,14 +85,32 @@ func TestVisualTopoSnapshotReferencesAndContext(t *testing.T) {
 		if e != nil || len(v.Stations) == 0 || len(v.Nodes) == 0 {
 			t.Fatal("native snapshot", name, e)
 		}
+		refsSeen := 0
 		for _, n := range v.Stations {
 			if n.Reference != nil {
+				refsSeen++
+
+				if n.Trip != -1 || n.TripValid || n.From.NativeValue() != -1 || n.To.NativeValue() != -1 {
+					t.Fatal("native reference endpoints", n.From.NativeValue(), n.To.NativeValue())
+				}
 				if *n.Reference != d.References()[n.ReferenceIndex] {
 					t.Fatal("reference linkage")
 				}
 			} else {
 				m := d.Measurements()[n.Head]
-				if n.From != m.From() || n.To != m.To() || n.Distance != m.DistanceMM() {
+				idx := int(m.TripIndexRaw())
+				valid := idx >= 0 && idx < len(d.Trips())
+				decl := int16(0)
+				if valid {
+					decl = d.Trips()[idx].DeclinationRaw()
+					if decl == -32768 {
+						decl = 0
+					}
+				}
+				if n.TripValid != valid || n.Declination != decl {
+					t.Fatal("native effective trip", n)
+				}
+				if n.ReferenceIndex != -1 || n.Trip != m.TripIndexRaw() || n.From != m.From() || n.To != m.To() || n.Distance != m.DistanceMM() {
 					t.Fatal("head linkage", n)
 				}
 				fw := int32(m.AzimuthRaw())
@@ -104,6 +123,15 @@ func TestVisualTopoSnapshotReferencesAndContext(t *testing.T) {
 					t.Fatal("raw forward", n)
 				}
 			}
+		}
+		expectedRefs := 0
+		for _, ref := range d.References() {
+			if ref.Station().NativeValue() != -1 {
+				expectedRefs++
+			}
+		}
+		if refsSeen != expectedRefs {
+			t.Fatal("current references missing", refsSeen, expectedRefs)
 		}
 	}
 	for _, name := range []string{"template-rays", "empty-current-drawing", "boundary-data"} {
@@ -131,6 +159,9 @@ func TestVisualTopoSnapshotReferencesAndContext(t *testing.T) {
 			if strings.HasPrefix(n.Node.Key, "template:") {
 				t.Fatal("template exported", n)
 			}
+			if n.Reference == nil && n.Trip != 1 {
+				t.Fatal("native global trip offset", n.Trip)
+			}
 			if !n.TripValid && n.Reference == nil {
 				t.Fatal("global trip missing", n)
 			}
@@ -149,5 +180,70 @@ func TestVisualTopoStrictThreshold(t *testing.T) {
 		if d[0].MM != tc.mm || d[0].RayKey != tc.key || d[0].Dot != tc.dot {
 			t.Fatal("native strict angular threshold", tc, d)
 		}
+	}
+}
+
+func TestVisualTopoRotatedPassage(t *testing.T) {
+	d := PassageDimensions(8192, []PassageRay{{Key: "diagonal", Distance: 1000, Azimuth: -8192}})
+	if d[0].MM != 999 || d[0].Dot != 999698 || d[0].RayKey != "diagonal" {
+		t.Fatal("native two-component dot", d)
+	}
+}
+
+func TestVisualTopoSortMixedIdentities(t *testing.T) {
+	for _, raw := range [][]uint32{{1, 3, 2}, {2, 8, 4, 9, 7, 3, 6, 1, 5}, {0x7ff00000, 0x80000001, 0x7fffff00, 0x7fffffff}} {
+		nodes := make([]VisualTopoStation, len(raw))
+		for i, id := range raw {
+			nodes[i].Node.ID = source.NewStationID(id)
+		}
+		if e := nativeStationSort(nodes, 0, len(nodes)-1, &geometryState{maxWork: 1000}); e != nil {
+			t.Fatal("valid native sort rejected", raw, e)
+		}
+		if raw[0] < 100 {
+			for i, n := range nodes {
+				if n.Node.ID.Raw() != uint32(i+1) {
+					t.Fatal("native ascending IDs", raw, nodes)
+				}
+			}
+		}
+	}
+	nodes := []VisualTopoStation{{Node: GeometryNode{ID: source.NewStationID(2)}}, {Node: GeometryNode{ID: source.NewStationID(1)}}}
+	if e := nativeStationSort(nodes, 0, 1, &geometryState{maxWork: 1}); e == nil {
+		t.Fatal("sort budget ignored")
+	}
+}
+
+func TestVisualTopoTripAtExactUpperBound(t *testing.T) {
+	b, e := os.ReadFile("../exportvisualtopo/testdata/features.top")
+	if e != nil {
+		t.Fatal(e)
+	}
+	d, e := top.ReadV3(b)
+	if e != nil {
+		t.Fatal(e)
+	}
+	rows := d.Measurements()
+	head := len(rows) - 1
+	offset := rows[head].Offsets().TripIndex.Start
+	binary.LittleEndian.PutUint16(b[offset:offset+2], uint16(len(d.Trips())))
+	derived, e := top.ReadV3(b)
+	if e != nil || derived.Measurements()[head].TripIndexRaw() != 3 {
+		t.Fatal("derived fixture trip boundary", e)
+	}
+	v, e := PrepareVisualTopo(derived, nil, GeometryOptions{})
+	if e != nil {
+		t.Fatal(e)
+	}
+	found := false
+	for _, n := range v.Stations {
+		if n.Reference == nil && n.Head == head {
+			found = true
+			if n.Trip != 3 || n.TripValid || n.Declination != 0 {
+				t.Fatal("invalid exact-bound trip accepted", n)
+			}
+		}
+	}
+	if !found {
+		t.Fatal("derived boundary head is not placed")
 	}
 }

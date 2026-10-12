@@ -575,6 +575,14 @@ quality score and preserves build/setup-failure controls. Local ordinary checks
 use `GOMAXPROCS=2 GOFLAGS=-p=1`. Published CI results, including every mutation
 scope/shard and the aggregate, must belong to the final delivered SHA.
 
+Hosted mutation feedback additionally requires package-local native snapshot
+goldens, nonzero raw trip-tick provenance, exact trip bounds/global indexes,
+mixed/wrapped identity sorting, diagonal LRUD and exhaustive BMP conversion.
+Compiler-invalid string/pointer mutations and initialization panics are avoided
+with normal Go serialization/value updates and direct embedded native tables;
+sort progress and range checks bound altered partition control flow. Gates,
+operators, previous scope and thresholds remain unchanged.
+
 **Next useful increment:** P12 — Toporobot and dialog options, planned only.
 
 ## Remaining original roadmap
