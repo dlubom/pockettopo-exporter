@@ -77,7 +77,18 @@ The native format contains FIX, TRIP/DATA, PLAN and ELEVATION, colored Polylines
 and embedded XSection station/ray/CONNECT records. It is PocketTopo interchange,
 not a standalone Therion project. See [the Therion contract](docs/SPEC.md#native-therion-interchange-p09)
 for trip filtering, native ordering, strict limits and losses.
-The next increment is **P10: native graphics DXF**, not implemented.
+P10 adds native graphics DXF for a selected plan or extended side view:
+
+```sh
+go run ./cmd/pockettopo-exporter export internal/exportdxf/testdata/features.top --format dxf --output build/dxf --view plan --dxf-options 3582
+go run ./cmd/pockettopo-exporter export internal/exportdxf/testdata/template-rays/current.top --format dxf --output build/dxf-side --view side --template-directory internal/exportdxf/testdata/template-rays --close-loops
+```
+
+It publishes `survey.dxf` and `report.json`; default scale is 500 and shots,
+rays and labels are enabled. All native graphics option bits, layers, GEO and
+metre/feet grids are available. See [the DXF contract](docs/SPEC.md#native-graphics-dxf-p10)
+for masks, provenance, native numeric behavior and explicit bounded failures.
+The next increment is **P11: VisualTopo and passage dimensions**, planned only.
 Historical per-field prefix APIs remain supported.
 
 ## Documentation

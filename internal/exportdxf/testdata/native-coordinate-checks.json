@@ -1,0 +1,27 @@
+{
+  "complete_outputs": 217,
+  "partial_outputs": 7,
+  "first_sketch_point": [
+    2.01,
+    6.01
+  ],
+  "first_geographic_point": [
+    202.02,
+    406.02
+  ],
+  "metre_grid_step": 2,
+  "foot_grid_step": 3.04,
+  "template_connector": [
+    [
+      22.552,
+      13.316
+    ],
+    [
+      20.542,
+      11.306
+    ]
+  ],
+  "all_raw_colors": 256,
+  "sketch_single_points": 128,
+  "sketch_polylines": 128
+}

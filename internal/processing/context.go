@@ -66,6 +66,10 @@ func PlaceContextGeometry(d source.Document, templates []source.ReferencePrefix,
 }
 
 func placeContextGeometry(d source.Document, templates []source.ReferencePrefix, options GeometryOptions, capture bool) (GeometryResult, error) {
+	return placeContextGeometryView(d, templates, options, capture, false)
+}
+
+func placeContextGeometryView(d source.Document, templates []source.ReferencePrefix, options GeometryOptions, capture, graphics bool) (GeometryResult, error) {
 	if options.MaxWork < 0 || options.MaxIterations < 0 {
 		return GeometryResult{}, geometryError("invalid_limits", "options")
 	}
@@ -81,6 +85,7 @@ func placeContextGeometry(d source.Document, templates []source.ReferencePrefix,
 	}
 	state := geometryState{maxWork: options.MaxWork}
 	var templateNodes []*geometryStation
+	var templateActual *geometryStation
 	if len(templates) > 0 {
 		refs := []source.Reference{}
 		for _, t := range templates {
@@ -92,6 +97,7 @@ func placeContextGeometry(d source.Document, templates []source.ReferencePrefix,
 			return GeometryResult{}, e
 		}
 		templateNodes = state.stations
+		templateActual = state.actual
 		state.templates = state.dir
 		for _, n := range templateNodes {
 			n.fixed = true
@@ -153,6 +159,9 @@ func placeContextGeometry(d source.Document, templates []source.ReferencePrefix,
 	}
 	if capture {
 		r.therion = state.therionView(groups, templateNodes)
+	}
+	if graphics {
+		r.graphics = state.graphicsView(groups, templateNodes, templateActual)
 	}
 	return r, nil
 }

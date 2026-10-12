@@ -628,3 +628,88 @@ losses. No CRS, entrance, stroke meaning or cross-section cropping is inferred.
 Native byte identity does not establish destination-application acceptance or a
 ready-made `.th`/`.th2` project. Independent capture and provenance are in
 [testdata/README](../internal/top/testdata/README.md#p09-native-therion-interchange).
+
+## Native graphics DXF (P10)
+
+`export <input.top> --format dxf --output <new-directory> [--view plan|side]
+[--scale 1..100000] [--dxf-options <mask>] [--grid-unit metres|feet]
+[--template-directory <dir>] [--close-loops]` publishes `survey.dxf` and
+schema-1 `report.json`. Defaults: plan, scale 500, native mask 14 (shots, rays,
+labels), metre grid and isolated input. All option arguments are single-use;
+unknown, duplicate, missing or invalid values fail. The decimal option mask
+accepts 0..4094 excluding bit 1; `--view side` sets native SIDE. Options are
+independent, including layer options when the corresponding geometry is disabled.
+
+| Bit | Native option | Behavior |
+| --- | --- | --- |
+| 1 | SIDE | Selected by `--view`; extended D/H rather than plan X/Y |
+| 2 | ENS | Survey legs/station circles; embedded XSection station geometry |
+| 4 | ENX | Survey and embedded XSection rays |
+| 8 | ENL | Labels of exported stations with positive raw head distance |
+| 16 | ENA | Template stations and attached rays; includes template grid bounds |
+| 32 | SEPS | Shot layer and fallback layer for rays/labels |
+| 64 | SEPX | Ray layer; also puts ordinary shots on Shots, as native |
+| 128 | SEPL | Label layer |
+| 256 | SEPC | Sketch color layers, including LGray connectors |
+| 512 | GEO | Add native reference east/north to coordinates |
+| 1024 | ENG | Native survey grid |
+| 2048 | SEPG | Grid layer |
+
+The byte profile is original PocketTopo 1.372 graphics DXF: AC1002, literal
+INSUNITS=4 at every scale, UTF-8 without BOM, CRLF and invariant culture.
+Coordinates add drawing origin and negate Y as wrapped Int32 *before* Double
+conversion. GEO adds the actual native reference Int64 east/north converted to
+Double; even side coordinates use these fields. Divide by scale and use Framework
+Double's general 15-significant-digit representation, trimmed fractions and
+uppercase exponents. Circles have radius 50/scale; label height stays 1.
+The native header does not describe rescaled real-world units or establish a CRS.
+
+Current drawing elements retain source order and precede template/current survey
+geometry. Singleton Polygons produce POINT, longer ones POLYLINE/VERTEX/SEQEND.
+All raw colors map to the seven native pens, with unknown colors green. Empty
+Polygons raise an explicit native-failure error. Resolved XSections always emit a
+DASH connector from the offset sketch center to the already placed station; ENS
+gates the embedded circle and ENX/ENL its rays/label. Lookup preserves native
+current-first/template fallback ownership; unresolved XSections emit nothing.
+
+Survey traversal uses native prepend order and cross attachment order. Invisible
+legs/rays emit no line, while named leg circles and eligible labels remain native.
+Reference/synthetic-root stations have native undefined TO and emit no circle.
+Actual steep/projected rays use DASH; corresponding template rays with a null
+native dashed pen are omitted. Dash tests retain raw inclination/distance and
+wrapped Int32 products, while coordinates use grouped/placed vectors. Embedded
+horizontal rays use raw vector DX/DY and inclination; directed rays use native
+ToRect with raw head azimuth and grouped DD, with the original projection threshold.
+
+Grid spacing is 1000 mm in metre mode or native 1520 mm in feet mode. Bounds are
+visible placed legs and references, excluding splays and sketch vertices. Template
+bounds are included only with ENA. Integer division truncates toward zero; expand
+the bounds by two grid steps and emit vertical lines before horizontal lines.
+Empty native bounds emit no grid lines. Wrapped/nonterminating grid arithmetic and
+Math.Abs(Int32.MinValue) failures return explicit errors before publication.
+
+`processing.PrepareGraphics` provides a detached view without changing P05–P09
+outputs or schemas. `exportdxf.Build` validates supported input through the existing
+bounded geometry/context path. Default output ceilings are 128 MiB and 1 million
+entities (including VERTEX/SEQEND); exact limits are inclusive. Grid cardinality is
+checked before iteration. A native missing-reference GEO failure is raised only
+when a coordinate is emitted, so empty GEO drawings remain supported. Geometry
+work/iteration limits and current-only closure retain P07/P08 contracts.
+
+Report fields identify source SHA/size/tail, resolved options/view, current and
+explicit template inventory/hashes/ignored bytes, every raw measurement and
+reference with file/local index and span, group membership/reversal, detached
+geometry with raw/native/display identities, each selected drawing element and
+omission, and each entity's owner plus exact output line range. Footer/header lines
+belong to no entity. Raw tables are read once when constructing provenance;
+source fields are separate from grouped vectors, placement and Q30 corrections.
+Losses include excluded drawings/template drawings, mapping and trip metadata,
+comments/roll, native filters, color normalization, numeric rounding and native
+failure deviations. Source bytes remain unchanged; no date/CRS is inferred.
+
+The P05 checked new-directory publication contract also applies to `survey.dxf`:
+sync/close each artifact, no-replace links and ownership anchors, report last.
+Errors return no Build result and publish nothing; notification failures preserve
+a completed package. Existing text/Therion artifact names and behavior remain.
+See [native evidence](../internal/top/testdata/README.md#p10-native-graphics-dxf).
+P11 and later native exporters are planned only.

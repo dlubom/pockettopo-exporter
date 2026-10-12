@@ -41,3 +41,9 @@ internal/top/testdata/native-context-read.txt -text whitespace=cr-at-eol
 internal/processing/testdata/context/*.tsv -text whitespace=cr-at-eol
 internal/top/testdata/native-therion-read.txt -text whitespace=cr-at-eol
 internal/exporttherion/testdata/*.txt -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof
+
+# P10 original-program DXF and evidence retain exact CRLF bytes.
+*.dxf binary
+*.png binary
+internal/exportdxf/testdata/*.txt -text whitespace=cr-at-eol
+internal/exportdxf/testdata/cases.tsv -text whitespace=cr-at-eol

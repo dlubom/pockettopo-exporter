@@ -51,6 +51,7 @@ type GeometryResult struct {
 	nodes      []GeometryNode
 	loops      []GeometryLoop
 	therion    TherionGeometry
+	graphics   GraphicsGeometry
 }
 
 func (r GeometryResult) Nodes() []GeometryNode { return slices.Clone(r.nodes) }

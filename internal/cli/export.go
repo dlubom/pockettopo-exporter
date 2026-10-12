@@ -68,7 +68,11 @@ type publicationResult struct {
 	Report any
 }
 
-func publishResult(output string, r publicationResult) (err error) {
+func publishResult(output string, r publicationResult) error {
+	return publishNamedResult(output, r, "survey.txt")
+}
+
+func publishNamedResult(output string, r publicationResult, artifactName string) (err error) {
 	if err = os.Mkdir(output, 0700); err != nil {
 		return err
 	}
@@ -114,7 +118,7 @@ func publishResult(output string, r publicationResult) (err error) {
 			}
 		}
 	}()
-	for _, name := range []string{"survey.txt", "report.json"} {
+	for _, name := range []string{artifactName, "report.json"} {
 		path := filepath.Join(output, name)
 		temp := fmt.Sprintf("%s.tmp", path)
 		f, e := os.OpenFile(temp, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
@@ -127,7 +131,7 @@ func publishResult(output string, r publicationResult) (err error) {
 			return e
 		}
 		owned = append(owned, ownedPath{temp, fileIdentity})
-		if name == "survey.txt" {
+		if name == artifactName {
 			e = finishArtifact(f, func(w io.Writer) error { _, e := w.Write(r.Text); return e })
 		} else {
 			e = finishArtifact(f, func(w io.Writer) error { return json.NewEncoder(w).Encode(r.Report) })

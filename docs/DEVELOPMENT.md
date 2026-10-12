@@ -42,10 +42,10 @@ uncached race tests, coverage, build and CLI smoke behavior. Generated outputs
 are `coverage.out`, `mutation.json` and `build/`; caches/tools are in ignored
 `.cache/` and `.tools/`. There is no `go.sum` because there are no module
 dependencies. The document group covers P04d source/accounting/inspect faults alongside the
-unchanged earlier groups. The native-text group covers text and Therion serialization, decimal
+unchanged earlier groups. The native-text group covers text, Therion and graphics DXF serialization, decimal
 formatting, provenance and safe CLI publication. The weak-suite negative control deliberately stubs
-inspection/export/processing/geometry/context and exercises version, inspect, process, geometry, context and export arguments without assertions;
-all 42 generated mutants must live and the quality gate must reject them.
+inspection/export/processing/geometry/context and exercises version, inspect, process, geometry, context and text/Therion/DXF export arguments without assertions;
+all 46 generated mutants must live and the quality gate must reject them.
 Run one sequential campaign or one parallel coordinator at a time. The parallel
 runner snapshots only source/scripts/pinned tools into a private checkout per
 group with private caches/reports. It limits active groups, collects reports and
@@ -103,8 +103,8 @@ second/third Polygon scopes are separated, mappings and marker pairs stay
 cohesive, and processing has targeted P06, P07 and P08 campaigns in the same group. The unchanged prior 25 explicit
 scopes plus P06 processing, P07 geometry and P08 context remain exactly-once; all prior faults and thresholds
 are retained. Gremlins is partitioned into tables, drawings, output and processing
-by source file, with all internal production files assigned to one shard (Therion joins output) and
-unknown new packages rejected. Every shard still discovers coverage with the
+by source file, with all internal production files assigned to one shard (Therion and DXF join output) and
+unknown new packages rejected. P10 adds the dxf explicit scope to native-text; no earlier scope is removed. Every shard still discovers coverage with the
 full suite, uses all prior operators, the fail-closed adapter and the same >=90%
 JSON gate. Full/sharded mutation inventories are compared during delivery.
 The scheduling controls check serial/matrix/parallel scope equality, private

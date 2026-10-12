@@ -2097,3 +2097,73 @@ P05–P08 artifacts are unchanged; all 160 documented hashes were verified.
 | `internal/exporttherion/testdata/text-numbers.txt` | `56eea31cb09032422cc39190002cd48e6314fe978de5e4cc06b36cf443e3d233` |
 | `internal/exporttherion/testdata/text-rounding-closed.txt` | `3834e994a246387e6de1611aad29b82126d9cf183c40b079ff59a92961a2c1a9` |
 | `internal/exporttherion/testdata/text-rounding.txt` | `3834e994a246387e6de1611aad29b82126d9cf183c40b079ff59a92961a2c1a9` |
+
+## P10 native graphics DXF
+
+The unchanged original PocketTopo 1.372 assembly has SHA-256
+`048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371`.
+Research starts with the sibling analysis map and recovered
+`DXFWriter`, `GraphicsForm`, `Polygon.WriteDXF`, `XSection.WriteDXF`,
+`Station.WriteDXF/WriteXSectDXF`, `Survey.WriteDXF/WriteDXFGrid/GridSize/GetRef`
+and corresponding `PocketTopo.il`. The IL confirms unchecked Int32 addition and
+negation before `conv.r8`, independent bit tests, null template dashed pens,
+raw inclination/distance comparisons and source-first/template station lookup.
+The earlier JKTZ export module was inspected for provenance ideas; it does not
+supply a native graphics DXF oracle and no Python exporter behavior was reused.
+
+`scripts/reference-dxf-probe.cs` creates literal TOP streams and invokes Read/Load,
+CloseLoops and DXFWriter.WriteDXF by reflection into that original assembly.
+It initializes distinct native static pen identities, including DASH styles.
+No recovered exporter or geometry code is compiled. Native DXF source inputs,
+partial outputs and successful output bytes are preserved under
+`internal/exportdxf/testdata/`. The native manifest `cases.tsv` identifies source,
+explicit context, closure, native options, scale and grid unit for all **224** cases:
+**217 complete** byte goldens and **7 partial** native failures. Golden tests
+compare every complete byte stream and require all partial cases to fail before
+publication. These are not claims of arbitrary destination CAD acceptance.
+
+Cases cover plan/side, every option bit and composites, all 256 raw colors
+normalized to seven pens, 128 singleton POINTs and 128 two-point Polylines,
+unresolved and resolved horizontal/directed XSections, invisible/steep rays,
+nonzero origins and wrapping coordinates, scales 1/3/500/100000, large Int64
+references, GEO and template-only reference bases, metre/native feet grids,
+P07 geometry cases and P08 context with/without current-only closure. Existing
+P05–P09 frozen sources/probes/outputs are unchanged. Empty Polygon and missing
+GEO reference partial outputs remain evidence of native failure; empty GEO with
+no coordinate is a successful full native file.
+
+Fresh native capture uses the existing Wine/.NET 2.0 installation:
+
+```sh
+mkdir -p build/p10
+WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  '/Applications/Wine Staging.app/Contents/Resources/wine/bin/wine' \
+  /Users/dariuszlubomski/.local/share/pockettopo/wineprefix/drive_c/windows/Microsoft.NET/Framework/v2.0.50727/csc.exe \
+  /nologo /r:System.Windows.Forms.dll /r:System.Drawing.dll \
+  '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p10\probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-dxf-probe.cs'
+WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  '/Applications/Wine Staging.app/Contents/Resources/wine/bin/wine' build/p10/probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p10\native' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter' \
+  > build/p10/native-read.txt 2> build/p10/native-read.err
+shasum -a 256 -c internal/exportdxf/testdata/SHA256SUMS
+python3 scripts/check-native-dxf.py --root internal/exportdxf/testdata \
+  --report build/p10/native-coordinate-checks.json --preview build/p10/native-dxf-preview.svg
+```
+
+The native probe completed with exit 0 and empty stderr. `SHA256SUMS` contains
+242 exact source/probe/manifest/transcript/golden/visual hashes. The checksum
+manifest itself is `539da4c3e9007f7f11e07c47a27921c62784cdd2662e22ac3a84f65ec10bc2a2`;
+probe `284a7884c96d87bee38987edcb51f57fe1fe10cd4126593d506f04f0b934216e`;
+transcript `2833259d26f3d76ba47d59706ace8322ac32662fa2cc3791c8e1c2a6f6ed928e`.
+
+Independent Python checks consume frozen native bytes, not Go output. They check
+CRLF/header/EOF and coordinate/layer/entity counts, first sketch (2.01, 6.01),
+GEO (202.02, 406.02), metric/feet DXF grid steps 2/3.04 at scale500, template
+connector (22.552, 13.316) to (20.542, 11.306), DASH and scale3 general formatting.
+`native-coordinate-checks.json` records these results. `native-dxf-preview.svg`
+and its rendered PNG show native template-rays plan/side and were visually
+inspected independently; this is a native-coordinate preview, not an Inkscape
+DXF import test. The three original streams and every earlier fixture stay frozen.

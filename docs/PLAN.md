@@ -27,7 +27,8 @@ P05–P08 and existing prefix contracts remain unchanged.
 | P07 | Isolated reference placement, plan/extended geometry and optional native loop closure | Implemented; full local gates verified |
 | P08 | Explicit native template-directory geometry and per-source lineage | Implemented; full local gates verified |
 | P09 | Native Therion DATA, drawings and embedded XSections with provenance | Implemented; local ordinary gates verified; exact-SHA hosted gates required |
-| P10–P14 | Other native exports and compatibility milestone | Not implemented |
+| P10 | Native graphics DXF, plan/side/options, provenance and bounded native failures | Implemented; local ordinary gates and independent review verified; exact-SHA hosted gates required |
+| P11–P14 | Remaining native exports and compatibility milestone | Planned only |
 | P15/P16 | Walls SRV / Survex SVX | Subsequent scope |
 
 ### Verification and publication
@@ -450,12 +451,81 @@ GitHub Actions. The commit's checks and delivery response retain publication
 proof; do not substitute an earlier SHA or local snapshot.
 
 **Next useful increment:** P10 — native graphics DXF with plan/side options,
-independent native bytes and coordinate checks. Not implemented. Stop after P09.
+independent native bytes and coordinate checks. Implemented below. P09 remains preserved.
+
+## P10 — native graphics DXF
+
+**Status:** implemented; local ordinary gates and independent review verified.
+Exact-SHA hosted gates are required before publication is reported complete.
+**Dependency:** P04d/P07/P08. Only P10 is authorized;
+work directly on main and preserve P05–P09. Stop after P10.
+
+**Outcome:** `export <input.top> --format dxf --output <new-directory>
+[--view plan|side] [--scale 1..100000] [--dxf-options <native-mask>]
+[--grid-unit metres|feet] [--template-directory <dir>] [--close-loops]`
+publishes `survey.dxf` and deterministic source/geometry/entity provenance and
+loss reporting. One selected native drawing per invocation; default plan,
+scale 500, shots/rays/labels enabled (mask 14), metre grid. The SIDE bit is
+selected by `--view`; all other native graphics bits are supported independently.
+No 3D DXF, VisualTopo, Toporobot or optional drawing formats.
+
+Architecture: `internal/processing/graphics.go` captures a detached native
+view and metadata from existing bounded geometry; `internal/exportdxf` owns
+serialization, options, limits and entity lineage. `internal/cli/dxf.go` reuses
+P08 inventory and P05 publication with a selected artifact filename. Existing
+processing/export schemas and byte outputs retain their contracts.
+
+Implementation and verification plan:
+- [x] Confirm original DXFWriter/Polygon/XSection/Station/Survey/GraphicsForm
+  C# and IL; capture independent plan/side/options/context/closure/color/number
+  goldens and native failure cases without recompiling decompiled code.
+- [x] Add failing DXF CLI/native byte and coordinate assertions; implement
+  detached graphics view, bounded serializer and provenance, then verify the
+  same tests pass. Test overflow/precision, invisible/dashed rays, origins,
+  unresolved stations, template ownership, empty drawings and failures.
+- [x] Extend existing mutation scopes/shard scheduling without losing earlier
+  faults or controls; run bounded local ordinary gates, independent review,
+  frozen evidence hash readback and coordinate/visual checks.
+**Publication requirement:** Commit/push the final reviewed tree, run all ordinary platform gates,
+explicit mutations, Gremlins and negative/dispatch controls in GitHub Actions,
+review survivors and verify all jobs for the exact delivered SHA. The commit checks
+and delivery response retain this proof; no earlier SHA substitutes for it.
+
+Native partial writes are explicit errors before publication. Output bytes,
+entities and grid work have ceilings; native potentially wrapping grid loops
+must fail explicitly when they cannot terminate within bounds. No inferred CRS
+or survey dates. Report raw fields separately from derived coordinates.
+
+### Delivered behavior and verification
+
+The separate graphics view and serializer reproduce all **217 complete native
+byte goldens**; **7 native partial outputs** return explicit errors before
+publication. The unchanged original assembly, C#/IL, all native option bits,
+plan/side, source colors, XSections, scale/number formatting, metric/feet grids,
+GEO with current/template references, directory contexts and optional closure
+are covered. Independent coordinate/structure checks and a rendered native
+plan/side preview supplement exact bytes; no destination CAD import is claimed.
+
+Independent review identified table cloning per provenance row and last-entity
+footer ownership; both were repaired and protected by regressions. The final
+review also strengthened nonzero-roll/reversed-member and strict dash-boundary
+fixtures, confirming the fixtures contain the cases asserted. No substantive
+production findings remain. All **242** new checksums verify; **308** preexisting
+raw/golden/probe files remain byte-for-byte unchanged. Local check.sh passes
+with race, vet, Staticcheck, coverage controls, build/smoke and **98.7%** statement
+coverage. All **46** weak-suite mutants LIVED and the quality gate rejected the
+suite; compiler/setup controls return NOT VIABLE. Dispatch controls preserve
+exactly-once scopes, report/error propagation and private worker limits.
+P10 adds **60** explicit faults in the existing native-text group and assigns
+new graphics production files to the output/processing Gremlins shards. The
+complete heavy campaign runs on GitHub Actions, including all earlier scopes.
+
+**Next useful increment:** P11 — VisualTopo and passage dimensions, planned only.
 
 ## Remaining original roadmap
 
-After P09 there are **5 remaining required delivery stages to the native
-milestone**: P10–P14. P01 is a capability/fixture inventory maintained within those stages,
+After P10 there are **4 remaining required delivery stages to the native
+milestone**: P11–P14. P01 is a capability/fixture inventory maintained within those stages,
 not an additional standalone implementation chat. P15 and P16 add two subsequent
 stages for Walls and Survex. P17–P19 and R01–R07 are optional/conditional scope.
 
@@ -474,7 +544,7 @@ routine documentation and individual mutation groups are not separate PBIs.
 | P07 | Reference placement, plan geometry, extended projection and closure | Implemented above |
 | P08 | Explicit native template-directory context | Implemented above |
 | P09 | Native Therion DATA and drawing sections, embedded XSections | Implemented above |
-| P10 | Native graphics DXF, plan/side and options | P04d/P07/P08; native bytes plus coordinate/visual checks |
+| P10 | Native graphics DXF, plan/side and options | Implemented above; native byte, coordinate and visual evidence |
 | P11 | VisualTopo and passage dimensions | P06/P07/P08 |
 | P12 | Toporobot and dialog options | P06/P07/P08 |
 | P13 | Native 3D DXF | P07/P08; degenerate and bounded-failure cases |
