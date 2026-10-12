@@ -525,7 +525,9 @@ P09 allocation/string idioms and literal native option constants. No operator,
 exclusion or gate was weakened; a full dry discovery finds **1588 RUNNABLE** sites
 and zero uncovered sites. The initial explicit side-dash fault also correctly
 failed compilation rather than counting as KILLED; its replacement retains the
-height variable while zeroing its contribution. Package-owned tests and 44 new
+height variable while zeroing its contribution. The inclination fault likewise
+retains its source-table read; all 60 targeted faults pass a serial bounded
+compiler-only preflight. Package-owned tests and 44 new
 native goldens strengthen default/boundary options, no-template-export masks,
 nonzero origin fallback, label layers, exact ray thresholds and positive/negative
 survey grids. Existing 224 P10 golden bytes remain unchanged. Independent review

@@ -443,7 +443,7 @@ func TestDXFSideDashDistanceThreshold(t *testing.T) {
 	for _, tc := range []struct {
 		distance, dd, dh int32
 		dash             bool
-	}{{1000, 1000, 0, false}, {1000, 500, 0, true}, {1, 0, 0, false}, {32, 16, 16, false}} {
+	}{{1000, 1000, 0, false}, {1000, 500, 0, true}, {1000, 0, 500, true}, {1, 0, 0, false}, {32, 16, 16, false}} {
 		r := Report{}
 		w := writer{opt: Options{Scale: 500, Mask: Side | Rays}, lim: defaultLimits, lineNumber: 1, report: &r}
 		n := processing.GraphicsStation{To: -1, Distance: tc.distance, Node: processing.GeometryNode{StartKey: "root", Position: processing.Position{D: tc.dd, H: -tc.dh}, Vector: processing.Vector{DH: tc.dh}}}

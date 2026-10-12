@@ -46,9 +46,20 @@ func TestDXFCLIOptionsAndFailures(t *testing.T) {
 		bad = append(bad, append(append([]string{}, base...), extra...))
 	}
 	for _, args := range bad {
+		args = append([]string{}, args...)
+		target := ""
+		if len(args) > 5 && args[5] != "" {
+			target = filepath.Join(t.TempDir(), "out")
+			args[5] = target
+		}
 		var out, err bytes.Buffer
-		if Run(args, &out, &err) != 1 || out.Len() != 0 || err.Len() == 0 {
+		if Run(args, &out, &err) != 1 || out.Len() != 0 || err.String() != help {
 			t.Fatal("bad DXF args", args, &out, &err)
+		}
+		if target != "" {
+			if _, e := os.Lstat(target); !os.IsNotExist(e) {
+				t.Fatal("invalid option published output", args, e)
+			}
 		}
 	}
 	var stdout, stderr bytes.Buffer
@@ -173,7 +184,7 @@ type dxfFailingWriter struct{}
 func (dxfFailingWriter) Write([]byte) (int, error) { return 0, fmt.Errorf("output failed") }
 
 func TestDXFCLIDefaultAndBoundaryOptions(t *testing.T) {
-	for _, extra := range [][]string{nil, {"--scale", "1"}, {"--scale", "100000"}, {"--dxf-options", "4094"}} {
+	for _, extra := range [][]string{nil, {"--view", "plan"}, {"--scale", "1"}, {"--scale", "100000"}, {"--dxf-options", "4094"}} {
 		target := filepath.Join(t.TempDir(), "out")
 		args := append([]string{"export", "../exportdxf/testdata/features.top", "--format", "dxf", "--output", target}, extra...)
 		var out, err bytes.Buffer
@@ -194,7 +205,7 @@ func TestDXFCLIDefaultAndBoundaryOptions(t *testing.T) {
 			if extra[0] == "--scale" {
 				n, _ := strconv.Atoi(extra[1])
 				scale = int32(n)
-			} else {
+			} else if extra[0] == "--dxf-options" {
 				mask = 4094
 			}
 		}
