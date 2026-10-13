@@ -32,7 +32,8 @@ P05–P08 and existing prefix contracts remain unchanged.
 | P12 | Native Toporobot and dialog options, bounded existing-file merge and provenance | Implemented; exact-SHA hosted gates required |
 | P13 | Native 3D DXF, source-linked points/entities and bounded native hulls | Implemented; exact-SHA hosted gates required |
 | P14 | Native capability inventory, corpus validation and offline distributions | Implemented; exact-SHA hosted gates required |
-| P15/P16 | Walls SRV / Survex SVX | Agreed contracts below; implementation planned |
+| P15 | Walls SRV measurement export with P06 averages and individual splays | Implemented; exact-SHA hosted gates required |
+| P16 | Survex SVX individual-reading export | Agreed contract; planned |
 
 ### Verification and publication
 
@@ -785,9 +786,9 @@ the delivery SHA.
 
 ## P15 — Walls SRV
 
-**Status:** planned; contract agreed, not implemented.
+**Status:** implemented; exact-SHA hosted gates required.
 **Dependencies:** P04d, P06 and existing export/report publication.
-**Scope:** implement only P15 after a separate request, following the
+**Scope:** only P15, following the
 [SRV/SVX contract](SPEC.md#walls-srv-and-survex-svx-design-p15p16).
 
 **Acceptance:**
@@ -798,6 +799,39 @@ the delivery SHA.
   invalid-data failures, date templates and full original-row lineage.
 - Validate unclosed vectors and actual Walls acceptance; record version/settings
   and anonymous-splay limitations. Survex reading SRV is a separate check.
+
+### Delivered behavior and evidence
+
+`export --format srv` writes new-directory `survey.srv` and `report.json` using
+P06 consecutive spatial averages, head orientation/correction, raw singletons
+and separate anonymous splays. It preserves all source-row spans/values, raw ID
+aliases, original/native/emitted values, members/reversals, unresolved correction
+sources and output-line ownership. Initial/change-only manual declination and
+commented trip-date templates are separate directives; no generated averaging
+comments, geographic fixes, geometry/closure or inferred LRUD are added.
+
+Original PocketTopo independently read six authored cases and captured raw vectors
+and Float32 direction bits. Review found Walls rejects zero self-legs as well as
+nonzero self-legs; both now fail before publication. Distinct-name zero ties are
+retained. Review also added a nonfinite native-summary negative control. All
+P05–P14 frozen evidence remains unchanged. The 58-fault Walls campaign joins the
+existing native-text group and output shard without removing any previous scope,
+operator, threshold or failure control; the exact weak-suite cardinality is 63.
+
+The original Walls v2.3.0-beta.1 Windows gate installs the checksum-pinned official
+runtime, compiles the reviewed SRV in the application's normal project UI path,
+closes it normally and verifies native NTV vectors/final NTN statistics, commented
+dates and an actual invalid-inclination negative control. Its exact-SHA artifact
+retains projects, input/report hashes, native workfiles and window-state evidence.
+A Survex import is not its acceptance oracle. Local native-window access was
+unavailable because the Mac was locked; the hosted native gate is authoritative.
+Local ordinary checks (race, Staticcheck, coverage/build and validation controls)
+and complete dispatch controls passed with `GOMAXPROCS=2 GOFLAGS=-p=1`; full
+mutations run in Actions. Incomplete local preflight stopped on disk exhaustion
+and is not counted as mutation evidence.
+See [provenance](../internal/top/testdata/README.md#p15-walls-srv) and DEVELOPMENT.
+
+Stop after P15. P16 remains planned and requires its own request.
 
 ## P16 — Survex SVX
 
@@ -848,7 +882,7 @@ routine documentation and individual mutation groups are not separate PBIs.
 | P12 | Toporobot and dialog options | Implemented above |
 | P13 | Native 3D DXF | Implemented above; degenerate and bounded-failure cases |
 | P14 | Close native capability matrix and validate distribution | Implemented above; exact-SHA hosted gates required |
-| P15 | Walls SRV with averaged repeated legs | Contract above; follows the native milestone; actual Walls validation |
+| P15 | Walls SRV with averaged repeated legs | Implemented above; original Walls gate and exact-SHA CI required |
 | P16 | Survex SVX retaining individual readings | Contract above; follows P15; Survex performs adjacent-repeat averaging |
 | P17 | Optional layered SVG | Accepted R03 contract; can follow native drawings before SRV/SVX |
 | P18 | Optional XVI | Accepted R04 contract and native drawing semantics |

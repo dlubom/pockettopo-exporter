@@ -125,7 +125,20 @@ for arithmetic, omissions and point/entity provenance. P14 closes the
 the pinned 262-input real corpus and validated offline distributions for Linux
 amd64, Windows amd64 and macOS arm64. Each exact-SHA CI run uploads checksummed
 ZIP packages and the corpus validation report. Historical per-field prefix APIs
-remain supported. The next planned increment is **P15: Walls SRV**.
+remain supported. P15 adds Walls measurement export:
+
+```sh
+go run ./cmd/pockettopo-exporter export internal/exportwalls/testdata/features.top --format srv --output build/walls
+```
+
+It publishes `survey.srv` and `report.json`, using P06 spatial averages for
+consecutive repeated/reversed legs and retaining individual splays. Declination
+is emitted initially and only at changes; editable date templates stay comments.
+Original rows, corrections, native directions and output rounding remain in the
+report. The measurement-only profile omits fixes and drawings. See the
+[SRV contract](docs/SPEC.md#walls-srv-and-survex-svx-design-p15p16) and
+[fixture provenance](internal/top/testdata/README.md#p15-walls-srv).
+The next planned increment is **P16: Survex SVX**.
 
 ## Documentation
 

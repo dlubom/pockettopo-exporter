@@ -80,4 +80,7 @@ internal/top/testdata/native-dxf3d*.txt -text whitespace=cr-at-eol
 # P14 original-program corpus captures preserve complete native bytes.
 validation/native-text/*.txt -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof
 validation/native-text/cases.tsv -text whitespace=cr-at-eol
+internal/exportwalls/testdata/*.srv -text whitespace=cr-at-eol
+internal/exportwalls/testdata/*.tsv -text whitespace=cr-at-eol
+internal/exportwalls/testdata/native.txt -text whitespace=cr-at-eol
 internal/top/testdata/native-corpus-text-read.txt -text whitespace=cr-at-eol

@@ -46,7 +46,7 @@ dependencies. The document group covers P04d source/accounting/inspect faults al
 unchanged earlier groups. The native-text group covers text, Therion, graphics DXF, VisualTopo, Toporobot and 3D DXF serialization, decimal
 formatting, provenance and safe CLI publication. The weak-suite negative control deliberately stubs
 inspection/export/processing/geometry/context and exercises version, inspect, process, geometry, context and text/Therion/DXF/VisualTopo/Toporobot/3D DXF export arguments without assertions;
-all 58 generated mutants must live and the quality gate must reject them.
+all 63 generated mutants must live and the quality gate must reject them.
 Run one sequential campaign or one parallel coordinator at a time. The parallel
 runner snapshots only source/scripts/pinned tools into a private checkout per
 group with private caches/reports. It limits active groups, collects reports and
@@ -183,7 +183,7 @@ prior scope, all five shards, operators, >=90% gate and failure controls.
 `GOMAXPROCS=2 GOFLAGS=-p=1 bash scripts/mutation-dxf3d.sh --preflight` checks that
 all new faults compile without running a local mutation campaign or producing
 a KILLED report. The actual full campaign and negative control run in Actions.
-The native weak-suite control now requires exactly 58 live mutants.
+The native weak-suite control requires exactly 63 live mutants after P15.
 
 ## P14 corpus and offline distributions
 
@@ -224,3 +224,40 @@ The package BUILD.json distinguishes the source SHA while preserving existing
 CI complete explicitly requires the new corpus job and all three platform
 checks (each containing distribution verification), alongside the unchanged
 mutation matrix and failure controls.
+
+## P15 original Walls validation
+
+P15 keeps every P05–P14 scope, operator, threshold and failure control. The
+`walls` explicit campaign adds 58 faults to `native-text`; `exportwalls` is in
+the existing output Gremlins shard. The native weak-suite still requires exact
+cardinality: 63 live mutants. Setup/compiler/timeouts/incomplete outcomes never
+count as kills. Native compile-only preflight is available as
+`GOMAXPROCS=2 GOFLAGS=-p=1 bash scripts/mutation-walls.sh --preflight`; it does not
+produce a mutation score. Prefer the full Actions campaign after local disk or
+resource pressure. Never aggregate incomplete preflight output as a passed run.
+
+```sh
+GOMAXPROCS=2 GOFLAGS=-p=1 bash scripts/check.sh
+python3 scripts/test_walls_validation.py
+bash scripts/mutation-dispatch-trial.sh
+# Original application, on an isolated Windows runner with the pinned runtime:
+# pwsh scripts/validate-walls-native.ps1 -Binary build/pockettopo-exporter.exe -Walls <Walls32.exe>
+```
+
+`walls-native` is a required Windows Actions job. It administratively extracts
+(no installation changes to the user's Mac) official Walls v2.3.0-beta.1 from
+MSI SHA-256 `11445a522760ef98876c3d025e90b734c2073d8a033717c7313a8da130168ce0`.
+The owned runner process follows `ID_PRJ_COMPILEITEM`, then closes normally.
+Validate exact native NTV layout/version, complete DBF headers, source-line/name
+identity, unadjusted ENU vectors, final NTN survey count/length and an actual
+invalid-inclination rejection. Merely starting Walls, creating a workfile or
+reading SRV in Survex does not satisfy this gate. `test_walls_validation.py`
+rejects malformed schema/header/date/fix/nonfinite/incomplete/trailing cases.
+Native projects/workfiles/window evidence and `report.json` are uploaded as
+`original-walls-<SHA>`; every mutation job also uploads its raw report for survivor
+review. CI complete requires this native job in addition to all existing jobs.
+
+Offline distribution validation adds one SRV package regression through a separate
+P15 manifest. The six frozen P14 native byte cases and their hashes are unchanged.
+The existing 262-input/25-profile native corpus baseline remains unchanged; P15
+uses small independently read semantic cases and the original destination gate.

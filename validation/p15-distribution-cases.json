@@ -1,0 +1,8 @@
+[
+  {
+    "format": "srv",
+    "input": "internal/exportwalls/testdata/features.top",
+    "golden": "internal/exportwalls/testdata/features.srv",
+    "options": []
+  }
+]

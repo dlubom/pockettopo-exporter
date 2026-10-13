@@ -1,0 +1,126 @@
+[
+  {
+    "path": "internal/exportwalls/testdata/alias-self-zero.top",
+    "sha256": "c6554c191722fdf381969327b8c1ca92a4e8ca38f59da2dd64fcb836e1d83907"
+  },
+  {
+    "path": "internal/exportwalls/testdata/aliases.json",
+    "sha256": "0ef99f4117d5abcb7dbd800c961f18c462961db6a3a4051f443fdcb5dcd137e6"
+  },
+  {
+    "path": "internal/exportwalls/testdata/aliases.srv",
+    "sha256": "56990f6b0fa69e06eac329b2fd31e6704916477f82c935791918b87ea9cf49e4"
+  },
+  {
+    "path": "internal/exportwalls/testdata/aliases.top",
+    "sha256": "55af517458b94a01d58e6f3b29ae58383169ced99e11c146066410912df730ec"
+  },
+  {
+    "path": "internal/exportwalls/testdata/aliases.tsv",
+    "sha256": "add80b1871023f139f22e652ca7de6486aff7476d599f45448985ce364309fcc"
+  },
+  {
+    "path": "internal/exportwalls/testdata/cancel.top",
+    "sha256": "7d521d094d9a04c9aa15cb48217050106ec20ced5b2bbeafdb101519c543fca3"
+  },
+  {
+    "path": "internal/exportwalls/testdata/cancel.tsv",
+    "sha256": "b3cde0082479ed1009fffcbd940630af0ccd204111f04f68fb8362972de995ea"
+  },
+  {
+    "path": "internal/exportwalls/testdata/empty.top",
+    "sha256": "fb5cdecb0c1dd3daac7dd93a3618bcb8152152ffaa330789d9791abf3b10c1ff"
+  },
+  {
+    "path": "internal/exportwalls/testdata/features.json",
+    "sha256": "4e1c893485965abcd37c2505d22dc0b4166ce674f02ba1997b528a8a7065863b"
+  },
+  {
+    "path": "internal/exportwalls/testdata/features.srv",
+    "sha256": "c0e13551e52b5960488b5c76ad9c05bf4a32b9f88a5550f8836d313c8913d742"
+  },
+  {
+    "path": "internal/exportwalls/testdata/features.top",
+    "sha256": "428ac2aa72396282e6ec47d6de32dd51607e4daf02059e0479d585c23f84dea2"
+  },
+  {
+    "path": "internal/exportwalls/testdata/features.tsv",
+    "sha256": "d09844b8766c0c255833f63ea2a0beab227c5a1554ea0ec6f8d8417f296db9bf"
+  },
+  {
+    "path": "internal/exportwalls/testdata/inclination.top",
+    "sha256": "a8d5e6fc710741834b242ded42c12549cf56f86eb06b76de0783124fc04d864c"
+  },
+  {
+    "path": "internal/exportwalls/testdata/mixed-zero.top",
+    "sha256": "289de9276ec4e3115fcad0bcb5f80f876a1d84eee24338dd9273e74a549dfd51"
+  },
+  {
+    "path": "internal/exportwalls/testdata/mixed-zero.tsv",
+    "sha256": "94976e2881aeafe62d515db3c64ed201d63496a9147e2984294bb25e310179cb"
+  },
+  {
+    "path": "internal/exportwalls/testdata/mixed.json",
+    "sha256": "4cfe0d334a62a0e97ed908726b50873f04094fb54f5b6e0314d7b1e38fc60122"
+  },
+  {
+    "path": "internal/exportwalls/testdata/mixed.srv",
+    "sha256": "c4405f3965e93bd9ab493f8715f9286360e500217766887f6f1976f0fa2d00e8"
+  },
+  {
+    "path": "internal/exportwalls/testdata/mixed.top",
+    "sha256": "79cb2c4a0a57760c7c0a92ccd6d6f5ebab1ce5cd1b532be3d47a750645456e0b"
+  },
+  {
+    "path": "internal/exportwalls/testdata/mixed.tsv",
+    "sha256": "4f46c14a5874dfc8db9c58d4b58fe340fd70d5d0f17847f25fd49d849ae0d04e"
+  },
+  {
+    "path": "internal/exportwalls/testdata/native.txt",
+    "sha256": "465c84d807e38106ea811fd2be5d6d8e4735ef93f2b94e9b45b9ffaa66aebb9f"
+  },
+  {
+    "path": "internal/exportwalls/testdata/negative.top",
+    "sha256": "a70aab6a15aa810870acb71d6a01ff8c8caf5564feaab5c18b971cf3a321ff0c"
+  },
+  {
+    "path": "internal/exportwalls/testdata/self-zero.top",
+    "sha256": "c4b8f7d55d6a6f654344c784af6268231398304eff6138a578466e92693fcb66"
+  },
+  {
+    "path": "internal/exportwalls/testdata/self.top",
+    "sha256": "b183155e30a64a00feaec24790baa572edb1f7b705cb10d57439370d4fe1d131"
+  },
+  {
+    "path": "internal/exportwalls/testdata/ties.json",
+    "sha256": "ff1c1efff634dd4a316b06ddda3481d89848079c5ab2ca1231eff373922baaa9"
+  },
+  {
+    "path": "internal/exportwalls/testdata/ties.srv",
+    "sha256": "4dc3a5d43f02dbbab59919961c84fdd981e7bd645123fe651e7a20b2236488b4"
+  },
+  {
+    "path": "internal/exportwalls/testdata/ties.top",
+    "sha256": "0ed6349613f42004206392513ec34061576337e66753c5fa66ced6a39190e166"
+  },
+  {
+    "path": "internal/exportwalls/testdata/ties.tsv",
+    "sha256": "4bf5c7fd8c186d98ae2392507f1ba2e37763ae58d36f77639716052ebf993d0b"
+  },
+  {
+    "path": "internal/exportwalls/testdata/undefined.top",
+    "sha256": "da450650bde371045aa52a7ffe49b9e47e60fcbc21bd65fd7255e3df6e4808f9"
+  },
+  {
+    "path": "scripts/reference-srv-probe.cs",
+    "sha256": "dd757c8286c47959a4c920da27b077b189de05eb26948ba91c5feaaaa4f81464"
+  },
+  {
+    "path": "scripts/create-srv-fixtures.py",
+    "sha256": "1c1df8ddf156157cc6f27b7d5fa1aabaaf985e99c324d5f687e4bde594312c1b"
+  },
+  {
+    "path": "validation/p15-distribution-cases.json",
+    "sha256": "714fdbe23d62ea2f1aa83a7cb1cec94e3e71e185c20ce75afdf55ff42f1078eb"
+  }
+]

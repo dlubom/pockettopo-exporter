@@ -77,6 +77,7 @@ def smoke(payload, target, revision):
         if invoke(["--version"]).stdout != b"pockettopo-exporter dev\n" or invoke(["--help"]).returncode != 0:
             raise ValueError("distributed CLI help/version failed")
         cases = json.loads((REPO / "validation/distribution-cases.json").read_text())
+        cases += json.loads((REPO / "validation/p15-distribution-cases.json").read_text())
         for index, case in enumerate(cases):
             source = scratch / Path(case["input"]).name
             shutil.copyfile(REPO / case["input"], source)
@@ -96,7 +97,9 @@ def smoke(payload, target, revision):
             result = invoke(["export", bad, "--format", fmt, "--output", output])
             if result.returncode != 1 or result.stdout or not result.stderr or output.exists():
                 raise ValueError("distributed CLI malformed-input contract failed")
-    return {"source_revision": revision, "target": target, "native_byte_cases": len(cases),
+    return {"source_revision": revision, "target": target,
+            "native_byte_cases": sum(x["format"] != "srv" for x in cases),
+            "destination_byte_cases": sum(x["format"] == "srv" for x in cases),
             "offline": True, "no_replace": True, "malformed_input": True}
 
 

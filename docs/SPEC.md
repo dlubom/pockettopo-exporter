@@ -65,7 +65,7 @@ gates alongside all existing ordinary/mutation/control jobs.
 
 ## Walls SRV and Survex SVX design (P15/P16)
 
-**Status:** agreed contract; implementation planned. P15 exports `survey.srv`,
+**Status:** P15 implemented; P16 remains planned. P15 exports `survey.srv`,
 P16 exports `survey.svx`; both include `report.json`. Commands use
 `export <input.top> --format srv|svx --output <new-directory>`.
 One isolated TOP v3 input, measurement data only, without prior loop closure,
@@ -104,6 +104,8 @@ template context, drawings, derived LRUD or inferred geographic fixes.
 - All-zero named groups remain ties. Reject mixed zero/nonzero groups, nonzero
   cancellation, undefined From, name collisions, negative distances, raw
   inclinations outside ±90 and unsupported/non-finite results before publication.
+  SRV also rejects all native-identical endpoints, including zero self-legs: Walls
+  rejects these as duplicate names. Distinct-name all-zero ties remain supported.
 - The report retains source hashes, raw IDs/aliases, rows/spans, original/emitted
   values, grouping, corrections and omissions. Reuse existing safe publication
   and destination defaults; no guessed accuracy, team, entrance or flag semantics.
@@ -190,6 +192,22 @@ so equal closed SRV/SVX geometry is not required.
 [Survex commands](https://survex.com/docs/manual/datafile.htm#declination),
 [Survex repeats](https://survex.com/docs/manual/svxhowto.htm#repeated-readings).
 JKTZ is syntax/provenance prior art, not this project's averaging oracle.
+P15 uses `internal/exportwalls.Build` and the existing checked no-replace,
+report-last publication. Output has an inclusive 128 MiB ceiling; resource errors
+return an empty result and publish nothing. Existing parser/table limits apply;
+report lineage and source copies can require substantially more memory than the
+input. Its deterministic schema-1 report includes raw trips/references/rows and
+spans, source/output hashes, the reversible raw/native/name map, group members and
+reversal, native P06 vectors/Float32 directions, original/emitted values, directive
+line ownership, unresolved corrections and date-recalculation limitations.
+References are retained as omitted records; no `#Fix` is emitted. Anonymous wall
+shots remain individual `-` rows and are outside Walls cave-length statistics.
+Original-assembly vector/Float32 captures and original Walls v2.3.0-beta.1
+compilation/database validation are separate from the project SRV/report byte
+regressions. The native gate uses manual correction, commented dates and no
+geographic reference, and compares unadjusted NTV vectors and named lengths.
+See [P15 provenance](../internal/top/testdata/README.md#p15-walls-srv).
+
 Acceptance and implementation boundaries: [P15](PLAN.md#p15--walls-srv),
 [P16](PLAN.md#p16--survex-svx).
 

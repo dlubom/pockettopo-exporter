@@ -15,9 +15,9 @@ import tempfile
 REPO = Path(__file__).resolve().parent.parent
 EVIDENCE = REPO / "validation"
 ARTIFACTS = {"text": "survey.txt", "therion": "survey.txt", "dxf": "survey.dxf",
-             "visualtopo": "survey.tro", "toporobot": "survey.text", "dxf3d": "survey.dxf"}
+             "visualtopo": "survey.tro", "toporobot": "survey.text", "dxf3d": "survey.dxf", "srv": "survey.srv"}
 HASH_FIELDS = {"text": "text", "therion": "text", "dxf": "dxf",
-               "visualtopo": "output", "toporobot": "output", "dxf3d": "dxf"}
+               "visualtopo": "output", "toporobot": "output", "dxf3d": "dxf", "srv": "output"}
 
 
 def sha256(raw):

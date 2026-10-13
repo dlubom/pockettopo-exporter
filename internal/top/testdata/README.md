@@ -2571,3 +2571,88 @@ platforms. Toporobot supplies its captured `2026-10-13T07:29:26` export clock.
 Exact-SHA Actions must also pass every preserved mutation/control group before
 publication is called complete. P15/P16 and optional consumer checks remain
 planned only.
+
+## P15 Walls SRV
+
+The agreed P15/P16 contract is commit `596df342099928803fdda481afa35b18742a1577`.
+Only P15 is implemented. SRV/report goldens are project profile regressions, not
+native PocketTopo export bytes: PocketTopo has no Walls exporter. Their numeric
+expectations are separately checked against original-assembly vectors/Float32
+bits and the original destination's compiled results.
+
+`internal/exportwalls/testdata/` contains authored small TOP cases from
+`scripts/create-srv-fixtures.py`. `features` has three actual consecutive readings,
+including a reverse member, an individual splay, manual/equal/Auto/missing-trip
+transitions, distinct station `0`/`0.0`, a vertical singleton and a zero tie. Its
+source comment includes Unicode/newlines/directive text, and its reference is
+preserved in the report but omitted from SRV. `mixed` averages three readings
+with a reversal and different effective corrections; the subsequent splay and
+one-millimetre singleton retain their raw angles. `ties` has reversed all-zero
+readings and a downward vertical; `aliases` uses two raw IDs with one native
+identity, an eight-character literal and a hidden reserved target name. Separate
+cases contain mixed zero/nonzero readings, exact spatial cancellation, negative
+distance, invalid inclination, undefined From and nonzero/zero/alias self-legs.
+A synthetic case is not promoted to field provenance.
+
+The original executable was extracted read-only from the sibling archive, with
+SHA-256 `048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371`.
+`scripts/reference-srv-probe.cs` invokes the original `DataSet.Read`,
+`Trip.Evaluate`, `Survey.EvalData` and `Station.GetAvDirection` by reflection;
+empty placement dictionaries isolate grouping without Update/templates/closure.
+`features`, `mixed`, `ties`, `aliases`, `cancel` and `mixed-zero` were independently
+read by that assembly. Their `.tsv` files retain exact original CRLF vector and
+Float32-bit captures; `native.txt` retains the unsuppressed successful transcript.
+Reproduction (repository-local outputs; existing .NET 2/Wine):
+
+```sh
+unzip -p ../pockettopo-decompilation/inputs/PocketTopo-1.372.zip PocketTopoV1372/PocketTopo.exe > build/PocketTopo-1.372.exe
+WINEDEBUG=-all wine 'C:\windows\Microsoft.NET\Framework\v2.0.50727\csc.exe' /nologo /r:System.Windows.Forms.dll /r:System.Drawing.dll /out:build/reference-srv-probe.exe scripts/reference-srv-probe.cs
+WINEDEBUG=-all wine build/reference-srv-probe.exe build/PocketTopo-1.372.exe build/p15-native internal/exportwalls/testdata/features.top internal/exportwalls/testdata/mixed.top internal/exportwalls/testdata/ties.top internal/exportwalls/testdata/aliases.top internal/exportwalls/testdata/cancel.top internal/exportwalls/testdata/mixed-zero.top
+```
+
+C#/IL explains spatial averaging, per-member `RealAzimuth`, reverse component
+negation, integer division and the head correction's subtraction from the
+Float32 direction. The Go output for singleton/splay rows intentionally uses raw
+polar observations instead of native fixed-point roundtrip values. Derived
+vertical Float32 overshoot is normalized only within the agreed 0.00001-degree
+bound, preserving the native value separately. P06/source APIs are unchanged.
+JKTZ `src/jktz/pockettopo/export.py` was inspected as syntax/provenance prior art;
+its own confirmation/averaging policy is not used as the numeric oracle.
+
+Destination evidence uses the **original Walls v2.3.0-beta.1** official runtime,
+MSI SHA-256 `11445a522760ef98876c3d025e90b734c2073d8a033717c7313a8da130168ce0`,
+[source commit](https://github.com/wallscavesurvey/walls/tree/6ebe3331fd6054b830f31437d2c9e5b2e34c8881).
+The [Walls manual](https://texasspeleologicalsurvey.org/software/walls/Walls_manual.pdf)
+was checked for DAV/metres/degrees, eight-character names, anonymous wall shots,
+manual Decl/#Date ordering and Derive from #Date settings. Exact-version source
+`prjview.cpp`, `compile.cpp`, `ntfile.cpp`, `wall_srv.h` and `netlib.h` independently
+establish the normal compile command, source-line/native vector DBF layout and
+final survey statistics. `compile.cpp` rejects identical endpoint identities even
+for zero length; P15 now rejects these before publication.
+
+`scripts/validate-walls-native.ps1` runs only on an isolated Windows runner. It
+opens fresh minimal WPJs with the reviewed SRV, invokes the original application's
+normal compile command, closes its files normally and retains native workfiles.
+`scripts/validate-walls-ntv.py` compares **unadjusted** ENU vectors, endpoint/line
+identity, commented dates and named cave length with independent trigonometry.
+It requires complete native NTV/NTN structures and final survey summaries; a
+native invalid-inclination control must fail. Settings are default project,
+manual declination, no geographic reference and commented date templates; the
+fixtures have no nonzero loop adjustment. The exact-SHA Actions artifact
+`original-walls-<SHA>` holds runtime hash, project/compiled-input hashes, window
+state, native databases and the detailed verification report. The local Mac was
+locked during this delivery, so no local native GUI result is claimed.
+
+Anonymous `-` measurements are interpreted by Walls as wall shots and do not
+enter the named-vector NTV table or cave-length total. Their raw readings remain
+individual SRV/report rows. This target convention does not establish physical
+wall-point identity, LRUD measurements or equality with another consumer's splays.
+Reading SRV in Survex is not substituted for this original-Walls gate.
+
+All new fixture/expectation hashes are pinned in `validation/p15-evidence.json`.
+The 1462 preserved and 271 P14 evidence identities are unchanged. Independent
+review of implementation, C#/IL and destination-gate logic identified zero
+self-leg rejection and a nonfinite native-summary control; each was reproduced
+RED and corrected GREEN. The 58 explicit Walls faults and all earlier scopes
+run in Actions; compile/setup/disk/timeouts/incomplete outcomes are failures.
+P16 remains planned.

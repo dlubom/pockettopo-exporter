@@ -63,6 +63,41 @@ jobs:
           name: corpus-${{ github.sha }}
           path: build/corpus-report.json
           if-no-files-found: error
+  walls-native:
+    runs-on: windows-2025
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Extract checksum-pinned original Walls
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory build -Force | Out-Null
+          $msi = "$PWD/build/WallsInstaller.msi"
+          Invoke-WebRequest 'https://github.com/wallscavesurvey/walls/releases/download/v2.3.0-beta.1/WallsInstaller-2.3.0-beta.1.2025-09-13.msi' -OutFile $msi
+          if ((Get-FileHash $msi -Algorithm SHA256).Hash.ToLower() -ne '11445a522760ef98876c3d025e90b734c2073d8a033717c7313a8da130168ce0') { throw 'Walls installer identity differs' }
+          $target = "$PWD/build/walls-runtime"
+          $p = Start-Process msiexec.exe -ArgumentList "/a `"$msi`" /qn TARGETDIR=`"$target`" /l*v `"$PWD/build/walls-extraction.log`"" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "Walls extraction failed: $($p.ExitCode)" }
+      - name: Compile reviewed SRV in original Walls and verify native databases
+        shell: pwsh
+        run: |
+          go build -o build/pockettopo-exporter.exe ./cmd/pockettopo-exporter
+          if ($LASTEXITCODE -ne 0) { throw 'Go build failed' }
+          $walls = @(Get-ChildItem build/walls-runtime -Recurse -Filter Walls32.exe)
+          if ($walls.Count -ne 1) { throw 'Missing or ambiguous original Walls executable' }
+          ./scripts/validate-walls-native.ps1 -Binary build/pockettopo-exporter.exe -Walls $walls[0].FullName
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: original-walls-${{ github.sha }}
+          path: |
+            build/walls-native/
+            build/walls-extraction.log
+          if-no-files-found: error
   mutation-plan:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -101,11 +136,19 @@ jobs:
         run: bash scripts/mutation.sh "$MUTATION_GROUP"
       - if: matrix.group == 'gremlins-output'
         run: bash scripts/mutation-trial.sh
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: mutations-${{ matrix.group }}-${{ github.sha }}
+          path: |
+            mutation.json
+            build/*-mutation.json
+          if-no-files-found: warn
 
   complete:
     name: CI complete
     if: always()
-    needs: [check, corpus, mutation-plan, mutation]
+    needs: [check, corpus, walls-native, mutation-plan, mutation]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -116,8 +159,9 @@ jobs:
           PLAN_RESULT: ${{ needs.mutation-plan.result }}
           MUTATION_RESULT: ${{ needs.mutation.result }}
           CORPUS_RESULT: ${{ needs.corpus.result }}
+          WALLS_RESULT: ${{ needs.walls-native.result }}
         run: |
-          if [[ "$CHECK_RESULT" != success || "$CORPUS_RESULT" != success || "$PLAN_RESULT" != success || "$MUTATION_RESULT" != success ]]; then
-            printf 'CI incomplete: checks=%s corpus=%s plan=%s mutations=%s\n' "$CHECK_RESULT" "$CORPUS_RESULT" "$PLAN_RESULT" "$MUTATION_RESULT" >&2
+          if [[ "$CHECK_RESULT" != success || "$CORPUS_RESULT" != success || "$WALLS_RESULT" != success || "$PLAN_RESULT" != success || "$MUTATION_RESULT" != success ]]; then
+            printf 'CI incomplete: checks=%s corpus=%s Walls=%s plan=%s mutations=%s\n' "$CHECK_RESULT" "$CORPUS_RESULT" "$WALLS_RESULT" "$PLAN_RESULT" "$MUTATION_RESULT" >&2
             exit 1
           fi
