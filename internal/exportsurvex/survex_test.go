@@ -50,7 +50,7 @@ func TestSurvexGolden(t *testing.T) {
 			if e != nil {
 				t.Fatal(e)
 			}
-			want, e := os.ReadFile("testdata/" + name + ".svx")
+			want, e := os.ReadFile("testdata/" + name + "-compact.svx")
 			if e != nil {
 				t.Fatal(e)
 			}

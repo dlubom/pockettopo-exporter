@@ -11,7 +11,7 @@ trap 'rm -rf "$trial"' EXIT
 cp go.mod "$trial/"
 cp -R internal "$trial/"
 mkdir -p "$trial/original" build
-files=(internal/exportwalls/walls.go internal/cli/walls.go)
+files=(internal/exportwalls/walls.go internal/cli/walls.go internal/processing/averaging.go)
 for file in "${files[@]}"; do cp "$file" "$trial/original/${file//\//_}"; done
 report="$root/build/walls-mutation.json"
 rm -f "$report"
@@ -31,9 +31,9 @@ mutate() {
  printf '%s\n' "$changed" >"$file"
  go build ./internal/exportwalls ./internal/cli
  if [[ $preflight == true ]]; then printf 'COMPILES walls fault: %s\n' "$name"; return; fi
- go test -json -count=1 -timeout=30s -run '^TestWalls' ./internal/exportwalls ./internal/cli >"$name.json" 2>&1 || status=$?
+ go test -json -count=1 -timeout=30s -run '^TestWalls|^TestAverageRepeatedLegs' ./internal/exportwalls ./internal/cli ./internal/processing >"$name.json" 2>&1 || status=$?
  if [[ "$status" != 1 ]] || ! jq -e -s '
-  any(.[];.Action=="fail" and (.Test//""|test("^TestWalls"))) and
+  any(.[];.Action=="fail" and (.Test//""|test("^Test(Walls|AverageRepeatedLegs)"))) and
   all(.[];((.Output//"")|contains("panic: test timed out"))|not)
  ' "$name.json" >/dev/null; then cat "$name.json" >&2; printf 'Fault not killed: %s\n' "$name" >&2; exit 1; fi
  jq -n --arg name "$name" '{name:$name,status:"KILLED"}' >>mutants.jsonl
@@ -66,6 +66,9 @@ mutate unsigned-azimuth "$x" 'angle(int(uint16(v.Azimuth)))' 'angle(int(v.Azimut
 mutate angle-scale "$x" 'float64(raw)*360/65536' 'float64(raw)*400/65536'
 mutate negative-declination "$x" 'return trips[index].DeclinationRaw(), "stored-explicit"' 'return -trips[index].DeclinationRaw(), "stored-explicit"'
 mutate auto "$x" 'if trips[index].AutoDeclination() {' 'if false {'
+mutate declination-initial-zero "$x" 'i == 0 || decl != previousDeclination' 'decl != previousDeclination'
+mutate declination-transition "$x" 'i == 0 || decl != previousDeclination' 'i == 0 || decl == previousDeclination'
+mutate declination-state "$x" 'previousDeclination = decl' 'previousDeclination = -32768'
 mutate trip-boundary "$x" 'int(index) >= len(trips)' 'int(index) > len(trips)'
 mutate name-limit "$x" 'len(s) > 8' 'len(s) >= 8'
 mutate name-alias "$x" 'uint32(id.NativeValue())' 'id.Raw()'
@@ -88,8 +91,17 @@ mutate self-leg "$x" 'v.Distance > 0 && v.From.Native == v.To.Native' 'false'
 mutate zero-constraints "$x" 'if !constraints.join(v.From.Native, v.To.Native) {' 'if !constraints.join(v.From.Native, v.To.Native) && false {'
 mutate fixed-propagation "$x" 'if !oka && okb {' 'if false {'
 mutate grid "$x" 'Case=Mixed Grid=0' 'Case=Mixed'
+a=internal/processing/averaging.go
+mutate average-splay "$a" 'm.To().NativeValue() != -1' 'true'
+mutate average-zero-boundary "$a" 'm.DistanceMM() > 0' 'm.DistanceMM() >= 0'
+mutate average-reversal "$a" 'distance = -distance' 'distance = distance'
+mutate average-correction "$a" 'float64(int16(int32(row.AzimuthRaw())+int32(declination(row))))' 'float64(row.AzimuthRaw())'
+mutate average-count "$a" 'n := float64(len(g.Members))' 'n := float64(1)'
+mutate average-head-correction "$a" '-float64(declination(head))' '+float64(declination(head))'
+mutate average-cancellation "$a" 'g.DistanceM <= 0.0000005' 'g.DistanceM < 0'
+mutate average-inclination "$a" 'math.Atan2(up, horizontal)' 'math.Atan2(-up, horizontal)'
 if [[ $preflight != true ]]; then
  jq -s '.' mutants.jsonl >"$report"
- jq -e 'length == 43 and (map(.name) | unique | length) == 43 and
+ jq -e 'length == 54 and (map(.name) | unique | length) == 54 and
    all(.[]; (.name | type == "string" and length > 0) and .status == "KILLED")' "$report" >/dev/null
 fi

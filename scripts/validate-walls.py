@@ -27,7 +27,7 @@ def validate(binary, cavern, dump3d):
     if version.returncode or not re.fullmatch(rb'[^\r\n]+ - Survex 1\.4\.22', version.stdout.strip()):
         raise ValueError('Walls consumer must be exactly Survex 1.4.22')
     source = ROOT / 'internal/exportwalls/testdata/features.top'
-    golden = ROOT / 'internal/exportwalls/testdata/features.srv'
+    golden = ROOT / 'internal/exportwalls/testdata/features-averaged.srv'
     before = source.read_bytes()
     with tempfile.TemporaryDirectory(prefix='pockettopo-walls-') as scratch:
         scratch = Path(scratch)
@@ -45,6 +45,12 @@ def validate(binary, cavern, dump3d):
                 or report['source_sha256'] != hashlib.sha256(before).hexdigest()
                 or len(report['measurements']) != 5):
             raise ValueError('Walls provenance mismatch')
+        averages = report['averages']
+        if (len(averages) != 1 or averages[0]['head_index'] != 0
+                or averages[0]['members'] != [{'row_index': 0, 'reversed': False},
+                                              {'row_index': 1, 'reversed': True}]
+                or any(report['measurements'][i]['srv_line'] != averages[0]['srv_line'] for i in (0, 1))):
+            raise ValueError('Averaged leg lost raw member/line provenance')
         out3d = scratch / 'survey.3d'
         consumed = run([cavern, '--output=' + str(out3d), package / 'survey.srv'], env={**os.environ, 'LC_ALL': 'C'})
         # The reader documents GRID as unsupported; zero is its standalone default.
@@ -74,7 +80,7 @@ def validate(binary, cavern, dump3d):
         for name, xyz in expected.items():
             if any(abs(a - b) > 0.011 for a, b in zip(nodes[name][0], xyz)):
                 raise ValueError('Consumer coordinate mismatch: ' + name)
-        if 'FIXED' not in nodes['0.0'][1] or 'ANON WALL' not in nodes[''][1] or dump.count(' SPLAY') != 1 or dump.count('\nLINE ') != 4:
+        if 'FIXED' not in nodes['0.0'][1] or 'ANON WALL' not in nodes[''][1] or dump.count(' SPLAY') != 1 or dump.count('\nLINE ') != 3:
             raise ValueError('Consumer lost reference, splay or repeated leg')
         # Independent consumer must actually reject a malformed measurement.
         invalid = scratch / 'invalid.srv'

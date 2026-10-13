@@ -21,7 +21,7 @@ func TestSurvexCLIExport(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	want, e := os.ReadFile("../exportsurvex/testdata/features.svx")
+	want, e := os.ReadFile("../exportsurvex/testdata/features-compact.svx")
 	if e != nil {
 		t.Fatal(e)
 	}

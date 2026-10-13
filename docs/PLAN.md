@@ -26,14 +26,14 @@ P05–P08 and existing prefix contracts remain unchanged.
 | P06 | Native fixed-point grouping, source-row lineage and average-direction processing/JSON | Implemented; full local gates verified |
 | P07 | Isolated reference placement, plan/extended geometry and optional native loop closure | Implemented; full local gates verified |
 | P08 | Explicit native template-directory geometry and per-source lineage | Implemented; full local gates verified |
-| P09 | Native Therion DATA, drawings and embedded XSections with provenance | Implemented; local ordinary gates verified; exact-SHA hosted gates required |
-| P10 | Native graphics DXF, plan/side/options, provenance and bounded native failures | Implemented; local ordinary gates and independent review verified; exact-SHA hosted gates required |
-| P11 | Native VisualTopo 5.02, direction-selected passage dimensions, explicit context and provenance | Implemented; exact-SHA hosted gates required |
-| P12 | Native Toporobot and dialog options, bounded existing-file merge and provenance | Implemented; exact-SHA hosted gates required |
-| P13 | Native 3D DXF, source-linked points/entities and bounded native hulls | Implemented; exact-SHA hosted gates required |
-| P14 | Native capability inventory, corpus validation and offline distributions | Implemented; exact-SHA hosted gates required |
-| P15 | Walls SRV conversion, source lineage and independent reader validation | Implemented; exact-SHA hosted gates required |
-| P16 | Survex SVX conversion, source lineage and independent reader validation | Implemented; exact-SHA hosted gates required |
+| P09 | Native Therion DATA, drawings and embedded XSections with provenance | Implemented; reviewed-SHA hosted gates verified below |
+| P10 | Native graphics DXF, plan/side/options, provenance and bounded native failures | Implemented; reviewed-SHA hosted gates verified below |
+| P11 | Native VisualTopo 5.02, direction-selected passage dimensions, explicit context and provenance | Implemented; reviewed-SHA hosted gates verified below |
+| P12 | Native Toporobot and dialog options, bounded existing-file merge and provenance | Implemented; reviewed-SHA hosted gates verified below |
+| P13 | Native 3D DXF, source-linked points/entities and bounded native hulls | Implemented; reviewed-SHA hosted gates verified below |
+| P14 | Native capability inventory, corpus validation and offline distributions | Implemented; reviewed-SHA hosted gates verified below |
+| P15 | Walls SRV conversion, source lineage and independent reader validation | Implemented; reviewed-SHA hosted gates verified below |
+| P16 | Survex SVX conversion, source lineage and independent reader validation | Implemented; reviewed-SHA hosted gates verified below |
 
 ### Verification and publication
 
@@ -55,6 +55,64 @@ delivery response provide publication evidence.
 
 The P04d request authorized direct work, commit and push on `main`.
 No branch/worktree/PR or exporter implementation was part of P04d.
+
+### Current release-readiness review — 2026-10-13
+
+The reviewed implementation is **`9a48609b5a0c10da2da1e98d5a37b323ca3c1ff9`**,
+on main, equal to remote main when checked. Its [CI run
+38393987305](https://github.com/dlubom/pockettopo-exporter/actions/runs/38393987305)
+completed all **30 jobs successfully**, including the three platform checks,
+corpus, independent consumers, all mutation groups and `CI complete`.
+This is current exact-SHA evidence for P05–P16; the historical per-PBI publication
+requirements below remain the rules for subsequent changes, not outstanding
+failures of this reviewed commit.
+
+Fresh local ordinary gates passed, with 98.2% statement coverage and unchanged
+frozen evidence. The full pinned corpus repeated 6504 successful and 46 explicit
+failed native-format profiles; all 262 text outputs matched original-program
+captures. Supplemental Walls and Survex checks each produced 251 accepted outputs
+and 11 explicit invalid-input failures. The reviewed macOS arm64 distribution
+passed offline extraction, golden, identity and no-replace checks.
+
+The [review report](REVIEW-1.0.0-READINESS.md) records scope and limitations.
+No confirmed P1/P2 defect was found in the inspected code. A real Atschiloch TOP
+sample has all eight export formats (nine packages including both DXF views),
+383 source measurements, 48 triple legs and both drawings. Every one of its
+3641 drawing points was checked against raw TOP values in DXF and Therion.
+This is ready for user acceptance testing, not a published 1.0.0 release.
+
+### Current follow-up — readable SRV/SVX and Walls repeated legs
+
+Generated measurement labels and redundant declination directives are removed
+from both formats. Source comments and per-row provenance remain intact.
+Survex keeps its raw observations: its automatic averaging of all 48 real
+same-direction triplets was independently checked against the source vectors.
+
+Walls now exports one float64 ENU mean for each consecutive positive named
+repeated/reversed leg. Splays and zero equations remain separate. The report
+retains all original readings plus average membership, direction and output-line
+links. This avoids treating instrument repeats as additional Walls network loops.
+P06 native arithmetic and other exporters remain unchanged. New regression
+expectations preserve all previously frozen evidence. Walls has 54 explicit
+faults (43 original, three layout, eight averaging); Survex retains 46.
+
+Delivery uses a draft pull request against `main`, as requested on 2026-10-13.
+Baseline hosted CI above does not validate this follow-up; the pushed commit's
+checks and delivery response must identify its exact-SHA hosted result. Current
+local validation and sample artifacts are in `build/walls-averaged/`. Native
+Walls GUI acceptance remains separate from the Survex SRV consumer check.
+
+## Current focus — SRV/SVX user acceptance
+
+Verify the final averaged Walls sample and the source-order Survex sample in
+the intended applications. Keep further work bounded to confirmed discrepancies.
+
+## v1.0.0 — deferred
+
+The user postponed 1.0.0 on 2026-10-13. No release preparation, version change,
+tag or publication is in progress. Revisit release identity, distribution
+licensing, user documentation and exact-revision assets only when requested.
+The completed review and test artifacts remain available as development evidence.
 
 ## P04d — complete v3 source reading and inspection
 
@@ -845,7 +903,8 @@ SHA. No earlier run substitutes. Stop after P15; P16 is planned only.
 
 ## P16 — Survex SVX
 
-**Status:** implemented on main; final exact-SHA hosted gates required.
+**Status:** implemented on main; all 30 exact-SHA hosted jobs verified at
+`9a48609b5a0c10da2da1e98d5a37b323ca3c1ff9` in the current readiness review above.
 Preserve P05–P15; stop after P16.
 **Outcome:** isolated `export <input.top> --format survex --output <new-directory>`
 with `survey.svx` and deterministic source/lineage/loss `report.json`.
@@ -873,8 +932,8 @@ Implementation sequence (existing main checkout):
   distribution and complete mutation scopes/controls without removals.
 - [x] Run bounded ordinary gates and independent whole-change review; verify
   C#/IL, goldens, all new fault compilation and complete shard discovery.
-- [ ] Complete hosted mutations/survivor review and verify all jobs for the
-  exact final commit/push SHA. P17–P19 remain optional and unimplemented by P16.
+- [x] Complete hosted delivery verified for the final commit/push SHA in
+  CI run 38393987305. P17–P19 remain optional and unimplemented by P16.
 
 Local ordinary gates include race/vet/Staticcheck, exact coverage, build and smoke;
 total statement coverage is 98.2%, with 100% in the new exporter. All 43 explicit

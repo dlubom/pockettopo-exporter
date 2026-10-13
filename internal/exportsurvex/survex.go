@@ -140,6 +140,7 @@ func build(d source.Document, maxBytes int) (Result, error) {
 	}
 	constraints := zeroConstraints{parent: map[int32]int32{}, rank: map[int32]int{}, fixed: fixes}
 	fallbacks := 0
+	var previousDeclination int16
 	for i, m := range d.Measurements() {
 		v := Measurement{Index: i, Span: m.Offsets().Record, From: identify(m.From()), To: identify(m.To()), Distance: m.DistanceMM(), Azimuth: m.AzimuthRaw(), Inclination: m.InclinationRaw(), Flags: m.FlagsRaw(), Roll: m.RollRaw(), Trip: m.TripIndexRaw(), Comment: m.Comment(), Kind: "leg"}
 		if v.From.Survex == "" {
@@ -172,9 +173,11 @@ func build(d source.Document, maxBytes int) (Result, error) {
 		if reason != "stored-explicit" {
 			fallbacks++
 		}
-		w.write(fmt.Sprintf("; measurement %d", i))
 		w.comment(v.Comment)
-		w.write(fmt.Sprintf("*declination %s degrees", angle(int(decl))))
+		if i == 0 || decl != previousDeclination {
+			w.write(fmt.Sprintf("*declination %s degrees", angle(int(decl))))
+			previousDeclination = decl
+		}
 		v.Line = w.line
 		w.write(fmt.Sprintf("%s\t%s\t%s\t%s\t%s", v.From.Survex, v.To.Survex, metres(int64(v.Distance)), angle(int(uint16(v.Azimuth))), angle(int(v.Inclination))))
 		r.Measurements = append(r.Measurements, v)

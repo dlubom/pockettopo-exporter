@@ -21,7 +21,7 @@ func TestWallsCLIExport(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	want, e := os.ReadFile("../exportwalls/testdata/features.srv")
+	want, e := os.ReadFile("../exportwalls/testdata/features-averaged.srv")
 	if e != nil {
 		t.Fatal(e)
 	}

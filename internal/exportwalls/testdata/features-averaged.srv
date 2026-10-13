@@ -1,0 +1,18 @@
+; PocketTopo to Walls SRV; conversion profile 1.
+; Recorded dates are unverified; no date or CRS is inferred.
+#Units Reset Meters Order=DAV A=D V=D Case=Mixed Grid=0
+; trip 0 ticks=637134336000000000 declination_raw=4096
+; comment "recorded date"
+; trip 1 ticks=0 declination_raw=-32768
+; comment "Auto"
+; reference 0
+; comment "reference"
+#Fix 0.0 100 -200 3
+; comment "hello\r\n#Fix evil 0 0 0; \u017c"
+#Units Decl=22.5
+0.0	0.1	10	0	0
+#Units Decl=0
+0.1	0.2	2	90	45
+0.2	-	1	270	-90
+#Units Decl=22.5
+0.2	pzik0zj	0	0.0054931640625	0.0054931640625

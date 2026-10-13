@@ -48,7 +48,7 @@ func TestWallsGolden(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	want, e := os.ReadFile("testdata/features.srv")
+	want, e := os.ReadFile("testdata/features-averaged.srv")
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -78,7 +78,7 @@ func TestWallsReport(t *testing.T) {
 	if p.Schema != 1 || p.Tool != "dev" || p.Format != "walls-srv" || p.Context != "isolated-input" || p.SourceHash != fmt.Sprintf("%x", sha256.Sum256(d.Bytes())) || p.SourceSize != len(d.Bytes()) || p.SourceVersion != 3 || p.Tail != source.TailZeroTrailer || p.OutputHash != fmt.Sprintf("%x", sha256.Sum256(r.Text)) || p.OutputSize != len(r.Text) {
 		t.Fatalf("provenance: %+v", p)
 	}
-	if p.Profile != "source-order polar rows; metres; degrees; ASCII escaped comments; CRLF" || !strings.Contains(p.Policy, "Auto and missing trips use zero") {
+	if p.Profile != "consecutive repeated legs averaged in ENU; metres; degrees; ASCII escaped comments; CRLF" || !strings.Contains(p.Policy, "Auto and missing trips use zero") {
 		t.Fatal("profile/policy", p)
 	}
 	if len(p.Measurements) != 5 || len(p.Trips) != 2 || len(p.References) != 1 || len(p.Stations) != 4 {
@@ -87,7 +87,11 @@ func TestWallsReport(t *testing.T) {
 	lines := strings.Split(string(r.Text), "\r\n")
 	for i, m := range d.Measurements() {
 		v := p.Measurements[i]
-		if v.Index != i || v.Span != m.Offsets().Record || v.From.Raw != m.From().Raw() || v.From.Native != m.From().NativeValue() || v.From.Display != m.From().String() || v.To.Raw != m.To().Raw() || v.To.Native != m.To().NativeValue() || v.To.Display != m.To().String() || v.Distance != m.DistanceMM() || v.Azimuth != m.AzimuthRaw() || v.Inclination != m.InclinationRaw() || v.Flags != m.FlagsRaw() || v.Roll != m.RollRaw() || v.Trip != m.TripIndexRaw() || v.Comment != m.Comment() || !strings.HasPrefix(lines[v.Line-1], v.From.Walls+"\t"+v.To.Walls+"\t") {
+		output := v
+		if i == 1 {
+			output = p.Measurements[0]
+		}
+		if v.Index != i || v.Span != m.Offsets().Record || v.From.Raw != m.From().Raw() || v.From.Native != m.From().NativeValue() || v.From.Display != m.From().String() || v.To.Raw != m.To().Raw() || v.To.Native != m.To().NativeValue() || v.To.Display != m.To().String() || v.Distance != m.DistanceMM() || v.Azimuth != m.AzimuthRaw() || v.Inclination != m.InclinationRaw() || v.Flags != m.FlagsRaw() || v.Roll != m.RollRaw() || v.Trip != m.TripIndexRaw() || v.Comment != m.Comment() || !strings.HasPrefix(lines[v.Line-1], output.From.Walls+"\t"+output.To.Walls+"\t") {
 			t.Fatal("measurement lineage", i, v)
 		}
 	}

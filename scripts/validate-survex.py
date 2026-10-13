@@ -68,7 +68,7 @@ def validate(binary, cavern, dump3d):
             if {p.name for p in package.iterdir()} != {'survey.svx', 'report.json'}:
                 raise ValueError('Incomplete or extra SVX output')
             svx = (package / 'survey.svx').read_bytes()
-            if svx != (fixture / (case + '.svx')).read_bytes() or source.read_bytes() != before:
+            if svx != (fixture / (case + '-compact.svx')).read_bytes() or source.read_bytes() != before:
                 raise ValueError('SVX golden or original source changed')
             report = json.loads((package / 'report.json').read_text())
             if (report['format'] != 'survex-svx'

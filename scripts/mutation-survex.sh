@@ -66,6 +66,9 @@ mutate unsigned-azimuth "$x" 'angle(int(uint16(v.Azimuth)))' 'angle(int(v.Azimut
 mutate angle-scale "$x" 'float64(raw)*360/65536' 'float64(raw)*400/65536'
 mutate negative-declination "$x" 'return trips[index].DeclinationRaw(), "stored-explicit"' 'return -trips[index].DeclinationRaw(), "stored-explicit"'
 mutate auto "$x" 'if trips[index].AutoDeclination() {' 'if false {'
+mutate declination-initial-zero "$x" 'i == 0 || decl != previousDeclination' 'decl != previousDeclination'
+mutate declination-transition "$x" 'i == 0 || decl != previousDeclination' 'i == 0 || decl == previousDeclination'
+mutate declination-state "$x" 'previousDeclination = decl' 'previousDeclination = -32768'
 mutate trip-boundary "$x" 'int(index) >= len(trips)' 'int(index) > len(trips)'
 mutate name-separator "$x" 'strings.ReplaceAll(id.String(), ".", "_")' 'id.String()'
 mutate equates "$x" '*infer equates on' '*infer equates off'
@@ -90,6 +93,6 @@ mutate fixed-propagation "$x" 'if !oka && okb {' 'if false {'
 mutate splay-name "$x" 'v.To.Survex = "."' 'v.To.Survex = ".."'
 if [[ $preflight != true ]]; then
  jq -s '.' mutants.jsonl >"$report"
- jq -e 'length == 43 and (map(.name) | unique | length) == 43 and
+ jq -e 'length == 46 and (map(.name) | unique | length) == 46 and
    all(.[]; (.name | type == "string" and length > 0) and .status == "KILLED")' "$report" >/dev/null
 fi

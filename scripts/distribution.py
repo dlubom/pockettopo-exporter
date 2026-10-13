@@ -100,7 +100,7 @@ def smoke(payload, target, revision):
             raise ValueError("distributed Walls export failed")
         walls_bytes = (walls_output / "survey.srv").read_bytes()
         walls_report = json.loads((walls_output / "report.json").read_bytes())
-        if (walls_bytes != (REPO / "internal/exportwalls/testdata/features.srv").read_bytes()
+        if (walls_bytes != (REPO / "internal/exportwalls/testdata/features-averaged.srv").read_bytes()
                 or walls_report["output_sha256"] != digest(walls_bytes)
                 or walls_report["source_sha256"] != digest(walls_source.read_bytes())):
             raise ValueError("distributed Walls conversion golden/provenance differs")
@@ -118,7 +118,7 @@ def smoke(payload, target, revision):
             raise ValueError("distributed Survex export failed")
         survex_bytes = (survex_output / "survey.svx").read_bytes()
         survex_report = json.loads((survex_output / "report.json").read_bytes())
-        if (survex_bytes != (REPO / "internal/exportsurvex/testdata/features.svx").read_bytes()
+        if (survex_bytes != (REPO / "internal/exportsurvex/testdata/features-compact.svx").read_bytes()
                 or survex_report["output_sha256"] != digest(survex_bytes)
                 or survex_report["source_sha256"] != digest(survex_source.read_bytes())):
             raise ValueError("distributed Survex conversion golden/provenance differs")

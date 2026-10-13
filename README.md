@@ -131,9 +131,10 @@ remain supported. P15 adds a source-preserving Walls SRV conversion:
 go run ./cmd/pockettopo-exporter export internal/exportwalls/testdata/features.top --format walls --output build/walls
 ```
 
-It publishes `survey.srv` and `report.json`, retaining source-order measurements,
-repeats, reverse shots, anonymous splays, stored declination and complete reference
-fixes. Station names are mapped without collisions to the Walls eight-character
+It publishes `survey.srv` and `report.json`. Consecutive positive named repeats
+and reverse shots become one averaged ENU vector; every original observation
+remains in the report. Anonymous splays, zero links, stored declination and complete
+reference fixes remain explicit. Station names are mapped without collisions to the Walls eight-character
 limit; comments, raw values, byte spans and omissions remain traceable. Dates,
 CRS, LRUD and drawings are not inferred. This is a conversion profile, not a native
 PocketTopo exporter. See [the Walls contract](docs/SPEC.md#walls-srv-conversion-p15)
@@ -147,10 +148,16 @@ go run ./cmd/pockettopo-exporter export internal/exportsurvex/testdata/features.
 It publishes `survey.svx` and `report.json`, retaining repeats, reverse shots,
 anonymous non-wall splays, zero equations and complete ENU fixes. Native station
 pairs use underscores to avoid Survex hierarchy; dates, CRS and LRUD are not
-inferred. Survex applies stored declination and its own network adjustment.
+inferred. Survex applies stored declination, automatically averages adjacent
+same-direction repeated legs, and performs its own network adjustment.
 See [the SVX contract](docs/SPEC.md#survex-svx-conversion-p16) for conversions,
-losses and independent pinned-consumer checks. P16 ends this delivery; optional
-P17 layered SVG remains unimplemented.
+losses and independent pinned-consumer checks. Current work is
+[SRV/SVX user acceptance](docs/PLAN.md#current-focus--srvsvx-user-acceptance).
+Version 1.0.0 is deferred; optional P17 layered SVG remains unimplemented.
+
+SRV/SVX keep measurement indexes in `report.json`, without generated per-row
+labels in the survey files. Declination is explicit before the first observation
+and changes only when its effective value changes; source comments are retained.
 
 ## Documentation
 

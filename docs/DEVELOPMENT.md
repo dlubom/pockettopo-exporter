@@ -228,7 +228,11 @@ mutation matrix and failure controls.
 ## P15 Walls verification
 
 P15 adds `internal/exportwalls` and `internal/cli/walls.go` to the existing output
-Gremlins shard and a `walls` scope with **43 explicit faults** to `native-text`.
+Gremlins shard and a `walls` scope to `native-text`. The subsequent compact-output
+and repeated-leg follow-up extends the original 43 faults to **54**, retaining
+the original set, three declination-state faults, and eight ENU averaging faults.
+The scope also runs the focused averaging tests in `internal/processing`;
+Gremlins already includes that package in its processing shard.
 All previous scopes/operators/thresholds remain. The exercised weak-suite control
 now has **62 mutants**, including Walls dispatch; all must survive and the gate
 must reject them. Actions uploads every group's mutation reports for survivor
@@ -259,7 +263,9 @@ review of `scripts/walls-fixtures.py`; never update goldens during a gate.
 ## P16 Survex verification
 
 P16 adds `internal/exportsurvex` and `internal/cli/survex.go` to the existing
-output Gremlins shard, and `survex` with **43 explicit faults** to `native-text`.
+output Gremlins shard, and the `survex` scope to `native-text`. The compact-output
+change extends its original 43 faults to **46** with the same three declination
+state controls as Walls; all earlier faults and failure controls remain.
 All prior campaigns, operators and thresholds remain unchanged. The weak-suite
 control now exercises Survex dispatch and requires exactly **66 live mutants**;
 compiler/setup errors, timeouts and incomplete results still fail closed.

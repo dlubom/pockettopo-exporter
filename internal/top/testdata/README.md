@@ -1,5 +1,23 @@
 # Native fixture and bounded reader evidence
 
+## Walls averaging and compact Survex layout (2026-10-13)
+
+The user requested readable SRV/SVX and no artificial Walls loops from repeated
+observations. `internal/exportwalls/testdata/features-averaged.srv` is derived
+independently from the literal P15 golden: its forward/reverse 10m pair describes
+exactly the same corrected vector and becomes one 10m leg. Generated measurement
+labels and repeated identical declination directives are removed. All remaining
+measurement/comment bytes are unchanged.
+`internal/exportsurvex/testdata/{features,splays,adjustment}-compact.svx` removes
+only those redundant labels/directives; Survex retains the source observations.
+
+`validation/compact-export-evidence.json` pins the four final expectations.
+They are conversion expectations, not original PocketTopo export captures.
+Original TOPs, P15/P16 goldens, authoring scripts and frozen manifests are unchanged.
+Small literal TOP tests independently cover triples/reversal, angular wrap,
+per-row corrections, grouping boundaries, large sums and cancellation to zero.
+The former compact-only Walls expectation remains in ignored local evidence.
+
 `api-trips-ids.top` is an unchanged 542-byte native PocketTopo 1.372 fixture
 from the JKTZ project, originally created by its native model/serializer through
 reflection and also accepted in the GUI. These are synthetic test inputs,

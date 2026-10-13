@@ -986,14 +986,22 @@ remain outside P13.
 `export <input.top> --format walls --output <new-directory>` publishes
 `survey.srv` and `report.json` using the existing exclusive, no-replace package
 publication. `internal/exportwalls.Build(source.Document)` is isolated and does
-not compute P06 groups or P07/P08 geometry. It requires a complete supported TOP
+not compute native P06 fixed-point groups or P07/P08 geometry. It requires a complete supported TOP
 v3 document. Earlier exporters and their report schemas remain unchanged.
 
 The profile uses ASCII (including escaped Unicode comments), CRLF, metres and
-360-degree angles. Each measurement is emitted once in source order, including
-repeats and reversed observations. These remain independent observations for the
-consumer's adjustment, not native vector averages; zero-length named legs act
-as equations. Native undefined destination identity `-1` (including its raw alias)
+360-degree angles. Consecutive positive named observations of the same native
+station pair, forward or reversed, become one averaged leg in the head's
+orientation. `processing.AverageRepeatedLegs` computes the arithmetic mean of
+float64 ENU vectors after applying each member's stored correction, then removes
+the head's correction for polar output. It does not reproduce P06 integer
+quantization or overflow, average polar angles independently, merge separated
+observations or infer outliers. Trip/flag/comment changes do not split a group.
+Splays and zero-length named equations remain individual and break groups.
+Derived lengths use at most six decimal places in metres and angles eight in
+degrees. A mean length at or below half a micrometre fails explicitly rather
+than rounding contradictory positive observations to a zero equation. Singleton
+source values remain exact. Walls applies its own subsequent network adjustment. Native undefined destination identity `-1` (including its raw alias)
 becomes Walls `-`, an anonymous wall shot. No LRUD is inferred. Flip, visibility,
 projection, special, mark, read-only and unknown flag bits and roll are retained
 in the report without a Walls drawing/geometry effect.
@@ -1007,7 +1015,12 @@ A=D V=D Case=Mixed Grid=0` sets the profile explicitly. `Grid=0` prevents Walls
 from inheriting a nonzero project convergence and rotating source fixes; it does
 not establish a CRS or that the source coordinates are geodetically correct.
 
-Each row gets its own `#Units Decl=...`. A valid explicit trip uses its stored
+Emit `#Units Decl=...` before the first measurement, including an initial zero,
+and thereafter only when the effective correction changes. Equal corrections
+across trip boundaries do not repeat the directive; returning to zero does.
+Generated `; measurement N` labels are omitted; row indexes and exact output
+line ownership remain in `report.json`. Preserve actual source comments.
+A valid explicit trip uses its stored
 correction; Auto and missing/out-of-range trip indexes use zero, as standard
 PocketTopo 1.372 does through `Trip.Read/GetDeclination/DeclCorrByIndex`. This is
 reported per row as `stored-explicit`, `native-auto-zero` or
@@ -1040,7 +1053,12 @@ lose precision in a consumer's floating-point calculations.
 Schema-version-1 reports contain the source hash/size/version/tail class, output
 hash/size, profile/correction policy, encountered station map, every trip,
 reference and measurement with source index/span/raw values/comments, output line
-numbers and correction decisions. Omitted/coalesced references have line zero.
+numbers and correction decisions. An additive `averages` array records each
+averaged leg's head, member source indices/reversal flags, unrounded derived
+polar values and SRV line. Every member's measurement line points to that one
+output row; its raw endpoints/angles/distance remain unchanged. All member
+comments are emitted safely before the average. Omitted/coalesced references
+have line zero.
 Loss entries explicitly cover dates, metadata, correction fallbacks, name mapping,
 references, drawings, all three mappings and trailer bytes. Original TOP bytes
 remain untouched; the report is not a replacement for the source archive.
@@ -1071,7 +1089,8 @@ publication mechanism. `internal/exportsurvex.Build(source.Document)` requires
 complete supported TOP v3 source data and uses no runtime dependencies. This is
 an isolated, standalone **conversion profile**, not a native PocketTopo exporter.
 No template discovery, P06 grouping or P07 loop closure is applied. Survex performs
-its own network adjustment, with its default measurement uncertainties; these
+automatic averaging of adjacent same-direction repeats and its own network
+adjustment, with its default measurement uncertainties; these
 are consumer defaults, not measured source accuracy.
 
 Every measurement remains a separate source-order observation, including repeats,
@@ -1083,8 +1102,11 @@ inclinations outside [-90,90], and nonzero native-identity self-legs fail before
 publication. Flags and roll remain raw report metadata; visibility, flip,
 projection and special flags do not become Survex flags.
 
-Native stored-trip correction becomes `*declination <value> degrees` immediately
-before each observation; compass values remain uncorrected. Standard PocketTopo
+Native stored-trip correction becomes `*declination <value> degrees` before the
+first observation (including zero), then only when the effective value changes.
+Equal corrections across trip boundaries do not repeat it; a return to zero is
+explicit. Omit generated `; measurement N` labels while retaining source comments
+and exact row/line ownership in the report. Compass values remain uncorrected. Standard PocketTopo
 1.372 maps Auto (-32768) and missing trip indexes to zero. The report identifies
 each fallback separately from explicit zero and preserves ticks, raw declination,
 trip index and comments. No `*date`, `*declination auto`, magnetic model, CRS,

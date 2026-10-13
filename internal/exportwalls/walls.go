@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"pockettopo-exporter/internal/processing"
 	"pockettopo-exporter/internal/source"
 )
 
@@ -75,15 +76,21 @@ type Report struct {
 	Trips         []Trip          `json:"trips"`
 	References    []Reference     `json:"references"`
 	Measurements  []Measurement   `json:"measurements"`
+	Averages      []Average       `json:"averages"`
 	Losses        []Loss          `json:"losses"`
 }
+type Average struct {
+	processing.AveragedLeg
+	Line int `json:"srv_line"`
+}
+
 type Result struct {
 	Text   []byte
 	Report Report
 }
 
-// Build retains source rows, including repeats and reversed shots. Walls handles
-// network adjustment; TOP drawing flags and native grouping are not applied.
+// Build averages consecutive repeated legs for Walls and retains every source
+// observation in the report. Walls handles subsequent network adjustment.
 func Build(d source.Document) (Result, error) { return build(d, 128*1024*1024) }
 
 func build(d source.Document, maxBytes int) (Result, error) {
@@ -91,7 +98,7 @@ func build(d source.Document, maxBytes int) (Result, error) {
 		return Result{}, fmt.Errorf("walls export requires a complete supported TOP v3 document")
 	}
 	raw := d.Bytes()
-	r := Report{Schema: 1, Tool: "dev", Format: "walls-srv", Context: "isolated-input", Profile: "source-order polar rows; metres; degrees; ASCII escaped comments; CRLF", Policy: "Standard PocketTopo 1.372 stored declination; Auto and missing trips use zero, not a calculated magnetic correction. Walls applies Decl exactly once; dates are not applied.", SourceHash: fmt.Sprintf("%x", sha256.Sum256(raw)), SourceSize: len(raw), SourceVersion: d.Version(), Tail: d.TailKind(), Stations: []Identity{}, Trips: []Trip{}, References: []Reference{}, Measurements: []Measurement{}, Losses: []Loss{}}
+	r := Report{Schema: 1, Tool: "dev", Format: "walls-srv", Context: "isolated-input", Profile: "consecutive repeated legs averaged in ENU; metres; degrees; ASCII escaped comments; CRLF", Policy: "Standard PocketTopo 1.372 stored declination; Auto and missing trips use zero, not a calculated magnetic correction. Walls applies Decl exactly once; dates are not applied.", SourceHash: fmt.Sprintf("%x", sha256.Sum256(raw)), SourceSize: len(raw), SourceVersion: d.Version(), Tail: d.TailKind(), Stations: []Identity{}, Trips: []Trip{}, References: []Reference{}, Measurements: []Measurement{}, Averages: []Average{}, Losses: []Loss{}}
 	w := writer{max: maxBytes, line: 1}
 	w.write("; PocketTopo to Walls SRV; conversion profile 1.")
 	w.write("; Recorded dates are unverified; no date or CRS is inferred.")
@@ -170,13 +177,44 @@ func build(d source.Document, maxBytes int) (Result, error) {
 		if reason != "stored-explicit" {
 			fallbacks++
 		}
-		w.write(fmt.Sprintf("; measurement %d", i))
-		w.comment(v.Comment)
-		w.write(fmt.Sprintf("#Units Decl=%s", angle(int(decl))))
-		v.Line = w.line
-		w.write(fmt.Sprintf("%s\t%s\t%s\t%s\t%s", v.From.Walls, v.To.Walls, metres(int64(v.Distance)), angle(int(uint16(v.Azimuth))), angle(int(v.Inclination))))
 		r.Measurements = append(r.Measurements, v)
 	}
+	averages, err := processing.AverageRepeatedLegs(d)
+	if err != nil {
+		return Result{}, fmt.Errorf("walls: %w", err)
+	}
+	var previousDeclination int16
+	nextAverage := 0
+	for i := 0; i < len(r.Measurements); {
+		v := &r.Measurements[i]
+		end := i + 1
+		distance, azimuth, inclination := metres(int64(v.Distance)), angle(int(uint16(v.Azimuth))), angle(int(v.Inclination))
+		averaged := nextAverage < len(averages) && averages[nextAverage].HeadIndex == i
+		if averaged {
+			a := averages[nextAverage]
+			end = i + len(a.Members)
+			distance, azimuth, inclination = averagedNumber(a.DistanceM, 6), averagedNumber(a.AzimuthDegrees, 8), averagedNumber(a.InclinationDegrees, 8)
+		}
+		for j := i; j < end; j++ {
+			w.comment(r.Measurements[j].Comment)
+		}
+		decl, _ := correction(v.Trip, trips)
+		if i == 0 || decl != previousDeclination {
+			w.write(fmt.Sprintf("#Units Decl=%s", angle(int(decl))))
+			previousDeclination = decl
+		}
+		v.Line = w.line
+		w.write(fmt.Sprintf("%s\t%s\t%s\t%s\t%s", v.From.Walls, v.To.Walls, distance, azimuth, inclination))
+		for j := i + 1; j < end; j++ {
+			r.Measurements[j].Line = v.Line
+		}
+		if averaged {
+			r.Averages = append(r.Averages, Average{averages[nextAverage], v.Line})
+			nextAverage++
+		}
+		i = end
+	}
+
 	mapped := 0
 	for _, s := range r.Stations {
 		if s.Walls != s.Display {
@@ -190,7 +228,7 @@ func build(d source.Document, maxBytes int) (Result, error) {
 	}
 	add("dates_not_applied", len(trips), "Recorded ticks and comments remain metadata; no verified survey date or magnetic model is inferred.")
 	add("native_zero_declination", fallbacks, "Auto and unresolved trip indexes use the standard 1.372 zero fallback; this is not a verified physical correction.")
-	add("measurement_metadata", len(r.Measurements), "Roll and flags remain in this report. Drawing visibility, projection, flip and special flags have no Walls effect. Repeated/reversed rows remain independent observations, not P06 averages.")
+	add("measurement_metadata", len(r.Measurements), "Roll and flags remain in this report. Drawing visibility, projection, flip and special flags have no Walls effect. Consecutive positive repeated/reversed legs are averaged once in ENU; this report retains all original observations and membership. Splays and zero equations remain individual.")
 	add("station_names_mapped", mapped, "Names exceeding eight characters use p plus base36 of the native identity, without truncation. Raw aliases remain separately traceable.")
 	add("incomplete_references_omitted", incomplete, "Hidden station identities or sentinel coordinates are not fabricated as zero fixes; all raw reference fields remain in this report.")
 	add("duplicate_references_coalesced", duplicates, "Identical fixes for the same native station are emitted once; conflicting complete fixes fail before publication.")
@@ -320,4 +358,13 @@ func (w *writer) comment(s string) {
 		q = q[160:]
 	}
 	w.write(fmt.Sprintf("; comment %s", q))
+}
+
+// Only derived averages are rounded; singleton source decimals remain exact.
+func averagedNumber(value float64, places int) string {
+	s := strings.TrimRight(strings.TrimRight(strconv.FormatFloat(value, 'f', places, 64), "0"), ".")
+	if s == "-0" {
+		return "0"
+	}
+	return s
 }

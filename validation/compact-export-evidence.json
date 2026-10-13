@@ -1,0 +1,18 @@
+[
+  {
+    "path": "internal/exportsurvex/testdata/features-compact.svx",
+    "sha256": "7bbdba1d2deaa3b211d55251d94b9f65a2a63d62bc0dea3cc8fe0226834054a4"
+  },
+  {
+    "path": "internal/exportsurvex/testdata/splays-compact.svx",
+    "sha256": "672ac4b848d2c8c351129e622f82c30426c26633644b1352ca30d7ba855f6702"
+  },
+  {
+    "path": "internal/exportsurvex/testdata/adjustment-compact.svx",
+    "sha256": "07bf63240ba4ea8a457c4109885dbfe8a4ac1c028f5256f4148bdbcb279cc39f"
+  },
+  {
+    "path": "internal/exportwalls/testdata/features-averaged.srv",
+    "sha256": "a2ac49b2d727b5e54a6e5c6653d6d016f27a9ddcc6bee25bb4b6ff40f2332141"
+  }
+]
