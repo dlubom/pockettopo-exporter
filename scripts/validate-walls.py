@@ -23,7 +23,8 @@ def run(args, **kwargs):
 
 def validate(binary, cavern, dump3d):
     version = run([cavern, '--version'])
-    if version.returncode or version.stdout.strip() != b'cavern - Survex 1.4.22':
+    # An uninstalled binary prints argv[0], including the supplied path.
+    if version.returncode or not re.fullmatch(rb'[^\r\n]+ - Survex 1\.4\.22', version.stdout.strip()):
         raise ValueError('Walls consumer must be exactly Survex 1.4.22')
     source = ROOT / 'internal/exportwalls/testdata/features.top'
     golden = ROOT / 'internal/exportwalls/testdata/features.srv'
