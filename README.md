@@ -137,8 +137,20 @@ fixes. Station names are mapped without collisions to the Walls eight-character
 limit; comments, raw values, byte spans and omissions remain traceable. Dates,
 CRS, LRUD and drawings are not inferred. This is a conversion profile, not a native
 PocketTopo exporter. See [the Walls contract](docs/SPEC.md#walls-srv-conversion-p15)
-for strict failures and independent consumer validation. **P16: Survex SVX** is
-planned; no SVX exporter is implemented by P15.
+for strict failures and independent consumer validation. P16 adds isolated Survex
+SVX conversion with source-order observations and an explicit provenance report:
+
+```sh
+go run ./cmd/pockettopo-exporter export internal/exportsurvex/testdata/features.top --format survex --output build/survex
+```
+
+It publishes `survey.svx` and `report.json`, retaining repeats, reverse shots,
+anonymous non-wall splays, zero equations and complete ENU fixes. Native station
+pairs use underscores to avoid Survex hierarchy; dates, CRS and LRUD are not
+inferred. Survex applies stored declination and its own network adjustment.
+See [the SVX contract](docs/SPEC.md#survex-svx-conversion-p16) for conversions,
+losses and independent pinned-consumer checks. P16 ends this delivery; optional
+P17 layered SVG remains unimplemented.
 
 ## Documentation
 

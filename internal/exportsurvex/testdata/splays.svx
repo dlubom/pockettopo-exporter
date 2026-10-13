@@ -1,0 +1,30 @@
+; PocketTopo to Survex SVX; conversion profile 1.
+; Recorded dates are unverified; no date or CRS is inferred.
+*begin
+*units default
+*calibrate default
+*case preserve
+*truncate off
+*flags not duplicate not surface not splay
+*data normal from to tape compass clino
+*infer equates on
+; trip 0 ticks=0 declination_raw=-4096
+; comment "signed declination"
+; reference 0
+*fix 0_0 0 0 0
+; measurement 0
+*declination -22.5 degrees
+0_0	0_1	1	22.5	0
+; measurement 1
+*declination -22.5 degrees
+0_1	.	1	112.5	0
+; measurement 2
+*declination -22.5 degrees
+0_1	.	2	22.5	90
+; measurement 3
+*declination -22.5 degrees
+0_1	0	0	0	0
+; measurement 4
+*declination -22.5 degrees
+0_1	0_1	0	0	0
+*end

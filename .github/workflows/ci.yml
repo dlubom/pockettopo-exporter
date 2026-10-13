@@ -81,10 +81,14 @@ jobs:
         run: |
           go build -o build/pockettopo-exporter ./cmd/pockettopo-exporter
           python3 scripts/validate-walls.py --binary build/pockettopo-exporter --cavern build/walls-consumer/survex-1.4.22/src/cavern --dump3d build/walls-consumer/survex-1.4.22/src/dump3d --report build/walls-consumer-report.json
+      - name: Verify SVX syntax, coordinates and rejection control
+        run: python3 scripts/validate-survex.py --binary build/pockettopo-exporter --cavern build/walls-consumer/survex-1.4.22/src/cavern --dump3d build/walls-consumer/survex-1.4.22/src/dump3d --report build/survex-consumer-report.json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: walls-consumer-${{ github.sha }}
-          path: build/walls-consumer-report.json
+          path: |
+            build/walls-consumer-report.json
+            build/survex-consumer-report.json
           if-no-files-found: error
 
   mutation-plan:

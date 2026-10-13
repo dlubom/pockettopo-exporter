@@ -33,7 +33,7 @@ correction is planned here.
 
 Native Therion interchange is not a ready-made `.th`/`.th2` project. Native 3D
 DXF is not Survex `.3d`. Walls `.srv` is the P15 conversion below; Survex `.svx`
-remains subsequent scope. Layered SVG, XVI, direct TH2, separate cross-section files and PNG/PDF
+is the P16 conversion below. Layered SVG, XVI, direct TH2, separate cross-section files and PNG/PDF
 are conditional additions; they do not block native exports.
 
 The native milestone covers documented options and relevant input/context
@@ -1062,3 +1062,81 @@ unreferenced consumer context; it does not validate Walls GUI, inherited WPJ
 settings, or arbitrary consumer adjustment and rendering. The source archive and
 SHA-256 for rebuilding this reader are pinned in `install-walls-consumer.sh`.
 This use of an SRV reader does not implement the P16 SVX exporter.
+
+## Survex SVX conversion (P16)
+
+`export <input.top> --format survex --output <new-directory>` publishes
+`survey.svx` and `report.json` through the existing exclusive new-directory
+publication mechanism. `internal/exportsurvex.Build(source.Document)` requires
+complete supported TOP v3 source data and uses no runtime dependencies. This is
+an isolated, standalone **conversion profile**, not a native PocketTopo exporter.
+No template discovery, P06 grouping or P07 loop closure is applied. Survex performs
+its own network adjustment, with its default measurement uncertainties; these
+are consumer defaults, not measured source accuracy.
+
+Every measurement remains a separate source-order observation, including repeats,
+reverse shots and zero-length rows. Distance is exact decimal millimetres/1000;
+bearing is unsigned raw Int16 bits times 360/65536 and inclination is signed
+Int16 times 360/65536. Angles have exact terminating decimals, without native
+text-export rounding. Invalid source identities, negative/missing distances,
+inclinations outside [-90,90], and nonzero native-identity self-legs fail before
+publication. Flags and roll remain raw report metadata; visibility, flip,
+projection and special flags do not become Survex flags.
+
+Native stored-trip correction becomes `*declination <value> degrees` immediately
+before each observation; compass values remain uncorrected. Standard PocketTopo
+1.372 maps Auto (-32768) and missing trip indexes to zero. The report identifies
+each fallback separately from explicit zero and preserves ticks, raw declination,
+trip index and comments. No `*date`, `*declination auto`, magnetic model, CRS,
+convergence, entrance or historical date/correction claim is inferred.
+
+Native display names `series.station` become `series_station`; simple numeric IDs
+stay numeric. This is injective across named native IDs and never truncates names
+or creates a Survex hierarchy. Raw aliases share a name but retain distinct raw
+identities in the ordered station inventory and record reports. Hidden/reserved
+identities fail in observations except native UNDEF (-1) destinations, which use
+`.`: a fresh anonymous **non-wall splay** for each occurrence. This does not infer
+which physical surface was measured. Undefined origins are rejected.
+
+`*infer equates on` makes zero named legs equations, preserving their original
+angle fields in the text and report even though the consumer ignores them.
+The report classifies them as `zero-link`. Complete reference fixes are checked
+against the whole zero-link equivalence class, including aliases and transitive
+chains; unequal coordinates fail. Redundant zero self-links remain source rows;
+Survex can warn that a station is equated to itself. Zero-length splays remain
+anonymous observations rather than named station equations.
+
+Complete named references emit exact ENU metre `*fix` coordinates without an
+assertion about CRS/datum/accuracy; Int64 formatting retains every millimetre.
+Consumers may round large coordinates. Hidden identities or missing-coordinate
+sentinels (MinInt64 east/north, MinInt32 altitude) are omitted explicitly rather
+than converted to zero. Identical native-station fixes are coalesced, with the
+omitted duplicate's output line zero; contradictory fixes fail. References not
+connected by measurements can cause consumer disconnected-network diagnostics;
+export success does not promise consumer acceptance of every source network.
+
+The file uses ASCII with CRLF, an unnamed `*begin`/`*end` settings scope, default
+units/calibration, preserved case, truncation off, cleared surface/duplicate/splay
+flags and `*data normal from to tape compass clino`. It is intended for standalone
+processing; embedding under an external survey/CRS remains the caller's choice.
+Comments use bounded `strconv.QuoteToASCII` chunks prefixed with `; comment `,
+so control characters, Unicode and malicious directives never become commands.
+The output is limited to 128 MiB before publication. A controlled output error
+returns no result; existing publication crash/cleanup contracts remain unchanged.
+
+Schema-version-1 `survex-svx` reports contain source/output hashes and sizes,
+version/tail classification, ordered raw station identities and mappings,
+complete trip/reference/measurement fields and source spans. `svx_line` is a
+one-based owned observation/fix line, zero for omitted references. Losses count
+unapplied dates, zero-correction fallbacks, ignored measurement metadata, renamed
+stations, omitted/coalesced references, unspecified reference frame, omitted
+plan/side elements and three mappings. No LRUD or drawing interpretation is added.
+
+Evidence is recorded in `internal/top/testdata/README.md`. Literal SVX goldens are
+hand-derived from independent TOP fields; the shared feature source also has an
+original PocketTopo text golden. `scripts/validate-survex.py` requires the pinned
+Survex 1.4.22 SVX reader and checks analytic ENU coordinates, signed correction,
+independent anonymous splays, zero equations, reverse repetitions and adjustment
+of unequal repeated observations. Every case has a malformed-distance rejection
+control. These consumer checks supplement native field evidence. All prior
+native goldens, P14 corpus/distribution cases and P15 contracts remain preserved.

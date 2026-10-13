@@ -254,3 +254,35 @@ context. Other errors/warnings fail the controlled consumer fixture. It is a
 format/coordinate acceptance test, not a claim about Walls GUI or native P06
 averaging. Regenerate P15 literal inputs/expected SRV only through deliberate
 review of `scripts/walls-fixtures.py`; never update goldens during a gate.
+
+
+## P16 Survex verification
+
+P16 adds `internal/exportsurvex` and `internal/cli/survex.go` to the existing
+output Gremlins shard, and `survex` with **43 explicit faults** to `native-text`.
+All prior campaigns, operators and thresholds remain unchanged. The weak-suite
+control now exercises Survex dispatch and requires exactly **66 live mutants**;
+compiler/setup errors, timeouts and incomplete results still fail closed.
+`mutation-survex.sh --preflight` checks literal targets and compiles all faults;
+it does not execute a local mutation campaign or claim KILLED outcomes.
+
+The required `walls-consumer` Actions job retains P15 validation and additionally
+runs `validate-survex.py` against the same SHA-256-pinned Survex 1.4.22 build.
+`check.sh` additionally runs independent Python regression controls for complete
+anonymous endpoint decoding and per-endpoint flags. Its three literal SVX cases check numeric ENU fixes, signed declination, repeated
+and reverse observations, consumer adjustment, independently anonymous non-wall
+splays, zero equations and malformed-distance rejection. Only the redundant
+self-equation case permits one specifically identified warning. The report is
+uploaded with P15's report and the aggregate gate requires the combined job.
+
+```sh
+python3 scripts/validate-survex.py --binary build/pockettopo-exporter --report build/survex-consumer-report.json
+GOMAXPROCS=2 GOFLAGS=-p=1 bash scripts/mutation-survex.sh --preflight
+```
+
+The exporter/distributed binary needs no Survex installation. All three platform
+distribution jobs additionally exercise the P16 conversion golden, provenance,
+no-replace and malformed-input contracts with empty PATH. The six native golden
+cases, P15 offline case and P14's 262-input/25-profile baseline stay unchanged.
+`p16-evidence.json` pins the eight new fixture/authoring identities; gates never
+regenerate expected bytes.

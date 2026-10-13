@@ -107,14 +107,32 @@ def smoke(payload, target, revision):
         saved_walls = {p.name: p.read_bytes() for p in walls_output.iterdir()}
         if invoke(walls_args).returncode != 1 or saved_walls != {p.name: p.read_bytes() for p in walls_output.iterdir()}:
             raise ValueError("distributed Walls export replaced existing output")
+
+        # P16 separate conversion golden and source/line readback.
+        survex_source = scratch / "survex.top"
+        shutil.copyfile(REPO / "internal/exportsurvex/testdata/features.top", survex_source)
+        survex_output = scratch / "survex-export"
+        survex_args = ["export", survex_source, "--format", "survex", "--output", survex_output]
+        result = invoke(survex_args)
+        if result.returncode or result.stderr or {p.name for p in survex_output.iterdir()} != {"survey.svx", "report.json"}:
+            raise ValueError("distributed Survex export failed")
+        survex_bytes = (survex_output / "survey.svx").read_bytes()
+        survex_report = json.loads((survex_output / "report.json").read_bytes())
+        if (survex_bytes != (REPO / "internal/exportsurvex/testdata/features.svx").read_bytes()
+                or survex_report["output_sha256"] != digest(survex_bytes)
+                or survex_report["source_sha256"] != digest(survex_source.read_bytes())):
+            raise ValueError("distributed Survex conversion golden/provenance differs")
+        saved_survex = {p.name: p.read_bytes() for p in survex_output.iterdir()}
+        if invoke(survex_args).returncode != 1 or saved_survex != {p.name: p.read_bytes() for p in survex_output.iterdir()}:
+            raise ValueError("distributed Survex export replaced existing output")
         bad.write_bytes(b"Top\x03")
-        for fmt in [*corpus.ARTIFACTS, "walls"]:
+        for fmt in [*corpus.ARTIFACTS, "walls", "survex"]:
             output = scratch / ("bad-" + fmt)
             result = invoke(["export", bad, "--format", fmt, "--output", output])
             if result.returncode != 1 or result.stdout or not result.stderr or output.exists():
                 raise ValueError("distributed CLI malformed-input contract failed")
     return {"source_revision": revision, "target": target, "native_byte_cases": len(cases),
-            "walls_conversion_case": True, "offline": True, "no_replace": True, "malformed_input": True}
+            "walls_conversion_case": True, "survex_conversion_case": True, "offline": True, "no_replace": True, "malformed_input": True}
 
 
 def build(output):

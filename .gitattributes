@@ -83,3 +83,7 @@ internal/top/testdata/native-dxf3d*.txt -text whitespace=cr-at-eol
 validation/native-text/*.txt -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof
 validation/native-text/cases.tsv -text whitespace=cr-at-eol
 internal/top/testdata/native-corpus-text-read.txt -text whitespace=cr-at-eol
+
+# P16 literal SVX conversion and original-program source text retain CRLF.
+internal/exportsurvex/testdata/*.svx -text whitespace=cr-at-eol
+internal/exportsurvex/testdata/*.txt -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof

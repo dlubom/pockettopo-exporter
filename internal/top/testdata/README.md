@@ -2649,3 +2649,48 @@ reproduced self-leg and conflicting zero-linked-fixed-station defects; named
 regressions failed before their fixes and passed afterward. Raw aliases and
 transitive equations are covered. P05–P14's 1462 preserved and 271 P14 evidence
 identities remain unchanged.
+
+## P16 — Survex SVX conversion and consumer evidence (2026-10-13)
+
+PocketTopo 1.372 has no SVX exporter. P16 confirms the same native fields as P15
+against the actual C# and IL, including `Station.Read` (0x1669c), `ID.Read`
+(0x22348), `Trip.Read` (0x12c1c), `GetDeclination` (0x12720),
+`DeclCorrByIndex`, `Reference.Read`, `Angle.ToUnit` and `Angle.ToUnsigned`.
+The six reference SHA-256 identities listed under P15 were checked again and
+match exactly. `Trip.Read` replaces Auto -32768 with zero, `GetDeclination`
+returns the supplied value, unresolved trip indexes use zero, raw station
+aliases retain native equality, bearing is unsigned and inclination is signed.
+No native processing/grouping or geometry was substituted for source rows.
+
+JKTZ's `export.py` supplies prior ideas about line provenance, safe comments,
+zero equations and anonymous splays. P16 keeps its independent source-order
+profile and the explicit standard 1.372 zero fallback rather than copying JKTZ's
+held-correction/grouping policy. The authoritative [Survex data-file manual](https://survex.com/docs/manual/datafile.htm)
+sections Station Names, Anonymous Stations, BEGIN, CALIBRATE, DATA, DECLINATION,
+FLAGS, FIX, INFER, TRUNCATE and UNITS establish the destination contract.
+Native station pairs use underscores; `.` is an anonymous non-wall splay and
+`*infer equates on` treats zero tape readings as station equations. No wall,
+magnetic-model, historical date or CRS inference is claimed.
+
+`internal/exportsurvex/testdata/features.top` and `features.native.txt` are exact
+copies of P15's frozen independently native-readback source/text capture, with
+the same two SHA-256 identities recorded above. `TestSurvexNativeSourceGolden`
+checks the preserved original-program text golden through P05. The SVX golden
+is **conversion evidence**, never a native PocketTopo output.
+`scripts/survex-fixtures.py` specifies all expected SVX bytes literally and writes
+two additional independent TOP cases: `splays` actually has two distinct anonymous
+endpoints, negative stored declination, a numeric legacy station and a raw alias
+self-equation; `adjustment` actually has 10m forward / 12m reverse observations.
+The authoring script never calls the Go converter and is never run by a gate.
+`validation/p16-evidence.json` pins all seven fixture files and that script.
+
+`validate-survex.py` uses exactly cavern/dump3d 1.4.22. The pinned source archive
+and SHA-256 remain `install-walls-consumer.sh`'s P15 identity; the existing required
+consumer job runs both formats and uploads both reports. Analytic expectations
+check signed declination once, ENU fixes, retention of reversed observations,
+10/12m adjustment to 11m under equal consumer uncertainties, zero-linked coordinates,
+splay multiplicity and absence of WALL flags. dump3d's two-decimal coordinates
+use a 0.011m comparison tolerance. Each case must reject a malformed distance.
+The redundant self-equation case permits exactly one known warning; the other
+two permit none. Consumer acceptance does not establish native P06/P07 arithmetic.
+P05–P15 evidence is verified unchanged; all prior mutation scopes remain active.

@@ -33,7 +33,7 @@ P05–P08 and existing prefix contracts remain unchanged.
 | P13 | Native 3D DXF, source-linked points/entities and bounded native hulls | Implemented; exact-SHA hosted gates required |
 | P14 | Native capability inventory, corpus validation and offline distributions | Implemented; exact-SHA hosted gates required |
 | P15 | Walls SRV conversion, source lineage and independent reader validation | Implemented; exact-SHA hosted gates required |
-| P16 | Survex SVX | Planned only |
+| P16 | Survex SVX conversion, source lineage and independent reader validation | Implemented; exact-SHA hosted gates required |
 
 ### Verification and publication
 
@@ -843,6 +843,51 @@ and compiler errors/timeouts remain rejected by the unchanged mutation gate.
 P14 corpus, P15 consumer, mutation/control and aggregate jobs for the exact final
 SHA. No earlier run substitutes. Stop after P15; P16 is planned only.
 
+## P16 — Survex SVX
+
+**Status:** implemented on main; final exact-SHA hosted gates required.
+Preserve P05–P15; stop after P16.
+**Outcome:** isolated `export <input.top> --format survex --output <new-directory>`
+with `survey.svx` and deterministic source/lineage/loss `report.json`.
+
+**Design:** preserve source-order polar observations, repeats, reversals, unsigned
+bearings, signed inclinations and native stored-trip declination. Auto/missing
+trips retain the explicit standard 1.372 zero fallback. Use metres and exact
+binary-angle decimals. Map native `series.station` names to `series_station`,
+without hierarchy or truncation; raw aliases share native identity. Undefined
+destinations become anonymous non-wall splays (`.`); zero named legs are equations
+via `*infer equates on`, with all source angular fields retained. Complete named
+references become ENU fixes without claiming CRS; incomplete references remain
+in the report. Reject invalid identities/distances/inclinations, nonzero self
+legs and transitive zero-linked conflicting fixes. ASCII-escape comments and
+bound output before publication. No dates, magnetic model, LRUD, drawings,
+templates, grouping or native closure are inferred. Survex adjusts the network.
+
+Implementation sequence (existing main checkout):
+- [x] Confirm native C#/IL, immutable native field goldens, JKTZ prior art and
+  authoritative Survex syntax; add independently literal conversion goldens.
+- [x] Add exporter/CLI tests, implement the separate source-to-SVX writer and
+  existing exclusive new-directory publication; preserve all earlier routes.
+- [x] Require pinned Survex 1.4.22 SVX consumer validation with analytic stations,
+  splays/equations/repeats and malformed-input control in Actions; extend offline
+  distribution and complete mutation scopes/controls without removals.
+- [x] Run bounded ordinary gates and independent whole-change review; verify
+  C#/IL, goldens, all new fault compilation and complete shard discovery.
+- [ ] Complete hosted mutations/survivor review and verify all jobs for the
+  exact final commit/push SHA. P17–P19 remain optional and unimplemented by P16.
+
+Local ordinary gates include race/vet/Staticcheck, exact coverage, build and smoke;
+total statement coverage is 98.2%, with 100% in the new exporter. All 43 explicit
+faults compile. Gremlins discovery contains 2781 RUNNABLE sites, no uncovered
+sites and an exact disjoint five-shard union. Every earlier frozen evidence
+identity is unchanged. The supplemental pinned 262-input SVX smoke produced
+251 successful packages, all accepted by cavern; 11 invalid inputs failed
+explicitly before publication. This is consumer acceptance, not native geometry.
+Independent review found no exporter/CLI defect; its per-anonymous-endpoint flag
+control finding is fixed with a regression that rejects a WALL flag on either
+endpoint, missing/merged endpoints and duplicate named nodes. Exact-SHA hosted
+verification below remains required.
+
 ## Remaining original roadmap
 
 P14 closes the required native capability-inventory/distribution stage.
@@ -872,7 +917,7 @@ routine documentation and individual mutation groups are not separate PBIs.
 | P13 | Native 3D DXF | Implemented above; degenerate and bounded-failure cases |
 | P14 | Close native capability matrix and validate distribution | Implemented above; exact-SHA hosted gates required |
 | P15 | Walls SRV | Implemented above; exact-SHA hosted gates required |
-| P16 | Survex SVX | Planned; explicit conversions/losses and consumer validation |
+| P16 | Survex SVX | Implemented below; exact-SHA hosted gates required |
 | P17 | Optional layered SVG | Accepted R03 contract; can follow native drawings before SRV/SVX |
 | P18 | Optional XVI | Accepted R04 contract and native drawing semantics |
 | P19 | Conditional TH2, PNG or PDF | Separate behavior-sized items only after the corresponding research decision |
