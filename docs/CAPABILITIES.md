@@ -92,6 +92,8 @@ distribution revision. CI artifacts are validation packages, not a tagged releas
 
 Byte compatibility, corpus regression, CAD/VisualTopo/Toporobot import acceptance
 and rendered drawing fidelity are separate results. Optional R01/R02 consumer
-checks, older TOP versions, Walls/SRV and Survex/SVX remain future scope.
+checks and older TOP versions remain future scope. P15 now implements the
+additional [Walls SRV measurement profile](SPEC.md#walls-srv-and-survex-svx-design-p15p16),
+with P06 averages and original Walls validation; Survex/SVX remains planned.
 The native milestone means the bounded profiles inventoried here, with these
 limitations retained visibly.

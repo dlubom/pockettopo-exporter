@@ -75,7 +75,7 @@ function Compile-Case([string]$Name, [bool]$Reject) {
             }
             $main = @($windows | Where-Object {
                 [WallsWindows]::GetWindow($_,4) -eq [IntPtr]::Zero -and
-                [WallsWindows]::Class($_).StartsWith("Afx:") -and
+                [WallsWindows]::Class($_) -eq "Walls32Class" -and
                 [WallsWindows]::Text($_) -match "Walls"
             })
             $modal = @($windows | Where-Object { [WallsWindows]::Class($_) -eq "#32770" -and [WallsWindows]::Text($_) -ne "Tip of the Day" })

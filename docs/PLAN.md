@@ -690,7 +690,7 @@ review survivors and verify every CI job for the exact delivered SHA.
 and native sort overflow; zero-distance ancestors and template splays; arithmetic
 wrap and negative quantization; work/entity/byte limits and report line ownership.
 Native hulls are compatibility output, not an inferred watertight cave surface.
-P14 is implemented below; P15/P16 remain planned only.
+P14 and P15 are implemented below; P16 remains planned.
 
 Original-assembly evidence has 135 complete byte goldens, 24 generic-sort cases
 and 7 native failures; all 1,200 pre-existing evidence files match the baseline.
@@ -756,7 +756,8 @@ failed exports leaving output; no unsupported capability called native parity.
 remains the P05 metres/360 isolated profile; native text feet/grads and arbitrary
 machine code pages are explicitly outside current compatibility. Destination
 application acceptance and optional drawing research remain separate results.
-Stop after P14; P15/P16 stay planned.
+At P14 delivery, work stopped there and P15/P16 remained planned. P15 is now
+implemented below; P16 remains planned.
 
 The local complete corpus run has 6550 profile outcomes: **6504 successful**
 packages and **46 explicit failures**, each repeated with identical outcomes.
