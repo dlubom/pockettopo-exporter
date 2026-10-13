@@ -244,7 +244,7 @@ behavior with an empty PATH. P14's 262-input / 25-profile baseline stays unchang
 ```sh
 # Uses existing cavern/dump3d 1.4.22, no external tools needed by the exporter:
 python3 scripts/validate-walls.py --binary build/pockettopo-exporter --report build/walls-consumer-report.json
-# Linux development/CI installation, needs libproj-dev and libwxgtk3.2-dev:
+# Linux development/CI installation, needs libproj-dev, libgdal-dev, libwxgtk3.2-dev:
 bash scripts/install-walls-consumer.sh
 ```
 
