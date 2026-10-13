@@ -169,6 +169,38 @@ func TestVisualTopoSnapshotReferencesAndContext(t *testing.T) {
 	}
 }
 
+func TestVisualTopoReverseForwardAzimuthAndWorkBoundary(t *testing.T) {
+	b, e := os.ReadFile("testdata/geometry/reversed.top")
+	if e != nil {
+		t.Fatal(e)
+	}
+	d, e := top.ReadV3(b)
+	if e != nil {
+		t.Fatal(e)
+	}
+	v, e := PrepareVisualTopo(d, nil, GeometryOptions{MaxWork: 11})
+	if e != nil || len(v.Stations) != 2 {
+		t.Fatal("inclusive snapshot work boundary", e, len(v.Stations))
+	}
+	found := false
+	for _, n := range v.Stations {
+		if n.Reference == nil && n.Head == 0 {
+			found = true
+			// Frozen native reversed.top anchors the To endpoint. Station.FwAzimuth
+			// adds 32768 to raw 8192; Angle's Int32 value retains the whole turn.
+			if !n.Node.ID.SameIdentity(d.Measurements()[0].From()) || n.ForwardAzimuth != 40960 {
+				t.Fatal("native reverse forward azimuth provenance", n)
+			}
+		}
+	}
+	if !found {
+		t.Fatal("reverse-placed native head missing")
+	}
+	if _, e := PrepareVisualTopo(d, nil, GeometryOptions{MaxWork: 10}); e == nil {
+		t.Fatal("snapshot work below boundary accepted")
+	}
+}
+
 func TestVisualTopoStrictThreshold(t *testing.T) {
 	for _, tc := range []struct {
 		az  int32

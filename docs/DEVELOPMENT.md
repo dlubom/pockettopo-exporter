@@ -189,6 +189,9 @@ The native weak-suite control now requires exactly 58 live mutants.
 
 P14 changes validation and distribution tooling; application Go, previous
 contracts and every prior mutation scope/operator/threshold remain unchanged.
+Hosted survivor review also adds fixed reverse-angle provenance and singleton
+sort work-boundary regressions. They assert native Int32 values and concrete
+acceptance ceilings; byte equality alone misses those mutant behaviors.
 The standard-library Python scripts require Python 3.9+ only for development
 and CI. The distributed executable requires no Python, Go, Wine or PocketTopo.
 

@@ -28,6 +28,25 @@ func readDocument(t *testing.T, path string) source.Document {
 	}
 	return d
 }
+
+func TestVisualTopoReverseAxisReport(t *testing.T) {
+	d := readDocument(t, "../processing/testdata/geometry/reversed.top")
+	r, e := Build(d, nil, Options{Circle: 360})
+	if e != nil {
+		t.Fatal(e)
+	}
+	for _, g := range r.Report.Groups {
+		if g.Head == 0 {
+			// Native AngleBisector preserves Station.FwAzimuth's Int32 40960.
+			// Subtracting a whole turn leaves export bytes equal but loses provenance.
+			if g.Axis != 40960 {
+				t.Fatal("native report axis", g.Axis)
+			}
+			return
+		}
+	}
+	t.Fatal("reverse-placed native report head missing")
+}
 func TestVisualTopoNativeGoldens(t *testing.T) {
 	files, e := filepath.Glob("testdata/circle*/*.txt")
 	if e != nil || len(files) != 194 {

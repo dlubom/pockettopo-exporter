@@ -764,7 +764,7 @@ failures (12 work-limit and 6 iteration-limit results across six views/formats).
 All 262 text exports match independently captured original-assembly bytes.
 The 262 source paths contain 258 distinct hashes; duplicate paths stay separate.
 All 1462 earlier evidence identities remain unchanged. Bounded local ordinary
-gates passed with race/vet/Staticcheck and 98.0% total statement coverage;
+gates passed with race/vet/Staticcheck and 98.1% total statement coverage;
 validation negative controls and all six distribution native-byte cases pass.
 Hosted distribution, full mutation and corpus checks must pass for the final SHA.
 Independent review verified the pinned Git tree, all native text comparisons,
@@ -773,6 +773,15 @@ The reproduced archive symlink/file-type acceptance gap is fixed: every ZIP
 member must be a regular file, with negative binary/document controls. Final
 review found no unresolved actionable defect. No application Go, report schema,
 mutation scope, operator, threshold or existing failure control was changed.
+
+The first full P14 hosted run passed all 29 jobs. Survivor review then found
+three uncovered mutation behaviors despite equal export bytes: a whole-turn
+change to reverse forward-azimuth provenance, and extra singleton sort work
+in VisualTopo/3D DXF. Fixed regression expectations now preserve the native
+Int32 angle and inclusive work boundaries; all three mutated variants fail
+named tests. Production behavior and frozen evidence remain unchanged. The
+final test commit must repeat every hosted job; the earlier green SHA is not
+the delivery SHA.
 
 ## Remaining original roadmap
 

@@ -596,6 +596,17 @@ func TestDXF3DDeterminismAndFallback(t *testing.T) {
 	}
 }
 
+func TestDXF3DSingletonSortNeedsNoWork(t *testing.T) {
+	// Native Array.Sort's strict range test returns for one station without
+	// partitioning. A zero remaining budget must therefore accept this case.
+	id := source.NewStationID(65536)
+	values := []processing.GraphicsStation{{Node: processing.GeometryNode{ID: id}}}
+	w := writer{lim: limits{work: 0}}
+	if e := w.sort(values, 0, 0); e != nil || values[0].Node.ID != id {
+		t.Fatal("native singleton sort charged partition work", e, values)
+	}
+}
+
 func TestDXF3DSortWorkAndWrappedComparer(t *testing.T) {
 	var values []processing.GraphicsStation
 	for i := 0; i < 100; i++ {
