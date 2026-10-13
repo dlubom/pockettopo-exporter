@@ -63,6 +63,136 @@ the manifest and archive name identify the source revision. These CI packages
 are not a tagged public release. CI complete includes distribution and corpus
 gates alongside all existing ordinary/mutation/control jobs.
 
+## Walls SRV and Survex SVX design (P15/P16)
+
+**Status:** agreed contract; implementation planned. P15 exports `survey.srv`,
+P16 exports `survey.svx`; both include `report.json`. Commands use
+`export <input.top> --format srv|svx --output <new-directory>`.
+One isolated TOP v3 input, measurement data only, without prior loop closure,
+template context, drawings, derived LRUD or inferred geographic fixes.
+
+### Measurement rules
+
+| Case | Walls SRV | Survex SVX |
+| --- | --- | --- |
+| Consecutive repeated leg | One P06 spatial-vector average | All individual readings |
+| Reverse member | Included in the average | Swap endpoints, bearing +180° modulo 360, negate inclination |
+| Singleton or splay | Original measurement | Original measurement |
+| Anonymous splay endpoint | `-` | `::` with colon separator |
+
+- Use P06 identity/consecutive grouping and the head's direction, for any count.
+  Do not sort, globally deduplicate, remove outliers or move intervening splays.
+  Flip is not reversal. SVX repeats remain active, without `duplicate` flags.
+- SRV averages use each member's correction before averaging and express the
+  result relative to the head's correction. Do not replace P06 spatial averaging
+  with separate length/angle means. SVX keeps each member's correction.
+- Survex 1.4.22 does not merge opposite-direction repeats: a local probe produced
+  two legs/one loop/20 m; normalizing direction produced one leg/no loop/10 m.
+  A declination directive between same-direction repeats still allowed merging.
+- Preserve station identity across trips, including `0` versus `0.0`. Walls names
+  have at most eight characters; fallback is `p` plus unsigned native-ID base36,
+  with a reversible, collision-checked map. SVX preserves literal dots using
+  `*set separator :`, `*set names ._-`, `*case preserve`, `*truncate off`.
+- Splays remain individual and outside cave-length statistics. Anonymous wall
+  markers are a target convention, not proof of the physical point type.
+- Metres/degrees, Distance/Azimuth/Inclination, three distance decimals and six
+  angle decimals; rounding only at output. SRV: ASCII/CRLF, SVX: UTF-8/LF.
+  Escape source text safely in comments; preserve originals in the UTF-8 report.
+- Keep bearings in [0,360), including rounded 360 as zero. Derived P06 Float32
+  inclinations within 0.00001° beyond ±90 normalize to that endpoint; preserve
+  the native value in the report. Invalid raw inclinations are never clamped.
+- All-zero named groups remain ties. Reject mixed zero/nonzero groups, nonzero
+  cancellation, undefined From, name collisions, negative distances, raw
+  inclinations outside ±90 and unsupported/non-finite results before publication.
+- The report retains source hashes, raw IDs/aliases, rows/spans, original/emitted
+  values, grouping, corrections and omissions. Reuse existing safe publication
+  and destination defaults; no guessed accuracy, team, entrance or flag semantics.
+
+### Declination and editable dates
+
+Default: emit manual declination before the first measurement (including zero),
+then only at effective changes, including return to zero. Use separate lines:
+`#Units Decl=...` / `*declination ... degrees`. A trip change alone does not
+repeat the same correction. Manual trips use stored corrections; Auto/missing/
+invalid trips use P06 effective zero, explicitly labelled unresolved in the report.
+
+At each source-trip change, emit `;#Date YYYY-MM-DD` or `;*date YYYY-MM-DD`
+for the user to fill and uncomment. Keep the recorded TOP date separately as
+unverified metadata. For SRV averages, use the head's trip and report all members.
+Date placeholders do not alter the default export.
+
+To enable date-derived declination, comment out **all** manual declination lines:
+
+- **Walls:** fill/uncomment dates, set the project's geographic reference and
+  enable **Declinations — Derive from #Date**. Date and manual directives otherwise
+  override one another in file order.
+- **Survex:** fill/uncomment dates and geographic templates: input/output CRS,
+  a known fixed station (or connection to a fixed survey), and `*declination auto`
+  with a representative real location. A date alone does not enable correction.
+
+SVX keeps individual readings available for recalculation. An SRV average spanning
+multiple trips or corrections cannot be fully recalculated by editing one date;
+report that limitation and recompute from original readings when needed. Geographic
+position and verified dates are supplied by the user, never inferred by export.
+
+### Examples
+
+Three 10.020/10.000/9.980 m readings share bearing 90°, inclination/correction 0°.
+A splay follows; the next trip uses correction +5°. Date templates remain comments.
+
+```text
+; survey.srv
+#Units Reset Meters Order=DAV A=D V=D Case=Mixed
+;#Date YYYY-MM-DD
+#Units Decl=0.000000
+1.0 1.1 10.000 90.000000 0.000000
+1.1 -    2.500  0.000000 0.000000
+;#Date YYYY-MM-DD
+#Units Decl=5.000000
+1.1 1.2  5.000 180.000000 0.000000
+```
+
+```text
+; survey.svx
+*require 1.4.22
+*begin
+*case preserve
+*truncate off
+*set separator :
+*set names ._-
+*units tape metres
+*units compass clino declination degrees
+;*cs <CRS>
+;*cs out <OUTPUT_CRS>
+;*fix <STATION> <X> <Y> <Z>
+;*declination auto <X> <Y> <Z>
+*data normal from to tape compass clino
+;*date YYYY-MM-DD
+*declination 0.000000 degrees
+1.0 1.1 10.020 90.000000 0.000000
+1.0 1.1 10.000 90.000000 0.000000
+1.0 1.1  9.980 90.000000 0.000000
+1.1 ::   2.500  0.000000 0.000000
+;*date YYYY-MM-DD
+*declination 5.000000 degrees
+1.1 1.2  5.000 180.000000 0.000000
+*end
+```
+
+Examples illustrate layout, not native TOP byte goldens. Production SVX resets
+inherited calibration, flags, inference and accuracy inside the anonymous scope;
+trips do not create separate station namespaces. Consumers own loop adjustment,
+so equal closed SRV/SVX geometry is not required.
+
+**References:** [P06](#native-grouped-measurement-processing-p06), original
+`Survey.EvalData`, `Station.GetAvDirection` and corresponding C#/IL;
+[Walls manual](https://texasspeleologicalsurvey.org/software/walls/Walls_manual.pdf),
+[Survex commands](https://survex.com/docs/manual/datafile.htm#declination),
+[Survex repeats](https://survex.com/docs/manual/svxhowto.htm#repeated-readings).
+JKTZ is syntax/provenance prior art, not this project's averaging oracle.
+Acceptance and implementation boundaries: [P15](PLAN.md#p15--walls-srv),
+[P16](PLAN.md#p16--survex-svx).
+
 ## Source and compatibility contract
 
 The reference is standard PocketTopo **1.372**, executable SHA-256:
@@ -85,7 +215,9 @@ report disagreement; do not generalize to Swiss 1.472. Start at the sibling
 - Default to one isolated input. Native template/directory context is an
   explicit P08 mode with deterministic file inventory, hashes and ordering.
 - For each exporter fix settings, selection, grouping, arithmetic, ordering,
-  encoding and line endings. Target exact native bytes under those conditions.
+  encoding and line endings. For native P05–P13 formats, target exact native
+  bytes under those conditions. P15/P16 are additional destination formats;
+  their contracts require source fidelity and destination validation instead.
   Report semantic equivalence only with an explicit normalization rule.
 - Byte identity, semantic equivalence, destination-application acceptance and
   drawing/coordinate fidelity are separate results. Parsing and green CI alone

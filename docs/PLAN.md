@@ -32,7 +32,7 @@ P05–P08 and existing prefix contracts remain unchanged.
 | P12 | Native Toporobot and dialog options, bounded existing-file merge and provenance | Implemented; exact-SHA hosted gates required |
 | P13 | Native 3D DXF, source-linked points/entities and bounded native hulls | Implemented; exact-SHA hosted gates required |
 | P14 | Native capability inventory, corpus validation and offline distributions | Implemented; exact-SHA hosted gates required |
-| P15/P16 | Walls SRV / Survex SVX | Subsequent scope |
+| P15/P16 | Walls SRV / Survex SVX | Agreed contracts below; implementation planned |
 
 ### Verification and publication
 
@@ -783,6 +783,43 @@ named tests. Production behavior and frozen evidence remain unchanged. The
 final test commit must repeat every hosted job; the earlier green SHA is not
 the delivery SHA.
 
+## P15 — Walls SRV
+
+**Status:** planned; contract agreed, not implemented.
+**Dependencies:** P04d, P06 and existing export/report publication.
+**Scope:** implement only P15 after a separate request, following the
+[SRV/SVX contract](SPEC.md#walls-srv-and-survex-svx-design-p15p16).
+
+**Acceptance:**
+
+- Produce `survey.srv` + `report.json`: P06 averaged repeats, raw singleton/splay
+  rows, reversible names, stateful declination and commented editable trip dates.
+- Verify reverse/mixed-correction groups, 0/360 and vertical angles, zero ties,
+  invalid-data failures, date templates and full original-row lineage.
+- Validate unclosed vectors and actual Walls acceptance; record version/settings
+  and anonymous-splay limitations. Survex reading SRV is a separate check.
+
+## P16 — Survex SVX
+
+**Status:** planned; contract agreed, not implemented.
+**Dependencies:** P04d, P15's shared policy and existing export/report publication.
+**Scope:** implement only P16 after a separate request, following the same
+[contract](SPEC.md#walls-srv-and-survex-svx-design-p15p16).
+
+**Acceptance:**
+
+- Produce `survey.svx` + `report.json`: individual readings in source order,
+  reverse-repeat normalization, literal station dots and individual splays.
+- Verify adjacent-repeat merging in Survex 1.4.22, including reversed readings,
+  correction/date changes and interrupted pairs; check counts and splay flags.
+- Verify manual declination transitions, commented date/auto templates, zero ties,
+  vertical angles, strict failures and original/emitted-row lineage.
+
+For both items, preserve P05–P14 and source/processing contracts. Follow all gates
+in DEVELOPMENT, retain mutation scopes/failure controls, obtain independent review
+and update fixture provenance. Changes to grouping or magnetic policy require
+refining the contract. Commit/push needs authorization and exact-SHA hosted CI.
+
 ## Remaining original roadmap
 
 P14 closes the required native capability-inventory/distribution stage.
@@ -811,7 +848,8 @@ routine documentation and individual mutation groups are not separate PBIs.
 | P12 | Toporobot and dialog options | Implemented above |
 | P13 | Native 3D DXF | Implemented above; degenerate and bounded-failure cases |
 | P14 | Close native capability matrix and validate distribution | Implemented above; exact-SHA hosted gates required |
-| P15/P16 | Walls SRV / Survex SVX | Native milestone; explicit conversions/losses and consumer validation |
+| P15 | Walls SRV with averaged repeated legs | Contract above; follows the native milestone; actual Walls validation |
+| P16 | Survex SVX retaining individual readings | Contract above; follows P15; Survex performs adjacent-repeat averaging |
 | P17 | Optional layered SVG | Accepted R03 contract; can follow native drawings before SRV/SVX |
 | P18 | Optional XVI | Accepted R04 contract and native drawing semantics |
 | P19 | Conditional TH2, PNG or PDF | Separate behavior-sized items only after the corresponding research decision |
