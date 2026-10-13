@@ -1,0 +1,18 @@
+[
+  {
+    "path": "internal/exportwalls/testdata/features.native.txt",
+    "sha256": "5ce7b8a246a5af7028a1131d625a2ab8497320fe8b787ecc4dbb602b36f39df0"
+  },
+  {
+    "path": "internal/exportwalls/testdata/features.srv",
+    "sha256": "8693889e281707047c10d556e50ba0cc158cc2478df9215e9a49616e38684fa1"
+  },
+  {
+    "path": "internal/exportwalls/testdata/features.top",
+    "sha256": "4315777361971b5fa2e47d2d3bfbed7d1f83f9ab62624899a649d0f80eb78b57"
+  },
+  {
+    "path": "scripts/walls-fixtures.py",
+    "sha256": "ca2282b96f93fa704abf8ad56d8c8fa57999f459743d996f5b2a458ad4bf05c8"
+  }
+]

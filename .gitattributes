@@ -1,4 +1,6 @@
 * text=auto eol=lf
+internal/exportwalls/testdata/*.srv -text whitespace=cr-at-eol
+internal/exportwalls/testdata/*.txt -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof
 *.top binary
 internal/top/testdata/native-trip-read.txt -text whitespace=cr-at-eol
 internal/top/testdata/native-measurement-read.txt -text whitespace=cr-at-eol

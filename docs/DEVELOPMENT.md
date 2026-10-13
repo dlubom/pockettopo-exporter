@@ -224,3 +224,33 @@ The package BUILD.json distinguishes the source SHA while preserving existing
 CI complete explicitly requires the new corpus job and all three platform
 checks (each containing distribution verification), alongside the unchanged
 mutation matrix and failure controls.
+
+## P15 Walls verification
+
+P15 adds `internal/exportwalls` and `internal/cli/walls.go` to the existing output
+Gremlins shard and a `walls` scope with **43 explicit faults** to `native-text`.
+All previous scopes/operators/thresholds remain. The exercised weak-suite control
+now has **62 mutants**, including Walls dispatch; all must survive and the gate
+must reject them. Actions uploads every group's mutation reports for survivor
+review. Dispatch controls still require exactly-once full-scope scheduling.
+
+The new required `walls-consumer` Actions job builds a SHA-256-pinned Survex 1.4.22
+source archive (development-only) and checks its Walls reader against independent
+analytic coordinates and a malformed-input control. `CI complete` includes this
+job. The three distribution jobs retain all six native byte cases and additionally
+verify the Walls conversion golden, provenance, no-replace and malformed-input
+behavior with an empty PATH. P14's 262-input / 25-profile baseline stays unchanged.
+
+```sh
+# Uses existing cavern/dump3d 1.4.22, no external tools needed by the exporter:
+python3 scripts/validate-walls.py --binary build/pockettopo-exporter --report build/walls-consumer-report.json
+# Linux development/CI installation, needs libproj-dev and libwxgtk3.2-dev:
+bash scripts/install-walls-consumer.sh
+```
+
+The consumer deliberately allows exactly the two documented warnings: retained
+compass on a plumb shot, and Survex ignoring `Grid=0` in an unreferenced standalone
+context. Other errors/warnings fail the controlled consumer fixture. It is a
+format/coordinate acceptance test, not a claim about Walls GUI or native P06
+averaging. Regenerate P15 literal inputs/expected SRV only through deliberate
+review of `scripts/walls-fixtures.py`; never update goldens during a gate.

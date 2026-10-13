@@ -32,8 +32,8 @@ correction is planned here.
 | 3D DXF | `.dxf` | `ThreeD.WriteDXF` |
 
 Native Therion interchange is not a ready-made `.th`/`.th2` project. Native 3D
-DXF is not Survex `.3d`. Walls `.srv` and Survex `.svx` are confirmed subsequent
-scope. Layered SVG, XVI, direct TH2, separate cross-section files and PNG/PDF
+DXF is not Survex `.3d`. Walls `.srv` is the P15 conversion below; Survex `.svx`
+remains subsequent scope. Layered SVG, XVI, direct TH2, separate cross-section files and PNG/PDF
 are conditional additions; they do not block native exports.
 
 The native milestone covers documented options and relevant input/context
@@ -980,3 +980,85 @@ establish this contract. Evidence and
 reproduction commands are in [fixture provenance](../internal/top/testdata/README.md#p13-native-3d-dxf).
 Consumer CAD import, a watertightness guarantee and the P14 compatibility matrix
 remain outside P13.
+
+## Walls SRV conversion (P15)
+
+`export <input.top> --format walls --output <new-directory>` publishes
+`survey.srv` and `report.json` using the existing exclusive, no-replace package
+publication. `internal/exportwalls.Build(source.Document)` is isolated and does
+not compute P06 groups or P07/P08 geometry. It requires a complete supported TOP
+v3 document. Earlier exporters and their report schemas remain unchanged.
+
+The profile uses ASCII (including escaped Unicode comments), CRLF, metres and
+360-degree angles. Each measurement is emitted once in source order, including
+repeats and reversed observations. These remain independent observations for the
+consumer's adjustment, not native vector averages; zero-length named legs act
+as equations. Native undefined destination identity `-1` (including its raw alias)
+becomes Walls `-`, an anonymous wall shot. No LRUD is inferred. Flip, visibility,
+projection, special, mark, read-only and unknown flag bits and roll are retained
+in the report without a Walls drawing/geometry effect.
+
+Distances and reference coordinates use exact integer millimetre-to-decimal-metre
+formatting, including Int64 references without intermediate floating point.
+Azimuth uses unsigned Int16; inclination and stored declination use signed Int16.
+The angle conversion is `raw * 360 / 65536`, with at most 13 fractional decimal
+places, so no source angular resolution is lost. `#Units Reset Meters Order=DAV
+A=D V=D Case=Mixed Grid=0` sets the profile explicitly. `Grid=0` prevents Walls
+from inheriting a nonzero project convergence and rotating source fixes; it does
+not establish a CRS or that the source coordinates are geodetically correct.
+
+Each row gets its own `#Units Decl=...`. A valid explicit trip uses its stored
+correction; Auto and missing/out-of-range trip indexes use zero, as standard
+PocketTopo 1.372 does through `Trip.Read/GetDeclination/DeclCorrByIndex`. This is
+reported per row as `stored-explicit`, `native-auto-zero` or
+`native-missing-trip-zero`. It is compatibility with the recorded native
+correction, not a claim that Auto calculated the physical declination. No
+`#Date`, automatic magnetic model or inferred survey date is emitted. Exact
+recorded ticks and trip comments remain in the report and escaped SRV comments.
+
+Station identity follows native equality, not raw bits or display names alone.
+Nonempty decimal/dotted names up to eight ASCII characters are preserved. Longer
+names become `p` plus unsigned base36 of the **native** Int32 identity. This is
+injective and disjoint from literal numeric names; aliases share one Walls name
+but retain distinct raw identities in the report. Hidden reserved identities
+cannot be converted to invented named stations. An unnamed/hidden measurement
+origin, hidden non-undefined destination, negative/sentinel distance, inclination
+outside [-90,90], or positive-distance same-native-station leg fails the entire
+export with the source row index before creating a directory.
+
+Complete named references become `#Fix station East North Up`, with no inferred
+CRS, datum, uncertainty, entrance or coordinate transformation. Any sentinel
+coordinate or hidden station makes that reference `omitted-incomplete`; every raw
+field remains in the report. Equal fixes for the same native identity are emitted
+once and reported as `duplicate-identical`; conflicting complete fixes fail.
+Zero-link equivalence classes are also checked: they may not connect different
+fixed coordinates, including transitively or through raw aliases. This is stricter
+than native reference placement. A zero self-equation is retained; a consumer may
+warn that it is redundant. Very large coordinates preserve decimal bytes but may
+lose precision in a consumer's floating-point calculations.
+
+Schema-version-1 reports contain the source hash/size/version/tail class, output
+hash/size, profile/correction policy, encountered station map, every trip,
+reference and measurement with source index/span/raw values/comments, output line
+numbers and correction decisions. Omitted/coalesced references have line zero.
+Loss entries explicitly cover dates, metadata, correction fallbacks, name mapping,
+references, drawings, all three mappings and trailer bytes. Original TOP bytes
+remain untouched; the report is not a replacement for the source archive.
+Every comment physical line starts with `; comment ` and contains at most 160
+ASCII-escaped payload characters, so embedded CR/LF, Unicode, semicolons or
+`#Fix` text cannot become executable SRV directives. Output is bounded to 128 MiB;
+resource errors publish nothing. There are no template, closure or other exporter
+options on this command.
+
+The fixture has an independent literal TOP writer, hand-calculated SRV golden
+and fresh original-assembly native text capture. Prior native goldens and P14
+frozen evidence remain intact. `scripts/validate-walls.py` runs the pinned Survex
+1.4.22 **Walls reader**, checking emitted bytes/provenance and independently
+calculated ENU coordinates, repeated/reversed legs, fixed/anonymous station flags,
+splays, a zero-link identity and malformed-data rejection. Two warnings are
+expected: retained compass on a plumb splay and unsupported `Grid=0` (Survex's
+standalone default is already zero). This establishes acceptance in an isolated,
+unreferenced consumer context; it does not validate Walls GUI, inherited WPJ
+settings, or arbitrary consumer adjustment and rendering. The source archive and
+SHA-256 for rebuilding this reader are pinned in `install-walls-consumer.sh`.
+This use of an SRV reader does not implement the P16 SVX exporter.

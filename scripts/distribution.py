@@ -90,14 +90,31 @@ def smoke(payload, target, revision):
             if again.returncode != 1 or again.stdout or saved != {p.name: p.read_bytes() for p in output.iterdir()}:
                 raise ValueError("distributed CLI replaced existing output")
         bad = scratch / "bad.top"
+        # P15 is a conversion golden, separate from the six native byte cases.
+        walls_source = scratch / "walls.top"
+        shutil.copyfile(REPO / "internal/exportwalls/testdata/features.top", walls_source)
+        walls_output = scratch / "walls-export"
+        walls_args = ["export", walls_source, "--format", "walls", "--output", walls_output]
+        result = invoke(walls_args)
+        if result.returncode or result.stderr or {p.name for p in walls_output.iterdir()} != {"survey.srv", "report.json"}:
+            raise ValueError("distributed Walls export failed")
+        walls_bytes = (walls_output / "survey.srv").read_bytes()
+        walls_report = json.loads((walls_output / "report.json").read_bytes())
+        if (walls_bytes != (REPO / "internal/exportwalls/testdata/features.srv").read_bytes()
+                or walls_report["output_sha256"] != digest(walls_bytes)
+                or walls_report["source_sha256"] != digest(walls_source.read_bytes())):
+            raise ValueError("distributed Walls conversion golden/provenance differs")
+        saved_walls = {p.name: p.read_bytes() for p in walls_output.iterdir()}
+        if invoke(walls_args).returncode != 1 or saved_walls != {p.name: p.read_bytes() for p in walls_output.iterdir()}:
+            raise ValueError("distributed Walls export replaced existing output")
         bad.write_bytes(b"Top\x03")
-        for fmt in corpus.ARTIFACTS:
+        for fmt in [*corpus.ARTIFACTS, "walls"]:
             output = scratch / ("bad-" + fmt)
             result = invoke(["export", bad, "--format", fmt, "--output", output])
             if result.returncode != 1 or result.stdout or not result.stderr or output.exists():
                 raise ValueError("distributed CLI malformed-input contract failed")
     return {"source_revision": revision, "target": target, "native_byte_cases": len(cases),
-            "offline": True, "no_replace": True, "malformed_input": True}
+            "walls_conversion_case": True, "offline": True, "no_replace": True, "malformed_input": True}
 
 
 def build(output):

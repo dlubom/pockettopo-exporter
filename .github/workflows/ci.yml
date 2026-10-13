@@ -63,6 +63,30 @@ jobs:
           name: corpus-${{ github.sha }}
           path: build/corpus-report.json
           if-no-files-found: error
+  walls-consumer:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version-file: go.mod
+          cache: false
+      - run: sudo apt-get update && sudo apt-get install -y libproj-dev libwxgtk3.2-dev
+      - run: bash scripts/install-walls-consumer.sh
+      - name: Verify Walls syntax, coordinates and rejection control
+        run: |
+          go build -o build/pockettopo-exporter ./cmd/pockettopo-exporter
+          python3 scripts/validate-walls.py --binary build/pockettopo-exporter --cavern build/walls-consumer/survex-1.4.22/src/cavern --dump3d build/walls-consumer/survex-1.4.22/src/dump3d --report build/walls-consumer-report.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: walls-consumer-${{ github.sha }}
+          path: build/walls-consumer-report.json
+          if-no-files-found: error
+
   mutation-plan:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -101,11 +125,19 @@ jobs:
         run: bash scripts/mutation.sh "$MUTATION_GROUP"
       - if: matrix.group == 'gremlins-output'
         run: bash scripts/mutation-trial.sh
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: mutations-${{ matrix.group }}-${{ github.sha }}
+          path: |
+            mutation.json
+            build/*mutation*.json
+          if-no-files-found: error
 
   complete:
     name: CI complete
     if: always()
-    needs: [check, corpus, mutation-plan, mutation]
+    needs: [check, corpus, walls-consumer, mutation-plan, mutation]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -116,8 +148,9 @@ jobs:
           PLAN_RESULT: ${{ needs.mutation-plan.result }}
           MUTATION_RESULT: ${{ needs.mutation.result }}
           CORPUS_RESULT: ${{ needs.corpus.result }}
+          WALLS_RESULT: ${{ needs.walls-consumer.result }}
         run: |
-          if [[ "$CHECK_RESULT" != success || "$CORPUS_RESULT" != success || "$PLAN_RESULT" != success || "$MUTATION_RESULT" != success ]]; then
-            printf 'CI incomplete: checks=%s corpus=%s plan=%s mutations=%s\n' "$CHECK_RESULT" "$CORPUS_RESULT" "$PLAN_RESULT" "$MUTATION_RESULT" >&2
+          if [[ "$CHECK_RESULT" != success || "$CORPUS_RESULT" != success || "$WALLS_RESULT" != success || "$PLAN_RESULT" != success || "$MUTATION_RESULT" != success ]]; then
+            printf 'CI incomplete: checks=%s corpus=%s walls=%s plan=%s mutations=%s\n' "$CHECK_RESULT" "$CORPUS_RESULT" "$WALLS_RESULT" "$PLAN_RESULT" "$MUTATION_RESULT" >&2
             exit 1
           fi

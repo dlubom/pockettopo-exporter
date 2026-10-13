@@ -20,7 +20,7 @@ def verify(items, root):
 
 
 if __name__ == "__main__":
-    for name in ("preserved-evidence.json", "p14-evidence.json"):
+    for name in ("preserved-evidence.json", "p14-evidence.json", "p15-evidence.json"):
         items = json.loads((ROOT / "validation" / name).read_text())
         verify(items, ROOT)
         print("Verified", name, len(items), "identities")

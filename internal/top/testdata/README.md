@@ -2571,3 +2571,81 @@ platforms. Toporobot supplies its captured `2026-10-13T07:29:26` export clock.
 Exact-SHA Actions must also pass every preserved mutation/control group before
 publication is called complete. P15/P16 and optional consumer checks remain
 planned only.
+
+## P15 — Walls source conversion and consumer evidence (2026-10-13)
+
+PocketTopo 1.372 has no Walls exporter. P15 separates native source semantics,
+independently specified conversion bytes and destination-reader acceptance.
+Primary references were `analysis/ANALYSIS.txt`, `Station.Read/RealAzimuth`,
+`Trip.Read/GetDeclination/DeclCorrByIndex`, `Angle.ToUnit/ToUnsigned`, `ID.Read/
+ToString` and `Reference.Read` in the sibling decompilation. IL confirms:
+Station.Read RVA 0x1669c retains Int32 distance, Int16 angles, byte flags/roll and
+Int16 trip; RealAzimuth RVA 0x15868 adds trip correction exactly once;
+Angle.ToUnit 0xf5b8 uses conv.i2 while ToUnsigned 0xf5e0 uses conv.u2, both divide
+by 65536; Trip.Read 0x12c1c replaces Auto -32768 with zero, and GetDeclination
+0x12720 returns its supplied declination. Missing trip indexes return zero.
+
+Frozen reference SHA-256 identities inspected:
+
+```text
+44726d9b81881474147865a629365b9e02f0cc3e42dcec0b921613e36826c1cb  Station.cs
+7c452162180db0407a46058695219660222f47d405632386ce407d42d43beddd  Trip.cs
+703e23a8e002aa12dcdcde2296cd300e9f1a961b951addbcbc14b94a6a0060be  Angle.cs
+8737d23529d5c27bc7d7be7a9563b73cd76ed8738d95639dde64eef113790fe6  ID.cs
+e6b2b669d39d0d63440908130ed90d62e91fa4e8e021bbfffe5823d62e805614  Reference.cs
+ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76  PocketTopo.il
+```
+
+Earlier JKTZ `src/jktz/pockettopo/export.py` and `export_policy.py` were inspected.
+Its ideas of bounded ASCII comments and an injective eight-character name mapping
+are useful. Its correction/grouping policies were not copied: it holds unresolved
+Auto/missing trips, while this profile explicitly reports standard 1.372's zero
+fallback and preserves every raw row. Mapping uses native identity so raw aliases
+cannot become different stations. The official [Walls manual](https://texasspeleologicalsurvey.org/software/walls/Walls_manual.pdf)
+sections 4.1–4.5 establish ASCII comments, anonymous wall shots, #Units, Grid and
+ENU #Fix semantics; the [Survex Walls-reader documentation](https://survex.com/docs/manual/walls.htm)
+distinguishes supported syntax from known consumer differences. No neighboring
+SRV/SVX file served as a native oracle.
+
+`scripts/walls-fixtures.py` writes independent literal TOP bytes and hand-derived
+SRV text to `internal/exportwalls/testdata/`. The five rows actually contain a
+normal/reversed pair, another trip, vertical anonymous splay and a zero link to a
+long station ID. There are explicit and Auto trips, a complete ENU fix, raw flags
+and roll, and a Polish comment containing CR/LF and a fake #Fix. Tests additionally
+mutate literal fields for raw aliases, reserved IDs, angle/name boundaries,
+reference sentinels/conflicts, chained zero equations and invalid measurements.
+
+Fresh native evidence was captured with the original EXE SHA-256
+`048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371`, the existing
+original .NET 2 runtime and the preserved `reference-corpus-text-probe.cs` probe.
+Its one-entry input list was `features.top`, rooted at the Walls testdata folder;
+it reported `0 complete features.top` and count=1. Capture `0000.txt` was copied
+unchanged to `features.native.txt`. The probe invokes the original DataSet.Read
+and Exporter.WriteText, independently checks complete Survey.WriteText bytes,
+and never compiles recovered native code. `TestWallsNativeSourceGolden` compares
+P05 against this independent output; it is not claimed as a native SRV golden.
+
+```text
+4315777361971b5fa2e47d2d3bfbed7d1f83f9ab62624899a649d0f80eb78b57  features.top
+5ce7b8a246a5af7028a1131d625a2ab8497320fe8b787ecc4dbb602b36f39df0  features.native.txt
+8693889e281707047c10d556e50ba0cc158cc2478df9215e9a49616e38684fa1  features.srv
+```
+
+The independent Survex 1.4.22 SRV reader accepted the fixture. Numeric expectations
+are analytic: start (100,-200,3), a 10m bearing of 22.5 degrees, 2m east at +45
+degrees inclination, a 1m downward splay, and a zero-link identity. `dump3d`
+coordinates agree within 0.011m (its two-decimal text output); named stations,
+anonymous wall flags, fixed flag and repeated lines are checked separately.
+A corrupted numeric distance must fail. Grid=0 is intentional for Walls and
+ignored with a documented warning by Survex; the plumb compass gives the other
+expected warning. The exact consumer source tar SHA-256 is
+`a26962d888621cfd2043a7cc6a227fc905130dfbd14c450dc1c4c02fbfdd9dbc`.
+
+Independent review also ran a supplemental 262-input corpus smoke: 251 successful
+exports were all accepted by the SRV reader; 11 exports explicitly rejected
+unrepresentable station identities, out-of-range inclination or nonzero self-legs.
+This is supplemental acceptance, not a frozen native geometry golden. Review
+reproduced self-leg and conflicting zero-linked-fixed-station defects; named
+regressions failed before their fixes and passed afterward. Raw aliases and
+transitive equations are covered. P05–P14's 1462 preserved and 271 P14 evidence
+identities remain unchanged.

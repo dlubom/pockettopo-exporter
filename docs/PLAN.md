@@ -32,7 +32,8 @@ P05–P08 and existing prefix contracts remain unchanged.
 | P12 | Native Toporobot and dialog options, bounded existing-file merge and provenance | Implemented; exact-SHA hosted gates required |
 | P13 | Native 3D DXF, source-linked points/entities and bounded native hulls | Implemented; exact-SHA hosted gates required |
 | P14 | Native capability inventory, corpus validation and offline distributions | Implemented; exact-SHA hosted gates required |
-| P15/P16 | Walls SRV / Survex SVX | Subsequent scope |
+| P15 | Walls SRV conversion, source lineage and independent reader validation | Implemented; exact-SHA hosted gates required |
+| P16 | Survex SVX | Planned only |
 
 ### Verification and publication
 
@@ -783,6 +784,59 @@ named tests. Production behavior and frozen evidence remain unchanged. The
 final test commit must repeat every hosted job; the earlier green SHA is not
 the delivery SHA.
 
+## P15 — Walls SRV
+
+**Status:** implemented and independently reviewed on main; publication requires
+the final exact-SHA hosted gates. P05–P14 are preserved. P16 stays planned.
+**Outcome:** `export <input.top> --format walls --output <new-directory>`
+publishes `survey.srv` and a deterministic provenance/loss report. This is a
+documented conversion, not a native PocketTopo exporter.
+
+**Contract and implementation choices:** isolated source-order polar rows,
+including repeats/reversals and anonymous destination splays; metres and exact
+binary-angle decimal degrees; native stored-trip declination (Auto and missing
+trip use the standard 1.372 zero fallback, explicitly reported). No grouping,
+closure, templates, inferred dates, magnetic model, CRS, LRUD or drawings.
+Use native identity for an injective <=8-character station map. Complete named
+references become ENU fixes without a CRS claim; incomplete references remain
+in the report. Fail before publication on unrepresentable measurement identities,
+negative/missing distances, out-of-range inclinations, nonzero self-legs or
+conflicting fixes (including through transitive zero links).
+ASCII-escaped, bounded comment lines preserve arbitrary source text safely.
+
+Implementation sequence (inline, existing main checkout):
+- [x] Confirm C#/IL fields, angle/declination/identity behavior and earlier native
+  goldens; inspect JKTZ prior art and the authoritative Walls syntax.
+- [x] Add independent literal TOP/SRV conversion fixtures and failing tests for
+  rows, splays, zero links, trip changes, aliases/long names, reference sentinels,
+  malicious comments, invalid values, provenance, deterministic bytes and limits.
+- [x] Implement `internal/exportwalls.Build(source.Document)` and isolated CLI
+  publication through the existing no-replace mechanism; preserve earlier routes.
+- [x] Add a reproducible external Walls-reader check with pinned consumer version,
+  numerical station/leg assertions and a malformed-input negative control.
+  Require it in Actions; extend mutation scope and failure controls without removals.
+- [x] Run ordinary gates, obtain an independent whole-change review, document
+  evidence/contracts. Publication below remains the final gate.
+
+Review focus: native aliases versus raw IDs; Auto versus explicit zero;
+declination applied exactly once; unsigned azimuth and signed inclination;
+reference sentinel/ENU fidelity; comment/directive injection; partial packages;
+consumer acceptance versus native compatibility. A Walls-format read by cavern
+is an independent format/coordinate check, not a Walls GUI or P16 deliverable.
+
+Independent review reproduced nonzero self-legs and zero-equated conflicting
+fixes; regression tests verified both fixes, including aliases and transitive
+chains. The reported mutation-count mismatch is corrected to 43 unique faults;
+all literal targets and the complete-result cardinality gate were checked.
+`Grid=0` explicitly disables inherited Walls convergence; the independent reader
+uses its standalone zero default and reports that unsupported option. The
+supplemental corpus check accepted all 251 successful packages from 262 inputs;
+11 invalid-input exports failed explicitly.
+
+**Publication gate:** commit/push and verify all ordinary/distribution, unchanged
+P14 corpus, P15 consumer, mutation/control and aggregate jobs for the exact final
+SHA. No earlier run substitutes. Stop after P15; P16 is planned only.
+
 ## Remaining original roadmap
 
 P14 closes the required native capability-inventory/distribution stage.
@@ -811,7 +865,8 @@ routine documentation and individual mutation groups are not separate PBIs.
 | P12 | Toporobot and dialog options | Implemented above |
 | P13 | Native 3D DXF | Implemented above; degenerate and bounded-failure cases |
 | P14 | Close native capability matrix and validate distribution | Implemented above; exact-SHA hosted gates required |
-| P15/P16 | Walls SRV / Survex SVX | Native milestone; explicit conversions/losses and consumer validation |
+| P15 | Walls SRV | Implemented above; exact-SHA hosted gates required |
+| P16 | Survex SVX | Planned; explicit conversions/losses and consumer validation |
 | P17 | Optional layered SVG | Accepted R03 contract; can follow native drawings before SRV/SVX |
 | P18 | Optional XVI | Accepted R04 contract and native drawing semantics |
 | P19 | Conditional TH2, PNG or PDF | Separate behavior-sized items only after the corresponding research decision |
