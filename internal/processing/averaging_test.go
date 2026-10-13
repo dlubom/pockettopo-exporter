@@ -57,14 +57,8 @@ func polarResult(t *testing.T, shots []polarShot) source.Document {
 	return d
 }
 
-func TestAverageRepeatedLegsLeadingSplay(t *testing.T) {
-	shots := []polarShot{{0, 0x80000000, 2000, 0, 0, 0}, {0, 1, 10000, 0, 0, 0}, {0, 1, 12000, 0, 0, 0}}
-	g, err := AverageRepeatedLegs(polarResult(t, shots))
-	if err != nil || len(g) != 1 || g[0].HeadIndex != 1 || len(g[0].Members) != 2 || g[0].DistanceM != 11 {
-		t.Fatal(g, err)
-	}
-}
-
+// Run positive groups before leading splays and mixed boundaries so reversed
+// loop-increment mutations fail on an invalid index instead of cycling forever.
 func TestAverageRepeatedLegsPolar(t *testing.T) {
 	for _, c := range []struct {
 		name                           string
@@ -101,6 +95,14 @@ func TestAverageRepeatedLegsPolar(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestAverageRepeatedLegsLeadingSplay(t *testing.T) {
+	shots := []polarShot{{0, 0x80000000, 2000, 0, 0, 0}, {0, 1, 10000, 0, 0, 0}, {0, 1, 12000, 0, 0, 0}}
+	g, err := AverageRepeatedLegs(polarResult(t, shots))
+	if err != nil || len(g) != 1 || g[0].HeadIndex != 1 || len(g[0].Members) != 2 || g[0].DistanceM != 11 {
+		t.Fatal(g, err)
 	}
 }
 
