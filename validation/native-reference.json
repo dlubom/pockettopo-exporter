@@ -1,0 +1,19 @@
+{
+  "assembly_sha256": "048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371",
+  "decompilation_sha256": {
+    "csharp/PocketTopo/Exporter.cs": "fa729796c62c0e698b5eb7c66c4f8393b6e20992a9f2cdbdc6736a08566ff81f",
+    "csharp/PocketTopo/MainForm.cs": "ca8485363da0dcbf2c44923779013acf7fa3a55abc1d9f5bad93f2a6865f1f76",
+    "csharp/PocketTopo/Config.cs": "d94b1858a37772e83eb2761ca49b412c5d070b55f0f2e1b746c42d0a11219068",
+    "csharp/PocketTopo/GraphicsForm.cs": "4b71af3b00dd3034faf7d95fc73184d8b750b7e1dfc12c44702edeadb84af629",
+    "csharp/PocketTopo/ToporobotForm.cs": "a5214f5ae86e6d398f16d26951314598dca96e9d8694536c78642824090ddd82",
+    "csharp/PocketTopo/DataSet.cs": "18dc45a572a7fcd53c18eef93d5195ab3778a755485674237c07d7923a5d9940",
+    "csharp/PocketTopo/Survey.cs": "e164752db9560a455d5c441bf0bebf133b19a0c25cfc3428bd5f09fdae45d48f",
+    "csharp/PocketTopo/Therion.cs": "2f79d123ae648d57299ac8ad7e2d00325cf4d2f9741471de88caeea880be1bb1",
+    "csharp/PocketTopo/DXFWriter.cs": "e10750bdb157010f130a22ca8d484126ee5d2ff22ef5ee5579a4648dd2dbfd1d",
+    "csharp/PocketTopo/VisualTopoExp.cs": "26fb0b0e968bc91191b1ce0e8611fa0ff78da5370d52e047aaeb23edef671c98",
+    "csharp/PocketTopo/ToporobotExp.cs": "f493f11a4ddb1ccb352ff27ac31df87999e6f6bbec82426f36712a5a37e9163c",
+    "csharp/PocketTopo/ThreeD.cs": "f5e319760a06beba9a3d5b8f6e6d67756357b8ab98c777962da7ddaa5382005d",
+    "PocketTopo.il": "ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76"
+  },
+  "review": "C#/IL methods and settings independently reviewed; original assembly corpus probe compiled only reflection code"
+}

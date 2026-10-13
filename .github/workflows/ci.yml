@@ -27,6 +27,42 @@ jobs:
           cache: false
       - run: bash scripts/tools.sh
       - run: bash scripts/check.sh
+      - name: Build and validate offline distribution
+        run: python3 scripts/distribution.py --output build/distribution
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: distribution-${{ matrix.os }}-${{ github.sha }}
+          path: build/distribution/
+          if-no-files-found: error
+  corpus:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Fetch pinned TOP corpus
+        run: |
+          mkdir -p build/corpus
+          curl --fail --location --silent --show-error https://codeload.github.com/dlubom/test2/tar.gz/4c00c008a8dd441d70f9c62aa376c20b5914c7e0 | tar -xz --wildcards --no-same-owner -C build/corpus '*.top'
+      - name: Validate every source and export profile
+        env:
+          GOTOOLCHAIN: local
+        run: |
+          go build -o build/pockettopo-exporter ./cmd/pockettopo-exporter
+          python3 scripts/verify-evidence.py
+          python3 scripts/validate-corpus.py --binary build/pockettopo-exporter --corpus build/corpus/test2-4c00c008a8dd441d70f9c62aa376c20b5914c7e0 --report build/corpus-report.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: corpus-${{ github.sha }}
+          path: build/corpus-report.json
+          if-no-files-found: error
   mutation-plan:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -69,7 +105,7 @@ jobs:
   complete:
     name: CI complete
     if: always()
-    needs: [check, mutation-plan, mutation]
+    needs: [check, corpus, mutation-plan, mutation]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -79,8 +115,9 @@ jobs:
           CHECK_RESULT: ${{ needs.check.result }}
           PLAN_RESULT: ${{ needs.mutation-plan.result }}
           MUTATION_RESULT: ${{ needs.mutation.result }}
+          CORPUS_RESULT: ${{ needs.corpus.result }}
         run: |
-          if [[ "$CHECK_RESULT" != success || "$PLAN_RESULT" != success || "$MUTATION_RESULT" != success ]]; then
-            printf 'CI incomplete: checks=%s plan=%s mutations=%s\n' "$CHECK_RESULT" "$PLAN_RESULT" "$MUTATION_RESULT" >&2
+          if [[ "$CHECK_RESULT" != success || "$CORPUS_RESULT" != success || "$PLAN_RESULT" != success || "$MUTATION_RESULT" != success ]]; then
+            printf 'CI incomplete: checks=%s corpus=%s plan=%s mutations=%s\n' "$CHECK_RESULT" "$CORPUS_RESULT" "$PLAN_RESULT" "$MUTATION_RESULT" >&2
             exit 1
           fi

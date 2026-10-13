@@ -1,0 +1,50 @@
+[
+  {
+    "format": "text",
+    "input": "internal/exporttext/testdata/mixed.top",
+    "golden": "internal/exporttext/testdata/mixed.txt",
+    "options": []
+  },
+  {
+    "format": "therion",
+    "input": "internal/exporttherion/testdata/features.top",
+    "golden": "internal/exporttherion/testdata/features.txt",
+    "options": []
+  },
+  {
+    "format": "dxf",
+    "input": "internal/exportdxf/testdata/features.top",
+    "golden": "internal/exportdxf/testdata/features-o0.dxf",
+    "options": [
+      "--dxf-options",
+      "0",
+      "--view",
+      "plan",
+      "--scale",
+      "500",
+      "--grid-unit",
+      "metres"
+    ]
+  },
+  {
+    "format": "visualtopo",
+    "input": "internal/exportvisualtopo/testdata/dimensions.top",
+    "golden": "internal/exportvisualtopo/testdata/circle360/dimensions.txt",
+    "options": []
+  },
+  {
+    "format": "toporobot",
+    "input": "internal/exportvisualtopo/testdata/dimensions.top",
+    "golden": "internal/exporttoporobot/testdata/c360-dimensions.text",
+    "options": [
+      "--export-time",
+      "2026-10-13T07:29:26"
+    ]
+  },
+  {
+    "format": "dxf3d",
+    "input": "internal/exportdxf3d/testdata/fallback.top",
+    "golden": "internal/exportdxf3d/testdata/fallback.dxf",
+    "options": []
+  }
+]

@@ -37,7 +37,8 @@ go run ./cmd/pockettopo-exporter export internal/exporttherion/testdata/features
 go test ./internal/top -run '^$' -bench '^BenchmarkDocument' -benchmem
 ```
 
-`check.sh` checks formatting, vet, Staticcheck, coverage-boundary controls,
+`check.sh` checks P14 validation negative controls and frozen evidence hashes,
+formatting, vet, Staticcheck, coverage-boundary controls,
 uncached race tests, coverage, build and CLI smoke behavior. Generated outputs
 are `coverage.out`, `mutation.json` and `build/`; caches/tools are in ignored
 `.cache/` and `.tools/`. There is no `go.sum` because there are no module
@@ -83,9 +84,12 @@ The scripts and [CI workflow](../.github/workflows/ci.yml) are authoritative.
   every existing campaign when changing orchestration; dispatch controls require
   exactly-once scheduling and failure propagation.
 
-CI runs ordinary checks on Linux amd64, Windows amd64 and macOS arm64. Linux
+CI runs ordinary checks and native-platform distribution verification on Linux
+amd64, Windows amd64 and macOS arm64. A Linux corpus job checks every pinned input
+and all 25 export profiles twice. Linux
 mutation jobs come directly from `mutation.sh --matrix`. **CI complete** requires
-all platform checks, the scheduling controls and every mutation group to pass.
+all platform/distribution checks, corpus validation, the scheduling controls and
+every mutation group to pass.
 When configuring required checks, use this aggregate gate; a skipped/canceled
 group is not a successful delivery. Do not claim branch protection is configured
 merely because the workflow defines this job.
@@ -180,3 +184,40 @@ prior scope, all five shards, operators, >=90% gate and failure controls.
 all new faults compile without running a local mutation campaign or producing
 a KILLED report. The actual full campaign and negative control run in Actions.
 The native weak-suite control now requires exactly 58 live mutants.
+
+## P14 corpus and offline distributions
+
+P14 changes validation and distribution tooling; application Go, previous
+contracts and every prior mutation scope/operator/threshold remain unchanged.
+The standard-library Python scripts require Python 3.9+ only for development
+and CI. The distributed executable requires no Python, Go, Wine or PocketTopo.
+
+```sh
+python3 scripts/test_validation.py
+python3 scripts/verify-evidence.py
+# Keep the original pinned corpus outside tracked runtime sources.
+mkdir -p .cache/p14
+curl --fail --location --silent --show-error https://codeload.github.com/dlubom/test2/tar.gz/4c00c008a8dd441d70f9c62aa376c20b5914c7e0 -o .cache/p14/test2.tar.gz
+tar -xzf .cache/p14/test2.tar.gz -C .cache/p14
+python3 scripts/validate-corpus.py --binary build/pockettopo-exporter --corpus .cache/p14/test2-4c00c008a8dd441d70f9c62aa376c20b5914c7e0 --report build/corpus-report.json
+# Requires a clean committed checkout and a new output directory.
+GOCACHE="$PWD/.cache/go-build" GOTOOLCHAIN=local GOMAXPROCS=2 GOFLAGS=-p=1 python3 scripts/distribution.py --output build/distribution
+```
+
+Corpus acquisition requires network access; validation runs offline after input
+identity checks. Actions fetches only TOP members from the pinned archive.
+`--record` is a deliberate baseline-authoring switch, never a CI repair or gate
+option. Review changed results against source evidence before replacing a
+baseline. Every input path remains distinct, including identical hashes.
+All corpus text outputs compare against separate original-program goldens;
+other corpus results are deterministic project regressions, not native truth.
+
+ZIP artifacts and corpus reports are uploaded by the exact-SHA CI run.
+Distribution validation builds its own binary, verifies VCS identity and payload
+readback, extracts to a temporary unrelated directory, clears PATH and checks
+six exact native byte cases, no-replace behavior and malformed input failures.
+The package BUILD.json distinguishes the source SHA while preserving existing
+`--version` and report schemas. No tag or GitHub Release is created by this gate.
+CI complete explicitly requires the new corpus job and all three platform
+checks (each containing distribution verification), alongside the unchanged
+mutation matrix and failure controls.

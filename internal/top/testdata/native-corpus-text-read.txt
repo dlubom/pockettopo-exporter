@@ -1,0 +1,263 @@
+0 complete 158-Atschiloch/2019-08-02/2019-08-02achiloch.top
+1 complete 340/340SR.top
+2 complete 408-Kitzgraben/20k01/200801Kitzgraben.top
+3 complete 408-Kitzgraben/20k02/kitzgraben meander.top
+4 complete 408-Kitzgraben/21k02p/kitzgr_popr.top
+5 complete 408-Kitzgraben/21k03/kitzgrabenschacht-ms.top
+6 complete 408-Kitzgraben/21k04/Kitzgr04.top
+7 complete 408-Kitzgraben/22k02w/2022-07-24_kitz_weryfikacja_kitzgr02(1.8-1.9).top
+8 complete 408-Kitzgraben/22k04p/2022-07-24_kitz_ryb.top
+9 complete 408-Kitzgraben/23k21/studnie pod kroczkiem.top
+10 complete 408-Kitzgraben/23k22/dzien paluszka.top
+11 complete 408-Kitzgraben/23k23/studnie pod kroczkiem2.top
+12 complete 408-Kitzgraben/23k24/meander.top
+13 complete 408-Kitzgraben/23k28/kitzg_kolektor_2023-08-08.top
+14 complete 408-Kitzgraben/23k29/kitzg_mndrk_2023-08-09.top
+15 complete 408-Kitzgraben/23k31/12.08.pod st. jubilata skazani na showshang.top
+16 complete 408-Kitzgraben/24k36/240815KitzgrabenMP-PS.top
+17 complete 421-Tschikpausenhohle/na1/na1.top
+18 complete 426-Gerollheimer/gerollenheim.top
+19 complete 426-Gerollheimer/gerollenheim_v2.top
+20 complete 426-Gerollheimer/gerollenheim_v3.top
+21 complete 482-Hohle_der_blaunen_Nebel/19.07.24.top
+22 complete 495-Interessante/20090817-Meander_Zachodni1+Dolne_C/ciekawa meander  v1.top
+23 complete 495-Interessante/20090817-Meander_Zachodni1+Dolne_C/ciekawa meander  v2.top
+24 complete 495-Interessante/20100721-Partie_kawowe/ciekawa nowe partie (5).top
+25 complete 495-Interessante/20100801-Meander_Zachodni2/wodospad.top
+26 complete 495-Interessante/20100801-Meander_Zachodni3/ciek zach 20100801 kml.top
+27 complete 495-Interessante/20100803-Ciagi_Polnocne4/ciek pn 20100802 v1.top
+28 complete 495-Interessante/20100803-Ciagi_Polnocne4/ciek pn 20100802 v2.top
+29 complete 495-Interessante/20100803-Ciagi_Polnocne4/ciek_pn_20100802 v3.top
+30 complete 495-Interessante/20100804-Gang_Bialych_Kamieni2/GABIK2/ciekawa-zab2.top
+31 complete 495-Interessante/20100804-Meander_Zachodni4/ciekawa zach208a (7).top
+32 complete 495-Interessante/20100811-Partie_Jana_Sopinskiego/sala jana sopinskiego.top
+33 complete 495-Interessante/20110729-Meander_Zachodni6/ciekawa-27072011-dmrm v1.top
+34 complete 495-Interessante/20110729-Meander_Zachodni6/ciekawa-27072011-dmrm.top
+35 complete 495-Interessante/20110731-Gang_Bialych_Kamieni3/bialy.top
+36 complete 495-Interessante/20110803-Gang_Bialych_Kamieni-domiary1/studniazaczekol.top
+37 complete 495-Interessante/20110806-Dolne_Ciagi/roma.top
+38 complete 495-Interessante/20110806-Gang_Bialych_Kamieni-domiary2/obejscie czekoladki.top
+39 complete 495-Interessante/20110806-Partie_Krokodylka/123qwe (2).top
+40 complete 495-Interessante/20110806-Partie_Krokodylka/123qwe.top
+41 complete 495-Interessante/20110806-Partie_Krokodylka/ZaKrokodylkiem.top
+42 complete 495-Interessante/20110806-Partie_Krokodylka/krokodylek.top
+43 complete 495-Interessante/20110806-Studnia_pod_Wiszaca_Polka/studnia w bialych pod wiszaca polka.top
+44 complete 495-Interessante/20110808-Gang_Bialych_Kamieni4_remake/OLD/bialy dwa v1.top
+45 complete 495-Interessante/20110808-Gang_Bialych_Kamieni4_remake/OLD/bialy dwa v2.top
+46 complete 495-Interessante/20110808-Gang_Bialych_Kamieni4_remake/reoptymistyczne.top
+47 complete 495-Interessante/20110811-Gang_Bialych_Kamieni-domiary3_remake/woda prawo.top
+48 complete 495-Interessante/20110811-Meander_Zachodni7/M A 268 ost.top
+49 complete 495-Interessante/20110811-Meander_Zachodni7/M A ost.top
+50 complete 495-Interessante/20120731-Amazonka/zjazd2_poprawione (2).top
+51 complete 495-Interessante/20120801-Boczny_komin_w_partiach_Optymistycznych/bocznykominoptymistyczne.top
+52 complete 495-Interessante/20120801-Gang_Kutasow/studniaoptymistyczne v1.top
+53 complete 495-Interessante/20120801-Gang_Kutasow/studniaoptymistyczne v2.top
+54 complete 495-Interessante/20120803-Ciek_pod_wisz_polka/ciek-pod-wisz-polka.top
+55 complete 495-Interessante/20120806-Partie_Gastryczne/gastryczne.top
+56 complete 495-Interessante/20120807-Partie_Baltazara_Gabki/gk2.top
+57 complete 495-Interessante/20120807-Partie_Gastryczne-Okna/okna.top
+58 complete 495-Interessante/20120807-Pochylnie_bez_pradu/jajst.top
+59 complete 495-Interessante/20120809-Amazonka-kontynuacja/Old/zjazd2.top
+60 complete 495-Interessante/20120809-Amazonka-kontynuacja/Old/zjazd2v2.top
+61 complete 495-Interessante/20120809-Amazonka-kontynuacja/amazonka kontynuacja jn or  v1.top
+62 complete 495-Interessante/20120809-Amazonka-kontynuacja/amazonka kontynuacja jn or v2.top
+63 complete 495-Interessante/20120809-Zachodni-Komin_Michala/kominmichala2.top
+64 complete 495-Interessante/20120809-Zachodni-meanderek/meanderek1.top
+65 complete 495-Interessante/20120809-Zachodni_285-287/zachokomin.top
+66 complete 495-Interessante/20120809-Zachodni_286/zach0dni2.top
+67 complete 495-Interessante/20120810-Zachodni-polnoc_kontynuacja/zachodni przodek  v1.top
+68 complete 495-Interessante/20120810-Zachodni-polnoc_kontynuacja/zachodni przodek v2.top
+69 complete 495-Interessante/20120812-Partie_Gastryczne-Meander_w_oknie/pg2.top
+70 complete 495-Interessante/20120813-Wspin_nad_Biala_Salka/meand-wisz-pol.top
+71 complete 495-Interessante/20120815-Zachodni-Dol/zachodni dol or jn.top
+72 complete 495-Interessante/20120815-Zachodni/zach15.04.top
+73 complete 495-Interessante/20121007-Partie_Powrotu/partie powrotu na biwak.top
+74 complete 495-Interessante/20130729-SMN/erm.top
+75 complete 495-Interessante/20130730-Partie_Powrotu2/erm2.top
+76 complete 495-Interessante/20130731-Partie_pod_studnia_na_zakrecie/2013-07-31_justyna-karol v1.top
+77 complete 495-Interessante/20130731-Partie_pod_studnia_na_zakrecie/2013-07-31_justyna-karol v2.top
+78 complete 495-Interessante/20130801-Kroko1/krok1 v1.top
+79 complete 495-Interessante/20130801-Kroko1/krok1 v2.top
+80 complete 495-Interessante/20130802-Kontynuacja_Baltazara/dom0208.top
+81 complete 495-Interessante/20130802-Kroko2/kro2.top
+82 complete 495-Interessante/20130802-Kroko3/kroke3.top
+83 complete 495-Interessante/20130803-Ciag_wejsciowy-podmeander/cioranie.top
+84 complete 495-Interessante/20130804-Kijanka/20130804_km.top
+85 complete 495-Interessante/20130805-Powiew_Zachodu/powiew zachodu 5AUG2013 v1.top
+86 complete 495-Interessante/20130805-Powiew_Zachodu/powiew zachodu 5AUG2013 v2.top
+87 complete 495-Interessante/20130805-Rura_freatyczna/20130805_KM-rura.top
+88 complete 495-Interessante/20130806-Tu_lis_ma_nore/Tu lis ma nore kontynuacja EROR 6AUG13.top
+89 complete 495-Interessante/20130807-Dziki_Zachod/EROR 7AUG13 Zachodni przodek.top
+90 complete 495-Interessante/20130807-Dziki_Zachod/EROR 7AUG13 new Zachodni przodek.top
+91 complete 495-Interessante/20130807-Dziki_Zachod/EROR 7AUG13 new Zachodni przodek_new2.top
+92 complete 495-Interessante/20130807-Dziki_Zachod/dziki zachod 7AUG2013 org.top
+93 complete 495-Interessante/20130807-Dziki_Zachod/dziki zachod 7AUG2013.top
+94 complete 495-Interessante/20130807-Dziki_Zachod/dziki zachod 7AUG2013_new.top
+95 complete 495-Interessante/20130808-Partie_drzemiacego_smoka/20130808 v1.top
+96 complete 495-Interessante/20130808-Partie_drzemiacego_smoka/20130808 v2.top
+97 complete 495-Interessante/20130808-Wspin_nad_Biala_Salka-Kontynuacja/koniec.top
+98 complete 495-Interessante/20130809-Dziki_Zachod2/gang.top
+99 complete 495-Interessante/20130809-Studnia_na_rozdrozu/studnia-na-rozdrozu.top
+100 complete 495-Interessante/20130810-3_Studnia_Optymistyczna/stud3.top
+101 complete 495-Interessante/20130813-Kolo/130813ko.top
+102 complete 495-Interessante/20130813-Rura_freatyczna2/moze.top
+103 complete 495-Interessante/20130813-Studnia_RT/rtst.top
+104 complete 495-Interessante/20130814-Zach_dom/jeden.top
+105 complete 495-Interessante/20130816-Pietro_Kutasow/kut.top
+106 complete 495-Interessante/20140722-Gastryczne_dolny_meander/140722PG_dolny_meander.top
+107 complete 495-Interessante/20140722-Gastryczne_dolny_meander/140722PG_dolny_meander_v2.top
+108 complete 495-Interessante/20140722-Gastryczne_dolny_meander/140722PG_dolny_meander_v3.top
+109 complete 495-Interessante/20140722-Gastryczne_dolny_meander/140722PG_dolny_meander_w.top
+110 complete 495-Interessante/20140722-Partie_Gastryczne_Przekop/140722PG_przekop.top
+111 complete 495-Interessante/20140727-Gastryczne-Kontynuacja/kont v2.top
+112 complete 495-Interessante/20140727-Gastryczne-Kontynuacja/kont.top
+113 complete 495-Interessante/20140728-Fantazja/fantazja.top
+114 complete 495-Interessante/20140729-Boki_Trawers/bokitrawers.top
+115 complete 495-Interessante/20140730-Kolorowe_skaly-bok1/1.ms,mf.top
+116 complete 495-Interessante/20140730-Kolorowe_skaly-bok2/2.ms,mf.top
+117 complete 495-Interessante/20140730-Kolorowe_skaly-bok2/2.ms,mk_m.top
+118 complete 495-Interessante/20140731-Kaskady_Viktorii/W1 ms.mf.top
+119 complete 495-Interessante/20140802-Baltazar_Petla/140802ga.top
+120 complete 495-Interessante/20140802-Domiary_do_Pochylnie_bez_Pradu/tomk0we.top
+121 complete 495-Interessante/20140803-Czarna_Pochylnia/140803cz.top
+122 complete 495-Interessante/20140803-Fantazja2/fantazja2.top
+123 complete 495-Interessante/20140803-Obejscie_60/60obejscie.top
+124 complete 495-Interessante/20140803-Woda_w_Meandrze/140803wm.top
+125 complete 495-Interessante/20140804-Re/rebiale.top
+126 complete 495-Interessante/20140805-Kaskady_Viktorii2/Kaskady_Viktorii_2.KM.KK.MK-f3L.top
+127 complete 495-Interessante/20140805-Poprawki/poprawki.top
+128 complete 495-Interessante/20140806-Kaskady_Viktorii3/Kaskady Viktorii_3_KM.KK.MK.top
+129 complete 495-Interessante/20140807-Partie_gastryczne-meanderek/PG_meanderek_KM.KK.MK.top
+130 complete 495-Interessante/20140807-Partie_gastryczne-meanderek/PG_meanderek_KM.KK.MKv2.top
+131 complete 495-Interessante/20140808-Jeziorko/jeziorko.top
+132 complete 495-Interessante/20140808-Meander_odbytniczy/meander odbytniczy v1.top
+133 complete 495-Interessante/20140808-Meander_odbytniczy/meander odbytniczy v2.top
+134 complete 495-Interessante/20140808-Meander_odbytniczy/meander odbytniczy.top
+135 complete 495-Interessante/20140808-Re2/140808r2.top
+136 complete 495-Interessante/20140810-Re3/140810r3.top
+137 complete 495-Interessante/20140810-Re3/140810r3v2.top
+138 complete 495-Interessante/20140810-niegryzie/niegryzie.top
+139 complete 495-Interessante/20140811-Obejscie_do_Nikad/zakr.top
+140 complete 495-Interessante/20140812-Brzytwa2/brzytwa2.top
+141 complete 495-Interessante/20140812-st/st.top
+142 complete 495-Interessante/20140813-Kaskady_Lafiryndy/kaskady lafiryndy v2.top
+143 complete 495-Interessante/20140813-Kaskady_Lafiryndy/kaskady lafiryndy.top
+144 complete 495-Interessante/20140813-Meander_pogadajmy_o_kobietach/meander pogadajmy o kobietach v2.top
+145 complete 495-Interessante/20140813-Meander_pogadajmy_o_kobietach/meander pogadajmy o kobietach.top
+146 complete 495-Interessante/20140814-Gabki-Studnia_z_meandrem/140813gk.top
+147 complete 495-Interessante/20150722-Partie_za_wschodnim_biwakiem/kms1.top
+148 complete 495-Interessante/20150722-Partie_za_wschodnim_biwakiem/kms1_poprawka.top
+149 complete 495-Interessante/20150728-Meander_za_Morzem_Guinessa/2015-07-28_KRJ.top
+150 complete 495-Interessante/20150801-Gabki_za_biwakiem1/zabi.top
+151 complete 495-Interessante/20150801-Gabki_za_biwakiem3/zabi3.top
+152 complete 495-Interessante/20150801-Gabki_za_biwakiem4/zabi4.top
+153 complete 495-Interessante/20150802-Partie_za_przekopem/zaprzek1.top
+154 complete 495-Interessante/20150804-Piekny_Meander/pomarancze.top
+155 complete 495-Interessante/20150804-Piekny_Meander/pomaranczeV2.top
+156 complete 495-Interessante/20150805-Drugi_syfon/2syfony.top
+157 complete 495-Interessante/20150805-Drugi_syfon/2syfony_v2.top
+158 complete 495-Interessante/20150805-Meander_Malina/malina.top
+159 complete 495-Interessante/20150805-rury/rury.top
+160 complete 495-Interessante/20150805-rury/rury_V2.top
+161 complete 495-Interessante/20150806-Syfon_Dziewicy/dziewica.top
+162 complete 495-Interessante/20150806-Syfon_Dziewicy/dziewica_v2.top
+163 complete 495-Interessante/20150806-Wielka_Sala/sala.top
+164 complete 495-Interessante/20150806-Wielka_Sala/sala_v2.top
+165 complete 495-Interessante/20150806-Wspinanie_w_meandrze/wspinanie.top
+166 complete 495-Interessante/20150811-Kreta_Galeria/meander.top
+167 complete 495-Interessante/20150812-Nie_chce_mi_sie/viki.top
+168 complete 495-Interessante/20150813-Splatany_Meander/olaikuba.top
+169 complete 495-Interessante/20160720-Na_raty/RKM07-20.top
+170 complete 495-Interessante/20160720-Na_raty2/RKM2.top
+171 complete 495-Interessante/20160725-Studnia_Jednej_Nocy/25.07.JS,MS.P40.top
+172 complete 495-Interessante/20160726-Nowa_Jaskinia/PartieOdDrugiejCzterdziestki.top
+173 complete 495-Interessante/20160728-Meander_Kaszuba/MKaszuba.top
+174 complete 495-Interessante/20160802-Za_Owsikami/Old/ows.top
+175 complete 495-Interessante/20160802-Za_Owsikami/Old/za owsikami.top
+176 complete 495-Interessante/20160802-Za_Owsikami/owsiki - studnia klozetowa.top
+177 complete 495-Interessante/20160808-Bok1/bok1.top
+178 complete 495-Interessante/20160809-Bok2/boki 2.top
+179 complete 495-Interessante/20160810-Bez_karty/szychta bez karty 1.top
+180 complete 495-Interessante/20160810-Bez_karty/szychta bez karty.top
+181 complete 495-Interessante/20170726-Meander_Stropowy1/MMMK-meander.top
+182 complete 495-Interessante/20170726-Polaczenie/polaczenie.top
+183 complete 495-Interessante/20170730-Meander_Stropowy2/kkd1.top
+184 complete 495-Interessante/20170804-Meander_Stropowy3/170804KM.top
+185 complete 495-Interessante/20170808-Meander_Stropowy4/podstrop.top
+186 complete 495-Interessante/20170809-Gorne_pietro_meandra_kaszuba/górne pietro kaszuba.top
+187 complete 495-Interessante/20170809-Meander_Chorych_Snow/meander chorych snow.top
+188 complete 495-Interessante/20170811-Boczna_odnoga/dta.top
+189 complete 495-Interessante/20170812-ToNieTu/olw.top
+190 complete 495-Interessante/20170815-Zapomniany_korytarz/ZK gora.top
+191 complete 495-Interessante/20170815-Zapomniany_korytarz/zapomnniany korytarz.top
+192 complete 495-Interessante/20180726-Meander_Stropowy5/meander_stropowy.top
+193 complete 495-Interessante/20180728-Na_Dwa_Razy/na dwa razy.top
+194 complete 495-Interessante/20180729-Meander_Razy_Kilka/Meander razy kilka.top
+195 complete 495-Interessante/20180801-Meander_Stropowy6/meander_kka.top
+196 complete 495-Interessante/20180807-Urodziny/urodziny.top
+197 complete 495-Interessante/20180812-Urodziny2/paluszek4.top
+198 complete 495-Interessante/20190724-Meander_pod_jednej_nocy/23.07.2019_KTJ.top
+199 complete 495-Interessante/20190730-Pod_wodospad/2019-07-30-jp-pod-wodospad.top
+200 complete 495-Interessante/20190731-Gangbang/2019-07-31-gangbang.top
+201 complete 495-Interessante/20190731-Podwojny_meander/190731KK.top
+202 complete 495-Interessante/20190731-Sala_przed_sala_z_wodospadem/sala przed.top
+203 complete 495-Interessante/20190801-Nie_mam_pojecia/nie mam pojecia.top
+204 complete 495-Interessante/20190806-RuraPomiedzySZWiSZB/RuraPomiedzySZWiSZB.top
+205 complete 495-Interessante/20190809-obejscieijt/1989ijt.top
+206 complete 495-Interessante/20190810-Komin_o_glupiej_nazwie/ijt190810.top
+207 complete 495-Interessante/20190810-bezimienna/190810dziurka.top
+208 complete 495-Interessante/20190810-obwodoijt/19810.top
+209 complete 495-Interessante/20190810-popierdolka/zapochylnia.top
+210 complete 495-Interessante/20200728-RP/2020-07-28_wschod_powtorka_odzysk.top
+211 complete 495-Interessante/20200728-WF/2020-07-28_KTH.top
+212 complete 495-Interessante/20200730-OB/jt3007.top
+213 complete 495-Interessante/20200731-JT/3107jt.top
+214 complete 495-Interessante/20200731-NA/3107nac.top
+215 complete 495-Interessante/20200731-Nad_kolankiem/3107nadkol.top
+216 complete 495-Interessante/20200806-Syfon_2_Kul/Old/syfon dwoch kul.top
+217 complete 495-Interessante/20200806-Syfon_2_Kul/szychta1-wodospad.top
+218 complete 495-Interessante/20200809-Pod_studnia_z_mlotkiem/Pod_studnia_z_mlotkiem.top
+219 complete 495-Interessante/20210726-Meander_Stropowy7/21strop1.top
+220 complete 495-Interessante/20210731-Meander_Stropowy8/21strop2.top
+221 complete 495-Interessante/20210731-Powrot_do_Baltazara_Gabki/21Baltazar_Gabka+szkic-1.top
+222 complete 495-Interessante/20210731-Powrot_do_Baltazara_Gabki/21Baltazar_Gabka.top
+223 complete 495-Interessante/20210804-Meander_Stropowy9/21strop3.top
+224 complete 495-Interessante/20220726-Meander_Chorych_Snow_Remake/chorych snow1.top
+225 complete 495-Interessante/20220730-Zachodnie_gowno1/zachodnie gowno.top
+226 complete 495-Interessante/20220731-Ciagi_z_Blotnym_Bajorem/ciagi z blotnym bajorem.top
+227 complete 495-Interessante/20220731-Nowa_Nadzieja/nowa nadzieja.top
+228 complete 500-B3-6/20210730-21b3-6/b3it30.07.top
+229 complete 500-B3-6/OLD/b3-6_v1.top
+230 complete 500-B3-6/OLD/b3-6_v2.top
+231 complete 501-Kitzgrabenwasserschacht/501KITTM/501KITTM v1.top
+232 complete 501-Kitzgrabenwasserschacht/501KITTM/501KITTM v2.top
+233 complete 501-Kitzgrabenwasserschacht/DS201208/DS201208.top
+234 complete 501-Kitzgrabenwasserschacht/KI201201/KI201201.top
+235 complete 501-Kitzgrabenwasserschacht/kic1/kic1.top
+236 complete 502-Schattenhohle/20120816-Shadow/shadow.top
+237 complete 503-Biwakko/20140813-Biwakko/biwakko.top
+238 complete 504-37/20180801-zjazd37/37-1.top
+239 complete 504-37/20180806-ciag-glowny/ciag glowny 37.top
+240 complete 504-37/20180806-na-180/2018.08.06.top
+241 complete 504-37/20180806-obejscie-do-pierwszego-dna/obejscie.top
+242 complete 504-37/20180812-meander/meander.top
+243 complete 506-AK-1/20160806-Ak1/ak1-160806.top
+244 complete 507-X-Schacht/20160806-stdx01/studnia x_poprawiona.top
+245 complete 507-X-Schacht/20160806-stdx02/studnia x asp.top
+246 complete 507-X-Schacht/Old/studnia x.top
+247 complete 508-Schacht_unter_dem_Stein/20160807-schacht_1/schacht_1.top
+248 complete 563-Linker_Wandschacht/180808/180808.top
+249 complete 564-Rechter_Wandschacht/180807/20180807dartom.top
+250 complete 565-Hohle_unter_dem_Steinpilz/SZ38/lka7.top
+251 complete 567-Alte_Westmaander/20200805-Stary_Meander_Zachodni/2020-08-05_j.dwie_studnie.top
+252 complete 568-Alte_Ostmaander/20200801_pietro_0/pietro 0.top
+253 complete 568-Alte_Ostmaander/20200801_pietro_minus_1/pietro -1.top
+254 complete 569-Dreischachtlhohle/20200811-Trzy_Studzienki/2020-08-11 Trzy Studnie.top
+255 complete 570-fk13/20200801-FK13/fk13.top
+256 complete 571-Muminshohle/20210730-Muminkow/Pod okapem.top
+257 complete 572-Querhohle/20210816-Poprzeczna/HAGEN_2021-08-16_Poprzeczna_2-0.top
+258 complete 573-Widerspenstige_Hohle/20210812-Przekorna_Studnia/przekorna.top
+259 complete 574-Hohle_mit_Spiegeln/20210813-Z_lustrami/z lustrami.top
+260 complete 574-Hohle_mit_Spiegeln/20210813-Z_lustrami/z lustrami_domalowane_otwory.top
+261 complete German_1/german_1/cave.top
+P14 native corpus text capture complete count=262

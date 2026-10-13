@@ -31,7 +31,7 @@ P05–P08 and existing prefix contracts remain unchanged.
 | P11 | Native VisualTopo 5.02, direction-selected passage dimensions, explicit context and provenance | Implemented; exact-SHA hosted gates required |
 | P12 | Native Toporobot and dialog options, bounded existing-file merge and provenance | Implemented; exact-SHA hosted gates required |
 | P13 | Native 3D DXF, source-linked points/entities and bounded native hulls | Implemented; exact-SHA hosted gates required |
-| P14 | Native compatibility milestone | Planned only |
+| P14 | Native capability inventory, corpus validation and offline distributions | Implemented; exact-SHA hosted gates required |
 | P15/P16 | Walls SRV / Survex SVX | Subsequent scope |
 
 ### Verification and publication
@@ -689,7 +689,7 @@ review survivors and verify every CI job for the exact delivered SHA.
 and native sort overflow; zero-distance ancestors and template splays; arithmetic
 wrap and negative quantization; work/entity/byte limits and report line ownership.
 Native hulls are compatibility output, not an inferred watertight cave surface.
-P14 remains planned only.
+P14 is implemented below; P15/P16 remain planned only.
 
 Original-assembly evidence has 135 complete byte goldens, 24 generic-sort cases
 and 7 native failures; all 1,200 pre-existing evidence files match the baseline.
@@ -709,11 +709,77 @@ four previously-live tie faults. Invalid string arithmetic sites are avoided by
 counter/partition mutants from timing out. Their named-failure reproductions and
 follow-up independent review pass; full final-SHA hosted gates remain required.
 
+## P14 — native capability matrix and distribution validation
+
+**Status:** implemented and independently reviewed; publication requires
+the exact-SHA hosted gates below.
+**Dependency:** P05/P09–P13 and the pinned test2 corpus.
+Deliver a closed, evidence-linked inventory of the six native exporters and
+their exposed profiles, a reproducible corpus regression gate, and validated
+offline binary packages for Linux amd64, Windows amd64 and macOS arm64.
+Preserve P05–P13; no new exporter, input version, consumer integration or P15/P16.
+
+**Architecture:** standard-library Python development scripts validate the built
+CLI and package it; application Go code and existing schemas stay unchanged.
+The external corpus is pinned to test2 `4c00c008a8dd441d70f9c62aa376c20b5914c7e0`;
+each of its 262 TOP paths retains size, SHA-256 and Git blob identity. Exact
+native goldens establish compatibility; corpus outcomes are explicitly project
+regressions, with separate supported/unsupported/failed classifications.
+
+Implementation sequence (executed inline on the requested main checkout):
+- [x] Inventory C#/IL entrypoints, global/dialog options, native captures and
+  deliberate deviations in `docs/CAPABILITIES.md`; freeze prior evidence hashes.
+- [x] Add `scripts/validate-corpus.py` and its negative tests: reject missing,
+  added or changed inputs; inspect every source; exercise all six formats in
+  isolated and explicit context/closure profiles; verify input/output hashes,
+  complete packages, deterministic reports and failure without publication.
+  Freeze inspect/export outcomes separately from original-program observations.
+- [x] Add `scripts/distribution.py` and negative tests: create new ZIP packages
+  with binary/docs/build identity/checksums; verify extraction and every payload;
+  run the extracted binary offline against six native byte goldens and test
+  no-replace/error behavior. Bind packages to the exact checkout SHA.
+- [x] Extend Actions with Linux corpus validation and three native-platform
+  distribution gates/artifacts, retaining the complete mutation matrix and
+  controls; include every new job in `CI complete`.
+- [x] Run bounded local ordinary/tooling checks and native golden verification;
+  obtain independent review and update SPEC/PLAN/evidence.
+- Publication gate: commit/push and require all hosted checks and mutation
+  groups for the exact final SHA; the commit's CI run is the publication record.
+
+Review focus: duplicate input paths versus bytes; missing/extra corpus entries;
+native caught partial files; absolute-path-independent report hashes; archive
+tampering, unexpected members and executable permissions; package source SHA;
+failed exports leaving output; no unsupported capability called native parity.
+
+**Milestone claim:** coverage of the documented bounded profiles only. Text
+remains the P05 metres/360 isolated profile; native text feet/grads and arbitrary
+machine code pages are explicitly outside current compatibility. Destination
+application acceptance and optional drawing research remain separate results.
+Stop after P14; P15/P16 stay planned.
+
+The local complete corpus run has 6550 profile outcomes: **6504 successful**
+packages and **46 explicit failures**, each repeated with identical outcomes.
+The 46 failures are 28 negative Toporobot indexes and 18 context-closure
+failures (12 work-limit and 6 iteration-limit results across six views/formats).
+All 262 text exports match independently captured original-assembly bytes.
+The 262 source paths contain 258 distinct hashes; duplicate paths stay separate.
+All 1462 earlier evidence identities remain unchanged. Bounded local ordinary
+gates passed with race/vet/Staticcheck and 98.0% total statement coverage;
+validation negative controls and all six distribution native-byte cases pass.
+Hosted distribution, full mutation and corpus checks must pass for the final SHA.
+Independent review verified the pinned Git tree, all native text comparisons,
+the 1462/271 evidence inventories and preserved C#/IL/checksum manifests.
+The reproduced archive symlink/file-type acceptance gap is fixed: every ZIP
+member must be a regular file, with negative binary/document controls. Final
+review found no unresolved actionable defect. No application Go, report schema,
+mutation scope, operator, threshold or existing failure control was changed.
+
 ## Remaining original roadmap
 
-After P13 there is **1 remaining required delivery stage to the native
-milestone**: P14. P01 is a capability/fixture inventory maintained within those stages,
-not an additional standalone implementation chat. P15 and P16 add two subsequent
+P14 closes the required native capability-inventory/distribution stage.
+The remaining native profile gaps are explicit in CAPABILITIES; no universal
+option or consumer-acceptance claim is made. P01's capability/fixture inventory
+is closed by P14, not an additional standalone implementation chat. P15 and P16 add two subsequent
 stages for Walls and Survex. P17–P19 and R01–R07 are optional/conditional scope.
 
 These are meaningful outcomes, not a guaranteed count of future chats. P04d
@@ -724,7 +790,7 @@ routine documentation and individual mutation groups are not separate PBIs.
 
 | ID | Outcome | Dependencies / refinement |
 | --- | --- | --- |
-| P01 | Native exporter/options and fixture capability matrix | Capture the relevant part with each exporter; finish full inventory by P14 |
+| P01 | Native exporter/options and fixture capability matrix | Closed by P14, including explicit unsupported settings |
 | P04d | Complete supported v3 source read and inspect | Implemented above |
 | P05 | Isolated native text export through CLI, exact goldens and provenance/loss reporting | Implemented above; Update has no text-field effect, and geometry failure differences are explicit |
 | P06 | Native fixed-point angles, consecutive-shot grouping and average directions | Implemented above |
@@ -735,7 +801,7 @@ routine documentation and individual mutation groups are not separate PBIs.
 | P11 | Native VisualTopo and passage dimensions | Implemented above |
 | P12 | Toporobot and dialog options | Implemented above |
 | P13 | Native 3D DXF | Implemented above; degenerate and bounded-failure cases |
-| P14 | Close native capability matrix and validate distribution | P05/P09–P13, pinned corpus and complete gates |
+| P14 | Close native capability matrix and validate distribution | Implemented above; exact-SHA hosted gates required |
 | P15/P16 | Walls SRV / Survex SVX | Native milestone; explicit conversions/losses and consumer validation |
 | P17 | Optional layered SVG | Accepted R03 contract; can follow native drawings before SRV/SVX |
 | P18 | Optional XVI | Accepted R04 contract and native drawing semantics |
@@ -743,7 +809,8 @@ routine documentation and individual mutation groups are not separate PBIs.
 
 This is dependency order, not a requirement to finish every P06–P08 feature
 before any useful export. Preserve P05 as the first export milestone. Native
-compatibility is established incrementally; claim full coverage only at P14.
+compatibility is established incrementally; P14 closes the documented profile
+inventory while retaining explicit capability gaps.
 
 ## Optional research retained, not scheduled
 

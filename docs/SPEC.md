@@ -40,6 +40,29 @@ The native milestone covers documented options and relevant input/context
 combinations, not just one file per extension. Maintain a tested capability
 matrix as each exporter arrives; add no empty exporter framework in advance.
 
+The [P14 capability matrix](CAPABILITIES.md) closes that inventory for the
+documented bounded profiles, including unimplemented native settings and
+intentional deviations. It is not a claim of every native option or consumer
+acceptance. P14 retains P05–P13 application behavior and report schemas.
+
+P14 validation accounts for every path in the pinned test2 corpus using SHA-256,
+size and Git blob identity, independently of duplicated bytes or neighboring
+conversion files. Frozen corpus outcomes are project regressions; separately
+captured original-assembly exports remain the native byte oracle. Every profile
+must be deterministic, preserve inputs and verify complete output/report hashes,
+or fail before publication with an explicit bounded/native diagnostic.
+
+Distribution packages are ZIPs for Linux amd64, Windows amd64 and macOS arm64,
+built from a clean committed source tree. BUILD.json retains full Git revision,
+target, Go toolchain, CLI version and payload hashes; SHA256SUMS covers every
+other member including BUILD.json, and an adjacent checksum covers the ZIP.
+Validation requires regular-file archive members, exact membership, byte hashes, executable mode and
+matching embedded Go VCS revision, followed by offline native-byte CLI tests
+from an unrelated directory. Existing `dev` CLI/report versions remain intact;
+the manifest and archive name identify the source revision. These CI packages
+are not a tagged public release. CI complete includes distribution and corpus
+gates alongside all existing ordinary/mutation/control jobs.
+
 ## Source and compatibility contract
 
 The reference is standard PocketTopo **1.372**, executable SHA-256:

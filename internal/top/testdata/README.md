@@ -2505,3 +2505,69 @@ native bytes and bound the faulty variants. Named-test-failure reproductions
 confirm the two former nonterminating variants now fail promptly. No operator,
 threshold, scope or failure-control acceptance was weakened. The final campaign
 must run on the repaired exact SHA; earlier successful jobs are not substitutes.
+
+
+## P14 capability inventory, real corpus and distribution evidence
+
+The [capability matrix](../../../docs/CAPABILITIES.md) closes the six native
+exporter inventories, including unsupported settings and deliberate deviations.
+`validation/native-reference.json` pins the reviewed C# entrypoints, dialogs,
+global configuration and full IL. The original PocketTopo 1.372 assembly hash
+remains `048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371`.
+Independent review reverified all 113 sibling decompilation checksum entries and
+existing native checksum manifests. Earlier JKTZ source-pinned conversion policy
+was inspected as prior art; its SRV/SVX outputs are not native exporter oracles.
+
+The complete external test2 corpus is pinned at
+`4c00c008a8dd441d70f9c62aa376c20b5914c7e0`. Before capture, all 262 TOP paths were
+matched to the complete recursive Git tree (not truncated), with Git blob SHA-1,
+SHA-256 and sizes verified against downloaded original bytes. The durable
+inventory is `validation/corpus-inputs.json`; duplicate paths remain independent.
+The original corpus stays external in ignored `.cache/p14/`, without rewrites.
+All files are v3; 260 have canonical zero trailers and 2 have no trailer.
+
+`scripts/reference-corpus-text-probe.cs` compiles reflection code only. It invokes
+original `Trip.Reset`, `DataSet.Read(path,false)` and `Exporter.WriteText`, then
+original `Survey.WriteText` with exceptions exposed and a complete-byte
+comparison to reject swallowed/partial exports. Config is metres/360, isolated
+input, invariant capture profile, UTF-8 without BOM and CRLF. Calls have a
+10-second thread boundary; no timeout is promoted to a golden. All **262**
+captures completed, the process exited 0 and stderr was empty. Raw stdout is
+`native-corpus-text-read.txt`, ending with
+`P14 native corpus text capture complete count=262`. Original captures and the
+native manifest are preserved in `validation/native-text/`; `native-text.json`
+records path, completion, filename, size and hash. These are native byte goldens,
+not outputs reconstructed from Go.
+
+Actual capture command after compiling with the existing original .NET 2 csc:
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine 'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\reference-corpus-text-probe.exe' \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\.cache\p14\test2-4c00c008a8dd441d70f9c62aa376c20b5914c7e0' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\.cache\p14\paths.txt' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p14-native-text' \
+  > build/p14-native-text.txt 2> build/p14-native-text.err
+```
+
+`paths.txt` lists the input inventory paths in the same UTF-8 sorted order, one
+per line. `scripts/validate-corpus.py` compares every real text export to these
+original bytes. Its other format/context/closure results are explicitly **project
+regression outcomes** in `validation/corpus-results.json`. All 262 inspections
+are supported; 6550 profile outcomes contain 6504 complete packages and 46
+explicit failed exports, each repeated identically. All source hashes remain
+unchanged. Neighboring DXF/SRV/SVX files are not authenticated native truth and
+are never used as expectations. Runtime/setup errors and timeouts fail the gate.
+
+`validation/preserved-evidence.json` pins 1462 pre-P14 fixture/probe identities
+(excluding mutable provenance documentation). `validation/p14-evidence.json`
+pins the new probe, original stdout/captures, reference hashes, corpus inventory,
+regression baseline and distribution-case selection. `verify-evidence.py`
+checks every identity without regenerating it; negative controls reject missing,
+changed or duplicate evidence. `distribution-cases.json` selects six earlier
+native full-file goldens for extracted offline binary checks on all three
+platforms. Toporobot supplies its captured `2026-10-13T07:29:26` export clock.
+Exact-SHA Actions must also pass every preserved mutation/control group before
+publication is called complete. P15/P16 and optional consumer checks remain
+planned only.

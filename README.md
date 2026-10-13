@@ -120,9 +120,12 @@ go run ./cmd/pockettopo-exporter export internal/exportdxf/testdata/template-ray
 It publishes `survey.dxf` and `report.json`, with native ordered `LINE`/`3DFACE`
 entities, current/template geometry and 16 mm quantization. Unbounded native
 hulls fail explicitly before publication. See [the 3D DXF contract](docs/SPEC.md#native-3d-dxf-p13)
-for arithmetic, omissions and point/entity provenance. The next increment is
-**P14: native capability matrix and distribution validation**, planned only.
-Historical per-field prefix APIs remain supported.
+for arithmetic, omissions and point/entity provenance. P14 closes the
+[native capability matrix](docs/CAPABILITIES.md) with explicit profile limits,
+the pinned 262-input real corpus and validated offline distributions for Linux
+amd64, Windows amd64 and macOS arm64. Each exact-SHA CI run uploads checksummed
+ZIP packages and the corpus validation report. Historical per-field prefix APIs
+remain supported. The next planned increment is **P15: Walls SRV**.
 
 ## Documentation
 
@@ -131,6 +134,7 @@ Historical per-field prefix APIs remain supported.
 | [PLAN](docs/PLAN.md) | Authoritative delivery status, remaining roadmap and one next item |
 | [SPEC](docs/SPEC.md) | Product scope, architecture, compatibility and source-preservation contracts |
 | [DEVELOPMENT](docs/DEVELOPMENT.md) | Actual commands, quality gates and delivery workflow |
+| [CAPABILITIES](docs/CAPABILITIES.md) | Native options, exact evidence, limitations, corpus and distribution proof |
 | [HISTORY](docs/HISTORY.md) | Evidence behind the 2026-10-11 reset and access to earlier detailed contracts |
 | [AGENTS](AGENTS.md) | Concise instructions for agents |
 | [Native evidence](internal/top/testdata/README.md) | Fixture provenance, hashes, native probes and observed behavior |
