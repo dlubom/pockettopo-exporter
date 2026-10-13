@@ -14,6 +14,7 @@ const help = `Usage: pockettopo-exporter --help | --version
   pockettopo-exporter export <input.top> --format text --output <new-directory>
   pockettopo-exporter export <input.top> --format dxf --output <new-directory> [--view plan|side] [--scale 1..100000] [--dxf-options <mask>] [--grid-unit metres|feet] [--template-directory <dir>] [--close-loops]
   pockettopo-exporter export <input.top> --format visualtopo --output <new-directory> [--angle-unit degrees|grads] [--template-directory <dir>] [--close-loops]
+  pockettopo-exporter export <input.top> --format toporobot --output <new-directory> [--angle-unit degrees|grads] [--code 1..100000] [--trip 1..100000] [--auto-declination] [--manual-declination] [--include-splays true|false] [--vertical-sections] [--add-to <existing.text>] [--export-time YYYY-MM-DDTHH:MM:SS] [--template-directory <dir>] [--close-loops]
   pockettopo-exporter export <input.top> --format therion --output <new-directory> [--template-directory <dir>] [--close-loops]
 
 Evaluate explicit template-directory geometry and source lineage.
@@ -30,6 +31,9 @@ func Run(args []string, stdout, stderr io.Writer) int {
 		return runContext(args, stdout, stderr)
 	}
 	if len(args) > 0 && args[0] == "export" {
+		if len(args) >= 4 && args[2] == "--format" && args[3] == "toporobot" {
+			return runToporobot(args, stdout, stderr)
+		}
 		if len(args) >= 4 && args[2] == "--format" && args[3] == "visualtopo" {
 			return runVisualTopo(args, stdout, stderr)
 		}

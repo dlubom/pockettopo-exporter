@@ -2286,3 +2286,106 @@ directly. Sort range/progress checks bound altered control flow. No NOT VIABLE
 outcome is accepted and no operator/scope/threshold is removed. Equivalent
 partition ordering/singleton swaps, zero-distance sentinels and unused codepoint
 trim boundaries are distinguished from observable mutation gaps.
+
+## P12 native Toporobot and dialog options
+
+The original PocketTopo 1.372 executable remains
+`048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371`.
+`scripts/reference-toporobot-probe.cs` compiles only literal fixture/reflection
+harness code, not recovered exporters. It uses Read or controlled-directory Load,
+CloseLoops(close,false), the original ToporobotExp.WriteExport and an independent
+unsuppressed AddToporobot/Toporobot.Write completion comparison. Two dynamic Guest
+clock lines are removed only for that completion check; frozen golden bytes retain
+the exact clocks. Go tests supply the clock captured in each golden, not normalized
+or Go-generated expected output. Native filenames are `survey.text`.
+
+C#/IL references: ToporobotExp.XSection/AddXSections/AddInline/AddToporobot/
+WriteExport; Toporobot.ReadLine/CleanupTrips/Write/Limit/LineHeader/CommentLines/
+AddReference/AddTrip/AddCode/AddSeries/AddStation/AddLine; ToporobotForm defaults,
+Form_Closing and CheckEnable; MacEncoding.GetBytes/GetChars; Station.FwAzimuth/
+FwIncl/GetAvDirection; Survey.GetStations; ID.Series/Station/Next. IL confirms
+Int32 multiplication before LRUD division, Float32 operation order, -400 manual
+trip offsets regardless of circle, strict inline deduplication and the native
+parser's sequential station insertion. Earlier JKTZ averaging/drawing/export
+code was reviewed as prior art; it does not implement this native format and
+was not used as the oracle.
+
+`internal/exporttoporobot/testdata/cases.tsv` contains **373 captures**:
+**319 complete native byte goldens** and **54 native failures** (44
+ArgumentOutOfRangeException, six NullReferenceException, four OverflowException).
+Cases include both circles, closure, prior P07/P08 geometry/context, native
+VisualTopo fixture inputs, all 16 combinations of automatic/manual declination,
+included splays and vertical sections, code/trip indexes 1/2/7/9/9999/10000/100000,
+existing-file merges, duplicate sorted heads, topology/gaps, reversed terminal
+series links, dates 1919/1920/2019/2020, long UTF-16 names/comments and surrogate
+padding, first-ray ties, inline tolerance and Int32-wrapped LRUD projection.
+The four new literal TOP fixtures were written by the harness and successfully
+read by the original program; old TOP files were read only.
+
+`scripts/reference-toporobot-model-probe.cs` independently invokes original
+Toporobot.Read/Write. The **21 reader/writer cases** preserve native rich comments,
+named series, compact dates, sparse/reordered station headers, mismatched comment
+headers, UTF-8/UTF-16LE/UTF-16BE/UTF-32LE/UTF-32BE BOMs, decimal thousands,
+large finite numbers, inline spacing, hexadecimal rejection and native NaN
+acceptance. Four native failures remain explicit; two native-accepted NaN cases
+are intentionally rejected by the portable finite merge policy. The other
+**15 successful roundtrips match exact bytes**. Old writer metadata is discarded
+and regenerated, as native Read/Write does. No destination-application import
+is claimed. The custom native MacEncoding BMP map is exhaustive; native .NET 2
+trim behavior reuses the unchanged P11 captured table.
+
+Original capture transcripts are retained as `native-toporobot-read.txt`,
+`native-toporobot-extra-read.txt`, `native-toporobot-final-read.txt`,
+`native-toporobot-model-read.txt` and `native-toporobot-model-final-read.txt`.
+Only new P12 evidence was added; all **811** pre-existing tracked raw/golden/probe
+files matched their start-of-task hashes. The complete new evidence inventory,
+including both probes/transcripts/inputs/outputs, is
+[`SHA256SUMS`](../../exporttoporobot/testdata/SHA256SUMS) (377 entries).
+
+Capture commands (existing Wine/.NET 2; the Framework64 compiler completed while
+old Framework compiler processes could remain spinning after invocation):
+
+```sh
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine 'C:\windows\Microsoft.NET\Framework64\v2.0.50727\csc.exe' \
+  /nologo /r:System.Windows.Forms.dll /r:System.Drawing.dll \
+  '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p12\probe-final.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-toporobot-probe.cs'
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/p12/probe-final.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p12\final-native' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter' \
+  > build/p12/final-native-read.txt 2> build/p12/final-native-read.err
+# Compile the model probe with the same compiler (no WinForms references needed).
+env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/p12/model-probe-final.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p12\model-final-native' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\internal\exporttoporobot\testdata\extra-comments-360-4.text' \
+  > build/p12/model-final-native-read.txt 2> build/p12/model-final-native-read.err
+shasum -a 256 -c internal/exporttoporobot/testdata/SHA256SUMS
+```
+
+
+The final review also prompted `scripts/reference-toporobot-number-probe.cs`:
+**66 independent .NET 2 invariant Single/Double grammar observations** are frozen
+in `numbers.tsv`. Integer-part commas require a preceding digit; consecutive or
+trailing integer commas are native-accepted, while leading/fraction/exponent
+commas, hexadecimal forms, underscores and non-ASCII whitespace are rejected.
+Native NaN/Infinity acceptance is retained as evidence of the explicit finite
+merge deviation. The regression failed before the grammar repair and passes
+without changing any earlier byte golden. The numeric probe is compiled with the
+same Framework64 compiler and writes the TSV directly; its completion transcript
+is `native-toporobot-number-read.txt`.
+
+
+The completed independent review additionally prompted native signed-code/date
+and null-reference-name readbacks. `model/signed-fields.*` pins .NET decimal
+magnitude padding (including the sign outside D2/D3/D4 precision).
+`model/null-ref-name.*` retains original NullReferenceException and partial-file
+behavior; portable publication fails unless a matching current reference repairs
+that null name during merge. `native-toporobot-model-reviewed-read.txt` retains
+this native confirmation. Regressions also account for every contributing
+existing comment/name continuation and distinguish terminal-series-link ownership
+from an omitted measurement record, without changing any earlier golden bytes.

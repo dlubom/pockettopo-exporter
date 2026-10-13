@@ -37,7 +37,7 @@ type VisualTopoGeometry struct {
 }
 
 func PrepareVisualTopo(d source.Document, templates []source.ReferencePrefix, options GeometryOptions) (VisualTopoGeometry, error) {
-	r, e := placeContextGeometryViews(d, templates, options, false, false, true)
+	r, e := placeContextGeometryViews(d, templates, options, false, false, true, false)
 	if e != nil {
 		return VisualTopoGeometry{}, e
 	}

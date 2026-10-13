@@ -17,6 +17,7 @@ package cli
 import "io"
 func runContext(_ []string, _, _ io.Writer) int { return 1 }
 func runTherion(_ []string, _, _ io.Writer) int { return 1 }
+func runToporobot(_ []string, _, _ io.Writer) int { return 1 }
 func runVisualTopo(_ []string, _, _ io.Writer) int { return 1 }
 func runDXF(_ []string, _, _ io.Writer) int { return 1 }
 func process(_ string, _, _ io.Writer) int { return 1 }
@@ -44,6 +45,7 @@ func TestWithoutAssertions(t *testing.T) {
     cli.Run([]string{"export", "input.top", "--format", "therion", "--output", "out"}, io.Discard, io.Discard)
     cli.Run([]string{"export", "input.top", "--format", "dxf", "--output", "out"}, io.Discard, io.Discard)
     cli.Run([]string{"export", "input.top", "--format", "visualtopo", "--output", "out"}, io.Discard, io.Discard)
+    cli.Run([]string{"export", "input.top", "--format", "toporobot", "--output", "out"}, io.Discard, io.Discard)
     cli.Run([]string{"--version"}, io.Discard, io.Discard)
     cli.Run([]string{"geometry", "input.top", "--json"}, io.Discard, io.Discard)
     cli.Run([]string{"geometry", "input.top", "--json", "--close-loops"}, io.Discard, io.Discard)
@@ -59,7 +61,7 @@ if ! go test -count=1 ./... >baseline.log 2>&1; then
   exit 1
 fi
 "$root/.tools/bin/gremlins" unleash --workers 2 --output "$root/build/mutation-weak.json"
-jq -e '.mutants_total == 50 and .mutants_lived == .mutants_total and .mutants_killed == 0
+jq -e '.mutants_total == 54 and .mutants_lived == .mutants_total and .mutants_killed == 0
   and ([.files[].mutations[]] | length) == .mutants_total
   and all(.files[].mutations[]; .status == "LIVED")' "$root/build/mutation-weak.json"
 gate_status=0

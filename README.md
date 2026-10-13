@@ -99,8 +99,18 @@ It publishes `survey.tro` and `report.json`, with metres, degrees by default,
 and a fixed native Windows-1252 profile. Dimensions select attached raw splays
 by alignment, preserving native ties and zero cases. See [the VisualTopo
 contract](docs/SPEC.md#native-visualtopo-and-passage-dimensions-p11) for ordering,
-encoding, provenance and losses. The next increment is **P12: Toporobot and
-dialog options**, planned only.
+encoding, provenance and losses. P12 adds native Toporobot and its dialog options:
+
+```sh
+go run ./cmd/pockettopo-exporter export internal/exporttoporobot/testdata/topology.top --format toporobot --output build/toporobot --export-time 2026-10-13T12:34:56
+go run ./cmd/pockettopo-exporter export internal/exporttoporobot/testdata/comments.top --format toporobot --output build/toporobot-merge --add-to build/toporobot/survey.text --angle-unit grads --vertical-sections
+```
+
+It publishes `survey.text` and `report.json`, reproducing native series/trip/code
+selection, MacEncoding, LRUD and inline splays. Code/trip padding, declination
+overrides, splays, vertical sections, merge, timestamp, explicit context and closure
+are available. See [the Toporobot contract](docs/SPEC.md#native-toporobot-and-dialog-options-p12).
+The next increment is **P13: native 3D DXF**, planned only.
 Historical per-field prefix APIs remain supported.
 
 ## Documentation

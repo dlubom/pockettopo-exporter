@@ -30,7 +30,7 @@ if [[ "${DISPATCH_PARALLEL_CHECK:-false}" == true ]]; then
  sleep 0.05
 fi
 SH
-printf 'gremlins\ngremlins\ngremlins\ngremlins\n' >"$trial/expected.log"
+printf 'gremlins\ngremlins\ngremlins\ngremlins\ngremlins\n' >"$trial/expected.log"
 for script in scripts/mutation-*.sh; do
   case "$script" in
     scripts/mutation-go.sh|scripts/mutation-trial.sh|scripts/mutation-dispatch-trial.sh) continue ;;

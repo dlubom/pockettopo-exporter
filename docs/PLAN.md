@@ -4,7 +4,7 @@ This is the single current backlog and handoff. [SPEC](SPEC.md) defines product
 contracts; [DEVELOPMENT](DEVELOPMENT.md) defines verification and delivery.
 Historical PBI numbers remain traceable; they do not imply equal-sized outcomes.
 
-## Current implementation — 2026-10-12
+## Current implementation — 2026-10-13
 
 P04d started from P04c17 (`bfa73944e3d3baad00b07e2b6dd5a8c9f9a3682b`) plus
 the documentation reset (`94a3f2e`). P05 builds on verified P04d
@@ -29,7 +29,8 @@ P05–P08 and existing prefix contracts remain unchanged.
 | P09 | Native Therion DATA, drawings and embedded XSections with provenance | Implemented; local ordinary gates verified; exact-SHA hosted gates required |
 | P10 | Native graphics DXF, plan/side/options, provenance and bounded native failures | Implemented; local ordinary gates and independent review verified; exact-SHA hosted gates required |
 | P11 | Native VisualTopo 5.02, direction-selected passage dimensions, explicit context and provenance | Implemented; exact-SHA hosted gates required |
-| P12–P14 | Remaining native exports and compatibility milestone | Planned only |
+| P12 | Native Toporobot and dialog options, bounded existing-file merge and provenance | Implemented; exact-SHA hosted gates required |
+| P13/P14 | 3D DXF and native compatibility milestone | Planned only |
 | P15/P16 | Walls SRV / Survex SVX | Subsequent scope |
 
 ### Verification and publication
@@ -534,14 +535,14 @@ nonzero origin fallback, label layers, exact ray thresholds and positive/negativ
 survey grids. Existing 224 P10 golden bytes remain unchanged. Independent review
 classifies prior/equivalent survivors; final hosted results remain required.
 
-**Next useful increment:** P11 is delivered below; P12 remains planned only.
+**Next useful increment:** P11 and P12 are delivered below.
 
 ## P11 — native VisualTopo and passage dimensions
 
 **Status:** implemented; local gates and independent review verified;
 exact-SHA hosted gates are required before publication is reported complete.
 **Dependency:** P06/P07/P08. P05–P10 and existing prefix APIs remain unchanged.
-P12 remains planned only; this delivery ends after P11.
+The P11 delivery ended after P11; P12 is delivered below.
 
 `export <input.top> --format visualtopo --output <new-directory>` publishes native
 `survey.tro` and a deterministic schema-1 provenance/loss report. The default
@@ -583,12 +584,74 @@ with normal Go serialization/value updates and direct embedded native tables;
 sort progress and range checks bound altered partition control flow. Gates,
 operators, previous scope and thresholds remain unchanged.
 
-**Next useful increment:** P12 — Toporobot and dialog options, planned only.
+**Next useful increment:** P12 — Toporobot and dialog options, delivered below.
+
+## P12 — native Toporobot and dialog options
+
+**Status:** implemented; local gates and independent review verified.
+Exact-SHA hosted gates are required before publication is reported complete.
+**Dependency:** P06/P07/P08. Work directly on main;
+preserve P05–P11 and stop after P12. P13 remains planned only.
+
+**Outcome:** native `survey.text` plus schema-1 provenance/loss report, isolated
+or explicit template context and optional closure. Expose native dialog defaults:
+code/trip minimum indexes 1 (range 1..100000), included splays, horizontal passage
+sections, automatic/manual declination overrides, and read-only merge from an
+existing native MacEncoding file. Degrees/grads are explicit. An export timestamp
+is recorded and can be fixed for reproducibility; it is writer metadata, not a
+survey date. All publication uses the existing new-directory no-replace contract.
+
+**Architecture:** detached Toporobot processing view; separate bounded native
+model/parser/writer in `internal/exporttoporobot`; CLI reuses P08 input inventory
+and P05 publication. No new dependencies or changes to previous output schemas.
+
+Implementation and verification plan:
+- [x] Confirm original ToporobotExp/Toporobot/ToporobotForm/MacEncoding and IL;
+  capture original-program byte goldens, merge/roundtrip and failure cases.
+- [x] Write failing native-byte/CLI tests; implement detached geometry, native
+  LRUD at radius 100 with Int32 wrap, series/trip/code selection and inline rays.
+- [x] Implement bounded MacEncoding read/merge/write, UTF-16 truncation/comments,
+  fixed timestamp option and detailed source/output lineage; test malformed files,
+  holes, duplicate IDs, padding, no references, resource limits and preservation.
+- [x] Extend explicit/Gremlins scope and negative/dispatch controls without
+  removing prior faults/operators/thresholds; run bounded ordinary local gates.
+- [x] Independent final review and regression repairs; final ordinary gates,
+  native readback, evidence preservation and complete mutation discovery.
+**Publication requirement:** commit/push on main, run the full GitHub Actions
+campaign, review survivors and verify every job for the exact delivered SHA.
+
+**Review focus:** merge rewrites/renumbering; timestamps and source dates;
+reserved/series-zero IDs; overwritten output records and template starts;
+Float32/Int32 overflow and Unicode/continuation boundaries.
+
+Native C#/IL and original assembly probes establish 319 complete byte goldens,
+54 native failures and 21 existing-reader/writer cases. MacEncoding is exhaustive;
+context/closure, both circles, all 16 dialog combinations, terminal series links,
+long Unicode/comments, date/index boundaries, deduplication and Int32 LRUD wrap
+are covered. Existing nonfinite values, oversized Int32 units, incomplete BOM
+code units and work limits fail explicitly. No consumer import is claimed.
+
+Early independent review identified shared-start copying, retained-zero LRUD,
+UTF-16 padding, comment-copy work and group lookup issues. Final review also
+identified existing continuation provenance, signed decimal padding, null
+reference names and terminal-link omission classification. Native readbacks and
+regressions verify all repairs; no substantive review finding remains. The final
+ordinary suite includes race/vet/Staticcheck, >=95% exact coverage, build/smoke;
+the existing-file fuzz run passed 256,532 executions in 10 seconds. All 55 explicit
+faults compile in preflight. Full discovery has 2,410 RUNNABLE sites, zero uncovered
+sites and an exact disjoint five-shard union; no operator or threshold was weakened. Final ordinary gates and independent review are verified. Hosted mutations,
+survivor review and exact-SHA publication remain required before delivery claims.
+P12 adds 55 explicit faults without removing prior scopes. A fifth Gremlins shard
+holds the new exporter/CLI; all production files remain exactly-once assigned.
+The weak-suite control requires exactly 54 live mutants and retains setup/build
+failure rejection. P13 is planned only; this request ends after P12.
+
+**Next useful increment:** P13 — native 3D DXF, planned only.
 
 ## Remaining original roadmap
 
-After P11 there are **3 remaining required delivery stages to the native
-milestone**: P12–P14. P01 is a capability/fixture inventory maintained within those stages,
+After P12 there are **2 remaining required delivery stages to the native
+milestone**: P13/P14. P01 is a capability/fixture inventory maintained within those stages,
 not an additional standalone implementation chat. P15 and P16 add two subsequent
 stages for Walls and Survex. P17–P19 and R01–R07 are optional/conditional scope.
 
@@ -609,7 +672,7 @@ routine documentation and individual mutation groups are not separate PBIs.
 | P09 | Native Therion DATA and drawing sections, embedded XSections | Implemented above |
 | P10 | Native graphics DXF, plan/side and options | Implemented above; native byte, coordinate and visual evidence |
 | P11 | Native VisualTopo and passage dimensions | Implemented above |
-| P12 | Toporobot and dialog options | P06/P07/P08 |
+| P12 | Toporobot and dialog options | Implemented above |
 | P13 | Native 3D DXF | P07/P08; degenerate and bounded-failure cases |
 | P14 | Close native capability matrix and validate distribution | P05/P09–P13, pinned corpus and complete gates |
 | P15/P16 | Walls SRV / Survex SVX | Native milestone; explicit conversions/losses and consumer validation |

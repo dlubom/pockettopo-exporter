@@ -1,0 +1,34 @@
+    -6     1   1   1   1 survey
+    -5     1   1   1   1        1.01       -1.01        1.01     1     0
+(   -5     1   1   1   1 caf
+(   -5     1   2   1   1 rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+(   -5     1   3   1   1-rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+(   -5     1   4   1   1-rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+(   -5     1   5   1   1-rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+(   -5     1   6   1   1-rrrrrrrrrrrrrrrrrrrrrrrrrrrr
+    -4     1   1   1   1 26/10/13 07:46:38  Guest
+    -4     2   1   1   1 26/10/13 07:46:38  Guest
+    -3     1   1   1   1 
+    -2     1   1   1   1 31/12/20  Same Name     Second Name   1    0.00   0   1
+(   -2     1   1   1   1 trip tail
+    -2     2   1   1   1 31121919  Same Name     Second Name   1    0.00   0   1
+(   -2     2   1   1   1 trip tail
+    -2     3   1   1   1 31/12/19  Same Name     Second Name   1    0.00   0   1
+(   -2     3   1   1   1 trip tail
+    -2     4   1   1   1 31122020  Same Name     Second Name   1    0.00   0   1
+(   -2     4   1   1   1 trip tail
+    -1     1   1   1   1  360.00  360.00    0.05    1.00    1.00  100.00  100.00
+     1    -2   1   1   1 series/name row 5
+     1    -1   1   1   1       2       3       1       2       2       3       0
+     1     0   1   1   1    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+     1     1   1   1   2    1.00  359.99   22.50    0.00    0.00    0.00    0.00
+(    1     1   1   1   1 series/name row 0
+     1     2   1   1   1    1.00   44.97  -22.52    0.00    0.00    0.00    0.00
+(    1     2   1   1   1 series/name row 1
+     2    -2   1   1   1 series/name row 2
+     2    -1   1   1   1       1       2       2       3       3       3       0
+     2     0   1   1   3    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+     2     1   1   1   4    1.00    0.00    0.00    0.00    0.00    0.00    0.00
+(    2     1   1   1   1 series/name row 3
+     2     3   1   1   3    1.00  314.97    0.00    0.00    0.00    0.00    0.00
+(    2     3   1   1   1 series/name row 4

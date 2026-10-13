@@ -52,6 +52,7 @@ type GeometryResult struct {
 	loops      []GeometryLoop
 	therion    TherionGeometry
 	visual     VisualTopoGeometry
+	toporobot  ToporobotGeometry
 	graphics   GraphicsGeometry
 }
 

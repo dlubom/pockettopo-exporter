@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-groups=(gremlins-tables gremlins-drawings gremlins-output gremlins-processing
+groups=(gremlins-tables gremlins-drawings gremlins-output gremlins-toporobot gremlins-processing
   tables mappings first-polygon second-count second-points second-color
   next-markers third-count third-points third-color third-marker
   plan-loop plan-elements side-mapping side-marker document native-text processing)
@@ -31,6 +31,7 @@ gremlins_shard() {
   case "$1" in
     internal/source/*|internal/top/prefix.go|internal/top/measurements.go|internal/top/references.go) printf tables ;;
     internal/top/*) printf drawings ;;
+    internal/exporttoporobot/*|internal/cli/toporobot.go) printf toporobot ;;
     internal/cli/*|internal/exporttext/*|internal/exporttherion/*|internal/exportdxf/*|internal/exportvisualtopo/*|internal/nativefmt/*) printf output ;;
     internal/processing/*) printf processing ;;
     *) printf 'Unassigned Gremlins source file: %s\n' "$1" >&2; return 2 ;;
@@ -99,7 +100,7 @@ run_group() {
     side-mapping) scopes=(side-mapping) ;;
     side-marker) scopes=(side-marker) ;;
     document) scopes=(document) ;;
-    native-text) scopes=(text therion dxf visualtopo) ;;
+    native-text) scopes=(text therion dxf visualtopo toporobot) ;;
     processing) scopes=(processing geometry context) ;;
     next-markers) scopes=(plan-next-marker plan-following-marker) ;;
     third-count) scopes=(plan-third-polygon-count) ;;

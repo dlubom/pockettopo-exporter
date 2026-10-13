@@ -800,3 +800,86 @@ Original C#/IL, the pinned .NET sorting helper, **194 native byte goldens**,
 **4105 Single-format cases**, exhaustive encoding/trim tables, hashes and the
 unsuppressed native completion transcript are documented in
 [fixture provenance](../internal/top/testdata/README.md#p11-native-visualtopo-and-passage-dimensions).
+
+## Native Toporobot and dialog options (P12)
+
+`export <input.top> --format toporobot --output <new-directory>` publishes
+`survey.text` and schema-1 `report.json`. It preserves P05–P11 outputs, source
+APIs, geometry/context contracts and no-replace report-last publication.
+The separate `processing.PrepareToporobot` snapshot and `exporttoporobot.Build`
+model/parser/writer use only the Go standard library.
+
+| Option | Native dialog/default behavior |
+| --- | --- |
+| `--angle-unit degrees\|grads` | Full circle 360 by default, or 400 |
+| `--code 1..100000` / `--trip 1..100000` | Default 1; pad table minimum indexes, reuse matching existing records |
+| `--auto-declination` | Force automatic; wins when both overrides are present |
+| `--manual-declination` | Force manual for automatic source trips; manual offset always uses -400/65536 |
+| `--include-splays true\|false` | True by default; native inline ray records and strict Float32 deduplication |
+| `--vertical-sections` | False by default; force vertical up/down basis and code limit zero |
+| `--add-to <existing.text>` | Read-only native parse/merge/rewrite into the new output package |
+| `--export-time YYYY-MM-DDTHH:MM:SS` | Fixed writer wall-clock metadata; CLI defaults to its current local wall clock |
+| `--template-directory <dir>` / `--close-loops` | Explicit P08 context and current-only closure |
+
+API callers supply `Options.WrittenAt`; its zero value is literal year 0001
+metadata. With identical inputs and options, both artifacts are deterministic.
+The native reference filename stem is `survey`, matching the fixed artifact
+filename. Merge uses an empty cave name, as native WriteExport does. Every
+existing input is hashed/inventoried and remains byte-for-byte unchanged.
+
+Native GetStations(false) sorting, duplicate identity order, station-zero
+creation, cross-series starts/terminal links, references, gaps and overwrites
+are reproduced. Series zero can be modeled but is omitted by native Write;
+reserved/undefined series -1 can cause explicit native failures. Trip selection
+uses native global indexes, source date/name identity and first two nonempty
+trimmed comment lines; matching trips share later overwritten settings.
+Main lengths/directions use grouped placed vectors with Float32 operation order.
+Dimensions use raw forward azimuth/inclination bisectors, radius-100 fixed-point
+vectors, first dot strictly above 5000, and Int32 product wrap before /10000.
+A zero-distance station with no positive successor retains existing LRUD.
+Inline lines use raw distance/angles and deduplicate only when all three
+Float32 differences are strictly below 0.1, without azimuth wrap.
+
+The native custom MacEncoding table is captured exhaustively; it is not generic
+Mac Roman. Unsupported UTF-16 units become question marks, including two per
+supplementary character. Native UTF-16 limits/padding preserve 55-unit
+reference/series names, 12-unit trip fields plus up to 53 continuation units,
+and 254-unit trimmed comment budgets with 55-unit continuation wrapping.
+Date formatting follows the native 1920..2019 compact interval. Field widths
+are minima: large coordinates/indexes can expand columns and produce files the
+native fixed-offset reader cannot reimport. Exact bytes do not imply consumer
+acceptance; no destination Toporobot application validation is claimed.
+
+Existing-file reads reproduce native fixed UTF-16 offsets, BOM detection
+(UTF-8, UTF-16LE/BE, UTF-32LE), sequential station insertion ignoring station
+header numbers, latest-record comment attachment, name continuations, inline
+parsing and trip-name trim. UTF-32BE is rejected, matching the captured native
+failure. Old Guest metadata is discarded and regenerated. The bounded portable
+profile additionally rejects nonfinite existing numeric values, angular units
+outside Int32, incomplete UTF-16/32 tails and resource exhaustion. Native
+suppressed exceptions/partial output become explicit errors before publication.
+
+Limits: merge input 32 MiB; output 128 MiB after encoding with exact-limit
+acceptance; aggregate sparse slots 2,000,000, individual index <=1,000,000;
+10,000,000 model work units (including searches, comment-copy units and LRUD
+candidate work). P07/P08 geometry/input/context limits remain applicable.
+Shared detached starts and report start tables are captured once; output work
+uses indexed group lookup. These are acceptance ceilings, not promises of low
+memory use at every maximum. Every invalid or duplicate CLI option fails.
+
+The report separates raw source rows/trips/references and byte spans, current
+member/reversal groups, flattened template row lineage and prefix hashes from
+sorted geometry (raw/native/display IDs), start nodes, vectors/corrections,
+LRUD axes/candidates/selection/wrap and applied/retained decisions. Every output
+line has a Record range with current/template keys, existing line identities or
+explicit generated/metadata ownership. Matching record keys retain contribution
+order; native overwrite/normalization losses are listed. Source TOP files and
+existing Toporobot files remain the authoritative hashed inputs; the report is
+not an alternative lossless source archive. Drawings/mappings, roll, unused flags
+and native omitted heads have explicit omissions; no CRS or survey date is inferred.
+
+C#/IL and **319 native byte goldens**, **54 native failures**, **21 native
+reader/writer cases**, exhaustive MacEncoding, 66 native numeric grammar observations and source-preserving CLI tests
+are recorded in [P12 fixture provenance](../internal/top/testdata/README.md#p12-native-toporobot-and-dialog-options).
+Two native-accepted nonfinite reader cases are intentionally rejected under
+the finite merge profile; 15 successful roundtrips match exact native bytes.
