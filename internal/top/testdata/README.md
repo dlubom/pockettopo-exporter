@@ -2482,3 +2482,26 @@ entity group codes/one-based lines and stretch ownership, and check determinism
 and detached results. Exact work prefixes, inclusive output/point/entity budgets,
 ancestor cycles, malformed/unsupported input and CLI publication failures are
 covered. Consumer import or watertight cave-wall semantics are not claimed.
+
+
+Hosted P13 mutation feedback adds `reference-dxf3d-face-probe.cs` and
+`faces.tsv`: 24 direct original FindFace outcomes retain selected point identity
+and resulting normal, including zero/orthogonal/negative previous normals,
+interior edge points, coincident-but-distinct points, zero normals and Int32
+normal overflow. Positions in this finite private-method probe are already in
+native 16 mm internal point units. These are additional algorithm goldens,
+not full-file byte exports; `cases.tsv` and earlier captures remain unchanged.
+The face probe takes the original assembly path and a new TSV output path;
+compile with the same .NET 2.0 compiler and invoke with no WinForms references.
+Its original stdout is `native-dxf3d-faces-read.txt`, exit 0 and empty stderr.
+All four corresponding previously-live tie/identity faults now fail these native
+expectations. The production tie logic was already correct and remains unchanged.
+
+The first hosted campaign rejected a compiler-invalid string-subtraction mutant,
+a stalled partition recursion mutant and a decrementing-work-counter timeout.
+`strings.Join` preserves group keys without an invalid arithmetic mutation site;
+negative consumed-work checks and finite partition-progress controls retain
+native bytes and bound the faulty variants. Named-test-failure reproductions
+confirm the two former nonterminating variants now fail promptly. No operator,
+threshold, scope or failure-control acceptance was weakened. The final campaign
+must run on the repaired exact SHA; earlier successful jobs are not substitutes.

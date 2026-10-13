@@ -654,3 +654,65 @@ func FuzzDXF3DHull(f *testing.F) {
 		}
 	})
 }
+
+func TestDXF3DWorkStateAndPartitionProgress(t *testing.T) {
+	w := writer{lim: defaultLimits, work: -1}
+	if w.tick() || w.err == nil {
+		t.Fatal("negative consumed work must fail closed")
+	}
+	w = writer{lim: defaultLimits}
+	if e := w.partitionProgress(0, 10, 0, 10); e == nil {
+		t.Fatal("partition did not shrink")
+	}
+	w = writer{lim: limits{work: 0}}
+	if e := w.partitionProgress(0, 10, 5, 4); e == nil {
+		t.Fatal("partition work budget")
+	}
+}
+
+func TestDXF3DNativeFaceIdentities(t *testing.T) {
+	b, e := os.ReadFile("testdata/faces.tsv")
+	if e != nil {
+		t.Fatal(e)
+	}
+	c := csv.NewReader(bytes.NewReader(b))
+	c.Comma = '\t'
+	cases, e := c.ReadAll()
+	if e != nil || len(cases) != 25 {
+		t.Fatal("native face manifest", e, len(cases))
+	}
+	read := func(s string) coordinate {
+		fields := strings.Split(s, ",")
+		var v [3]int32
+		for i := range v {
+			n, e := strconv.ParseInt(fields[i], 10, 32)
+			if e != nil {
+				t.Fatal(e)
+			}
+			v[i] = int32(n)
+		}
+		return coordinate{v[0], v[1], v[2]}
+	}
+	for _, r := range cases[1:] {
+		t.Run(r[0], func(t *testing.T) {
+			a, b := new(point), new(point)
+			a.coordinate = read(r[1])
+			b.coordinate = read(r[2])
+			var points []*point
+			for _, p := range strings.Split(r[3], ";") {
+				points = append(points, &point{coordinate: read(p)})
+			}
+			prev := read(r[4])
+			w := writer{lim: defaultLimits, prev: vector{prev.X, prev.Y, prev.Z}}
+			p := w.findFace(points, a, b)
+			idx, e := strconv.Atoi(r[5])
+			if e != nil {
+				t.Fatal(e)
+			}
+			expected := read(r[6])
+			if p != points[idx] || w.prev != (vector{expected.X, expected.Y, expected.Z}) || w.err != nil {
+				t.Fatal("native point identity/normal", p, idx, w.prev, expected, w.err)
+			}
+		})
+	}
+}

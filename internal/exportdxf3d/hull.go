@@ -44,7 +44,7 @@ func (w *writer) tick() bool {
 	if w.err != nil {
 		return false
 	}
-	if w.work >= w.lim.work {
+	if w.work < 0 || w.work >= w.lim.work {
 		w.err = fmt.Errorf("resource_limit (3D DXF work)")
 		return false
 	}
@@ -264,6 +264,9 @@ func (w *writer) sort(a []processing.GraphicsStation, left, right int) error {
 			i++
 			j--
 		}
+		if e := w.partitionProgress(left, right, i, j); e != nil {
+			return e
+		}
 		if j-left <= right-i {
 			if left < j {
 				if e := w.sort(a, left, j); e != nil {
@@ -279,6 +282,18 @@ func (w *writer) sort(a []processing.GraphicsStation, left, right int) error {
 			}
 			right = j
 		}
+	}
+	return nil
+}
+
+// Partitioning must advance at least one scan boundary. Together with tick,
+// this prevents stalled partitions from recursing into the unchanged range.
+func (w *writer) partitionProgress(left, right, i, j int) error {
+	if !w.tick() {
+		return w.err
+	}
+	if i <= left && j >= right {
+		return fmt.Errorf("native_failure (3D DXF sort stalled)")
 	}
 	return nil
 }

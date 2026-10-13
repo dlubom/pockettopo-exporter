@@ -656,7 +656,7 @@ zero/positive successor LRUD, including merges. Refactoring invalid pointer
 operator sites and guarding trip-comment progress keeps native bytes unchanged;
 compiler failures and timeouts remain rejected rather than counted as kills.
 
-**Next useful increment:** P13 — native 3D DXF, planned only.
+**Next increment at P12 delivery:** P13 — native 3D DXF, implemented below.
 
 ## P13 — native 3D DXF
 
@@ -697,12 +697,17 @@ Independent review confirmed core C#/IL, 77 full-file byte comparisons, raw
 row/reference readback and point/entity ownership. Follow-up review required an
 exact 45-entry, unique-name/KILLED gate for the new explicit campaign; it is added.
 The new exporter has 100% statement coverage. All 45 explicit faults compile;
-full Gremlins discovery has 2,605 RUNNABLE sites, no uncovered sites, and an exact
+full Gremlins discovery has 2,611 RUNNABLE sites, no uncovered sites, and an exact
 disjoint five-shard union. No operators or thresholds were weakened. The bounded
 hull fuzz passed 535,209 executions in 10 seconds; final ordinary gates include
 race/vet/Staticcheck, exact coverage, build and smoke checks. Full
 hosted mutations/survivor review and exact-SHA CI remain required.
 
+Hosted feedback adds 24 original FindFace point-identity/normal goldens, killing
+four previously-live tie faults. Invalid string arithmetic sites are avoided by
+`strings.Join`; negative work and finite partition-progress controls prevent
+counter/partition mutants from timing out. Their named-failure reproductions and
+follow-up independent review pass; full final-SHA hosted gates remain required.
 
 ## Remaining original roadmap
 

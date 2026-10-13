@@ -951,8 +951,9 @@ quantized output; every entity records its owner, exact one-based line span and
 ordered point indexes. This separates repeated coordinates from source identity.
 Raw comments/dates remain in the hashed original TOP, without inferred dates.
 
-Original assembly C#/IL, 135 complete byte goldens, 24 generic-sort goldens
-and 7 controlled native failures establish this contract. Evidence and
+Original assembly C#/IL, 135 complete byte goldens, 24 generic-sort goldens,
+24 finite FindFace identity/normal outcomes and 7 controlled native failures
+establish this contract. Evidence and
 reproduction commands are in [fixture provenance](../internal/top/testdata/README.md#p13-native-3d-dxf).
 Consumer CAD import, a watertightness guarantee and the P14 compatibility matrix
 remain outside P13.

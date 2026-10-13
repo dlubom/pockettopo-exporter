@@ -127,7 +127,7 @@ func addSource(r *Report, g processing.ContextGroups, d source.Document, templat
 		for _, group := range item.groups {
 			key := fmt.Sprintf("group:%d", group.HeadIndex)
 			if item.template {
-				key = "template:" + key
+				key = strings.Join([]string{"template:", key}, "")
 			}
 			for _, m := range group.Members() {
 				l := item.lineage[m.RowIndex]
