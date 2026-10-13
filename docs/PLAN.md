@@ -817,14 +817,16 @@ nonzero self-legs; both now fail before publication. Distinct-name zero ties are
 retained. Review also added a nonfinite native-summary negative control. All
 P05–P14 frozen evidence remains unchanged. The 58-fault Walls campaign joins the
 existing native-text group and output shard without removing any previous scope,
-operator, threshold or failure control; the exact weak-suite cardinality is 63.
+operator, threshold or failure control; the exact weak-suite cardinality is 62.
 Hosted output review exposed four nonviable string-arithmetic mutations; typed
 formatting preserves exact SRV bytes while allowing the unweakened gate to run.
-Six substantive survivor test gaps (grouped inclination units, negative vertical
-normalization, missing-trip boundary, exact comment chunk, drawing-loss count and
-raw invalid inclination hidden by averaging)
+Seven substantive survivor test gaps (grouped inclination units, negative vertical
+normalization, missing-trip boundary, exact comment chunk, drawing-loss count,
+raw invalid inclination hidden by averaging and small negative bearing)
 were reproduced as named failures with bounded local replay and closed with
-independent native/output assertions. Full mutation evidence remains hosted.
+independent native/output assertions. The weak-suite measured inventory is exactly 58 preserved sites plus four new
+Walls dispatch sites; its gate also checks those four sites explicitly. Full
+mutation evidence remains hosted.
 
 The original Walls v2.3.0-beta.1 Windows gate installs the checksum-pinned official
 runtime, compiles the reviewed SRV in the application's normal project UI path,

@@ -46,7 +46,7 @@ dependencies. The document group covers P04d source/accounting/inspect faults al
 unchanged earlier groups. The native-text group covers text, Therion, graphics DXF, VisualTopo, Toporobot and 3D DXF serialization, decimal
 formatting, provenance and safe CLI publication. The weak-suite negative control deliberately stubs
 inspection/export/processing/geometry/context and exercises version, inspect, process, geometry, context and text/Therion/DXF/VisualTopo/Toporobot/3D DXF export arguments without assertions;
-all 63 generated mutants must live and the quality gate must reject them.
+all 62 generated mutants must live and the quality gate must reject them.
 Run one sequential campaign or one parallel coordinator at a time. The parallel
 runner snapshots only source/scripts/pinned tools into a private checkout per
 group with private caches/reports. It limits active groups, collects reports and
@@ -183,7 +183,7 @@ prior scope, all five shards, operators, >=90% gate and failure controls.
 `GOMAXPROCS=2 GOFLAGS=-p=1 bash scripts/mutation-dxf3d.sh --preflight` checks that
 all new faults compile without running a local mutation campaign or producing
 a KILLED report. The actual full campaign and negative control run in Actions.
-The native weak-suite control requires exactly 63 live mutants after P15.
+The native weak-suite control requires exactly 62 live mutants after P15.
 
 ## P14 corpus and offline distributions
 
@@ -230,7 +230,7 @@ mutation matrix and failure controls.
 P15 keeps every P05–P14 scope, operator, threshold and failure control. The
 `walls` explicit campaign adds 58 faults to `native-text`; `exportwalls` is in
 the existing output Gremlins shard. The native weak-suite still requires exact
-cardinality: 63 live mutants. Setup/compiler/timeouts/incomplete outcomes never
+cardinality: 62 live mutants. Setup/compiler/timeouts/incomplete outcomes never
 count as kills. Native compile-only preflight is available as
 `GOMAXPROCS=2 GOFLAGS=-p=1 bash scripts/mutation-walls.sh --preflight`; it does not
 produce a mutation score. Prefer the full Actions campaign after local disk or

@@ -2666,10 +2666,10 @@ review of implementation, C#/IL and destination-gate logic identified zero
 self-leg rejection and a nonfinite native-summary control; each was reproduced
 RED and corrected GREEN. The hosted Gremlins output report identified four nonviable string-arithmetic
 mutations; typed formatting preserves the SRV byte goldens without exclusions.
-Six substantive survivor gaps were closed and locally replayed as named failing
+Seven substantive survivor gaps were closed and locally replayed as named failing
 tests: grouped inclination conversion, signed vertical normalization, unresolved
-trip boundary, exact comment chunk, drawing-loss count and invalid raw inclination
-hidden by averaging. Equivalent exact
+trip boundary, exact comment chunk, drawing-loss count, invalid raw inclination
+hidden by averaging and small negative bearing. Equivalent exact
 ±90/zero branches retain the same output. The 58 explicit Walls faults and all
 earlier scopes run in Actions; compile/setup/disk/timeouts/incomplete outcomes are failures.
 P16 remains planned.

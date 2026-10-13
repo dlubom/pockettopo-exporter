@@ -197,6 +197,14 @@ func TestWallsNativeDirections(t *testing.T) {
 }
 
 func TestWallsSurvivorBoundaries(t *testing.T) {
+	for _, v := range []float64{-0.5, -360.5} {
+		if bearing(v) != "359.500000" {
+			t.Fatal("negative bearing normalization", v, bearing(v))
+		}
+	}
+	if bearing(-1) != "359.000000" {
+		t.Fatal("negative bearing boundary")
+	}
 	for _, v := range []float64{-90.00001, -90.000001, -90, 90, 90.000001, 90.00001} {
 		got, e := inclination(v)
 		want := math.Max(-90, math.Min(90, v))

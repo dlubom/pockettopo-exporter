@@ -65,7 +65,14 @@ if ! go test -count=1 ./... >baseline.log 2>&1; then
   exit 1
 fi
 "$root/.tools/bin/gremlins" unleash --workers 2 --output "$root/build/mutation-weak.json"
-jq -e '.mutants_total == 63 and .mutants_lived == .mutants_total and .mutants_killed == 0
+walls_dispatch_line=$(awk '/len\(args\).*args\[3\].*"srv"/ {print NR}' internal/cli/run.go)
+if [[ ! "$walls_dispatch_line" =~ ^[0-9]+$ ]]; then
+  printf 'Missing or ambiguous Walls dispatch source line.\n' >&2
+  exit 1
+fi
+# Measured inventory: all 58 prior sites plus four Walls dispatch sites.
+jq -e --argjson dispatch_line "$walls_dispatch_line" '.mutants_total == 62 and .mutants_lived == .mutants_total and .mutants_killed == 0
+  and ([.files[].mutations[] | select(.line == $dispatch_line)] | length) == 4
   and ([.files[].mutations[]] | length) == .mutants_total
   and all(.files[].mutations[]; .status == "LIVED")' "$root/build/mutation-weak.json"
 gate_status=0

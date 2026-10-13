@@ -144,6 +144,7 @@ jobs:
           path: |
             mutation.json
             build/*-mutation.json
+            build/mutation-weak.json
           if-no-files-found: warn
 
   complete:
