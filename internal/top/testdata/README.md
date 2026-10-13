@@ -2337,7 +2337,7 @@ trim behavior reuses the unchanged P11 captured table.
 Original capture transcripts are retained as `native-toporobot-read.txt`,
 `native-toporobot-extra-read.txt`, `native-toporobot-final-read.txt`,
 `native-toporobot-model-read.txt` and `native-toporobot-model-final-read.txt`.
-Only new P12 evidence was added; all **811** pre-existing tracked raw/golden/probe
+Only new P12 evidence was added; all **810** pre-existing tracked raw/golden/probe
 files matched their start-of-task hashes. The complete new evidence inventory,
 including both probes/transcripts/inputs/outputs, is
 [`SHA256SUMS`](../../exporttoporobot/testdata/SHA256SUMS) (377 entries).
