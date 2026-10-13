@@ -1,0 +1,140 @@
+﻿#32770 | Tip of the Day
+Button | &Show Tips on StartUp
+Button | &Tell me more...
+Button | &Prev
+Button | &Next
+Button | &Close
+Static | The editor windows, Review dialogs, and screen maps all have right-click context menus from which various functions can be invoked. For example, right click on a vector definition in a data file to highlight its location on the preview map.
+---
+Walls32Class | Walls Project Editor v2.3.0-beta.1 2025-09-13
+Afx:00600000:b:00010003:00000006:0006013F | P15 validation
+Button | &New Item
+Button | &Detach
+Button | &Compile
+Button | &Properties
+---
+MSCTFIME UI | MSCTFIME UI
+---
+IME | Default IME
+---
+tooltips_class32 | 
+---
+ComboLBox | 
+---
+Walls32Class | Walls Project Editor v2.3.0-beta.1 2025-09-13
+Afx:00600000:b:00010003:00000006:001C0075 | P15 validation - P15 validation (1.0)
+Button | FloatH
+Button | FloatV
+Button | Zoom
+Button | Abort
+Static | Name    Vectors   Length(m)
+Static | Totals:
+Static | Components
+Static | Loop Systems
+Static | Traverses
+Static | Surveys
+Static | Travs  UveH  UveV
+Static | Vecs   F/UveH     F/UveV
+Static | No loops present.
+Static | Isolated Loops
+Static | UVE:
+Static |        2       1.0
+Static | Loops:
+Button | <<
+Button | >>
+Static | Survey          From     To           Dst      Az      Vt   +Dst    +Az    +Vt
+Static | Vt Len:
+Static | Original Vector
+Static | Best Correction
+Static | F/UveH:
+Static | F/UveV:
+Static | Hz Len:
+Static | ENU Error:
+Button | Feet
+Static | Prv/Nxt:
+Button | Zoom
+Button | Back
+Button | Save
+Button | Default
+Button | Profile
+Button | Recall
+Button | />
+Button | <\
+Button | Scale && position...
+Button | Format opts...
+Button | Grid...
+Button | Passage...
+Button | Selected
+Button | All Floated
+Button | Label
+Button | Note
+Button | Mark
+Button | Flag
+Button | Update View
+Button | Display Map
+Button | <<
+Button | >>
+Button | <<
+Button | >>
+Static | Traverse
+Static | System
+Button | Displayed or Printed Map
+Static | View:
+Static | 16.5
+Static | 0
+Static | Width:
+Static | Traverses
+Static | Stations
+Button | Preview Map
+Static | Meters
+Static | True
+Button | Zoom In
+Button | Zoom Out
+Button | Default
+Button | Select All
+Button | Clear All
+Button | Scale && position...
+Button | Format opts...
+Button | Page Offsets...
+Button | Landscape
+Button | Printer Setup...
+Button | Print Preview
+Button | Print Map...
+Button | Page Grid
+Button | Printer Settings
+Static | Rt-click on grid to select frames,
+CTL-drag to pan, Dbl-clk to home.
+Static | 1
+Static | Printed scale:
+Static | Pages:
+Static | View frame:
+Static | 10.00 x 9.50 in
+Static | 1 in = 500 ft
+Static | Printable area:
+Static | 10.00 x 9.50 in
+Button | Details / Rpts...
+Button | Flag Symbols...
+Button | Detach
+Button | Inherit
+Button | Hide Labels
+Button | Hide Markers
+Button | Apply to All
+Button | Display Map
+Button | Node Totals
+Button | Segment Attributes
+Static | Vectors:
+Static | Length:
+Static | 2
+Static | 1.0
+Static | Line
+style:
+Static | Bkgnd:
+Static | Labels:
+Static | Notes:
+Static | Passage Floors:
+Static | Markers:
+Afx:00600000:b:00010003:00000006:0006013F | P15 validation
+Button | &New Item
+Button | &Detach
+Button | &Review
+Button | &Properties

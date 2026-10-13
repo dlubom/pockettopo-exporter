@@ -199,7 +199,7 @@ func build(d source.Document, maxBytes int) (Result, error) {
 		if first || g.Declination != previousDecl {
 			val := decimal(float64(g.Declination)*360/65536, 6)
 			r.Declinations = append(r.Declinations, Directive{w.line, trip, val})
-			w.write("#Units Decl=" + val)
+			w.write(fmt.Sprintf("#Units Decl=%s", val))
 		}
 		first = false
 		previousTrip = trip
@@ -281,7 +281,7 @@ func (n *nameMap) identify(id source.StationID) (Identity, error) {
 	}
 	v.Walls = v.Display
 	if v.Walls == "" || len(v.Walls) > 8 {
-		v.Walls = "p" + strconv.FormatUint(uint64(uint32(v.Native)), 36)
+		v.Walls = fmt.Sprintf("p%s", strconv.FormatUint(uint64(uint32(v.Native)), 36))
 	}
 	if owner, ok := n.owners[v.Walls]; ok && owner != v.Native {
 		return Identity{}, fmt.Errorf("srv station name collision: %s", v.Walls)
@@ -355,8 +355,8 @@ func (w *writer) comment(s string) {
 	}
 	q := strconv.QuoteToASCII(s)
 	for len(q) > 160 {
-		w.write("; comment " + q[:160])
+		w.write(fmt.Sprintf("; comment %s", q[:160]))
 		q = q[160:]
 	}
-	w.write("; comment " + q)
+	w.write(fmt.Sprintf("; comment %s", q))
 }

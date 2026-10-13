@@ -1,5 +1,7 @@
 """Negative controls for the original Walls database verifier (no consumer oracle)."""
 import importlib.util
+import hashlib
+import json
 import math
 from pathlib import Path
 import struct
@@ -28,6 +30,30 @@ def ntv():
     return raw
 
 class WallsControls(unittest.TestCase):
+    def test_frozen_original_walls_vectors_and_statistics(self):
+        root = Path(__file__).resolve().parent.parent
+        data = root / "internal/exportwalls/testdata"
+        capture = data / "walls-native"
+        report = json.loads((capture / "report.json").read_bytes())
+        self.assertEqual(report["walls_sha256"],"ee11c4cf908d200176c96528e702846ef3e2caba7e356fc0e4c03bde17ae782f")
+        self.assertTrue(report["negative_control"])
+        for case in report["cases"]:
+            name = case["name"]
+            srv = (data / (name + ".srv")).read_bytes()
+            self.assertEqual(hashlib.sha256(srv).hexdigest(),case["srv_sha256"])
+            self.assertEqual((capture / name / "survey.srv").read_bytes(),srv)
+            for path,digest in case["files"].items():
+                self.assertEqual(hashlib.sha256((capture / name / path).read_bytes()).hexdigest(),digest)
+            actual = walls.read_ntv(capture / name / "p15/p15.NTV")
+            expected,splays,length = walls.expected(srv)
+            self.assertEqual(len(actual),len(expected))
+            self.assertEqual(splays,case["anonymous_wall_shots"])
+            self.assertEqual(walls.survey_summary(capture / name / "p15/p15.NTN")[0],len(expected))
+            self.assertAlmostEqual(walls.survey_summary(capture / name / "p15/p15.NTN")[1],length,places=5)
+            for got,want in zip(actual,expected):
+                self.assertEqual((got["from"],got["to"],got["srv_line"]),(want["from"],want["to"],want["srv_line"]))
+                for a,b in zip(got["vector_enu_metres"],want["vector_enu_metres"]):self.assertAlmostEqual(a,b,places=5)
+
     def test_requires_complete_native_schema_and_values(self):
         with tempfile.TemporaryDirectory() as d:
             path = Path(d)/"native.ntv"

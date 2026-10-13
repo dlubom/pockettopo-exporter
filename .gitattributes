@@ -83,4 +83,6 @@ validation/native-text/cases.tsv -text whitespace=cr-at-eol
 internal/exportwalls/testdata/*.srv -text whitespace=cr-at-eol
 internal/exportwalls/testdata/*.tsv -text whitespace=cr-at-eol
 internal/exportwalls/testdata/native.txt -text whitespace=cr-at-eol
+internal/exportwalls/testdata/native-raw-boundaries.txt -text whitespace=cr-at-eol
+internal/exportwalls/testdata/walls-native/** binary
 internal/top/testdata/native-corpus-text-read.txt -text whitespace=cr-at-eol

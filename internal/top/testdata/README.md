@@ -2592,7 +2592,9 @@ readings and a downward vertical; `aliases` uses two raw IDs with one native
 identity, an eight-character literal and a hidden reserved target name. Separate
 cases contain mixed zero/nonzero readings, exact spatial cancellation, negative
 distance, invalid inclination, undefined From and nonzero/zero/alias self-legs.
-A synthetic case is not promoted to field provenance.
+Two further native-read cases contain raw inclinations ±16385 hidden inside
+otherwise valid nonzero spatial averages; strict per-row rejection must precede
+serialization. A synthetic case is not promoted to field provenance.
 
 The original executable was extracted read-only from the sibling archive, with
 SHA-256 `048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371`.
@@ -2602,6 +2604,7 @@ empty placement dictionaries isolate grouping without Update/templates/closure.
 `features`, `mixed`, `ties`, `aliases`, `cancel` and `mixed-zero` were independently
 read by that assembly. Their `.tsv` files retain exact original CRLF vector and
 Float32-bit captures; `native.txt` retains the unsuppressed successful transcript.
+`native-raw-boundaries.txt` records the two additional raw-inclination probes.
 Reproduction (repository-local outputs; existing .NET 2/Wine):
 
 ```sh
@@ -2640,7 +2643,15 @@ native invalid-inclination control must fail. Settings are default project,
 manual declination, no geographic reference and commented date templates; the
 fixtures have no nonzero loop adjustment. The exact-SHA Actions artifact
 `original-walls-<SHA>` holds runtime hash, project/compiled-input hashes, window
-state, native databases and the detailed verification report. The local Mac was
+state, native databases and the detailed verification report. A successful
+independent snapshot is preserved byte-for-byte in
+`internal/exportwalls/testdata/walls-native/`, with acquisition identity in
+`validation/p15-walls-capture.json`. Original executable SHA-256 is
+`ee11c4cf908d200176c96528e702846ef3e2caba7e356fc0e4c03bde17ae782f`.
+The four cases verify 6/2/2/2 named vectors and 21/9.964/1/2.5 m named lengths,
+including zero ties, manual/equal/zero corrections and anonymous wall-shot
+exclusion. Python controls independently read the frozen native databases and
+verify every captured file hash; current-SHA native CI still runs independently. The local Mac was
 locked during this delivery, so no local native GUI result is claimed.
 
 Anonymous `-` measurements are interpreted by Walls as wall shots and do not
@@ -2653,6 +2664,12 @@ All new fixture/expectation hashes are pinned in `validation/p15-evidence.json`.
 The 1462 preserved and 271 P14 evidence identities are unchanged. Independent
 review of implementation, C#/IL and destination-gate logic identified zero
 self-leg rejection and a nonfinite native-summary control; each was reproduced
-RED and corrected GREEN. The 58 explicit Walls faults and all earlier scopes
-run in Actions; compile/setup/disk/timeouts/incomplete outcomes are failures.
+RED and corrected GREEN. The hosted Gremlins output report identified four nonviable string-arithmetic
+mutations; typed formatting preserves the SRV byte goldens without exclusions.
+Six substantive survivor gaps were closed and locally replayed as named failing
+tests: grouped inclination conversion, signed vertical normalization, unresolved
+trip boundary, exact comment chunk, drawing-loss count and invalid raw inclination
+hidden by averaging. Equivalent exact
+±90/zero branches retain the same output. The 58 explicit Walls faults and all
+earlier scopes run in Actions; compile/setup/disk/timeouts/incomplete outcomes are failures.
 P16 remains planned.

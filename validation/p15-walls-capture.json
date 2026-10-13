@@ -1,0 +1,9 @@
+{
+  "consumer": "original Walls v2.3.0-beta.1",
+  "installer_sha256": "11445a522760ef98876c3d025e90b734c2073d8a033717c7313a8da130168ce0",
+  "capture_source_sha": "475243b1ab3b978455d73f7d6037cd9502a69417",
+  "run_url": "https://github.com/dlubom/pockettopo-exporter/actions/runs/38455845218",
+  "report": "internal/exportwalls/testdata/walls-native/report.json",
+  "settings": "default isolated project; no geographic reference; manual declination; commented dates",
+  "note": "Independent original-consumer snapshot, not final-SHA CI substitute; capture preserves original file bytes."
+}

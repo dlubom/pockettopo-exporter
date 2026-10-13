@@ -1,0 +1,7 @@
+.BOOK P15 validation
+.NAME p15
+.STATUS 2
+.SURVEY P15 measurements
+.NAME survey
+.STATUS 0
+.ENDBOOK

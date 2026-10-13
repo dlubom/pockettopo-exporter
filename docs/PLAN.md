@@ -811,19 +811,29 @@ sources and output-line ownership. Initial/change-only manual declination and
 commented trip-date templates are separate directives; no generated averaging
 comments, geographic fixes, geometry/closure or inferred LRUD are added.
 
-Original PocketTopo independently read six authored cases and captured raw vectors
+Original PocketTopo independently read eight authored cases and captured raw vectors
 and Float32 direction bits. Review found Walls rejects zero self-legs as well as
 nonzero self-legs; both now fail before publication. Distinct-name zero ties are
 retained. Review also added a nonfinite native-summary negative control. All
 P05–P14 frozen evidence remains unchanged. The 58-fault Walls campaign joins the
 existing native-text group and output shard without removing any previous scope,
 operator, threshold or failure control; the exact weak-suite cardinality is 63.
+Hosted output review exposed four nonviable string-arithmetic mutations; typed
+formatting preserves exact SRV bytes while allowing the unweakened gate to run.
+Six substantive survivor test gaps (grouped inclination units, negative vertical
+normalization, missing-trip boundary, exact comment chunk, drawing-loss count and
+raw invalid inclination hidden by averaging)
+were reproduced as named failures with bounded local replay and closed with
+independent native/output assertions. Full mutation evidence remains hosted.
 
 The original Walls v2.3.0-beta.1 Windows gate installs the checksum-pinned official
 runtime, compiles the reviewed SRV in the application's normal project UI path,
 closes it normally and verifies native NTV vectors/final NTN statistics, commented
 dates and an actual invalid-inclination negative control. Its exact-SHA artifact
 retains projects, input/report hashes, native workfiles and window-state evidence.
+The successful original snapshot is frozen under `internal/exportwalls/testdata/walls-native/`
+with the runtime hash and acquisition record; independent controls confirm
+6/2/2/2 named vectors and 21/9.964/1/2.5 m, excluding both anonymous wall shots.
 A Survex import is not its acceptance oracle. Local native-window access was
 unavailable because the Mac was locked; the hosted native gate is authoritative.
 Local ordinary checks (race, Staticcheck, coverage/build and validation controls)

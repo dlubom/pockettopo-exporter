@@ -48,6 +48,14 @@
     "sha256": "d09844b8766c0c255833f63ea2a0beab227c5a1554ea0ec6f8d8417f296db9bf"
   },
   {
+    "path": "internal/exportwalls/testdata/inclination-hidden.top",
+    "sha256": "184438ed5578caefd6340e614ebd5e7e1ede5b2e5643a8db66798858518d4971"
+  },
+  {
+    "path": "internal/exportwalls/testdata/inclination-hidden.tsv",
+    "sha256": "132263265302a912c5e41efd90f41fb2b6471281ecb7df2221ea14237e191925"
+  },
+  {
     "path": "internal/exportwalls/testdata/inclination.top",
     "sha256": "a8d5e6fc710741834b242ded42c12549cf56f86eb06b76de0783124fc04d864c"
   },
@@ -76,8 +84,20 @@
     "sha256": "4f46c14a5874dfc8db9c58d4b58fe340fd70d5d0f17847f25fd49d849ae0d04e"
   },
   {
+    "path": "internal/exportwalls/testdata/native-raw-boundaries.txt",
+    "sha256": "a4b0a12b979ba23f16ff0ca4c51d3988cfedc80d3e3d5b5c97774e2ab92d9664"
+  },
+  {
     "path": "internal/exportwalls/testdata/native.txt",
     "sha256": "465c84d807e38106ea811fd2be5d6d8e4735ef93f2b94e9b45b9ffaa66aebb9f"
+  },
+  {
+    "path": "internal/exportwalls/testdata/negative-inclination-hidden.top",
+    "sha256": "05f9775e25ecfee9d4bd1a28e8bfd6d40868ad04342dff4f60c37abbea3968f0"
+  },
+  {
+    "path": "internal/exportwalls/testdata/negative-inclination-hidden.tsv",
+    "sha256": "44be506655b39b1497b167f5a4ad98340f8b450e88cb59a56257a6035f2a581f"
   },
   {
     "path": "internal/exportwalls/testdata/negative.top",
@@ -112,15 +132,207 @@
     "sha256": "da450650bde371045aa52a7ffe49b9e47e60fcbc21bd65fd7255e3df6e4808f9"
   },
   {
+    "path": "internal/exportwalls/testdata/walls-native/aliases/export/report.json",
+    "sha256": "0ef99f4117d5abcb7dbd800c961f18c462961db6a3a4051f443fdcb5dcd137e6"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/aliases/export/survey.srv",
+    "sha256": "56990f6b0fa69e06eac329b2fd31e6704916477f82c935791918b87ea9cf49e4"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/aliases/p15/p15.NTA",
+    "sha256": "633fbf4453a9bc1825bef763887121724ec94c48f8f4379aadec0eb88ecf56b1"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/aliases/p15/p15.NTN",
+    "sha256": "bb3567f0c729ea5fcf304de0b47103b13a6b4f6ce431b59dbc01c698f2e1f73e"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/aliases/p15/p15.NTP",
+    "sha256": "23011bd108e15e5f3d5f5d7735ce87dc07036b5cd7ce01262f690fb40144ce17"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/aliases/p15/p15.NTS",
+    "sha256": "5fb8f429ec3c3fa2b637d4c7009ae5bfbe1876594b43ac3cef5b3a51ced3f953"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/aliases/p15/p15.NTV",
+    "sha256": "0d4f571e0b904d1abf964400921205622d5afa37f501fdfef416ff716ca25f20"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/aliases/p15.wpj",
+    "sha256": "39255dec48ac37f8d729c17eaabbff28b957df485dbbf5802aea2ec3d64b64fd"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/aliases/survey.srv",
+    "sha256": "56990f6b0fa69e06eac329b2fd31e6704916477f82c935791918b87ea9cf49e4"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/aliases/windows.txt",
+    "sha256": "de887685227703875bf1260bc76d30816ff699eae0b3060957f7349f44e2e98f"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/features/export/report.json",
+    "sha256": "4e1c893485965abcd37c2505d22dc0b4166ce674f02ba1997b528a8a7065863b"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/features/export/survey.srv",
+    "sha256": "c0e13551e52b5960488b5c76ad9c05bf4a32b9f88a5550f8836d313c8913d742"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/features/p15/p15.NTA",
+    "sha256": "e6c93495f28a3c3f951a94a182de6064696880e23cfc330b70491fdd0e3208b4"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/features/p15/p15.NTN",
+    "sha256": "9f7e4de3cfbe6947848ee97e6cafb12526cecf225c9dc41edabf65f916bab854"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/features/p15/p15.NTP",
+    "sha256": "b517e833f384c0525c8f103729e4eca44b0eceb54c94673c6edc0bd9f973e920"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/features/p15/p15.NTS",
+    "sha256": "5fb8f429ec3c3fa2b637d4c7009ae5bfbe1876594b43ac3cef5b3a51ced3f953"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/features/p15/p15.NTV",
+    "sha256": "761245e10e3abf725ccc33d9408b1f59c6b52e6895867a583843bb8f7d326d2d"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/features/p15.wpj",
+    "sha256": "39255dec48ac37f8d729c17eaabbff28b957df485dbbf5802aea2ec3d64b64fd"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/features/survey.srv",
+    "sha256": "c0e13551e52b5960488b5c76ad9c05bf4a32b9f88a5550f8836d313c8913d742"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/features/windows.txt",
+    "sha256": "87082975809a1f4b4ec65fb89e9891c0b3f3415cbff0add14261dd60efe29274"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/mixed/export/report.json",
+    "sha256": "4cfe0d334a62a0e97ed908726b50873f04094fb54f5b6e0314d7b1e38fc60122"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/mixed/export/survey.srv",
+    "sha256": "c4405f3965e93bd9ab493f8715f9286360e500217766887f6f1976f0fa2d00e8"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/mixed/p15/p15.NTA",
+    "sha256": "3434cebf325b4afc08aba93510c5866ba6106e1b2b4064a2a204c3ee8fdd1832"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/mixed/p15/p15.NTN",
+    "sha256": "fed68b874d57f2e63cc5cb6021f1cc2979ef15c5bd69580c6573ec6732dc8638"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/mixed/p15/p15.NTP",
+    "sha256": "f7ffa46289d4e872bf42d97a9621e9ad770147aeefcaf3a3f1a68aeeafc94205"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/mixed/p15/p15.NTS",
+    "sha256": "5fb8f429ec3c3fa2b637d4c7009ae5bfbe1876594b43ac3cef5b3a51ced3f953"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/mixed/p15/p15.NTV",
+    "sha256": "0cbd45488400cea35ba110cf1c282d755bfe4547915e296b77f3046a6af572b5"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/mixed/p15.wpj",
+    "sha256": "39255dec48ac37f8d729c17eaabbff28b957df485dbbf5802aea2ec3d64b64fd"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/mixed/survey.srv",
+    "sha256": "c4405f3965e93bd9ab493f8715f9286360e500217766887f6f1976f0fa2d00e8"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/mixed/windows.txt",
+    "sha256": "bc0c5143b7754afafdadba053cf0b3496675775822027682fc1980913eb5f7a0"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/negative-control/p15/p15.N$N",
+    "sha256": "8c475e2d9410828a899bbdf1998434c601757442b088897ef694e865db996d86"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/negative-control/p15/p15.NTA",
+    "sha256": "a5390459824988c4e04a6231fa26648e8adf7e98a7d5196a67d23b48a363d2c1"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/negative-control/p15/p15.NTV",
+    "sha256": "c87b93e2fcf17f0845924d0e77c0b95e59ad6b2f7e7daeb5c0064ebd87000c43"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/negative-control/p15.wpj",
+    "sha256": "39255dec48ac37f8d729c17eaabbff28b957df485dbbf5802aea2ec3d64b64fd"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/negative-control/survey.srv",
+    "sha256": "530894a2c7a418cfcb739e0e4429a1b7939e3d9476201d650d3ef45c80272465"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/negative-control/windows.txt",
+    "sha256": "7bea579b4a652befd8622470e85d5d8a2d1a663e4c5b1a7ebc52336474f18736"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/report.json",
+    "sha256": "6ed6c9ea0d8e6df95e81bf3e9a70349752037b63fc921b02e330d79ea822f551"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/ties/export/report.json",
+    "sha256": "ff1c1efff634dd4a316b06ddda3481d89848079c5ab2ca1231eff373922baaa9"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/ties/export/survey.srv",
+    "sha256": "4dc3a5d43f02dbbab59919961c84fdd981e7bd645123fe651e7a20b2236488b4"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/ties/p15/p15.NTA",
+    "sha256": "633fbf4453a9bc1825bef763887121724ec94c48f8f4379aadec0eb88ecf56b1"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/ties/p15/p15.NTN",
+    "sha256": "35a0bba53b7e9f867ec9907f4c6887b69641f9ca7951cf54618bf9f63c7fece6"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/ties/p15/p15.NTP",
+    "sha256": "b00b0bb22610df3c00293792b257df321a6481859fbf91e1c55c2e521865c485"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/ties/p15/p15.NTS",
+    "sha256": "5fb8f429ec3c3fa2b637d4c7009ae5bfbe1876594b43ac3cef5b3a51ced3f953"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/ties/p15/p15.NTV",
+    "sha256": "6a219fe067103b2970d2be2f5bf6c0161a672056d7ad390e3b24af8af8a4417e"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/ties/p15.wpj",
+    "sha256": "39255dec48ac37f8d729c17eaabbff28b957df485dbbf5802aea2ec3d64b64fd"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/ties/survey.srv",
+    "sha256": "4dc3a5d43f02dbbab59919961c84fdd981e7bd645123fe651e7a20b2236488b4"
+  },
+  {
+    "path": "internal/exportwalls/testdata/walls-native/ties/windows.txt",
+    "sha256": "9b8e1a52f71b63e31d1764e37641b052167e79262dcf48b84cebc65362ba2eef"
+  },
+  {
     "path": "scripts/reference-srv-probe.cs",
     "sha256": "dd757c8286c47959a4c920da27b077b189de05eb26948ba91c5feaaaa4f81464"
   },
   {
     "path": "scripts/create-srv-fixtures.py",
-    "sha256": "1c1df8ddf156157cc6f27b7d5fa1aabaaf985e99c324d5f687e4bde594312c1b"
+    "sha256": "d29da91fbe9ece533eb431a75bfcee351c3df84a105e7f6b6268cdb004a723de"
   },
   {
     "path": "validation/p15-distribution-cases.json",
     "sha256": "714fdbe23d62ea2f1aa83a7cb1cec94e3e71e185c20ce75afdf55ff42f1078eb"
+  },
+  {
+    "path": "validation/p15-walls-capture.json",
+    "sha256": "89fe5d1a5c7e054266ef7ee0ba2ba054e25cb39ac91a0deb3aa24f40b47e42b1"
   }
 ]

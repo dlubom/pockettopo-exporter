@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"pockettopo-exporter/internal/processing"
 	"pockettopo-exporter/internal/source"
 	"pockettopo-exporter/internal/top"
 	"reflect"
@@ -93,7 +94,7 @@ func TestWallsFeatures(t *testing.T) {
 }
 
 func TestWallsInvalid(t *testing.T) {
-	for _, name := range []string{"mixed-zero", "cancel", "negative", "inclination", "undefined", "self", "self-zero", "alias-self-zero"} {
+	for _, name := range []string{"mixed-zero", "cancel", "negative", "inclination", "inclination-hidden", "negative-inclination-hidden", "undefined", "self", "self-zero", "alias-self-zero"} {
 		t.Run(name, func(t *testing.T) {
 			r, e := Build(document(t, name))
 			if e == nil || len(r.Text) != 0 || r.Report.Schema != 0 {
@@ -183,13 +184,98 @@ func TestWallsNativeDirections(t *testing.T) {
 				}
 			}
 			if len(g.Members) > 1 {
-				if g.Emitted[0] != decimal(float64(g.Direction.DistanceMM)/1000, 3) || g.Emitted[1] != bearing(float64(g.Direction.AzimuthRadians)*180/math.Pi) {
+				incl := math.Max(-90, math.Min(90, float64(g.Direction.InclinationRadians)*180/math.Pi))
+				if g.Emitted[0] != decimal(float64(g.Direction.DistanceMM)/1000, 3) || g.Emitted[1] != bearing(float64(g.Direction.AzimuthRadians)*180/math.Pi) || g.Emitted[2] != strconv.FormatFloat(incl, 'f', 6, 64) {
 					t.Fatal("native output", g)
 				}
 			}
 		}
 		if index != len(r.Report.Groups) {
 			t.Fatal("native group count")
+		}
+	}
+}
+
+func TestWallsSurvivorBoundaries(t *testing.T) {
+	for _, v := range []float64{-90.00001, -90.000001, -90, 90, 90.000001, 90.00001} {
+		got, e := inclination(v)
+		want := math.Max(-90, math.Min(90, v))
+		if e != nil || got != want {
+			t.Fatal("signed/inclusive vertical", v, got, e)
+		}
+	}
+	for _, v := range []float64{math.Nextafter(90.00001, math.Inf(1)), math.Nextafter(-90.00001, math.Inf(-1))} {
+		if _, e := inclination(v); e == nil {
+			t.Fatal("outside vertical bound", v)
+		}
+	}
+	trips := document(t, "features").Trips()
+	for _, index := range []int16{-32768, -1, 4, 32767} {
+		raw, reason := correction(index, trips)
+		if raw != 0 || reason != "unresolved-trip-zero" {
+			t.Fatal("trip boundary", index, raw, reason)
+		}
+	}
+	w := writer{max: 1000, line: 1}
+	w.comment(strings.Repeat("x", 158))
+	if strings.Count(w.b.String(), "\r\n") != 1 || len(w.b.String()) != 172 {
+		t.Fatal("exact comment chunk", w.b.String())
+	}
+	d := document(t, "../../top/testdata/api-drawings")
+	r, e := Build(d)
+	if e != nil {
+		t.Fatal(e)
+	}
+	p, _ := d.Plan()
+	s, _ := d.Side()
+	want := len(p.Elements()) + len(s.Elements())
+	if len(p.Elements()) == 0 || len(s.Elements()) == 0 {
+		t.Fatal("fixture must contain both drawings")
+	}
+	found := false
+	for _, loss := range r.Report.Losses {
+		if loss.Code == "drawing_elements_omitted" {
+			found = true
+			if loss.Count != want {
+				t.Fatal("drawing loss", loss, want)
+			}
+		}
+	}
+	if !found {
+		t.Fatal("drawing omission missing")
+	}
+}
+
+func TestWallsRejectedNativeGroups(t *testing.T) {
+	for _, name := range []string{"inclination-hidden", "negative-inclination-hidden"} {
+		d := document(t, name)
+		grouped, e := processing.GroupMeasurements(d)
+		if e != nil {
+			t.Fatal(e)
+		}
+		if len(grouped.Groups()) != 1 || d.Measurements()[1].InclinationRaw() >= -16384 && d.Measurements()[1].InclinationRaw() <= 16384 {
+			t.Fatal("fixture does not hide invalid raw inclination")
+		}
+		g := grouped.Groups()[0]
+		if !(g.Forward.DistanceMM > 0) || math.Abs(float64(g.Forward.InclinationRadians)*180/math.Pi) > 90 {
+			t.Fatal("fixture must have a valid derived direction")
+		}
+		b, e := os.ReadFile("testdata/" + name + ".tsv")
+		if e != nil {
+			t.Fatal(e)
+		}
+		v := strings.Fields(strings.Split(strings.TrimSpace(string(b)), "\n")[2])
+		if len(v) != 14 || v[0] != "group" {
+			t.Fatal("native observation")
+		}
+		for i, got := range []float32{g.Forward.DistanceMM, g.Forward.AzimuthRadians, g.Forward.InclinationRadians} {
+			n, e := strconv.ParseUint(v[8+i], 16, 32)
+			if e != nil || math.Float32bits(got) != uint32(n) {
+				t.Fatal("native invalid-row averaging", g, v)
+			}
+		}
+		if _, e = Build(d); e == nil {
+			t.Fatal("raw validity must not be inferred from averaged direction")
 		}
 	}
 }

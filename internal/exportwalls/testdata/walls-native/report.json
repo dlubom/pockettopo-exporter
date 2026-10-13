@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "consumer": "original Walls v2.3.0-beta.1",
+  "walls_sha256": "ee11c4cf908d200176c96528e702846ef3e2caba7e356fc0e4c03bde17ae782f",
+  "source_commit": "6ebe3331fd6054b830f31437d2c9e5b2e34c8881",
+  "settings": "default project; no geographic reference; manual Decl; commented dates; no loops in fixtures",
+  "tolerance_metres": 1e-05,
+  "cases": [
+    {
+      "name": "features",
+      "source_sha256": "428ac2aa72396282e6ec47d6de32dd51607e4daf02059e0479d585c23f84dea2",
+      "srv_sha256": "c0e13551e52b5960488b5c76ad9c05bf4a32b9f88a5550f8836d313c8913d742",
+      "named_vectors": 6,
+      "cave_length_metres": 21.0,
+      "anonymous_wall_shots": 1,
+      "vectors": [
+        {
+          "from": "1.0",
+          "to": "1.1",
+          "vector_enu_metres": [
+            9.999999999999986,
+            -5.235987770562866e-07,
+            0.0
+          ],
+          "srv_line": 10
+        },
+        {
+          "from": "1.1",
+          "to": "0",
+          "vector_enu_metres": [
+            -0.43567256675237664,
+            -4.980982775976985,
+            0.0
+          ],
+          "srv_line": 14
+        },
+        {
+          "from": "0",
+          "to": "0.0",
+          "vector_enu_metres": [
+            2.298092234516565,
+            1.9284118029234993,
+            0.0
+          ],
+          "srv_line": 16
+        },
+        {
+          "from": "0.0",
+          "to": "1.2",
+          "vector_enu_metres": [
+            0.0,
+            0.0,
+            2.0
+          ],
+          "srv_line": 19
+        },
+        {
+          "from": "1.2",
+          "to": "1.3",
+          "vector_enu_metres": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "srv_line": 21
+        },
+        {
+          "from": "1.3",
+          "to": "1.4",
+          "vector_enu_metres": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "srv_line": 23
+        }
+      ],
+      "files": {
+        "p15.wpj": "39255dec48ac37f8d729c17eaabbff28b957df485dbbf5802aea2ec3d64b64fd",
+        "survey.srv": "c0e13551e52b5960488b5c76ad9c05bf4a32b9f88a5550f8836d313c8913d742",
+        "windows.txt": "87082975809a1f4b4ec65fb89e9891c0b3f3415cbff0add14261dd60efe29274",
+        "export/report.json": "4e1c893485965abcd37c2505d22dc0b4166ce674f02ba1997b528a8a7065863b",
+        "export/survey.srv": "c0e13551e52b5960488b5c76ad9c05bf4a32b9f88a5550f8836d313c8913d742",
+        "p15/p15.NTA": "e6c93495f28a3c3f951a94a182de6064696880e23cfc330b70491fdd0e3208b4",
+        "p15/p15.NTN": "9f7e4de3cfbe6947848ee97e6cafb12526cecf225c9dc41edabf65f916bab854",
+        "p15/p15.NTP": "b517e833f384c0525c8f103729e4eca44b0eceb54c94673c6edc0bd9f973e920",
+        "p15/p15.NTS": "5fb8f429ec3c3fa2b637d4c7009ae5bfbe1876594b43ac3cef5b3a51ced3f953",
+        "p15/p15.NTV": "761245e10e3abf725ccc33d9408b1f59c6b52e6895867a583843bb8f7d326d2d"
+      }
+    },
+    {
+      "name": "mixed",
+      "source_sha256": "79cb2c4a0a57760c7c0a92ccd6d6f5ebab1ce5cd1b532be3d47a750645456e0b",
+      "srv_sha256": "c4405f3965e93bd9ab493f8715f9286360e500217766887f6f1976f0fa2d00e8",
+      "named_vectors": 2,
+      "cave_length_metres": 9.963999999999997,
+      "anonymous_wall_shots": 1,
+      "vectors": [
+        {
+          "from": "1.0",
+          "to": "1.1",
+          "vector_enu_metres": [
+            0.6070298793490411,
+            9.944490118934075,
+            0.0
+          ],
+          "srv_line": 9
+        },
+        {
+          "from": "1.1",
+          "to": "1.2",
+          "vector_enu_metres": [
+            -9.587093566569728e-08,
+            0.0009999999954043819,
+            0.0
+          ],
+          "srv_line": 11
+        }
+      ],
+      "files": {
+        "p15.wpj": "39255dec48ac37f8d729c17eaabbff28b957df485dbbf5802aea2ec3d64b64fd",
+        "survey.srv": "c4405f3965e93bd9ab493f8715f9286360e500217766887f6f1976f0fa2d00e8",
+        "windows.txt": "bc0c5143b7754afafdadba053cf0b3496675775822027682fc1980913eb5f7a0",
+        "export/report.json": "4cfe0d334a62a0e97ed908726b50873f04094fb54f5b6e0314d7b1e38fc60122",
+        "export/survey.srv": "c4405f3965e93bd9ab493f8715f9286360e500217766887f6f1976f0fa2d00e8",
+        "p15/p15.NTA": "3434cebf325b4afc08aba93510c5866ba6106e1b2b4064a2a204c3ee8fdd1832",
+        "p15/p15.NTN": "fed68b874d57f2e63cc5cb6021f1cc2979ef15c5bd69580c6573ec6732dc8638",
+        "p15/p15.NTP": "f7ffa46289d4e872bf42d97a9621e9ad770147aeefcaf3a3f1a68aeeafc94205",
+        "p15/p15.NTS": "5fb8f429ec3c3fa2b637d4c7009ae5bfbe1876594b43ac3cef5b3a51ced3f953",
+        "p15/p15.NTV": "0cbd45488400cea35ba110cf1c282d755bfe4547915e296b77f3046a6af572b5"
+      }
+    },
+    {
+      "name": "ties",
+      "source_sha256": "0ed6349613f42004206392513ec34061576337e66753c5fa66ced6a39190e166",
+      "srv_sha256": "4dc3a5d43f02dbbab59919961c84fdd981e7bd645123fe651e7a20b2236488b4",
+      "named_vectors": 2,
+      "cave_length_metres": 1.0,
+      "anonymous_wall_shots": 0,
+      "vectors": [
+        {
+          "from": "1.0",
+          "to": "1.1",
+          "vector_enu_metres": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "srv_line": 9
+        },
+        {
+          "from": "1.1",
+          "to": "1.2",
+          "vector_enu_metres": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "srv_line": 10
+        }
+      ],
+      "files": {
+        "p15.wpj": "39255dec48ac37f8d729c17eaabbff28b957df485dbbf5802aea2ec3d64b64fd",
+        "survey.srv": "4dc3a5d43f02dbbab59919961c84fdd981e7bd645123fe651e7a20b2236488b4",
+        "windows.txt": "9b8e1a52f71b63e31d1764e37641b052167e79262dcf48b84cebc65362ba2eef",
+        "export/report.json": "ff1c1efff634dd4a316b06ddda3481d89848079c5ab2ca1231eff373922baaa9",
+        "export/survey.srv": "4dc3a5d43f02dbbab59919961c84fdd981e7bd645123fe651e7a20b2236488b4",
+        "p15/p15.NTA": "633fbf4453a9bc1825bef763887121724ec94c48f8f4379aadec0eb88ecf56b1",
+        "p15/p15.NTN": "35a0bba53b7e9f867ec9907f4c6887b69641f9ca7951cf54618bf9f63c7fece6",
+        "p15/p15.NTP": "b00b0bb22610df3c00293792b257df321a6481859fbf91e1c55c2e521865c485",
+        "p15/p15.NTS": "5fb8f429ec3c3fa2b637d4c7009ae5bfbe1876594b43ac3cef5b3a51ced3f953",
+        "p15/p15.NTV": "6a219fe067103b2970d2be2f5bf6c0161a672056d7ad390e3b24af8af8a4417e"
+      }
+    },
+    {
+      "name": "aliases",
+      "source_sha256": "55af517458b94a01d58e6f3b29ae58383169ced99e11c146066410912df730ec",
+      "srv_sha256": "56990f6b0fa69e06eac329b2fd31e6704916477f82c935791918b87ea9cf49e4",
+      "named_vectors": 2,
+      "cave_length_metres": 2.5,
+      "anonymous_wall_shots": 0,
+      "vectors": [
+        {
+          "from": "15.65535",
+          "to": "1.0",
+          "vector_enu_metres": [
+            0.0,
+            1.5,
+            0.0
+          ],
+          "srv_line": 9
+        },
+        {
+          "from": "1.0",
+          "to": "p1z141z1",
+          "vector_enu_metres": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "srv_line": 10
+        }
+      ],
+      "files": {
+        "p15.wpj": "39255dec48ac37f8d729c17eaabbff28b957df485dbbf5802aea2ec3d64b64fd",
+        "survey.srv": "56990f6b0fa69e06eac329b2fd31e6704916477f82c935791918b87ea9cf49e4",
+        "windows.txt": "de887685227703875bf1260bc76d30816ff699eae0b3060957f7349f44e2e98f",
+        "export/report.json": "0ef99f4117d5abcb7dbd800c961f18c462961db6a3a4051f443fdcb5dcd137e6",
+        "export/survey.srv": "56990f6b0fa69e06eac329b2fd31e6704916477f82c935791918b87ea9cf49e4",
+        "p15/p15.NTA": "633fbf4453a9bc1825bef763887121724ec94c48f8f4379aadec0eb88ecf56b1",
+        "p15/p15.NTN": "bb3567f0c729ea5fcf304de0b47103b13a6b4f6ce431b59dbc01c698f2e1f73e",
+        "p15/p15.NTP": "23011bd108e15e5f3d5f5d7735ce87dc07036b5cd7ce01262f690fb40144ce17",
+        "p15/p15.NTS": "5fb8f429ec3c3fa2b637d4c7009ae5bfbe1876594b43ac3cef5b3a51ced3f953",
+        "p15/p15.NTV": "0d4f571e0b904d1abf964400921205622d5afa37f501fdfef416ff716ca25f20"
+      }
+    }
+  ],
+  "negative_control": true,
+  "anonymous_limit": "Walls treats '-' as anonymous wall measurements; these do not enter the named-vector NTV table or cave-length statistics. No wall point identity or LRUD semantics is inferred."
+}

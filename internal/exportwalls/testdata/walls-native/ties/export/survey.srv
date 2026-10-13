@@ -1,0 +1,10 @@
+; PocketTopo to Walls SRV; P15 measurement profile.
+; Dates are unverified. Fill/uncomment date templates only after verification.
+; For date-derived declination, comment ALL manual Decl lines, set a geographic
+; reference in Walls, and enable Declinations - Derive from #Date.
+; Recompute mixed-trip averages from source readings before date recalculation.
+#Units Reset Meters Order=DAV A=D V=D Case=Mixed
+;#Date YYYY-MM-DD
+#Units Decl=0.000000
+1.0	1.1	0.000	0.000000	0.000000
+1.1	1.2	1.000	0.000000	-90.000000
