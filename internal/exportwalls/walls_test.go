@@ -29,6 +29,19 @@ func wallsDocument(t *testing.T, path string) source.Document {
 	}
 	return d
 }
+
+func lossCounts(t *testing.T, r Report) map[string]int {
+	t.Helper()
+	counts := map[string]int{}
+	for _, loss := range r.Losses {
+		if loss.Count <= 0 || loss.Detail == "" || counts[loss.Code] != 0 {
+			t.Fatal("invalid or duplicate loss", loss)
+		}
+		counts[loss.Code] = loss.Count
+	}
+	return counts
+}
+
 func TestWallsGolden(t *testing.T) {
 	d := wallsDocument(t, "testdata/features.top")
 	r, e := Build(d)
@@ -92,17 +105,14 @@ func TestWallsReport(t *testing.T) {
 	if v.Index != 0 || v.Span != q.Offsets().Record || v.Station.Raw != q.Station().Raw() || v.East != 100000 || v.North != -200000 || v.Altitude != 3000 || v.Comment != "reference" || v.Status != "fixed" || lines[v.Line-1] != "#Fix 0.0 100 -200 3" {
 		t.Fatal("reference lineage", v)
 	}
-	losses := map[string]int{}
-	for _, v := range p.Losses {
-		if v.Detail == "" {
-			t.Fatal("empty loss")
-		}
-		losses[v.Code] = v.Count
-	}
-	for k, n := range map[string]int{"dates_not_applied": 2, "measurement_metadata": 5, "native_zero_declination": 2, "station_names_mapped": 1, "mappings_and_tail_omitted": 3} {
+	losses := lossCounts(t, p)
+	for k, n := range map[string]int{"dates_not_applied": 2, "measurement_metadata": 5, "native_zero_declination": 2, "station_names_mapped": 1, "reference_frame_unspecified": 1, "mappings_and_tail_omitted": 3} {
 		if losses[k] != n {
 			t.Fatal("loss", k, losses)
 		}
+	}
+	if len(losses) != 6 {
+		t.Fatal("unexpected loss", losses)
 	}
 }
 func changedMeasurement(t *testing.T, index, relative int, b []byte) source.Document {
@@ -132,6 +142,11 @@ func TestWallsInvalidAndBounds(t *testing.T) {
 	} {
 		if _, e := Build(changedMeasurement(t, 0, c.field, c.value)); e == nil || !strings.Contains(e.Error(), c.message) {
 			t.Fatal("invalid accepted", c, e)
+		}
+	}
+	for _, value := range [][]byte{{0, 64}, {0, 192}} {
+		if _, e := Build(changedMeasurement(t, 0, 14, value)); e != nil {
+			t.Fatal("vertical inclination boundary", value, e)
 		}
 	}
 	d := wallsDocument(t, "testdata/features.top")
@@ -233,7 +248,11 @@ func TestWallsReferencePolicies(t *testing.T) {
 		if e != nil {
 			t.Fatal(mode, e)
 		}
+		losses := lossCounts(t, r.Report)
 		if mode == "duplicate" || mode == "alias" {
+			if losses["duplicate_references_coalesced"] != 1 || losses["reference_frame_unspecified"] != 2 {
+				t.Fatal("duplicate reference accounting", losses)
+			}
 			if len(r.Report.References) != 2 || r.Report.References[1].Line != 0 || r.Report.References[1].Status != "duplicate-identical" || strings.Count(string(r.Text), "#Fix 0.0") != 1 {
 				t.Fatal("duplicate", r.Report)
 			}
@@ -244,7 +263,7 @@ func TestWallsReferencePolicies(t *testing.T) {
 			if !strings.Contains(string(r.Text), "#Fix 0.0 9223372036854775.807 -200 3") {
 				t.Fatal("reference precision")
 			}
-		} else if r.Report.References[0].Line != 0 || r.Report.References[0].Status != "omitted-incomplete" || strings.Contains(string(r.Text), "\r\n#Fix") {
+		} else if r.Report.References[0].Line != 0 || r.Report.References[0].Status != "omitted-incomplete" || strings.Contains(string(r.Text), "\r\n#Fix") || losses["incomplete_references_omitted"] != 1 || losses["reference_frame_unspecified"] != 0 {
 			t.Fatal("incomplete ref published", r.Report)
 		}
 	}
@@ -253,6 +272,9 @@ func TestWallsCommentSafetyAndAngles(t *testing.T) {
 	for _, s := range []string{"", "a", strings.Repeat("x", 158), strings.Repeat("x", 159), strings.Repeat("x", 400) + "\r\n#Fix bad 0 0 0;\x00\t\u0085\u2028🦇"} {
 		w := writer{max: 4096, line: 1}
 		w.comment(s)
+		if len(s) == 158 && w.b.String() != "; comment \""+s+"\"\r\n" {
+			t.Fatal("exact comment boundary adds an empty line")
+		}
 		var joined string
 		for _, line := range strings.Split(strings.TrimSuffix(w.b.String(), "\r\n"), "\r\n") {
 			if s == "" {
@@ -382,5 +404,40 @@ func TestWallsZeroConstraintGraph(t *testing.T) {
 	}
 	if z.join(9, 12) || z.join(10, 5) {
 		t.Fatal("transitive fixed constraint lost")
+	}
+}
+
+func TestWallsZeroConstraintWorkBound(t *testing.T) {
+	z := zeroConstraints{parent: map[int32]int32{}, rank: map[int32]int{}, fixed: map[int32][3]int64{}}
+	// Adversarial insertion order must not make a linear-depth equivalence tree.
+	for id := int32(1); id <= 4096; id++ {
+		if !z.join(id, id-1) {
+			t.Fatal("unfixed equivalence rejected")
+		}
+	}
+	for start := int32(0); start <= 4096; start++ {
+		id := start
+		for depth := 0; ; depth++ {
+			next, ok := z.parent[id]
+			if !ok {
+				break
+			}
+			if depth >= 13 {
+				t.Fatal("zero-link tree exceeds logarithmic depth", start)
+			}
+			id = next
+		}
+	}
+}
+
+func TestWallsDrawingLossCount(t *testing.T) {
+	d := wallsDocument(t, "../top/testdata/api-drawings.top")
+	r, e := Build(d)
+	if e != nil {
+		t.Fatal(e)
+	}
+	// Native fixture has eight polygons and two XSections in each drawing.
+	if got := lossCounts(t, r.Report)["drawing_elements_omitted"]; got != 20 {
+		t.Fatal("plan and side drawing omissions", got)
 	}
 }

@@ -833,6 +833,12 @@ uses its standalone zero default and reports that unsupported option. The
 supplemental corpus check accepted all 251 successful packages from 262 inputs;
 11 invalid-input exports failed explicitly.
 
+Hosted mutation review strengthened reference/drawing loss-count assertions,
+valid vertical-angle and comment-line boundaries, and the zero-link tree work
+bound. Formatting uses typed format arguments rather than string arithmetic;
+path compression traverses a captured path. Neither change alters SRV bytes,
+and compiler errors/timeouts remain rejected by the unchanged mutation gate.
+
 **Publication gate:** commit/push and verify all ordinary/distribution, unchanged
 P14 corpus, P15 consumer, mutation/control and aggregate jobs for the exact final
 SHA. No earlier run substitutes. Stop after P15; P16 is planned only.

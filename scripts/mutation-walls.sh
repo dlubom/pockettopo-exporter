@@ -80,8 +80,8 @@ mutate comment-length "$x" 'len(q) > 160' 'len(q) > 170'
 mutate output-boundary "$x" 'len(s)+2 > w.max-w.b.Len()' 'len(s)+2 >= w.max-w.b.Len()'
 mutate crlf "$x" 'w.b.WriteString("\r\n")' 'w.b.WriteString("\n")'
 mutate metres "$x" 'if u%1000 == 0 {
-		return sign + strconv.FormatUint(u/1000, 10)' 'if u%1000 == 0 {
-		return sign + strconv.FormatUint(u/100, 10)'
+		return fmt.Sprintf("%s%d", sign, u/1000)' 'if u%1000 == 0 {
+		return fmt.Sprintf("%s%d", sign, u/100)'
 mutate cli-name "$c" '"survey.srv"' '"survey.txt"'
 mutate cli-extra-options "$c" 'len(args) != 6' 'len(args) < 6'
 mutate self-leg "$x" 'v.Distance > 0 && v.From.Native == v.To.Native' 'false'

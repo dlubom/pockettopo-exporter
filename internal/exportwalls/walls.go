@@ -172,7 +172,7 @@ func build(d source.Document, maxBytes int) (Result, error) {
 		}
 		w.write(fmt.Sprintf("; measurement %d", i))
 		w.comment(v.Comment)
-		w.write("#Units Decl=" + angle(int(decl)))
+		w.write(fmt.Sprintf("#Units Decl=%s", angle(int(decl))))
 		v.Line = w.line
 		w.write(fmt.Sprintf("%s\t%s\t%s\t%s\t%s", v.From.Walls, v.To.Walls, metres(int64(v.Distance)), angle(int(uint16(v.Azimuth))), angle(int(v.Inclination))))
 		r.Measurements = append(r.Measurements, v)
@@ -218,17 +218,17 @@ type zeroConstraints struct {
 
 func (z *zeroConstraints) root(id int32) int32 {
 	root := id
+	var path []int32
 	for {
 		next, ok := z.parent[root]
 		if !ok {
 			break
 		}
+		path = append(path, root)
 		root = next
 	}
-	for id != root {
-		next := z.parent[id]
+	for _, id := range path {
 		z.parent[id] = root
-		id = next
 	}
 	return root
 }
@@ -260,7 +260,7 @@ func (z *zeroConstraints) join(a, b int32) bool {
 func stationName(id source.StationID) string {
 	s := id.String()
 	if len(s) > 8 {
-		return "p" + strconv.FormatUint(uint64(uint32(id.NativeValue())), 36)
+		return fmt.Sprintf("p%s", strconv.FormatUint(uint64(uint32(id.NativeValue())), 36))
 	}
 	return s
 }
@@ -288,9 +288,9 @@ func metres(mm int64) string {
 		u = uint64(-(mm + 1)) + 1
 	}
 	if u%1000 == 0 {
-		return sign + strconv.FormatUint(u/1000, 10)
+		return fmt.Sprintf("%s%d", sign, u/1000)
 	}
-	return sign + strconv.FormatUint(u/1000, 10) + "." + strings.TrimRight(fmt.Sprintf("%03d", u%1000), "0")
+	return fmt.Sprintf("%s%d.%s", sign, u/1000, strings.TrimRight(fmt.Sprintf("%03d", u%1000), "0"))
 }
 
 type writer struct {
@@ -316,8 +316,8 @@ func (w *writer) comment(s string) {
 	// Splitting only after escaping keeps every physical line a bounded comment.
 	q := strconv.QuoteToASCII(s)
 	for len(q) > 160 {
-		w.write("; comment " + q[:160])
+		w.write(fmt.Sprintf("; comment %s", q[:160]))
 		q = q[160:]
 	}
-	w.write("; comment " + q)
+	w.write(fmt.Sprintf("; comment %s", q))
 }
