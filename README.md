@@ -110,7 +110,18 @@ It publishes `survey.text` and `report.json`, reproducing native series/trip/cod
 selection, MacEncoding, LRUD and inline splays. Code/trip padding, declination
 overrides, splays, vertical sections, merge, timestamp, explicit context and closure
 are available. See [the Toporobot contract](docs/SPEC.md#native-toporobot-and-dialog-options-p12).
-The next increment is **P13: native 3D DXF**, planned only.
+P13 adds native 3D DXF surfaces and centerline segments:
+
+```sh
+go run ./cmd/pockettopo-exporter export internal/exportdxf3d/testdata/fallback.top --format dxf3d --output build/dxf3d
+go run ./cmd/pockettopo-exporter export internal/exportdxf/testdata/template-rays/current.top --format dxf3d --output build/dxf3d-context --template-directory internal/exportdxf/testdata/template-rays --close-loops
+```
+
+It publishes `survey.dxf` and `report.json`, with native ordered `LINE`/`3DFACE`
+entities, current/template geometry and 16 mm quantization. Unbounded native
+hulls fail explicitly before publication. See [the 3D DXF contract](docs/SPEC.md#native-3d-dxf-p13)
+for arithmetic, omissions and point/entity provenance. The next increment is
+**P14: native capability matrix and distribution validation**, planned only.
 Historical per-field prefix APIs remain supported.
 
 ## Documentation

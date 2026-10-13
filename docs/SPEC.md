@@ -883,3 +883,76 @@ reader/writer cases**, exhaustive MacEncoding, 66 native numeric grammar observa
 are recorded in [P12 fixture provenance](../internal/top/testdata/README.md#p12-native-toporobot-and-dialog-options).
 Two native-accepted nonfinite reader cases are intentionally rejected under
 the finite merge profile; 15 successful roundtrips match exact native bytes.
+
+
+## Native 3D DXF (P13)
+
+`export <input.top> --format dxf3d --output <new-directory>
+[--template-directory <dir>] [--close-loops]` publishes native `survey.dxf`
+and schema-1 `report.json` under the P05 no-replace publication contract.
+Input is complete supported TOP v3; P08 explicit input ordering, template table
+prefixes, limits, symlink rejection and ignored-byte inventory apply. An explicit
+empty template directory is still reported as explicit context. No automatic
+neighbor discovery, graphics DXF options, scale or side selection is added.
+The original ThreeD `side` parameter is unused. P05–P12 outputs/schemas remain
+unchanged; the help listing gains this format.
+
+The detached P07/P08 graphics geometry supplies native sorted stations:
+current placed references/legs except the synthetic `reference:-1`, followed
+by all placed template references/legs before original Framework 2.0 generic
+`Array.Sort<Station>` partitioning. Compare IDs by unchecked Int32 subtraction,
+including equal-ID partition order and wrap. Retain the actual template/current
+boundary and current-only closure. Export a stretch only when its raw head
+`dist > 0`, it has a start and its invisible bit (4) is clear. Unplaced,
+undefined-from and unattached/zero splays are retained in provenance without
+inventing a surface. No trip selection is applied.
+
+Each endpoint walks its start chain while it has no cross list, zero distance
+and a start. Add that resolved station, then all its attached splays in their
+native order. Splay visibility does not filter this list. Prepend every point;
+therefore the resulting list reverses both endpoint and cross order. Preserve
+point identity independently of coordinates; do not deduplicate coincident
+points. Two points yield a LINE, three a triangular 3DFACE, and four or more
+use the original ordered edge-front hull traversal. Retain the previous normal
+across searches and stretches, original tie branches, early duplicate-edge
+termination and fourth face vertex equal to the third. Native degenerate faces
+and non-watertight results are compatibility output, not inferred cave walls.
+
+For geometry millimetres X/Y/H, internal points are `(X>>4, (-Y)>>4, (-H)>>4)`;
+negation wraps Int32 before arithmetic shift. DXF coordinates are those Int32
+values shifted left by four. This rounds toward negative infinity at 16 mm
+spacing and preserves MinInt32 negation behavior. Differences, normal cross
+products and seed additions wrap Int32; dot products widen each Int32 operand
+to Int64 before multiplication and wrap their sum. Output uses decimal integers,
+layer 0, UTF-8 without BOM and CRLF; AC1002 HEADER and ENTITIES sections have
+no INSUNITS or CRS. No reference location offset is added. Plan sketches,
+side sketches, XSections, mappings, labels, colors, raw comments/roll/trip metadata
+and dates are not serialized in DXF; the loss report identifies this explicitly.
+
+Limits are 128 MiB DXF, 1,000,000 entities, 1,000,000 allocated source-linked
+points across stretches and 10,000,000 work steps for sorting, ancestor walking,
+point assembly, hull scans/edge operations. Existing geometry ceilings apply
+separately. The limits are inclusive; negative private test limits fail. Check
+point budgets before allocation and string budgets before append. Nonterminating
+native coincident/collinear hulls, geometry failures and budget exhaustion return
+an error with an empty result; the CLI exits 1 without publishing a directory.
+The original writer silently swallows exceptions and can leave partial files;
+P13 deliberately fails before publication. Notification errors after completed
+publication preserve the package, following P05.
+
+The report identifies every input and its role/hash/consumed/ignored bytes,
+current source hash/size/tail, output hash/size, options and context. All raw
+measurements/references preserve source indexes, exact record spans, raw fields,
+identity and group/reversal linkage. Geometry snapshots retain raw/native/display
+IDs, source spans, placements, start keys, vectors and corrections. Sorted
+stretches retain eligibility omissions, resolved endpoint keys, point and entity
+ranges. Every allocated point links its geometry key and original position to
+quantized output; every entity records its owner, exact one-based line span and
+ordered point indexes. This separates repeated coordinates from source identity.
+Raw comments/dates remain in the hashed original TOP, without inferred dates.
+
+Original assembly C#/IL, 135 complete byte goldens, 24 generic-sort goldens
+and 7 controlled native failures establish this contract. Evidence and
+reproduction commands are in [fixture provenance](../internal/top/testdata/README.md#p13-native-3d-dxf).
+Consumer CAD import, a watertightness guarantee and the P14 compatibility matrix
+remain outside P13.

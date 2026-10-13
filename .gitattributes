@@ -69,3 +69,10 @@ internal/top/testdata/native-toporobot-model-reviewed-read.txt -text whitespace=
 internal/top/testdata/native-toporobot-boundary-read.txt -text whitespace=cr-at-eol
 internal/exporttoporobot/testdata/model/*.input binary
 internal/exporttoporobot/testdata/model/*.tsv -text whitespace=cr-at-eol
+
+# P13 original-assembly byte goldens and CRLF transcripts.
+internal/exportdxf3d/testdata/*.entities binary
+internal/exportdxf3d/testdata/*.tsv -text whitespace=cr-at-eol
+internal/exportdxf3d/testdata/*.input -text whitespace=cr-at-eol
+internal/exportdxf3d/testdata/*.output -text whitespace=cr-at-eol
+internal/top/testdata/native-dxf3d*.txt -text whitespace=cr-at-eol

@@ -2399,3 +2399,86 @@ that null name during merge. `native-toporobot-model-reviewed-read.txt` retains
 this native confirmation. Regressions also account for every contributing
 existing comment/name continuation and distinguish terminal-series-link ownership
 from an omitted measurement record, without changing any earlier golden bytes.
+
+## P13 native 3D DXF
+
+The original PocketTopo 1.372 assembly remains unchanged, SHA-256
+`048cf57b874238ac142f1e4d3446af639ce3760b4a91724ea00bcc320eb5c371`.
+Primary research: sibling `analysis/ANALYSIS.txt`, `ThreeD` (all methods and
+nested Point/Vector), `Survey.GetStations/CloseLoops`, `Station.CompareTo`,
+`ID.CompareTo`, and corresponding IL. The IL confirms generic
+`System.Array.Sort<Station>` (not the non-generic Array overload), current-root
+exclusion/template inclusion, Int32 arithmetic before shifts, widened Int64 dot
+products, persistent previous normals and ignored `side`. ThreeD.cs SHA-256 is
+`f5e319760a06beba9a3d5b8f6e6d67756357b8ab98c777962da7ddaa5382005d`;
+PocketTopo.il is `ed465cef8fb81c61b37845ce7936105d70670cc8075500ac25abf9b706351a76`.
+Earlier JKTZ `src/jktz/pockettopo/export.py` was inspected for provenance ideas;
+it has Walls/Survex export, not a native ThreeD oracle. No behavior was reused.
+
+`scripts/reference-dxf3d-probe.cs` invokes the unchanged original assembly by
+reflection; no recovered geometry/export code is compiled. Default mode captures
+P07/P08 geometry/context, drawings (including empty Polygons irrelevant to 3D),
+reference extremes and template rays with/without closure, plus independent
+direct-stretch point models. Additional modes `semantics`, `sort`, `sequence`
+cover zero-distance ancestor fallback versus retained cross lists, invisible
+legs/splays, native generic sort ties/wrapped comparisons (2–74 stations), and
+57 stretches through a single native writer retaining its previous normal.
+The reused-writer sequence equals the concatenated standalone outputs for this
+selected input set; it does not establish an observable cross-stretch normal
+effect. The lifetime is confirmed in C#/IL and retained in the implementation.
+Models retain raw X/Y/H input positions before native quantization. Full-file
+TOP inputs use the native reader, then Update/current-only CloseLoops and ThreeD.
+Synthetic semantic TOP streams were read successfully by the original program.
+
+`internal/exportdxf3d/testdata/cases.tsv` contains exactly **166** cases:
+**135 complete byte outputs** (77 full files, 57 direct stretches and one
+80,297-byte multi-stretch sequence), **24 sort outcomes**, and **7 failures**.
+Five full-file failures are the preserved geometry Overflow/NullReference cases.
+Four coincident or collinear point identities do not terminate in the original
+hull: initial observational probes timed out after two seconds (full outputs
+remain under ignored `build/p13/native`); the frozen re-capture retains bounded
+partial output and explicit `CaptureLimit`, after at most 2,800 intercepted
+WriteLine calls. This is an observer limit, not an invented native success.
+The production port has checked deterministic work/entity/point/byte ceilings.
+Native coplanar and duplicate-coordinate hulls which terminate retain their
+exact native degenerate faces. Fifty seeded random direct models include Int32
+normal overflow and diverse hull fronts; extreme quantization separately covers
+MinInt32 negation and Int32/Int64 wrap.
+
+Original stdout is preserved in `native-dxf3d-read.txt`,
+`native-dxf3d-semantics-read.txt`, `native-dxf3d-sort-read.txt` and
+`native-dxf3d-sequence-read.txt` here. Each successful probe exited 0 with empty
+stderr. These transcripts include repeated direct models in supplemental modes;
+the combined case manifest includes each case once. Model/sort/sequence bytes
+and CRLF files are protected by `.gitattributes`. No existing source or native
+P05–P12 evidence file was edited.
+
+Reproduction with the existing Wine/.NET 2.0 installation (outputs are new local
+research artifacts; compile the final probe once, then run all four modes):
+
+```sh
+mkdir -p build/p13
+WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine 'C:\windows\Microsoft.NET\Framework64\v2.0.50727\csc.exe' \
+  /nologo /r:System.Windows.Forms.dll /r:System.Drawing.dll \
+  '/out:Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p13\probe.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\scripts\reference-dxf3d-probe.cs'
+WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEBUG=-all MVK_CONFIG_LOG_LEVEL=0 \
+  wine build/p13/probe.exe \
+  'Z:\Users\dariuszlubomski\.local\share\pockettopo\app\PocketTopoV1372\PocketTopo.exe' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter\build\p13\fresh-native' \
+  'Z:\Users\dariuszlubomski\proj\pockettopo-exporter' \
+  > build/p13/fresh-read.txt 2> build/p13/fresh-read.err
+# Repeat with new output directories and a final semantics / sort / sequence arg.
+# Combine default cases, the four semantic top cases, 24 sort cases and sequence.
+# Rewrite only generated build paths in the combined manifest to testdata paths.
+shasum -a 256 -c internal/exportdxf3d/testdata/SHA256SUMS
+```
+
+Go tests compare all complete native bytes and every generic-sort outcome;
+failures return an empty result. Report checks decode raw source rows/reference
+spans, link grouped members and geometry, verify quantized point identities,
+entity group codes/one-based lines and stretch ownership, and check determinism
+and detached results. Exact work prefixes, inclusive output/point/entity budgets,
+ancestor cycles, malformed/unsupported input and CLI publication failures are
+covered. Consumer import or watertight cave-wall semantics are not claimed.

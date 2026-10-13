@@ -30,7 +30,8 @@ P05–P08 and existing prefix contracts remain unchanged.
 | P10 | Native graphics DXF, plan/side/options, provenance and bounded native failures | Implemented; local ordinary gates and independent review verified; exact-SHA hosted gates required |
 | P11 | Native VisualTopo 5.02, direction-selected passage dimensions, explicit context and provenance | Implemented; exact-SHA hosted gates required |
 | P12 | Native Toporobot and dialog options, bounded existing-file merge and provenance | Implemented; exact-SHA hosted gates required |
-| P13/P14 | 3D DXF and native compatibility milestone | Planned only |
+| P13 | Native 3D DXF, source-linked points/entities and bounded native hulls | Implemented; exact-SHA hosted gates required |
+| P14 | Native compatibility milestone | Planned only |
 | P15/P16 | Walls SRV / Survex SVX | Subsequent scope |
 
 ### Verification and publication
@@ -644,7 +645,7 @@ survivor review and exact-SHA publication remain required before delivery claims
 P12 adds 55 explicit faults without removing prior scopes. A fifth Gremlins shard
 holds the new exporter/CLI; all production files remain exactly-once assigned.
 The weak-suite control requires exactly 54 live mutants and retains setup/build
-failure rejection. P13 is planned only; this request ends after P12.
+failure rejection. At P12 delivery, P13 remained planned only; the P12 request ended after P12.
 
 Hosted feedback additionally drives assertions for raw trip/reference/template/
 existing-file identities, output record indexes, fixed-field reader boundaries,
@@ -657,10 +658,56 @@ compiler failures and timeouts remain rejected rather than counted as kills.
 
 **Next useful increment:** P13 — native 3D DXF, planned only.
 
+## P13 — native 3D DXF
+
+**Status:** implemented; ordinary gates and independent review verified;
+exact-SHA hosted publication required. **Dependency:** P07/P08. Deliver only native ThreeD
+DXF through `export --format dxf3d`, isolated or explicit template context, with
+optional current-only closure. Preserve P05–P12 and stop before P14.
+
+**Architecture:** separate `internal/exportdxf3d` consumes the detached graphics
+geometry view. Reproduce original .NET station sorting, 16 mm quantization,
+Int32 cross products/Int64 dot products, point identity, persistent previous-face
+normal and ordered native hull traversal. Reuse bounded P08 input loading and
+P05 no-replace publication. No dependencies or previous schema changes.
+
+Implementation and verification sequence:
+- [x] Confirm ThreeD, Survey.GetStations and ID.CompareTo C#/IL; capture original
+  assembly full-file and direct stretch goldens, degenerate and overflow cases.
+- [x] Write failing byte/lineage/boundary tests; implement native station order,
+  endpoint ancestor fallback, attached splays, line/triangle/hull serialization.
+- [x] Add CLI, source/output hashes, raw rows/reference identities, node/point/
+  entity lineage and explicit omissions. Fail without partial publication on
+  malformed/unsupported input, native geometry failure and bounded-work excess.
+- [x] Extend complete mutation scope and negative/dispatch controls; run bounded
+  local ordinary gates and independent review.
+
+**Publication requirement:** commit/push on main, run all hosted gates/mutations,
+review survivors and verify every CI job for the exact delivered SHA.
+
+**Review focus:** collinear/coincident/coplanar point identity; equal station IDs
+and native sort overflow; zero-distance ancestors and template splays; arithmetic
+wrap and negative quantization; work/entity/byte limits and report line ownership.
+Native hulls are compatibility output, not an inferred watertight cave surface.
+P14 remains planned only.
+
+Original-assembly evidence has 135 complete byte goldens, 24 generic-sort cases
+and 7 native failures; all 1,200 pre-existing evidence files match the baseline.
+Independent review confirmed core C#/IL, 77 full-file byte comparisons, raw
+row/reference readback and point/entity ownership. Follow-up review required an
+exact 45-entry, unique-name/KILLED gate for the new explicit campaign; it is added.
+The new exporter has 100% statement coverage. All 45 explicit faults compile;
+full Gremlins discovery has 2,605 RUNNABLE sites, no uncovered sites, and an exact
+disjoint five-shard union. No operators or thresholds were weakened. The bounded
+hull fuzz passed 535,209 executions in 10 seconds; final ordinary gates include
+race/vet/Staticcheck, exact coverage, build and smoke checks. Full
+hosted mutations/survivor review and exact-SHA CI remain required.
+
+
 ## Remaining original roadmap
 
-After P12 there are **2 remaining required delivery stages to the native
-milestone**: P13/P14. P01 is a capability/fixture inventory maintained within those stages,
+After P13 there is **1 remaining required delivery stage to the native
+milestone**: P14. P01 is a capability/fixture inventory maintained within those stages,
 not an additional standalone implementation chat. P15 and P16 add two subsequent
 stages for Walls and Survex. P17–P19 and R01–R07 are optional/conditional scope.
 
@@ -682,7 +729,7 @@ routine documentation and individual mutation groups are not separate PBIs.
 | P10 | Native graphics DXF, plan/side and options | Implemented above; native byte, coordinate and visual evidence |
 | P11 | Native VisualTopo and passage dimensions | Implemented above |
 | P12 | Toporobot and dialog options | Implemented above |
-| P13 | Native 3D DXF | P07/P08; degenerate and bounded-failure cases |
+| P13 | Native 3D DXF | Implemented above; degenerate and bounded-failure cases |
 | P14 | Close native capability matrix and validate distribution | P05/P09–P13, pinned corpus and complete gates |
 | P15/P16 | Walls SRV / Survex SVX | Native milestone; explicit conversions/losses and consumer validation |
 | P17 | Optional layered SVG | Accepted R03 contract; can follow native drawings before SRV/SVX |

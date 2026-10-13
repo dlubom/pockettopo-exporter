@@ -42,10 +42,10 @@ uncached race tests, coverage, build and CLI smoke behavior. Generated outputs
 are `coverage.out`, `mutation.json` and `build/`; caches/tools are in ignored
 `.cache/` and `.tools/`. There is no `go.sum` because there are no module
 dependencies. The document group covers P04d source/accounting/inspect faults alongside the
-unchanged earlier groups. The native-text group covers text, Therion, graphics DXF, VisualTopo and Toporobot serialization, decimal
+unchanged earlier groups. The native-text group covers text, Therion, graphics DXF, VisualTopo, Toporobot and 3D DXF serialization, decimal
 formatting, provenance and safe CLI publication. The weak-suite negative control deliberately stubs
-inspection/export/processing/geometry/context and exercises version, inspect, process, geometry, context and text/Therion/DXF/VisualTopo/Toporobot export arguments without assertions;
-all 54 generated mutants must live and the quality gate must reject them.
+inspection/export/processing/geometry/context and exercises version, inspect, process, geometry, context and text/Therion/DXF/VisualTopo/Toporobot/3D DXF export arguments without assertions;
+all 58 generated mutants must live and the quality gate must reject them.
 Run one sequential campaign or one parallel coordinator at a time. The parallel
 runner snapshots only source/scripts/pinned tools into a private checkout per
 group with private caches/reports. It limits active groups, collects reports and
@@ -171,3 +171,12 @@ or ignored local outputs, never in the sibling decompilation artifacts.
 Keep status and the next PBI in PLAN. README is an entry point, not an append-only
 session journal. Git commits and CI runs retain delivery history. Record a newly
 discovered durable contract in SPEC, not in several competing handoff sections.
+
+
+P13 adds the `dxf3d` explicit scope to `native-text` and assigns
+`internal/exportdxf3d` to the existing output Gremlins shard. It retains every
+prior scope, all five shards, operators, >=90% gate and failure controls.
+`GOMAXPROCS=2 GOFLAGS=-p=1 bash scripts/mutation-dxf3d.sh --preflight` checks that
+all new faults compile without running a local mutation campaign or producing
+a KILLED report. The actual full campaign and negative control run in Actions.
+The native weak-suite control now requires exactly 58 live mutants.
