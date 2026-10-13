@@ -91,8 +91,8 @@ mutate cli-duplicate "$c" 'if seen[flag] {' 'if seen[flag] && false {'
 mutate line-dedup "$m" 'math.Abs(float64(v.dist-l.dist)) < 0.1' 'math.Abs(float64(v.dist-l.dist)) < 0.01'
 mutate crlf "$w" '[]string{s, "\r\n"}' '[]string{s, "\n"}'
 mutate continuation-owner "$r" 'addOwner(actual, owner)
-			var target' 'addOwner(nil, owner)
-			var target'
+			var comment' 'addOwner(nil, owner)
+			var comment'
 mutate signed-digits "$w" 'digits-len(s)' 'digits-len(s)-len(sign)'
 mutate null-reference "$w" 'if r.name == nil {' 'if r.name == nil && false {'
 mutate terminal-omission "$x" 'record.Kind == "station" || record.Kind == "splay"' 'record.Kind == "station" || record.Kind == "splay" || record.Kind == "series"'

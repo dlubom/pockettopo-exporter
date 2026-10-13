@@ -48,8 +48,15 @@ func TestToporobotDimensionQuantizationWrap(t *testing.T) {
 		t.Fatal(dims, az, incl)
 	}
 	s.Distance = 0
-	dims, _, _ = ToporobotDimensions(s, nil, false)
-	if dims != [4]PassageDimension{} {
+	dims, az, incl = ToporobotDimensions(s, nil, false)
+	if dims != [4]PassageDimension{} || az != -2147483648 || incl != -2147483648 {
 		t.Fatal("zero distance")
+	}
+	s.Distance = 1000
+	next := new(ToporobotStation)
+	next.ForwardAzimuth, next.ForwardInclination = 16384, 4096
+	dims, az, incl = ToporobotDimensions(s, next, false)
+	if az != 0 || incl != 0 || dims[0].RayKey != "left-first" {
+		t.Fatal("zero successor must not supply an axis", dims, az, incl)
 	}
 }

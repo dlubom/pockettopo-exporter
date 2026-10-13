@@ -2310,8 +2310,8 @@ parser's sequential station insertion. Earlier JKTZ averaging/drawing/export
 code was reviewed as prior art; it does not implement this native format and
 was not used as the oracle.
 
-`internal/exporttoporobot/testdata/cases.tsv` contains **373 captures**:
-**319 complete native byte goldens** and **54 native failures** (44
+`internal/exporttoporobot/testdata/cases.tsv` contains **379 captures**:
+**325 complete native byte goldens** and **54 native failures** (44
 ArgumentOutOfRangeException, six NullReferenceException, four OverflowException).
 Cases include both circles, closure, prior P07/P08 geometry/context, native
 VisualTopo fixture inputs, all 16 combinations of automatic/manual declination,
@@ -2319,8 +2319,11 @@ included splays and vertical sections, code/trip indexes 1/2/7/9/9999/10000/1000
 existing-file merges, duplicate sorted heads, topology/gaps, reversed terminal
 series links, dates 1919/1920/2019/2020, long UTF-16 names/comments and surrogate
 padding, first-ray ties, inline tolerance and Int32-wrapped LRUD projection.
-The four new literal TOP fixtures were written by the harness and successfully
-read by the original program; old TOP files were read only.
+The initial four literal TOP fixtures were written by the harness and successfully
+read by the original program; old TOP files were read only. Four additional
+`boundary/*.top` literals contain cross-series station1, zero/positive adjacent
+successors and a zero splay. The original program successfully read all four;
+six exact outputs include two merges with a literal nonzero-LRUD seed.
 
 `scripts/reference-toporobot-model-probe.cs` independently invokes original
 Toporobot.Read/Write. The **21 reader/writer cases** preserve native rich comments,
@@ -2340,7 +2343,7 @@ Original capture transcripts are retained as `native-toporobot-read.txt`,
 Only new P12 evidence was added; all **810** pre-existing tracked raw/golden/probe
 files matched their start-of-task hashes. The complete new evidence inventory,
 including both probes/transcripts/inputs/outputs, is
-[`SHA256SUMS`](../../exporttoporobot/testdata/SHA256SUMS) (377 entries).
+[`SHA256SUMS`](../../exporttoporobot/testdata/SHA256SUMS) (389 entries).
 
 Capture commands (existing Wine/.NET 2; the Framework64 compiler completed while
 old Framework compiler processes could remain spinning after invocation):
@@ -2366,6 +2369,13 @@ env WINEPREFIX=/Users/dariuszlubomski/.local/share/pockettopo/wineprefix WINEDEB
   > build/p12/model-final-native-read.txt 2> build/p12/model-final-native-read.err
 shasum -a 256 -c internal/exporttoporobot/testdata/SHA256SUMS
 ```
+
+The same export probe accepts a fourth `boundaries` argument to capture only
+the six boundary cases in a fresh output directory. Its unmodified stdout is
+`native-toporobot-boundary-read.txt`; those rows append to the frozen case
+inventory. Existing goldens are preserved. Tests additionally reuse P11's
+unchanged 4,105-case original .NET2 Single:F2 table, including a value that
+distinguishes seven from eight significant digits.
 
 
 The final review also prompted `scripts/reference-toporobot-number-probe.cs`:

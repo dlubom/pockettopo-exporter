@@ -94,7 +94,7 @@ func TestToporobotNativeSnapshotGoldens(t *testing.T) {
 		t.Fatal(e)
 	}
 	cases := strings.Split(strings.TrimSpace(string(b)), "\n")
-	if len(cases) != 373 {
+	if len(cases) != 379 {
 		t.Fatal("native case inventory", len(cases))
 	}
 	for _, row := range cases {

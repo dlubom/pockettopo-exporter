@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"pockettopo-exporter/internal/processing"
 	"pockettopo-exporter/internal/source"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -113,6 +114,9 @@ func Build(d source.Document, templates []source.ReferencePrefix, opt Options) (
 	return build(d, templates, opt, 128*1024*1024)
 }
 func build(d source.Document, templates []source.ReferencePrefix, opt Options, byteLimit int) (Result, error) {
+	return buildBudget(d, templates, opt, byteLimit, 10_000_000)
+}
+func buildBudget(d source.Document, templates []source.ReferencePrefix, opt Options, byteLimit, workLimit int) (Result, error) {
 	if opt.Circle == 0 {
 		opt.Circle = 360
 	}
@@ -134,8 +138,9 @@ func build(d source.Document, templates []source.ReferencePrefix, opt Options, b
 		return Result{}, e
 	}
 	m := newModel()
+	m.maxWork = workLimit
 	if opt.Existing != nil {
-		m, e = read(opt.Existing)
+		m, e = readBudget(opt.Existing, workLimit, 32*1024*1024)
 		if e != nil {
 			return Result{}, e
 		}
@@ -247,6 +252,9 @@ func build(d source.Document, templates []source.ReferencePrefix, opt Options, b
 				end = len(text)
 			} else {
 				end++
+			}
+			if end <= 0 || end > len(text) {
+				return Result{}, fmt.Errorf("native_failure (Toporobot trip comment progress)")
 			}
 			part := trim(text[:end])
 			text = text[end:]
@@ -398,7 +406,9 @@ func build(d source.Document, templates []source.ReferencePrefix, opt Options, b
 			target.trip = tripIndex
 			if num != 0 {
 				if s.Start != nil {
-					if e := addDimensions(target, ser, 0, *s.Start, &s); e != nil {
+					next := new(processing.ToporobotStation)
+					*next = s
+					if e := addDimensions(target, ser, 0, *s.Start, next); e != nil {
 						return Result{}, e
 					}
 					if e := addInline(target, *s.Start); e != nil {
@@ -465,8 +475,8 @@ func build(d source.Document, templates []source.ReferencePrefix, opt Options, b
 	}
 	status := map[int]string{}
 	for _, node := range view.Nodes {
-		var head int
-		if _, e := fmt.Sscanf(node.Key, "group:%d", &head); e == nil {
+		head, e := strconv.Atoi(strings.TrimPrefix(node.Key, "group:"))
+		if e == nil {
 			status[head] = node.Status
 		}
 	}

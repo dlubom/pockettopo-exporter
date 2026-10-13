@@ -878,7 +878,7 @@ existing Toporobot files remain the authoritative hashed inputs; the report is
 not an alternative lossless source archive. Drawings/mappings, roll, unused flags
 and native omitted heads have explicit omissions; no CRS or survey date is inferred.
 
-C#/IL and **319 native byte goldens**, **54 native failures**, **21 native
+C#/IL and **325 native byte goldens**, **54 native failures**, **21 native
 reader/writer cases**, exhaustive MacEncoding, 66 native numeric grammar observations and source-preserving CLI tests
 are recorded in [P12 fixture provenance](../internal/top/testdata/README.md#p12-native-toporobot-and-dialog-options).
 Two native-accepted nonfinite reader cases are intentionally rejected under

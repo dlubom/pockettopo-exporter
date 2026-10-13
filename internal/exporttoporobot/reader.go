@@ -13,7 +13,10 @@ import (
 // Read keeps native fixed UTF-16 offsets and sequential station insertion.
 // Resource/nonfinite failures are explicit before any output publication.
 func read(b []byte) (*model, error) {
-	if len(b) > 32*1024*1024 {
+	return readBudget(b, 10_000_000, 32*1024*1024)
+}
+func readBudget(b []byte, workLimit, byteLimit int) (*model, error) {
+	if len(b) > byteLimit {
 		return nil, fmt.Errorf("resource_limit (Toporobot merge bytes)")
 	}
 	text := decode(b)
@@ -51,6 +54,7 @@ func read(b []byte) (*model, error) {
 		text = stringFromUnits(u)
 	}
 	m := newModel()
+	m.maxWork = workLimit
 	var actual any
 	lines := strings.Split(strings.ReplaceAll(strings.ReplaceAll(text, "\r\n", "\n"), "\r", "\n"), "\n")
 	for line, s := range lines {
@@ -98,7 +102,8 @@ func read(b []byte) (*model, error) {
 				sep = ""
 			}
 			addOwner(actual, owner)
-			var target **string
+			var comment *string
+			var setComment func(*string)
 			switch v := actual.(type) {
 			case *station:
 				if strings.HasPrefix(body, "[") && strings.HasSuffix(body, "]") {
@@ -117,13 +122,17 @@ func read(b []byte) (*model, error) {
 					v.lines = append(v.lines, inline{dist: vals[0], az: vals[1], incl: vals[2], keys: []string{owner}})
 					continue
 				}
-				target = &v.comment
+				comment = v.comment
+				setComment = func(value *string) { v.comment = value }
 			case *series:
-				target = &v.comment
+				comment = v.comment
+				setComment = func(value *string) { v.comment = value }
 			case *code:
-				target = &v.comment
+				comment = v.comment
+				setComment = func(value *string) { v.comment = value }
 			case *reference:
-				target = &v.comment
+				comment = v.comment
+				setComment = func(value *string) { v.comment = value }
 			case *trip:
 				if v.comment == nil && sep == "" && (strings.HasSuffix(body, "1") || strings.HasSuffix(body, "2")) {
 					m.work += len(units(v.name1)) + len(units(v.name2)) + len(units(body))
@@ -138,21 +147,22 @@ func read(b []byte) (*model, error) {
 					}
 					continue
 				}
-				target = &v.comment
+				comment = v.comment
+				setComment = func(value *string) { v.comment = value }
 			}
-			if target != nil {
+			if setComment != nil {
 				copied := len(units(body)) + len(units(sep))
-				if *target != nil {
-					copied += len(units(**target))
+				if comment != nil {
+					copied += len(units(*comment))
 				}
 				m.work += copied
 				if e := m.tick(); e != nil {
 					return nil, e
 				}
-				if *target == nil {
-					*target = textPointer(body)
+				if comment == nil {
+					setComment(textPointer(body))
 				} else {
-					*target = textPointer(strings.Join([]string{**target, sep, body}, ""))
+					setComment(textPointer(strings.Join([]string{*comment, sep, body}, "")))
 				}
 			}
 			continue

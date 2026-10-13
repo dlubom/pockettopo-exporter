@@ -371,3 +371,9 @@ extra-terminal-360-14	internal/exporttoporobot/testdata/terminal.top	False	False
 extra-terminal-400-14	internal/exporttoporobot/testdata/terminal.top	False	False	400	1	1	14		ok
 extra-terminal-360-15	internal/exporttoporobot/testdata/terminal.top	False	False	360	1	1	15		ok
 extra-terminal-400-15	internal/exporttoporobot/testdata/terminal.top	False	False	400	1	1	15		ok
+boundary-cross1	internal/exporttoporobot/testdata/boundary/cross1.top	False	False	360	1	1	4		ok
+boundary-zero-next	internal/exporttoporobot/testdata/boundary/zero-next.top	False	False	360	1	1	4		ok
+boundary-positive-next	internal/exporttoporobot/testdata/boundary/positive-next.top	False	False	360	1	1	4		ok
+boundary-zero-splay	internal/exporttoporobot/testdata/boundary/zero-splay.top	False	False	360	1	1	4		ok
+boundary-merge-zero-next	internal/exporttoporobot/testdata/boundary/zero-next.top	False	False	360	1	1	4	boundary-seed/survey.text	ok
+boundary-merge-positive-next	internal/exporttoporobot/testdata/boundary/positive-next.top	False	False	360	1	1	4	boundary-seed/survey.text	ok

@@ -76,6 +76,52 @@ func TestToporobotCLIOptionsPublication(t *testing.T) {
 			if r.OutputHash != fmt.Sprintf("%x", sha256.Sum256(want)) || r.OutputSize != len(want) || len(r.Inputs) < 1 || r.Inputs[len(r.Inputs)-1].Name == "" {
 				t.Fatal("report inventory", string(jb))
 			}
+			dir, existing := "", ""
+			for i, flag := range tc.options {
+				if flag == "--template-directory" {
+					dir = tc.options[i+1]
+				}
+				if flag == "--add-to" {
+					existing = tc.options[i+1]
+				}
+			}
+			context := "isolated-input"
+			if dir != "" {
+				context = "explicit-template-directory"
+			}
+			if r.Context != context {
+				t.Fatal("context label", r.Context, context)
+			}
+			current, merges := 0, 0
+			for _, input := range r.Inputs {
+				path := filepath.Join(filepath.Dir(tc.input), input.Name)
+				if input.Role == "current" {
+					current++
+					if input.Name != filepath.Base(tc.input) {
+						t.Fatal("current name", input)
+					}
+				}
+				if input.Role == "existing-toporobot" {
+					merges++
+					path = existing
+					if input.Name != filepath.Base(existing) {
+						t.Fatal("existing name", input)
+					}
+				}
+				b, e := os.ReadFile(path)
+				if e != nil || input.SHA256 != fmt.Sprintf("%x", sha256.Sum256(b)) || input.Size != len(b) || input.Consumed+input.Ignored != len(b) {
+					t.Fatal("exact input inventory", input, e)
+				}
+			}
+			if current != 1 || (existing != "" && merges != 1) || (existing == "" && merges != 0) {
+				t.Fatal("input roles", r.Inputs)
+			}
+			if existing != "" {
+				b, _ := os.ReadFile(existing)
+				if r.ExistingHash != fmt.Sprintf("%x", sha256.Sum256(b)) || r.ExistingSize != len(b) {
+					t.Fatal("existing report identity")
+				}
+			}
 			if cli.Run(args, io.Discard, &err) != 1 {
 				t.Fatal("existing destination accepted")
 			}
@@ -84,6 +130,34 @@ func TestToporobotCLIOptionsPublication(t *testing.T) {
 				t.Fatal("output changed")
 			}
 		})
+	}
+}
+
+func TestToporobotCLIInclusiveOptionsAndEmptyContext(t *testing.T) {
+	for _, n := range []string{"1", "100000"} {
+		var err bytes.Buffer
+		args := []string{"export", "../processing/testdata/geometry/empty.top", "--format", "toporobot", "--output", filepath.Join(t.TempDir(), "out"), "--code", n, "--trip", n, "--export-time", "0001-01-01T00:00:00"}
+		if cli.Run(args, io.Discard, &err) != 0 {
+			t.Fatal("inclusive dialog bounds", n, err.String())
+		}
+	}
+	dir := t.TempDir()
+	b, e := os.ReadFile("../processing/testdata/geometry/empty.top")
+	if e != nil {
+		t.Fatal(e)
+	}
+	input := filepath.Join(dir, "current.top")
+	if e = os.WriteFile(input, b, 0600); e != nil {
+		t.Fatal(e)
+	}
+	target := filepath.Join(t.TempDir(), "out")
+	if cli.Run([]string{"export", input, "--format", "toporobot", "--output", target, "--template-directory", dir}, io.Discard, io.Discard) != 0 {
+		t.Fatal("empty explicit context")
+	}
+	jb, e := os.ReadFile(filepath.Join(target, "report.json"))
+	var r exporttoporobot.Report
+	if e != nil || json.Unmarshal(jb, &r) != nil || r.Context != "explicit-template-directory" || len(r.Inputs) != 1 {
+		t.Fatal("explicit empty context report", string(jb), e)
 	}
 }
 func TestToporobotCLIFailures(t *testing.T) {

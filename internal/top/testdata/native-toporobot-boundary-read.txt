@@ -1,0 +1,7 @@
+boundary-cross1 bytes=883
+boundary-zero-next bytes=591
+boundary-positive-next bytes=591
+boundary-zero-splay bytes=509
+boundary-merge-zero-next bytes=586
+boundary-merge-positive-next bytes=586
+P12 native boundary capture complete

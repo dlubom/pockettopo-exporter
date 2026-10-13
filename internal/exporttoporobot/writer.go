@@ -122,7 +122,7 @@ func (m *model) write(at time.Time, byteLimit int) ([]byte, []Record, error) {
 		}
 	}
 	if len(m.refs) > 0 {
-		for i := 1; i <= 2; i++ {
+		for _, i := range []int{1, 2} {
 			start := w.line
 			w.write(fmt.Sprintf("%s%02d/%02d/%02d %02d:%02d:%02d  Guest", header(-4, i, 1, 1), at.Year()%100, at.Month(), at.Day(), at.Hour(), at.Minute(), at.Second()))
 			w.record("writer-time", -4, i, start, []string{"metadata:export-time"})

@@ -45,6 +45,13 @@ class ReferenceToporobotProbe {
   Type form=a.GetType("PocketTopo.MainForm");foreach(string color in new string[]{"black","gray","brown","blue","green","red","orange"})form.GetField(color,f).SetValue(null,new Pen(Color.Black));
   Encoding mac=(Encoding)Activator.CreateInstance(a.GetType("PocketTopo.MacEncoding"),true);byte[] enc=new byte[65536];for(int i=0;i<65536;i++)enc[i]=mac.GetBytes(new char[]{(char)i})[0];File.WriteAllBytes(Path.Combine(root,"mac.bin"),enc);
   cases=new StreamWriter(Path.Combine(root,"cases.tsv"));
+  if(args.Length>3&&args[3]=="boundaries"){
+   string seedDir=Path.Combine(root,"boundary-seed");Directory.CreateDirectory(seedDir);
+   File.WriteAllBytes(Path.Combine(seedDir,"survey.text"),mac.GetBytes("     1    -2   1   1   1 S\r\n     1    -1   1   1   1       1       0       1       1       1       3       0\r\n     1     0   1   1   1    0.00    0.00    0.00    1.00    2.00    3.00    4.00\r\n"));
+   foreach(string n in new string[]{"cross1","zero-next","positive-next","zero-splay"})Run("boundary-"+n,"internal/exporttoporobot/testdata/boundary/"+n+".top",false,false,360,1,1,4,"");
+   foreach(string n in new string[]{"zero-next","positive-next"})Run("boundary-merge-"+n,"internal/exporttoporobot/testdata/boundary/"+n+".top",false,false,360,1,1,4,"boundary-seed/survey.text");
+   cases.Close();Console.WriteLine("P12 native boundary capture complete");return 0;
+  }
   foreach(int circle in new int[]{360,400}){
    foreach(bool close in new bool[]{false,true}){
     string prefix="c"+circle+(close?"-closed-":"-");

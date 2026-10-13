@@ -68,7 +68,12 @@ type model struct {
 	maxSlots int
 }
 
-func newModel() *model { return &model{maxWork: 10_000_000, maxSlots: 2_000_000} }
+func newModel() *model {
+	m := new(model)
+	m.maxWork = 10_000_000
+	m.maxSlots = 2_000_000
+	return m
+}
 func (m *model) tick() error {
 	m.work++
 	if m.work > m.maxWork {

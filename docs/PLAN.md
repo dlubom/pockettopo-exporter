@@ -624,7 +624,7 @@ campaign, review survivors and verify every job for the exact delivered SHA.
 reserved/series-zero IDs; overwritten output records and template starts;
 Float32/Int32 overflow and Unicode/continuation boundaries.
 
-Native C#/IL and original assembly probes establish 319 complete byte goldens,
+Native C#/IL and original assembly probes establish 325 complete byte goldens,
 54 native failures and 21 existing-reader/writer cases. MacEncoding is exhaustive;
 context/closure, both circles, all 16 dialog combinations, terminal series links,
 long Unicode/comments, date/index boundaries, deduplication and Int32 LRUD wrap
@@ -638,13 +638,22 @@ reference names and terminal-link omission classification. Native readbacks and
 regressions verify all repairs; no substantive review finding remains. The final
 ordinary suite includes race/vet/Staticcheck, >=95% exact coverage, build/smoke;
 the existing-file fuzz run passed 256,532 executions in 10 seconds. All 55 explicit
-faults compile in preflight. Full discovery has 2,410 RUNNABLE sites, zero uncovered
+faults compile in preflight. Full discovery has 2,405 RUNNABLE sites, zero uncovered
 sites and an exact disjoint five-shard union; no operator or threshold was weakened. Final ordinary gates and independent review are verified. Hosted mutations,
 survivor review and exact-SHA publication remain required before delivery claims.
 P12 adds 55 explicit faults without removing prior scopes. A fifth Gremlins shard
 holds the new exporter/CLI; all production files remain exactly-once assigned.
 The weak-suite control requires exactly 54 live mutants and retains setup/build
 failure rejection. P13 is planned only; this request ends after P12.
+
+Hosted feedback additionally drives assertions for raw trip/reference/template/
+existing-file identities, output record indexes, fixed-field reader boundaries,
+shared slot/work budgets, code reuse and normalized high-bit station numbers.
+The native Single:F2 oracle from P11 also checks seven-significant-digit formatting.
+Six new original-program boundary goldens cover cross-series station1 and
+zero/positive successor LRUD, including merges. Refactoring invalid pointer
+operator sites and guarding trip-comment progress keeps native bytes unchanged;
+compiler failures and timeouts remain rejected rather than counted as kills.
 
 **Next useful increment:** P13 — native 3D DXF, planned only.
 
