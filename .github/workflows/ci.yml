@@ -76,11 +76,12 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory build -Force | Out-Null
-          $msi = "$PWD/build/WallsInstaller.msi"
+          $msi = Join-Path $PWD 'build\WallsInstaller.msi'
           Invoke-WebRequest 'https://github.com/wallscavesurvey/walls/releases/download/v2.3.0-beta.1/WallsInstaller-2.3.0-beta.1.2025-09-13.msi' -OutFile $msi
           if ((Get-FileHash $msi -Algorithm SHA256).Hash.ToLower() -ne '11445a522760ef98876c3d025e90b734c2073d8a033717c7313a8da130168ce0') { throw 'Walls installer identity differs' }
-          $target = "$PWD/build/walls-runtime"
-          $p = Start-Process msiexec.exe -ArgumentList "/a `"$msi`" /qn TARGETDIR=`"$target`" /l*v `"$PWD/build/walls-extraction.log`"" -Wait -PassThru
+          $target = Join-Path $PWD 'build\walls-runtime'
+          $log = Join-Path $PWD 'build\walls-extraction.log'
+          $p = Start-Process msiexec.exe -ArgumentList "/a `"$msi`" /qn TARGETDIR=`"$target`" /l*v `"$log`"" -Wait -PassThru
           if ($p.ExitCode -ne 0) { throw "Walls extraction failed: $($p.ExitCode)" }
       - name: Compile reviewed SRV in original Walls and verify native databases
         shell: pwsh
