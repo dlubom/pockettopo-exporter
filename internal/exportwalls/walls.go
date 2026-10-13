@@ -186,7 +186,7 @@ func build(d source.Document, maxBytes int) (Result, error) {
 	var previousDeclination int16
 	nextAverage := 0
 	for i := 0; i < len(r.Measurements); {
-		v := &r.Measurements[i]
+		v := r.Measurements[i]
 		end := i + 1
 		distance, azimuth, inclination := metres(int64(v.Distance)), angle(int(uint16(v.Azimuth))), angle(int(v.Inclination))
 		averaged := nextAverage < len(averages) && averages[nextAverage].HeadIndex == i
@@ -205,7 +205,7 @@ func build(d source.Document, maxBytes int) (Result, error) {
 		}
 		v.Line = w.line
 		w.write(fmt.Sprintf("%s\t%s\t%s\t%s\t%s", v.From.Walls, v.To.Walls, distance, azimuth, inclination))
-		for j := i + 1; j < end; j++ {
+		for j := i; j < end; j++ {
 			r.Measurements[j].Line = v.Line
 		}
 		if averaged {

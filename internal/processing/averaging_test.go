@@ -57,6 +57,14 @@ func polarResult(t *testing.T, shots []polarShot) source.Document {
 	return d
 }
 
+func TestAverageRepeatedLegsLeadingSplay(t *testing.T) {
+	shots := []polarShot{{0, 0x80000000, 2000, 0, 0, 0}, {0, 1, 10000, 0, 0, 0}, {0, 1, 12000, 0, 0, 0}}
+	g, err := AverageRepeatedLegs(polarResult(t, shots))
+	if err != nil || len(g) != 1 || g[0].HeadIndex != 1 || len(g[0].Members) != 2 || g[0].DistanceM != 11 {
+		t.Fatal(g, err)
+	}
+}
+
 func TestAverageRepeatedLegsPolar(t *testing.T) {
 	for _, c := range []struct {
 		name                           string
@@ -65,6 +73,7 @@ func TestAverageRepeatedLegsPolar(t *testing.T) {
 	}{
 		{"triple and reverse", []polarShot{{0, 1, 10000, 0, 0, 4096}, {1, 0, 12000, -32768, 0, 4096}, {0, 1, 14000, 0, 0, 4096}}, 12, 0, 0},
 		{"north wrap", []polarShot{{0, 1, 10000, -64, 0, 0}, {0, 1, 10000, 64, 0, 0}}, 10 * math.Cos(math.Pi/512), 0, 0},
+		{"west", []polarShot{{0, 1, 10000, -16384, 0, 0}, {0, 1, 10000, -16384, 0, 0}}, 10, 270, 0},
 		{"different corrections", []polarShot{{0, 1, 10000, 0, 0, 0}, {0, 1, 10000, -16384, 0, 16384}}, 10, 0, 0},
 		{"inclined vectors", []polarShot{{0, 1, 2000, 16384, 8192, 0}, {0, 1, 2000, 16384, -8192, 0}}, math.Sqrt(2), 90, 0},
 		{"positive inclination", []polarShot{{0, 1, 2000, 16384, 8192, 0}, {0, 1, 2000, 16384, 8192, 0}}, 2, 90, 45},
@@ -80,7 +89,7 @@ func TestAverageRepeatedLegsPolar(t *testing.T) {
 			}
 			a := g[0]
 			azError := math.Abs(math.Remainder(a.AzimuthDegrees-c.azimuth, 360))
-			if math.Abs(a.DistanceM-c.distance) > 1e-9 || azError > 1e-9 || math.Abs(a.InclinationDegrees-c.inclination) > 1e-9 {
+			if math.Abs(a.DistanceM-c.distance) > 1e-9 || azError > 1e-9 || math.Abs(a.InclinationDegrees-c.inclination) > 1e-9 || a.AzimuthDegrees < 0 || a.AzimuthDegrees >= 360 {
 				t.Fatal(a)
 			}
 			if a.HeadIndex != 0 || len(a.Members) != len(c.shots) {
@@ -129,5 +138,23 @@ func TestAverageRepeatedLegsMultipleGroups(t *testing.T) {
 	g, err := AverageRepeatedLegs(polarResult(t, shots))
 	if err != nil || len(g) != 2 || g[0].HeadIndex != 0 || g[1].HeadIndex != 3 || g[0].DistanceM != 11 || g[1].DistanceM != 3 {
 		t.Fatal(g, err)
+	}
+}
+
+func TestAverageRepeatedLegsUnresolvedTrip(t *testing.T) {
+	for _, index := range []uint16{0xffff, 2} {
+		d := polarResult(t, []polarShot{{0, 1, 10000, 0, 0, 4096}, {0, 1, 10000, 0, 0, 4096}})
+		raw := d.Bytes()
+		for _, row := range d.Measurements() {
+			binary.LittleEndian.PutUint16(raw[row.Offsets().Record.Start+18:], index)
+		}
+		d, err := top.ReadV3(raw)
+		if err != nil {
+			t.Fatal(err)
+		}
+		g, err := AverageRepeatedLegs(d)
+		if err != nil || len(g) != 1 || g[0].DistanceM != 10 || g[0].AzimuthDegrees != 0 {
+			t.Fatal(index, g, err)
+		}
 	}
 }

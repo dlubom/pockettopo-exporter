@@ -132,8 +132,8 @@ func changedMeasurement(t *testing.T, index, relative int, b []byte) source.Docu
 	return d
 }
 func TestWallsInvalidAndBounds(t *testing.T) {
-	if _, e := Build(source.Document{}); e == nil {
-		t.Fatal("unsupported accepted")
+	if _, e := Build(source.Document{}); e == nil || e.Error() != "walls export requires a complete supported TOP v3 document" {
+		t.Fatal("unsupported document must be rejected by the exporter before processing", e)
 	}
 	for _, c := range []struct {
 		field   int
