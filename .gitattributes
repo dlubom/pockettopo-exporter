@@ -66,5 +66,6 @@ internal/top/testdata/native-toporobot-final-read.txt -text whitespace=cr-at-eol
 internal/top/testdata/native-toporobot-model-final-read.txt -text whitespace=cr-at-eol
 internal/top/testdata/native-toporobot-number-read.txt -text whitespace=cr-at-eol
 internal/top/testdata/native-toporobot-model-reviewed-read.txt -text whitespace=cr-at-eol
+internal/top/testdata/native-toporobot-boundary-read.txt -text whitespace=cr-at-eol
 internal/exporttoporobot/testdata/model/*.input binary
 internal/exporttoporobot/testdata/model/*.tsv -text whitespace=cr-at-eol
