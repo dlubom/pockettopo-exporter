@@ -42,6 +42,7 @@ public static class ExplorerMenuProbe {
  [DllImport("user32.dll")] static extern bool GetMenuItemRect(IntPtr window, IntPtr menu, uint item, out Rect r);
  [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
  [DllImport("user32.dll")] static extern void mouse_event(uint flags,uint x,uint y,uint data,UIntPtr extra);
+ [DllImport("user32.dll")] static extern void keybd_event(byte key,byte scan,uint flags,UIntPtr extra);
  public static string Class(IntPtr h) {var b=new StringBuilder(256);GetClassName(h,b,b.Capacity);return b.ToString();}
  public static string WindowDescription(IntPtr h) {uint pid;uint tid=GetWindowThreadProcessId(h,out pid);var b=new StringBuilder(2048);GetWindowText(h,b,b.Capacity);return "hwnd="+h.ToInt64()+" class="+Class(h)+" pid="+pid+" tid="+tid+" visible="+IsWindowVisible(h)+" title="+b.ToString();}
  public static string[] VisibleWindows() {var a=new List<string>();EnumWindows((h,x)=>{if(IsWindowVisible(h))a.Add(WindowDescription(h));return true;},IntPtr.Zero);return a.ToArray();}
@@ -59,6 +60,16 @@ public static class ExplorerMenuProbe {
  static string ObjectName(IntPtr handle) {var b=new StringBuilder(256);uint needed;if(!GetUserObjectInformation(handle,2,b,512,out needed))return "unavailable: "+Marshal.GetLastWin32Error();return b.ToString();}
  public static string DesktopDescription() {string result="window_station="+ObjectName(GetProcessWindowStation())+" thread_desktop="+ObjectName(GetThreadDesktop(GetCurrentThreadId()));IntPtr input=OpenInputDesktop(0,false,1);if(input==IntPtr.Zero)return result+" input_desktop_unavailable="+Marshal.GetLastWin32Error();try{return result+" input_desktop="+ObjectName(input);}finally{CloseDesktop(input);}}
  public static IntPtr[] VisibleMenus() {var a=new List<IntPtr>();EnumWindows((h,x)=>{if(IsWindowVisible(h)&&Class(h)=="#32768")a.Add(h);return true;},IntPtr.Zero);return a.ToArray();}
+ public static IntPtr[] ModernMenus(IntPtr explorer) {uint owner;GetWindowThreadProcessId(explorer,out owner);var a=new List<IntPtr>();EnumWindows((h,x)=>{uint pid;GetWindowThreadProcessId(h,out pid);if(pid==owner&&IsWindowVisible(h)&&Class(h)=="Microsoft.UI.Content.PopupWindowSiteBridge")a.Add(h);return true;},IntPtr.Zero);return a.ToArray();}
+ public static void ModernMoreOptions(IntPtr explorer) {
+  if(ModernMenus(explorer).Length==0)throw new Exception("No actual Explorer-owned modern popup for Show more options");
+  uint owner,foreground;GetWindowThreadProcessId(explorer,out owner);GetWindowThreadProcessId(GetForegroundWindow(),out foreground);
+  if(owner!=foreground)throw new Exception("Explorer is not foreground for Show more options keytip");
+  // The English native-runner popup exposes W beside Show more options, as
+  // captured by first-export.modern-popup.desktop.png. The resulting classic
+  // popup remains mandatory; a key injection alone never counts as success.
+  keybd_event(0x57,0,0,UIntPtr.Zero);keybd_event(0x57,0,2,UIntPtr.Zero);
+ }
  public static string MenuText(IntPtr menu,int item) {var b=new StringBuilder(2048);GetMenuString(menu,(uint)item,b,b.Capacity,0x400);return b.ToString().Replace("&","");}
  public static void Hover(IntPtr menu,int item,bool click) {Rect r;if(!GetMenuItemRect(IntPtr.Zero,menu,(uint)item,out r))throw new Exception("Cannot locate actual popup item");if(!SetCursorPos((r.left+r.right)/2,(r.top+r.bottom)/2))throw new Exception("Cannot move pointer on interactive desktop");if(click){mouse_event(2,0,0,0,UIntPtr.Zero);mouse_event(4,0,0,0,UIntPtr.Zero);}}
  [DllImport("kernel32.dll")] static extern bool FreeConsole();
@@ -267,7 +278,22 @@ function Invoke-ExplorerExport([string]$InputFile,[string]$Name,[string]$Expecte
     }
     $deadline=[DateTime]::UtcNow.AddSeconds(10)
     $root=$null
-    while ([DateTime]::UtcNow -lt $deadline -and $null -eq $root) { $root=Find-PopupItem 'PocketTopo Exporter'; Start-Sleep -Milliseconds 100 }
+    $modern=$false
+    while ([DateTime]::UtcNow -lt $deadline -and $null -eq $root) {
+        $root=Find-PopupItem 'PocketTopo Exporter'
+        if ($null -ne $root) { break }
+        if (@([ExplorerMenuProbe]::ModernMenus([IntPtr]$script:explorerWindow.HWND)).Count -gt 0) { $modern=$true; break }
+        Start-Sleep -Milliseconds 100
+    }
+    if ($modern) {
+        Save-ExplorerState "$Name.modern-popup"
+        if (![Globalization.CultureInfo]::CurrentUICulture.Name.StartsWith('en', [StringComparison]::OrdinalIgnoreCase)) {
+            throw 'Show more options keytip probe requires an English Windows runner UI; modern popup captured'
+        }
+        [ExplorerMenuProbe]::ModernMoreOptions([IntPtr]$script:explorerWindow.HWND)
+        $deadline=[DateTime]::UtcNow.AddSeconds(10)
+        while ([DateTime]::UtcNow -lt $deadline -and $null -eq $root) { $root=Find-PopupItem 'PocketTopo Exporter'; Start-Sleep -Milliseconds 100 }
+    }
     Save-ExplorerState "$Name.popup"
     if ($null -eq $root) {
         if (@([ExplorerMenuProbe]::VisibleMenus()).Count -eq 0) { throw 'Explorer produced no visible native classic popup; diagnostic state and screenshot were captured' }
@@ -321,7 +347,7 @@ function Invoke-ExplorerExport([string]$InputFile,[string]$Name,[string]$Expecte
     $expectedCode=0
     if ($Reject) { $expectedCode=1 }
     if ($process.ExitCode -ne $expectedCode) { throw "Explorer command returned incorrect status" }
-    $script:evidence.cases += @{ name=$Name; actual_explorer_menu=$true; exit_code=$process.ExitCode; console_stayed_until_enter=$true; output=$ExpectedOutput }
+    $script:evidence.cases += @{ name=$Name; actual_explorer_menu=$true; show_more_options_used=$modern; exit_code=$process.ExitCode; console_stayed_until_enter=$true; output=$ExpectedOutput }
 }
 
 try {
