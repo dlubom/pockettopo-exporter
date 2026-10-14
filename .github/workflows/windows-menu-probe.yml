@@ -1,0 +1,40 @@
+name: Windows menu probe
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  explorer:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2025, windows-11-arm]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    env:
+      GOTOOLCHAIN: local
+      CGO_ENABLED: 0
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Native command tests and versioned build
+        shell: bash
+        run: |
+          go test -count=1 ./cmd/pockettopo-exporter
+          go vet ./cmd/pockettopo-exporter
+          go build -trimpath -buildvcs=true -ldflags '-X pockettopo-exporter/internal/cli.Version=1.0.0' -o build/menu-probe/pockettopo-exporter.exe ./cmd/pockettopo-exporter
+      - name: Actual Explorer acceptance and diagnostics
+        shell: pwsh
+        run: ./scripts/validate-windows-menu.ps1 -Binary build/menu-probe/pockettopo-exporter.exe -Output build/windows-menu
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: explorer-probe-${{ matrix.os }}-${{ github.sha }}
+          path: build/windows-menu/
+          if-no-files-found: warn

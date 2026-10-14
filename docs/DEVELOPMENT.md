@@ -250,6 +250,11 @@ same-version/same-SHA native ZIP/checksum/validation sets. Existing dev artifact
 are not release inputs. A native Windows release job extracts its tested package
 and runs `validate-windows-menu.ps1` against that executable.
 
+For focused Windows diagnosis, dispatch `windows-menu-probe.yml`. It runs native
+command tests and the same actual Explorer acceptance on x64 and ARM64, retaining
+popup/focus/selection/session/registry JSON and screenshots when available. This
+diagnostic workflow never substitutes for the full exact-SHA CI publication gate.
+
 Publication is explicitly dispatched with an existing annotated `v1.0.0` and
 the successful **main push CI run ID for that exact revision**:
 

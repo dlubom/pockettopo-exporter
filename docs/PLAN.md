@@ -1129,6 +1129,13 @@ rename to the same foreign ZIP name relied on Unix replacement behavior. Each
 target now uses its own foreign filename, preserving the filename-rejection
 control without overwriting another fixture. Publication requires a fresh run
 for the corrected revision; earlier successful target packages are not reused.
+The next attempt passed native Windows Go/registry tests and both Windows
+archives, but the synthetic keyboard probe did not find an Explorer popup root.
+The probe now proves the selected/focused TOP and dispatches `WM_CONTEXTMENU`
+to the actual visible Explorer file view. Native diagnostics retain popup labels,
+selection/focus, process identities, registry view, desktop state and screenshots.
+`windows-menu-probe.yml` provides a focused two-architecture diagnostic run;
+publication still requires the original actual-menu acceptance in full CI.
 
 **Research references:** [GitHub release management](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository),
 [native runner labels](https://docs.github.com/en/actions/reference/runners/github-hosted-runners),
