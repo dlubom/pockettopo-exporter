@@ -16,6 +16,12 @@ examples. On macOS/Linux, from the unpacked folder:
 ./pockettopo-exporter export "My cave.top" --format svx --output "My cave-survex"
 ```
 
+The examples below use the unpacked release binary and your own TOP files.
+On Windows PowerShell, replace `./pockettopo-exporter` with
+`.\pockettopo-exporter.exe`; in Command Prompt, use `pockettopo-exporter.exe`.
+For template examples, `Surveys` is your folder of TOP files and `current.top`
+is the file being exported. Every export output folder must not already exist.
+
 The new output folder contains the export and `report.json`. Supported formats
 are `text`, `therion`, `dxf` (plan/side), `visualtopo`, `toporobot`, `dxf3d`, `srv`
 and `svx`. Inputs must be supported TOP v3. See [CAPABILITIES](docs/CAPABILITIES.md)
@@ -45,7 +51,7 @@ are available. Native Therion interchange includes DATA, plan/elevation drawings
 and embedded XSections, with explicit template context and optional closure.
 
 ```sh
-go run ./cmd/pockettopo-exporter inspect internal/top/testdata/api-drawings.top --json
+./pockettopo-exporter inspect "My cave.top" --json
 ```
 
 Inspection emits deterministic schema-version-1 JSON with the input SHA-256,
@@ -59,7 +65,7 @@ Native text export uses metres, a 360-degree circle and exact UTF-8/CRLF bytes.
 The output directory must be new; it contains `survey.txt` and `report.json`.
 
 ```sh
-go run ./cmd/pockettopo-exporter export internal/top/testdata/api-drawings.top --format text --output build/drawings-text
+./pockettopo-exporter export "My cave.top" --format text --output "My cave-text"
 ```
 
 See [the text contract](docs/SPEC.md#isolated-native-text-export-p05) for native
@@ -71,7 +77,7 @@ adds usable native text export; **P06** adds native fixed-point consecutive and
 reversed measurement groups with source lineage and average directions.
 
 ```sh
-go run ./cmd/pockettopo-exporter process internal/processing/testdata/repeats.top --json
+./pockettopo-exporter process "My cave.top" --json
 ```
 
 Processing is isolated and precedes placement/closure. It does not average P05
@@ -79,7 +85,7 @@ text rows. See [the processing contract](docs/SPEC.md#native-grouped-measurement
 P07 adds isolated geometry without changing text or grouped processing output:
 
 ```sh
-go run ./cmd/pockettopo-exporter geometry internal/processing/testdata/geometry/intersecting.top --json --close-loops
+./pockettopo-exporter geometry "My cave.top" --json --close-loops
 ```
 
 Coordinates use native millimetres (X east/right, Y south/down, H down,
@@ -89,7 +95,7 @@ P08 adds explicit template-directory geometry with a sorted source inventory,
 hashes, ignored-template-byte accounting and per-file lineage:
 
 ```sh
-go run ./cmd/pockettopo-exporter context internal/processing/testdata/context/crossfile/current.top --template-directory internal/processing/testdata/context/crossfile --json --close-loops
+./pockettopo-exporter context "Surveys/current.top" --template-directory "Surveys" --json --close-loops
 ```
 
 Templates affect placement; current-only closure holds template geometry fixed.
@@ -98,8 +104,8 @@ for portable ordering, limits and native failure deviations. P09 adds native
 Therion interchange (`survey.txt`) and a deterministic provenance/loss report:
 
 ```sh
-go run ./cmd/pockettopo-exporter export internal/exporttherion/testdata/features.top --format therion --output build/therion
-go run ./cmd/pockettopo-exporter export internal/exporttherion/testdata/template-rays/current.top --format therion --output build/therion-context --template-directory internal/exporttherion/testdata/template-rays --close-loops
+./pockettopo-exporter export "My cave.top" --format therion --output "My cave-therion"
+./pockettopo-exporter export "Surveys/current.top" --format therion --output "My cave-therion-context" --template-directory "Surveys" --close-loops
 ```
 
 The native format contains FIX, TRIP/DATA, PLAN and ELEVATION, colored Polylines
@@ -109,8 +115,8 @@ for trip filtering, native ordering, strict limits and losses.
 P10 adds native graphics DXF for a selected plan or extended side view:
 
 ```sh
-go run ./cmd/pockettopo-exporter export internal/exportdxf/testdata/features.top --format dxf --output build/dxf --view plan --dxf-options 3582
-go run ./cmd/pockettopo-exporter export internal/exportdxf/testdata/template-rays/current.top --format dxf --output build/dxf-side --view side --template-directory internal/exportdxf/testdata/template-rays --close-loops
+./pockettopo-exporter export "My cave.top" --format dxf --output "My cave-dxf" --view plan --dxf-options 3582
+./pockettopo-exporter export "Surveys/current.top" --format dxf --output "My cave-dxf-side" --view side --template-directory "Surveys" --close-loops
 ```
 
 It publishes `survey.dxf` and `report.json`; default scale is 500 and shots,
@@ -120,8 +126,8 @@ for masks, provenance, native numeric behavior and explicit bounded failures.
 P11 adds native VisualTopo 5.02 with direction-selected passage dimensions:
 
 ```sh
-go run ./cmd/pockettopo-exporter export internal/exportvisualtopo/testdata/dimensions.top --format visualtopo --output build/visualtopo
-go run ./cmd/pockettopo-exporter export internal/exportvisualtopo/testdata/template-rays/current.top --format visualtopo --output build/visualtopo-context --angle-unit grads --template-directory internal/exportvisualtopo/testdata/template-rays --close-loops
+./pockettopo-exporter export "My cave.top" --format visualtopo --output "My cave-visualtopo"
+./pockettopo-exporter export "Surveys/current.top" --format visualtopo --output "My cave-visualtopo-context" --angle-unit grads --template-directory "Surveys" --close-loops
 ```
 
 It publishes `survey.tro` and `report.json`, with metres, degrees by default,
@@ -131,8 +137,8 @@ contract](docs/SPEC.md#native-visualtopo-and-passage-dimensions-p11) for orderin
 encoding, provenance and losses. P12 adds native Toporobot and its dialog options:
 
 ```sh
-go run ./cmd/pockettopo-exporter export internal/exporttoporobot/testdata/topology.top --format toporobot --output build/toporobot --export-time 2026-10-13T12:34:56
-go run ./cmd/pockettopo-exporter export internal/exporttoporobot/testdata/comments.top --format toporobot --output build/toporobot-merge --add-to build/toporobot/survey.text --angle-unit grads --vertical-sections
+./pockettopo-exporter export "My cave.top" --format toporobot --output "My cave-toporobot" --export-time 2026-10-13T12:34:56
+./pockettopo-exporter export "More readings.top" --format toporobot --output "My cave-toporobot-merge" --add-to "My cave-toporobot/survey.text" --angle-unit grads --vertical-sections
 ```
 
 It publishes `survey.text` and `report.json`, reproducing native series/trip/code
@@ -142,8 +148,8 @@ are available. See [the Toporobot contract](docs/SPEC.md#native-toporobot-and-di
 P13 adds native 3D DXF surfaces and centerline segments:
 
 ```sh
-go run ./cmd/pockettopo-exporter export internal/exportdxf3d/testdata/fallback.top --format dxf3d --output build/dxf3d
-go run ./cmd/pockettopo-exporter export internal/exportdxf/testdata/template-rays/current.top --format dxf3d --output build/dxf3d-context --template-directory internal/exportdxf/testdata/template-rays --close-loops
+./pockettopo-exporter export "My cave.top" --format dxf3d --output "My cave-dxf3d"
+./pockettopo-exporter export "Surveys/current.top" --format dxf3d --output "My cave-dxf3d-context" --template-directory "Surveys" --close-loops
 ```
 
 It publishes `survey.dxf` and `report.json`, with native ordered `LINE`/`3DFACE`
@@ -158,7 +164,7 @@ ZIP packages and the corpus validation report. Historical per-field prefix APIs
 remain supported. P15 adds Walls measurement export:
 
 ```sh
-go run ./cmd/pockettopo-exporter export internal/exportwalls/testdata/features.top --format srv --output build/walls
+./pockettopo-exporter export "My cave.top" --format srv --output "My cave-walls"
 ```
 
 It publishes `survey.srv` and `report.json`, using P06 spatial averages for
@@ -171,7 +177,7 @@ report. The measurement-only profile omits fixes and drawings. See the
 P16 adds Survex individual-reading export:
 
 ```sh
-go run ./cmd/pockettopo-exporter export internal/exportwalls/testdata/features.top --format svx --output build/survex
+./pockettopo-exporter export "My cave.top" --format svx --output "My cave-survex-readings"
 ```
 
 It publishes `survey.svx` and `report.json`, preserving every reading in source
@@ -196,21 +202,12 @@ P16 completes the requested scope. **P17: optional layered SVG** remains planned
 | [AGENTS](AGENTS.md) | Concise instructions for agents |
 | [Native evidence](internal/top/testdata/README.md) | Fixture provenance, hashes, native probes and observed behavior |
 
-## Build and check
+## Development
 
-Use **Go 1.26.3** and Bash (Git Bash on Windows). From the repository root:
-
-```sh
-bash scripts/tools.sh       # install pinned development tools; requires network
-bash scripts/check.sh       # formatting, static checks, tests, coverage, build
-go run ./cmd/pockettopo-exporter --help
-go run ./cmd/pockettopo-exporter --version
-```
-
-The executable is written to `build/pockettopo-exporter` (`.exe` on Windows).
-See [DEVELOPMENT](docs/DEVELOPMENT.md) for the complete mutation campaign and
-its parallel CI groups and bounded local runner (`bash scripts/mutations-parallel.sh`).
-There are no application module dependencies.
+See [DEVELOPMENT](docs/DEVELOPMENT.md) for build-from-source commands, development
+tool requirements and quality gates. The application uses only Go's standard
+library. To use a release package, follow the binary examples above or the
+[quick start](QUICKSTART.md).
 
 ## Product direction and references
 
