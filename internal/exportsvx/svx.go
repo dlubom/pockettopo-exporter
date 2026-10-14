@@ -23,11 +23,12 @@ func build(d source.Document, maxBytes int) (Result, error) {
 	r := Report{Schema: 1, Tool: "dev", Format: "survex-svx", Context: "isolated-input", Profile: "Individual source-order readings; P06 reverse normalization; Survex averaging; metres/degrees; UTF-8/LF", Policy: "Stored manual correction; P06 zero for Auto/missing/invalid trips. Manual declination applies once. Commented dates and geographic templates require verified user data.", SourceHash: fmt.Sprintf("%x", sha256.Sum256(raw)), SourceSize: len(raw), SourceVersion: d.Version(), Tail: d.TailKind(), Stations: []Identity{}, Trips: []Trip{}, References: []Reference{}, Measurements: []Measurement{}, Groups: []Group{}, Dates: []Directive{}, Declinations: []Directive{}, Losses: []Loss{}}
 	w := writer{max: maxBytes, line: 1}
 	for _, line := range []string{
+		"*begin", "*set comment x3b", "*set decimal .", "*require 1.4.22",
 		"; PocketTopo to Survex SVX; P16 individual-reading profile.",
 		"; Dates are unverified. Fill/uncomment templates only after verification.",
 		"; For date-derived declination, comment ALL manual declination lines, fill dates",
 		"; and geographic templates with a real location and known fixed station.",
-		"*require 1.4.22", "*begin", "*case preserve", "*truncate off", "*set separator :", "*set names ._-",
+		"*case preserve", "*truncate off", "*set separator :", "*set names ._-",
 		"*units default", "*units tape metres", "*units compass clino declination degrees",
 		"*calibrate default", "*sd default", "*flags not duplicate not splay not surface",
 		"*infer equates off", "*infer plumbs off", "*infer exports off",

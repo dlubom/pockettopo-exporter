@@ -264,7 +264,7 @@ uses small independently read semantic cases and the original destination gate.
 
 ## P16 Survex validation
 
-P16 preserves every P05–P15 scope/operator/threshold/control. Its 53-fault `svx`
+P16 preserves every P05–P15 scope/operator/threshold/control. Its 56-fault `svx`
 campaign joins `native-text`; `exportsvx` joins the existing output Gremlins
 shard. The measured weak inventory is 66 live sites: all 62 earlier sites plus
 exactly four SVX dispatch sites. Compilation/setup/timeout/incomplete outcomes
@@ -277,16 +277,21 @@ GOMAXPROCS=2 GOFLAGS=-p=1 bash scripts/mutation-svx.sh --preflight
 GOMAXPROCS=2 GOFLAGS=-p=1 bash scripts/mutation-trial.sh
 bash scripts/mutation-dispatch-trial.sh
 python3 scripts/validate-survex.py --binary build/pockettopo-exporter --output build/survex-native
+python3 scripts/validate-survex.py --binary build/pockettopo-exporter --consumer-version 1.4.23 --output build/survex-1.4.23
 ```
 
-`validate-survex.py` requires both cavern and dump3d **1.4.22**; custom absolute
-paths use `--cavern` and `--dump3d`. It exports nine semantic cases, compiles them
+`validate-survex.py` requires both cavern and dump3d **1.4.22** by default; an
+explicit `--consumer-version 1.4.23` selects the other verified exact version.
+Custom absolute paths use `--cavern` and `--dump3d`. It exports nine semantic cases, compiles them
 and independently authored controls, compares `.3d` nodes/edges/flags at consumer
 precision and exact leg/loop/length/plan/vertical statistics, and verifies source
 immutability and package hashes. Active dates and a complete automatic profile
 are deliberate edits using known synthetic test dates/coordinates. The default
 export retains commented templates. A hostile include checks reset/restoration;
-an actual same-station error checks compiler failure. Parser tests reject
+three additional includes cover decimal commas, hash comments and both together,
+comparing the full graph with independently authored readings and a connected
+caller leg that must still use its original lexical settings after the include.
+An actual same-station error checks compiler failure. Parser tests reject
 missing/nonfinite/malformed results and incomplete template editing.
 
 The required Linux `survex-native` job builds official source archive
@@ -297,5 +302,12 @@ It installs runner-only build dependencies and uploads raw SVX/report inputs,
 CI complete additionally requires this job. Local original consumer snapshots are
 frozen in `internal/exportsvx/testdata/survex-native`; hash verification includes
 `validation/p16-evidence.json`. P14 native goldens/corpus and P15 original Walls
-evidence remain unchanged. Offline distributions add one SVX destination case
+evidence remain unchanged. The lexical correction adds eight separate byte/report
+expectations under `internal/exportsvx/testdata/lexical`, pinned by
+`validation/svx-lexical-evidence.json`; previous P16 snapshots stay frozen.
+Its three new explicit faults cover decimal reset, comment reset and scope
+placement, retaining all 53 earlier SVX faults. Optional Go consumer regressions
+run when cavern 1.4.22/1.4.23 is installed; the dedicated CI consumer gate always
+exercises all three lexical cases with pinned 1.4.22.
+Offline distributions add one SVX destination case
 without changing the six P14 native cases or their hashes.

@@ -218,6 +218,10 @@ summary vectors/directions, correction sources and directive line ownership.
 P06 summaries validate the agreed failure boundaries and provide provenance;
 they do not replace individual readings or control Survex's averaging.
 
+The anonymous SVX scope starts before any comments or numeric directives. It
+sets the comment character with `*set comment x3b` (semicolon) and the decimal
+character with `*set decimal .`, so includes from decimal-comma or hash-comment
+projects compile unchanged and restore the caller's lexical settings at `*end`.
 The anonymous SVX scope resets units, calibration, accuracy, all three leg
 flags and inference before data. It preserves literal dots and disables
 truncation. Source comments are ASCII-escaped on bounded comment lines within

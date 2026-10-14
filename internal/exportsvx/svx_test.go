@@ -220,7 +220,7 @@ func TestSVXPackageGoldens(t *testing.T) {
 		if e != nil {
 			t.Fatal(e)
 		}
-		want, e := os.ReadFile("testdata/" + name + ".svx")
+		want, e := os.ReadFile("testdata/lexical/" + name + ".svx")
 		if e != nil || !bytes.Equal(r.Text, want) {
 			t.Fatal("SVX regression", name, e)
 		}
@@ -228,7 +228,7 @@ func TestSVXPackageGoldens(t *testing.T) {
 		if e != nil {
 			t.Fatal(e)
 		}
-		want, e = os.ReadFile("testdata/" + name + ".json")
+		want, e = os.ReadFile("testdata/lexical/" + name + ".json")
 		if e != nil || !bytes.Equal(append(raw, '\n'), want) {
 			t.Fatal("report regression", name, e)
 		}

@@ -48,6 +48,9 @@ mutate output-hash "$x" 'sha256.Sum256(b)' 'sha256.Sum256(nil)'
 mutate source-size "$x" 'SourceSize: len(raw)' 'SourceSize: len(raw)+1'
 mutate output-size "$x" 'r.OutputSize = len(b)' 'r.OutputSize = len(b)+1'
 mutate version "$x" 'SourceVersion: d.Version()' 'SourceVersion: 0'
+mutate decimal-reset "$x" '"*set decimal ."' '"*set decimal ,"'
+mutate comment-reset "$x" '"*set comment x3b"' '"*set comment x23"'
+mutate lexical-scope "$x" '"*begin", "*set comment x3b", "*set decimal ."' '"*set comment x3b", "*set decimal .", "*begin"'
 mutate row-index "$x" 'Index: i, Span: m.Offsets().Record' 'Index: i+1, Span: m.Offsets().Record'
 mutate row-span "$x" 'Span: m.Offsets().Record' 'Span: source.Span{}'
 mutate row-distance "$x" 'Distance: m.DistanceMM()' 'Distance: 0'
@@ -96,6 +99,6 @@ mutate cli-source-limit "$c" 'top.DefaultDocumentLimits().MaxInputBytes' 100
 mutate cli-options "$c" 'len(args) != 6' 'len(args) < 6'
 if [[ $preflight != true ]]; then
  jq -s '.' mutants.jsonl >"$report"
- jq -e 'length == 53 and (map(.name) | unique | length) == 53 and
+ jq -e 'length == 56 and (map(.name) | unique | length) == 56 and
    all(.[]; (.name | type == "string" and length > 0) and .status == "KILLED")' "$report" >/dev/null
 fi

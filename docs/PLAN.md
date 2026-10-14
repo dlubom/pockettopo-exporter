@@ -919,6 +919,36 @@ Independent review verifies those cases and exact correspondence of all earlier
 Fresh bounded ordinary/consumer checks and disjoint 2792-site discovery pass;
 the repaired SHA must repeat every hosted job before delivery.
 
+### SVX lexical settings correction — 2026-10-14
+
+Requested scope: fix inherited decimal-comma and hash-comment parsing without
+changing measurement processing or source data. Keep resets inside the anonymous
+scope, before any emitted comment or numeric directive; restore caller settings
+on return. Preserve all frozen P16 evidence and the pinned 1.4.22 hosted gate.
+
+- [x] Reproduce both failures with real Survex regression tests, including caller
+  settings restoration and the combined configuration.
+- [x] Reset comment to `x3b` and decimal to `.`, retain independent byte/report
+  expectations in a separate fixture directory, and add faults to the existing
+  SVX mutation scope without removing previous faults.
+- [x] Extend the consumer gate with independent graph/statistics comparisons for
+  lexical settings; allow an explicit pinned 1.4.23 local run.
+- [x] Run bounded ordinary checks, focused mutation/negative controls, Survex
+  1.4.23 and independent review.
+
+Local verification: complete `check.sh` passed with race, vet, Staticcheck, build
+and 98.0% total statement coverage. Both actual cavern/dump3d 1.4.22 and 1.4.23
+passed all nine earlier cases, three lexical graph/restoration cases, the inherited
+settings case and the semantic negative control. All 1,967 prior frozen identities
+and eight new identities verify. Independent review found no actionable issue.
+The complete 56-fault SVX attempt stopped on a disk-exhausted compiler/linker;
+no score is accepted from that interrupted attempt. A separate complete Go-overlay
+campaign killed exactly the three new faults with named behavioral test failures.
+Dispatch controls passed. Commit and push on `main` are authorized. Delivery
+requires every hosted platform, consumer, corpus, mutation/weak-suite job and
+`CI complete` to succeed for the exact published SHA; commit checks and the
+delivery response retain that publication evidence. P17 is not started.
+
 For both items, preserve P05–P15 and source/processing contracts. Follow all gates
 in DEVELOPMENT, retain mutation scopes/failure controls, obtain independent review
 and update fixture provenance. Changes to grouping or magnetic policy require

@@ -32,10 +32,10 @@ def run(args):
     return subprocess.run(list(map(str,args)), capture_output=True, timeout=30,
                           env={**os.environ,'LC_ALL':'C','LANG':'C','SURVEXLANG':'en'})
 
-def version(binary):
+def version(binary, expected='1.4.22'):
     result = run([binary,'--version'])
     banner = (result.stdout+result.stderr).decode('utf-8')
-    if result.returncode or not re.search(r'Survex 1\.4\.22(?:\s|$)',banner):
+    if result.returncode or not re.search(r'Survex '+re.escape(expected)+r'(?:\s|$)',banner):
         raise ValueError('consumer version differs: '+banner)
     return banner.strip()
 
@@ -112,8 +112,38 @@ def edit_auto(text):
         text=text.replace(before,after)
     return text
 
-def validate(binary,cavern,dump3d,output):
-    banners={'cavern':version(cavern),'dump3d':version(dump3d)}
+def validate_lexical_settings(cavern,dump3d,raw,output):
+    output.mkdir()
+    # The reference readings are frozen, independently authored P16 controls.
+    # A connected caller leg uses default syntax in the control and inherited
+    # syntax in each actual host, so graph equality also proves restoration.
+    foundation='*set separator :\n*set names ._-\n'
+    data='*data normal from to tape compass clino\n'
+    (output/'control-include.svx').write_bytes((DATA/'features.control.svx').read_bytes())
+    control=output/'control.svx'
+    control.write_text(foundation+'*include control-include.svx\n'+data+'1.4 after1 1.25 90 0\n')
+    reference_stats,reference_graph=compile_file(cavern,dump3d,control)
+    if reference_stats!=(8,0,22.25,20.25,2.00):
+        raise ValueError('lexical reference statistics differ')
+    cases=[
+        ('decimal-comma','*set blank x09x20\n*set decimal ,\n','1.4 after1 1,25 90,0 0,0\n'),
+        ('hash-comments','*set comment #\n','1.4 after1 1.25 90 0 # restored comment\n'),
+        ('combined','*set blank x09x20\n*set decimal ,\n*set comment #\n','1.4 after1 1,25 90,0 0,0 # restored comment\n'),
+    ]
+    results=[]
+    for name,prefix,suffix in cases:
+        case=output/name;case.mkdir()
+        (case/'include.svx').write_bytes(raw)
+        actual=case/'actual.svx'
+        actual.write_text(foundation+prefix+'*include include.svx\n'+data+suffix)
+        stats,graph=compile_file(cavern,dump3d,actual)
+        if stats!=reference_stats or graph!=reference_graph:
+            raise ValueError(name+': lexical reset/restoration differs')
+        results.append({'name':name,'statistics':stats,'geometry':graph})
+    return results
+
+def validate(binary,cavern,dump3d,output,consumer_version='1.4.22'):
+    banners={'cavern':version(cavern,consumer_version),'dump3d':version(dump3d,consumer_version)}
     output.mkdir(parents=True,exist_ok=False)
     report={'schema_version':1,'consumer':banners,'cases':[]}
     for name,expected in EXPECTED.items():
@@ -186,6 +216,8 @@ def validate(binary,cavern,dump3d,output):
     if stats!=rs or graph!=rg or not any(all(flag in edge[2] for flag in ('DUPLICATE','SURFACE','SPLAY')) for edge in graph['edges']) or not any('[X]' in n for n in graph['nodes']):
         raise ValueError('scope reset/restoration differs')
     report['inherited_settings_verified']=True
+    report['lexical_settings']=validate_lexical_settings(cavern,dump3d,
+        (output/'features/export/survey.svx').read_bytes(),output/'lexical')
     # An actual compiler failure is required; parser/version/setup failures do
     # not establish the negative semantic control.
     bad=output/'invalid.svx';bad.write_text('*data normal from to tape compass clino\n0 0 1 0 0\n')
@@ -195,10 +227,11 @@ def validate(binary,cavern,dump3d,output):
         raise ValueError('consumer negative control failed: '+log)
     report['negative_control_verified']=True
     (output/'report.json').write_text(json.dumps(report,indent=2)+'\n')
-    print('Survex 1.4.22 verified: 9 geometry/statistics cases, inherited settings and semantic negative control')
+    print(f'Survex {consumer_version} verified: 9 geometry/statistics cases, 3 lexical reset/restoration cases, inherited settings and semantic negative control')
     return report
 
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--binary',type=Path,required=True);p.add_argument('--cavern',default='cavern');p.add_argument('--dump3d',default='dump3d');p.add_argument('--output',type=Path,required=True)
-    a=p.parse_args();validate(a.binary.resolve(),a.cavern,a.dump3d,a.output)
+    p.add_argument('--consumer-version',choices=('1.4.22','1.4.23'),default='1.4.22')
+    a=p.parse_args();validate(a.binary.resolve(),a.cavern,a.dump3d,a.output,a.consumer_version)

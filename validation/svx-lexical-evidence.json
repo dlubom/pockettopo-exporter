@@ -1,0 +1,34 @@
+[
+  {
+    "path": "internal/exportsvx/testdata/lexical/features.svx",
+    "sha256": "dd100f60581ec3a1562a61dcf57a1fe77253a35f5e1db668d8fe0b6d050b3a50"
+  },
+  {
+    "path": "internal/exportsvx/testdata/lexical/features.json",
+    "sha256": "c6d1c36d9b3ddc67469d49b844c8cbf2d0fd40c6ae6e73b29d05457d388dc71f"
+  },
+  {
+    "path": "internal/exportsvx/testdata/lexical/mixed.svx",
+    "sha256": "5ac200c59b496586d1ee93ce105095f3a412badb4dd062c96b1ac17ad8a9ffec"
+  },
+  {
+    "path": "internal/exportsvx/testdata/lexical/mixed.json",
+    "sha256": "57762ef0281d66e5fe7799b3749c957c5499612585784f624a275ff298d6389a"
+  },
+  {
+    "path": "internal/exportsvx/testdata/lexical/ties.svx",
+    "sha256": "cdcbf6cb38a2a471446f81bc970081172d08d0bdb03decd9eb671e30392645ef"
+  },
+  {
+    "path": "internal/exportsvx/testdata/lexical/ties.json",
+    "sha256": "73804d15e7327e31df47955b9e3625d8eb35d04314581af712cf303e967b099a"
+  },
+  {
+    "path": "internal/exportsvx/testdata/lexical/aliases.svx",
+    "sha256": "37294e73163eea26b3440b913fbe7b765b8a8c5e3a6bea851f91d6035c382d09"
+  },
+  {
+    "path": "internal/exportsvx/testdata/lexical/aliases.json",
+    "sha256": "fe3355bbfda2163bc9770486d066098ce7016debc65b40cd328617c4129de078"
+  }
+]

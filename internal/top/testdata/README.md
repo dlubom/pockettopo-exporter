@@ -2676,6 +2676,20 @@ P16 remains planned.
 
 ## P16 Survex SVX
 
+The 2026-10-14 lexical correction preserves every earlier P16 evidence byte.
+`internal/exportsvx/testdata/lexical/` contains four revised SVX/report regression
+pairs, independently derived from the frozen features/mixed/ties/aliases pairs:
+move `*begin` and `*require` ahead of the original four header comments, insert
+`*set comment x3b` and `*set decimal .` inside that scope, and retain all remaining
+lines unchanged. Only output hash/size and `svx_line` ownership (+2) change in
+the reports; the Go serializer was not used to author these expectations.
+`validation/svx-lexical-evidence.json` pins these eight new files separately.
+Real cavern/dump3d regression includes use decimal commas, hash comments and
+both together, comparing all nodes/edges/statistics against the unchanged
+independent features control plus a connected 1.25 m caller leg. That leg uses
+the caller's original syntax after the include, proving scope restoration.
+Both the default 1.4.22 gate and explicit local 1.4.23 gate use these cases.
+
 P16 implements the agreed individual-reading profile, preserving P05–P15.
 `scripts/create-svx-fixtures.py` authors four small TOP inputs using the P15
 literal writer: `interrupted` has repeated endpoint pairs separated first by a

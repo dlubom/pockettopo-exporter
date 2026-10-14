@@ -3,12 +3,27 @@
 import importlib.util
 from pathlib import Path
 import unittest
+from unittest.mock import patch
+import subprocess
 
 ROOT = Path(__file__).resolve().parent.parent
 spec=importlib.util.spec_from_file_location('survex',ROOT/'scripts/validate-survex.py')
 v=importlib.util.module_from_spec(spec);spec.loader.exec_module(v)
 
 class SurvexValidation(unittest.TestCase):
+    def test_explicit_consumer_version(self):
+        # Version query is the only mocked boundary; validation must still
+        # reject a different, prefixed, or failed consumer banner.
+        for expected in ('1.4.22','1.4.23'):
+            good=subprocess.CompletedProcess([],0,('cavern - Survex '+expected+'\n').encode(),b'')
+            with patch.object(v,'run',return_value=good):
+                self.assertIn(expected,v.version('cavern',expected))
+            for banner,status in [('Survex 1.4.24\n',0),('Survex '+expected+'0\n',0),('Survex '+expected+'\n',1)]:
+                bad=subprocess.CompletedProcess([],status,banner.encode(),b'')
+                with patch.object(v,'run',return_value=bad),self.assertRaises(ValueError):
+                    v.version('cavern',expected)
+        with patch.object(v,'run',return_value=subprocess.CompletedProcess([],0,b'Survex 1.4.23\n',b'')),self.assertRaises(ValueError):
+            v.version('cavern')
     def test_statistics(self):
         text='joined by 1 leg.\nThere are 0 loops.\nTotal length of survey legs = 10.00m\nTotal plan length of survey legs = 10.00m\nTotal vertical length of survey legs = 0.00m\n'
         self.assertEqual(v.statistics(text),(1,0,10.,10.,0.))
