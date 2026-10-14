@@ -6,6 +6,9 @@ import (
 	"io"
 )
 
+// Version is set by the release linker; ordinary source builds retain dev.
+var Version = "dev"
+
 const help = `Usage: pockettopo-exporter --help | --version
   pockettopo-exporter context <input.top> --template-directory <dir> --json [--close-loops]
   pockettopo-exporter inspect <input.top> --json
@@ -98,7 +101,7 @@ func Run(args []string, stdout, stderr io.Writer) int {
 	case "--help", "-h":
 		output = help
 	case "--version":
-		output = "pockettopo-exporter dev\n"
+		output = fmt.Sprintf("pockettopo-exporter %s\n", Version)
 	default:
 		fmt.Fprintf(stderr, "Unsupported argument: %q. Use --help.\n", args[0])
 		return 1

@@ -1,8 +1,37 @@
 # PocketTopo Exporter
 
-A portable, offline Go CLI being developed to reproduce the native exporters of
+A portable, offline CLI reproducing the native exporters of
 **PocketTopo 1.372**, preserving source data and reporting transformations and
 omissions. PocketTopo is a development reference, not a runtime dependency.
+
+## Download and use
+
+Get a ready-to-run program ZIP from [Releases](https://github.com/dlubom/pockettopo-exporter/releases/latest):
+Windows, macOS and Linux each have x64 and ARM64 builds. Extract the whole ZIP;
+no Go, Python, Wine or PocketTopo installation is needed. Read the
+[quick start](QUICKSTART.md) for download selection and Windows PowerShell/cmd
+examples. On macOS/Linux, from the unpacked folder:
+
+```sh
+./pockettopo-exporter export "My cave.top" --format svx --output "My cave-survex"
+```
+
+The new output folder contains the export and `report.json`. Supported formats
+are `text`, `therion`, `dxf` (plan/side), `visualtopo`, `toporobot`, `dxf3d`, `srv`
+and `svx`. Inputs must be supported TOP v3. See [CAPABILITIES](docs/CAPABILITIES.md)
+for profile limits and omissions.
+
+Windows users can opt into a right-click menu for `.top` files by running
+`pockettopo-exporter.exe windows-menu install`; remove it with
+`windows-menu uninstall`. In Windows 11, use **Show more options**. Installation
+is per user, needs no administrator rights and retains the default TOP app.
+The program folder must stay in its registered location; re-run install after
+moving it. Agents and scripts use the normal noninteractive CLI.
+
+Project code/documentation uses [MIT](LICENSE). Packages include
+[Go component notices](THIRD_PARTY_NOTICES.md). No Windows publisher certificate
+or Apple Developer ID/notarization is supplied; see the quick start for launch
+guidance and checksums.
 
 ## Where the project stands
 
@@ -122,8 +151,9 @@ entities, current/template geometry and 16 mm quantization. Unbounded native
 hulls fail explicitly before publication. See [the 3D DXF contract](docs/SPEC.md#native-3d-dxf-p13)
 for arithmetic, omissions and point/entity provenance. P14 closes the
 [native capability matrix](docs/CAPABILITIES.md) with explicit profile limits,
-the pinned 262-input real corpus and validated offline distributions for Linux
-amd64, Windows amd64 and macOS arm64. Each exact-SHA CI run uploads checksummed
+the pinned 262-input real corpus and validated offline distributions. Release
+1.0.0 extends native distribution validation to Linux, Windows and macOS on both
+amd64 and arm64. Each exact-SHA CI run uploads checksummed
 ZIP packages and the corpus validation report. Historical per-field prefix APIs
 remain supported. P15 adds Walls measurement export:
 

@@ -63,6 +63,67 @@ jobs:
           name: corpus-${{ github.sha }}
           path: build/corpus-report.json
           if-no-files-found: error
+  release-package:
+    name: release-package (${{ matrix.target }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: linux-amd64
+            os: ubuntu-24.04
+          - target: linux-arm64
+            os: ubuntu-24.04-arm
+          - target: windows-amd64
+            os: windows-2025
+          - target: windows-arm64
+            os: windows-11-arm
+          - target: darwin-amd64
+            os: macos-15-intel
+          - target: darwin-arm64
+            os: macos-15
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    defaults:
+      run:
+        shell: bash
+    env:
+      GOTOOLCHAIN: local
+      CGO_ENABLED: 0
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Verify target, ordinary native tests and release controls
+        env:
+          EXPECTED_TARGET: ${{ matrix.target }}
+        run: |
+          test "$(go env GOOS)-$(go env GOARCH)" = "$EXPECTED_TARGET"
+          go test -count=1 ./...
+          python3 scripts/test_validation.py
+          python3 scripts/test_assemble_release.py
+          python3 scripts/test_release_gate.py
+      - name: Build and verify the native 1.0.0 archive
+        run: python3 scripts/distribution.py --version 1.0.0 --output build/release-package
+      - name: Validate optional Windows menu in Explorer
+        if: startsWith(matrix.target, 'windows-')
+        shell: pwsh
+        run: |
+          python -c "from pathlib import Path; import zipfile; zipfile.ZipFile(next(Path('build/release-package').glob('*.zip'))).extractall('build/menu-package')"
+          if ($LASTEXITCODE -ne 0) { throw 'Archive extraction failed' }
+          ./scripts/validate-windows-menu.ps1 -Binary build/menu-package/pockettopo-exporter.exe -Output build/windows-menu
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: release-${{ matrix.target }}-${{ github.sha }}
+          path: build/release-package/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always() && startsWith(matrix.target, 'windows-')
+        with:
+          name: windows-menu-${{ matrix.target }}-${{ github.sha }}
+          path: build/windows-menu/
+          if-no-files-found: warn
   walls-native:
     runs-on: windows-2025
     timeout-minutes: 15
@@ -188,7 +249,7 @@ jobs:
   complete:
     name: CI complete
     if: always()
-    needs: [check, corpus, walls-native, survex-native, mutation-plan, mutation]
+    needs: [check, corpus, walls-native, survex-native, mutation-plan, mutation, release-package]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -201,8 +262,10 @@ jobs:
           CORPUS_RESULT: ${{ needs.corpus.result }}
           SURVEX_RESULT: ${{ needs.survex-native.result }}
           WALLS_RESULT: ${{ needs.walls-native.result }}
+          RELEASE_RESULT: ${{ needs.release-package.result }}
         run: |
-          if [[ "$CHECK_RESULT" != success || "$CORPUS_RESULT" != success || "$WALLS_RESULT" != success || "$SURVEX_RESULT" != success || "$PLAN_RESULT" != success || "$MUTATION_RESULT" != success ]]; then
+          if [[ "$CHECK_RESULT" != success || "$CORPUS_RESULT" != success || "$WALLS_RESULT" != success || "$SURVEX_RESULT" != success || "$PLAN_RESULT" != success || "$MUTATION_RESULT" != success || "$RELEASE_RESULT" != success ]]; then
             printf 'CI incomplete: checks=%s corpus=%s Walls=%s Survex=%s plan=%s mutations=%s\n' "$CHECK_RESULT" "$CORPUS_RESULT" "$WALLS_RESULT" "$SURVEX_RESULT" "$PLAN_RESULT" "$MUTATION_RESULT" >&2
+            printf 'Native release packages=%s\n' "$RELEASE_RESULT" >&2
             exit 1
           fi

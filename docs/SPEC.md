@@ -16,7 +16,9 @@ sections. Start with TOP v3. Older versions require separately established
 contracts and corpus evidence. Never edit inputs or rewrite TOP files.
 
 Historical comparison, reconciliation, station matching between surveys and
-cave catalogue decisions belong in JKTZ. No GUI, Bluetooth/calibration support,
+cave catalogue decisions belong in JKTZ. Optional Windows Explorer integration
+adds an interactive shell adapter around the same exporter; the core CLI remains
+offline and noninteractive. No full GUI, Bluetooth/calibration support,
 automatic survey-date correction, inferred CRS/entrance, or implicit magnetic
 correction is planned here.
 
@@ -52,16 +54,40 @@ captured original-assembly exports remain the native byte oracle. Every profile
 must be deterministic, preserve inputs and verify complete output/report hashes,
 or fail before publication with an explicit bounded/native diagnostic.
 
-Distribution packages are ZIPs for Linux amd64, Windows amd64 and macOS arm64,
+Distribution packages are ZIPs for Linux, Windows and macOS on amd64 and arm64,
 built from a clean committed source tree. BUILD.json retains full Git revision,
 target, Go toolchain, CLI version and payload hashes; SHA256SUMS covers every
 other member including BUILD.json, and an adjacent checksum covers the ZIP.
 Validation requires regular-file archive members, exact membership, byte hashes, executable mode and
 matching embedded Go VCS revision, followed by offline native-byte CLI tests
-from an unrelated directory. Existing `dev` CLI/report versions remain intact;
-the manifest and archive name identify the source revision. These CI packages
-are not a tagged public release. CI complete includes distribution and corpus
-gates alongside all existing ordinary/mutation/control jobs.
+from an unrelated directory. Release linker injection sets `cli.Version` to
+`1.0.0`; `--version` and inspection `tool_version` use it without changing JSON
+schemas. Ordinary unversioned builds retain `dev`. Release manifests bind
+version, target, SHA and `CGO_ENABLED=0`; native validation binds those fields to
+the archive checksum and actual runtime tests. These CI packages become public
+assets only after complete exact-SHA CI, six-target assembly validation, annotated
+tag verification and uploaded asset byte readback. CI complete includes all six
+native release jobs alongside existing platform/corpus/consumer/mutation gates.
+
+### Windows Explorer adapter (1.0.0)
+
+`windows-menu install|uninstall` registers/removes an owned `.top` static submenu
+under the current user's Classes registry. The default file association is not
+modified. Installation uses the absolute executable path; reinstall after moving
+the program. A `%` anywhere in that executable path is rejected before registry
+writes because Explorer interprets command-template placeholders; source paths
+remain literal arguments, including percent tokens. Uninstall/reinstall must refuse foreign contents rather than delete
+unowned registry data. Classic entries are under Show more options on Windows 11.
+
+`shell-export <input.top> --format <format>` (DXF optionally `--view plan|side`)
+uses existing export defaults and no-replace publication. New sibling directories
+use human format names and bounded numeric suffixes. It displays output/report
+location on success and readable diagnostics on failure; an actual console waits
+for Enter. These commands are separate from noninteractive `cli.Run`. Shell paths
+are passed directly as arguments, never interpolated into shell commands. Source,
+export and provenance semantics remain those of the selected existing exporter.
+Native Windows gates must exercise registry ownership, paths, collisions/errors
+and actual Explorer menu invocation before publication.
 
 ## Walls SRV and Survex SVX design (P15/P16)
 

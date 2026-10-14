@@ -78,17 +78,20 @@ All 262 isolated text exports match original-program bytes. The 262 paths have
 258 distinct input hashes. These failures are recorded limitations, not skipped
 cases or successful native parity claims.
 
-Linux amd64, Windows amd64 and macOS arm64 build from the exact clean Git SHA.
-Each ZIP includes the native executable, entrypoint and contract documentation,
+Linux, Windows and macOS on amd64 and arm64 build from the exact clean Git SHA.
+Each ZIP includes the native executable, quick start, MIT/Go notices and contract documentation,
 `BUILD.json` with full source revision/target/payload hashes, and `SHA256SUMS`.
 An adjacent checksum covers the ZIP. The validator requires regular file
 members (no directories or symlinks), exact membership,
 checksums, executable mode and embedded Go VCS identity, then extracts to an
 unrelated directory and runs with empty PATH: help/version, six exact native
 byte cases, no-replace publication and malformed input failures. Go, Wine and
-PocketTopo are development tools, not CLI runtime dependencies. The existing
-`--version` and report `tool_version` remain `dev`; BUILD.json identifies the
-distribution revision. CI artifacts are validation packages, not a tagged release.
+PocketTopo are development tools, not CLI runtime dependencies. Release builds
+report version `1.0.0`; unversioned developer builds remain `dev`. BUILD.json and
+native validation bind version, target, source revision, toolchain and archive
+hash. Six native release jobs and optional Windows menu acceptance are required
+by `CI complete`; publication additionally validates all six artifact sets and
+downloads the uploaded release assets for exact byte readback.
 
 Byte compatibility, corpus regression, CAD/VisualTopo/Toporobot import acceptance
 and rendered drawing fidelity are separate results. Optional R01/R02 consumer

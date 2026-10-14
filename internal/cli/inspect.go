@@ -92,7 +92,7 @@ func inspect(path string, stdout, stderr io.Writer) int {
 		return 1
 	}
 	hash := sha256.Sum256(b)
-	s := inspection{Schema: 1, Tool: "dev", Source: sourceSummary{SHA256: hex.EncodeToString(hash[:]), Size: len(b)}, Status: "malformed", Accounting: accountingSummary{Unparsed: len(b), Tail: source.TailUnreached}, Diagnostics: []diagnostic{}}
+	s := inspection{Schema: 1, Tool: Version, Source: sourceSummary{SHA256: hex.EncodeToString(hash[:]), Size: len(b)}, Status: "malformed", Accounting: accountingSummary{Unparsed: len(b), Tail: source.TailUnreached}, Diagnostics: []diagnostic{}}
 	if len(b) >= 4 {
 		s.Source.Version = new(byte)
 		*s.Source.Version = b[3]

@@ -33,7 +33,7 @@ P05–P08 and existing prefix contracts remain unchanged.
 | P13 | Native 3D DXF, source-linked points/entities and bounded native hulls | Implemented; exact-SHA hosted gates required |
 | P14 | Native capability inventory, corpus validation and offline distributions | Implemented; exact-SHA hosted gates required |
 | P15 | Walls SRV measurement export with P06 averages and individual splays | Delivered at `17c5960`; all 30 exact-SHA jobs passed |
-| P16 | Survex SVX individual-reading export | Implemented; final exact-SHA hosted gates required |
+| P16 | Survex SVX individual-reading export | Delivered at `d600cd0`; all 31 exact-SHA jobs passed |
 
 ### Verification and publication
 
@@ -953,6 +953,184 @@ For both items, preserve P05–P15 and source/processing contracts. Follow all g
 in DEVELOPMENT, retain mutation scopes/failure controls, obtain independent review
 and update fixture provenance. Changes to grouping or magnetic policy require
 refining the contract. Commit/push needs authorization and exact-SHA hosted CI.
+
+## Release 1.0.0 — accepted design, 2026-10-14
+
+**Status:** accepted for implementation on 2026-10-14; the user authorized MIT,
+direct work/commit/push on `main` and publication after exact-SHA green CI.
+Implementation and publication are in progress. This is the next increment; P17
+remains optional. Keep the design and implementation checklist here rather than
+creating another backlog.
+
+**Intent:** distribute the existing offline exporter so agents can automate it
+and people can use it without installing a development toolchain. The user
+requires command-line use at minimum and is interested in Windows right-click
+export. The user accepted the Windows integration and six-target matrix below.
+
+**Verified starting point:** local and remote `main` both point to
+`d600cd0ffe6192f6cbf2db4d5b940e001930a9ad`; the working tree was clean before
+this proposal. [CI run 38530570117](https://github.com/dlubom/pockettopo-exporter/actions/runs/38530570117)
+passed all 31 jobs, including `CI complete`. No remote tags or releases were
+returned by the live checks. Current distributions cover Linux amd64, Windows
+amd64 and macOS arm64 and identify the CLI as `dev`. No project LICENSE file
+exists in this checkout.
+
+### Portable command-line release
+
+- Publish six versioned ZIPs: Windows amd64/arm64, macOS amd64/arm64 and Linux
+  amd64/arm64. Human download labels explain x64, Intel and Apple Silicon.
+  This defines mainstream 64-bit desktop coverage; mobile, Windows CE, BSD and
+  32-bit systems need separately requested and validated targets.
+- Reuse the existing distribution builder and archive readback/offline tests.
+  Ship a native executable, a concise QUICKSTART, reference documentation,
+  approved license/attribution, BUILD.json and SHA256SUMS. Add an external
+  checksum list covering every release archive. No Go, Python, Wine or PocketTopo
+  installation is required to run the executable.
+- Release builds report `1.0.0` through `--version` and the existing inspection
+  tool-version field; local unversioned builds retain `dev`. Keep existing JSON
+  schemas, export bytes, arguments, exit codes and stderr diagnostics. Record
+  the exact source revision and actual toolchain in BUILD.json and the binary.
+- Keep the current pinned Go toolchain for this release unless a separately
+  verified reason requires an update. Publish its OS minimums separately from
+  the OS versions actually exercised by CI; a build is not proof of runtime
+  compatibility. Set `CGO_ENABLED=0` for portable release binaries.
+- Put downloads and a first successful export before developer instructions in
+  README. QUICKSTART covers PowerShell/cmd and Unix shells, paths containing
+  spaces, selecting the right download, output directories, report.json and
+  troubleshooting. Describe the supported TOP v3/profile boundary and native
+  Therion interchange clearly. Advanced options remain available through CLI.
+
+### Optional Windows Explorer integration
+
+"Optional" means opt-in installation by the end user. The recommended release
+scope includes shipping and validating the integration in 1.0.0; the user can
+instead select a CLI-only release before implementation.
+
+Propose a classic static submenu for `.top`: **PocketTopo Exporter > Export
+as...**, offering Text, Survex, Walls, Therion interchange, VisualTopo, Toporobot,
+DXF plan, DXF side and DXF 3D. Each entry invokes the same exporter with its
+documented defaults. Start with one selected file; template context, closure
+and advanced export settings remain explicit command-line options.
+
+- Provide opt-in install/uninstall actions scoped to the current Windows user.
+  Installation must not need administrator rights or change the default TOP
+  application. Resolve the installed executable using its absolute path;
+  document that moving the portable folder requires re-registering the menu.
+- A menu action writes a new sibling directory such as `cave-survex`; existing
+  directories use a bounded numeric suffix. Retain the actual no-replace
+  publication guard against races. Never overwrite an existing export or source.
+- Launch the executable directly, with correctly quoted arguments, rather than
+  interpolating a TOP path into shell code. Verify spaces, Unicode and shell
+  metacharacters in source and executable paths. Reject `%` in the executable's
+  installation path explicitly before registry writes: Explorer interprets such
+  command-template tokens even inside quotes. Normal CLI paths are unrestricted;
+  source TOP paths containing percent tokens must pass actual Explorer invocation.
+- Show the output location and report after success, and keep an error readable
+  after failure. A console status prompt is sufficient; the interactive menu
+  action must be separate from the noninteractive agent CLI.
+- Windows 11 exposes this classic integration under **Show more options**.
+  Direct placement in its modern menu requires `IExplorerCommand` and package
+  identity and is a later improvement. Do not change Explorer's global menu
+  settings. Full GUI authoring is outside this release design.
+
+### Verification and publication
+
+- Preserve the existing full mutation matrix, corpus/consumer jobs and negative
+  controls. Exercise archives on native CI runners for all six targets; where
+  a tool such as the race detector is unsupported, keep the existing supported
+  race jobs and run the supported ordinary/runtime checks explicitly.
+- Add meaningful release tests for version/manifest agreement, archive identity,
+  six-target completeness and offline native-byte export. Windows tests verify
+  registration readback, command arguments, uninstall, repeated export and
+  visible errors. Include an actual Windows Explorer smoke check before claiming
+  the menu works; registry readback alone is not Explorer acceptance.
+- The release implementer owns the Explorer smoke check on an isolated native
+  Windows Actions runner, starting with the existing x64 runner used by the
+  original Walls GUI gate. First prove that an Explorer session can be exercised
+  there, then capture menu presence, invocation and output evidence. Existing
+  Walls success does not prove Explorer automation is available. If the runner
+  cannot support that check, report the environment limitation and obtain a
+  scope decision or another Windows test environment before publishing; do not
+  quietly mark the menu gate successful or remove it.
+- Keep signing status explicit. macOS Developer ID/notarization and Windows
+  signing depend on separately available credentials/certificates. Do not claim
+  signed packages or warning-free downloads without verified signing. A release
+  without signing includes accurate platform-specific launch guidance.
+- Commit/push the accepted release implementation directly on `main`, then
+  require every applicable exact-SHA CI job and `CI complete` to succeed.
+  Release automation must verify that the tagged revision has passed these gates
+  and that all six packaged executables passed native archive tests.
+- Create annotated `v1.0.0` at that verified revision, assemble a draft GitHub
+  Release with all six archives, checksums and concise release notes, verify asset
+  hashes/readback, then publish as the latest stable release. An incomplete or
+  failed build must leave the release unpublished. Never silently reuse packages
+  from a different revision or replace a published version's artifacts.
+
+**License decision:** MIT was explicitly accepted by the user. Project copyright
+uses the repository author's name, Dariusz Lubomski; third-party reference and
+fixture terms remain separate.
+
+### Release implementation plan
+
+**Goal:** publish verified 1.0.0 archives for six native desktop targets.
+**Architecture:** keep the exporter core unchanged; inject build version into
+the existing CLI, add Windows shell commands in platform-specific source files,
+and extend the existing archive builder and CI. Keep execution in this plan.
+**Tech stack:** Go 1.26.3 standard library, Python standard library, GitHub
+Actions, native Windows registry/Explorer integration.
+
+**Review focus:** preserve no-replace outputs under collisions; quote Unicode
+and shell metacharacters without command injection; keep install/uninstall
+scoped to owned per-user keys; reject incorrect/missing archive version or SHA;
+require complete native six-target evidence before publication.
+
+1. [x] **Versioned portable release:** tests first for injected CLI/inspection
+   version and archive version/target/manifest integrity. Update `internal/cli/run.go`,
+   `internal/cli/inspect.go`, `scripts/distribution.py`, `scripts/test_validation.py`;
+   retain dev defaults and native byte smoke tests. Builder accepts `--version`
+   with default `dev`; release passes `1.0.0` and linker flag
+   `-X pockettopo-exporter/internal/cli.Version=1.0.0`.
+2. [x] **Windows integration:** tests first for sibling output/no-replace behavior,
+   argument handling, per-user registry installation and removal. Add
+   `windows-menu install|uninstall` and `shell-export <input.top> --format <format>`
+   (DXF optionally `--view plan|side`) using platform-specific CLI files and
+   `scripts/validate-windows-menu.ps1`. Main dispatches these interactive commands
+   separately from `cli.Run`; shell export uses existing `cli.Run` export logic.
+3. [x] **Native CI and release assets:** extend `.github/workflows/ci.yml` with
+   archive/runtime jobs for six target runners and a required Explorer check.
+   Add a script to assemble/verify all six packages from one successful exact-SHA
+   run, rejecting missing/duplicate/foreign/unvalidated assets. Keep all existing
+   jobs, mutation scopes and aggregate controls.
+4. [x] **Documentation and MIT:** add `LICENSE`, `QUICKSTART.md`, concise release
+   notes, and update README/SPEC/DEVELOPMENT/CAPABILITIES in place. Explain download
+   selection, unsigned signing status, shell installation/removal and scope.
+5. [ ] **Verification and delivery:** run bounded local checks, targeted package
+   tests and evidence verification; obtain an independent review, fix actionable
+   findings, commit/push on main, wait for all exact-SHA gates, verify archives,
+   tag `v1.0.0`, create/verify draft assets and publish. Record final SHA/run/release
+   evidence in release notes and machine-readable publication artifacts without
+   claiming pending jobs passed. The [tagged release](https://github.com/dlubom/pockettopo-exporter/releases/tag/v1.0.0)
+   and its exact-SHA CI link provide the final publication record; this committed
+   plan records the source preparation stage before that external publication.
+
+Local preparation passed bounded `check.sh` (race, vet, Staticcheck, build,
+98.0% statement coverage and all frozen identities), distribution/assembly/hosted
+release-gate negative controls, command-package profile/path/collision tests,
+dispatch controls and the exact 66-live-mutant weak-suite control including
+compiler/setup rejection. A concatenated version string initially introduced
+two nonviable arithmetic mutations; ordinary formatted output restores the
+original viable inventory without changing mutation controls. Independent
+release/menu reviews found two actionable issues: false-green post-publication
+filtering and Explorer executable-path placeholders. Both have tested fixes.
+Windows amd64 code/test compilation and vet passed; native registry/Explorer and
+all six actual release archives still require the final exact-SHA hosted run.
+
+**Research references:** [GitHub release management](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository),
+[native runner labels](https://docs.github.com/en/actions/reference/runners/github-hosted-runners),
+[static Windows menus](https://learn.microsoft.com/en-us/windows/win32/shell/creating-static-cascading-menus),
+[per-user file registrations](https://learn.microsoft.com/en-us/windows/win32/shell/fa-file-types),
+[Windows 11 modern menu requirements](https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/integrate-packaged-app-with-file-explorer),
+[Go OS minimums](https://go.dev/wiki/MinimumRequirements).
 
 ## Remaining original roadmap
 

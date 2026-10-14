@@ -84,11 +84,13 @@ The scripts and [CI workflow](../.github/workflows/ci.yml) are authoritative.
   every existing campaign when changing orchestration; dispatch controls require
   exactly-once scheduling and failure propagation.
 
-CI runs ordinary checks and native-platform distribution verification on Linux
-amd64, Windows amd64 and macOS arm64. A Linux corpus job checks every pinned input
+CI keeps full ordinary checks on Linux amd64, Windows amd64 and macOS arm64,
+and runs native ordinary tests/versioned distribution verification on all six
+Linux/Windows/macOS amd64/arm64 targets. Windows release jobs also exercise the
+optional Explorer menu. A Linux corpus job checks every pinned input
 and all 25 export profiles twice. Linux
 mutation jobs come directly from `mutation.sh --matrix`. **CI complete** requires
-all platform/distribution checks, corpus validation, the scheduling controls and
+all platform/distribution/release checks, corpus validation, the scheduling controls and
 every mutation group to pass.
 When configuring required checks, use this aggregate gate; a skipped/canceled
 group is not a successful delivery. Do not claim branch protection is configured
@@ -220,10 +222,49 @@ Distribution validation builds its own binary, verifies VCS identity and payload
 readback, extracts to a temporary unrelated directory, clears PATH and checks
 six exact native byte cases, no-replace behavior and malformed input failures.
 The package BUILD.json distinguishes the source SHA while preserving existing
-`--version` and report schemas. No tag or GitHub Release is created by this gate.
+report schemas. Ordinary packages retain `dev`; `--version 1.0.0` injects the
+release version and validates it in help/version/inspection/build metadata.
+No tag or GitHub Release is created by this builder.
 CI complete explicitly requires the new corpus job and all three platform
 checks (each containing distribution verification), alongside the unchanged
 mutation matrix and failure controls.
+
+## Release 1.0.0
+
+The accepted release uses the current Go toolchain and six native targets.
+`CGO_ENABLED=0` archives require no development runtime. Windows menu registration
+is per user and its acceptance gate must run on native Windows. Keep existing
+race checks on the three supported full-check runners; ARM Windows native tests
+run without the unsupported race detector.
+
+```sh
+python3 scripts/test_validation.py
+python3 scripts/test_assemble_release.py
+python3 scripts/test_release_gate.py
+GOTOOLCHAIN=local GOMAXPROCS=2 GOFLAGS=-p=1 python3 scripts/distribution.py --version 1.0.0 --output build/release-package
+```
+
+Distribution builds require clean committed sources. CI uploads
+`release-<target>-<SHA>` for each target; the assembler accepts only complete,
+same-version/same-SHA native ZIP/checksum/validation sets. Existing dev artifacts
+are not release inputs. A native Windows release job extracts its tested package
+and runs `validate-windows-menu.ps1` against that executable.
+
+Publication is explicitly dispatched with an existing annotated `v1.0.0` and
+the successful **main push CI run ID for that exact revision**:
+
+```sh
+gh workflow run release.yml -f tag=v1.0.0 -f ci_run_id=<verified-run-id>
+```
+
+The workflow checks every job, including the dynamic mutation inventory and six
+native release jobs; it rejects skipped/canceled/foreign/incomplete evidence.
+It verifies the tag, downloads that run's archives, assembles all six packages,
+creates a complete draft, downloads its assets and compares exact membership and
+hashes, then publishes as latest. Failure leaves publication incomplete; never
+replace a published version's artifacts or force-move its tag. Publication records
+are uploaded as `release-publication-v1.0.0`. No signing credentials are used;
+packages have no Windows publisher signature or Apple Developer ID/notarization.
 
 ## P15 original Walls validation
 

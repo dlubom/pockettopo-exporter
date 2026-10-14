@@ -6,6 +6,8 @@ export GOCACHE="$root/.cache/go-build" GOMODCACHE="$root/.cache/gomod"
 export STATICCHECK_CACHE="$root/.cache/staticcheck" GOTOOLCHAIN=local
 
 python3 scripts/test_validation.py
+python3 scripts/test_assemble_release.py
+python3 scripts/test_release_gate.py
 python3 scripts/test_walls_validation.py
 python3 scripts/test_survex_validation.py
 python3 scripts/verify-evidence.py
