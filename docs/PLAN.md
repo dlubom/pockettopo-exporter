@@ -897,7 +897,7 @@ restoration, active dates/IGRF and an actual semantic compiler failure. All 150
 new evidence files are frozen separately. Bounded check.sh passed with race,
 vet, Staticcheck, build and 98.0% total statement coverage; parser/P14 controls,
 53-fault compile-only preflight, complete dispatch and measured weak66 controls
-passed. Full Gremlins discovery has 2793 RUNNABLE sites, no uncovered sites and
+passed. Full Gremlins discovery has 2792 RUNNABLE sites, no uncovered sites and
 an exact disjoint five-shard union. Full mutation scores remain hosted.
 
 Independent core/final reviews confirmed raw/source/report fidelity and actual
@@ -906,6 +906,18 @@ the empty-input consumer limitation, and the required GDAL build dependency in
 the pinned-source Actions job. No substantive finding remains. Publication must
 verify every platform, corpus, original Walls, new Survex, mutation/control job
 and CI complete for the exact pushed SHA. P17 is not started.
+
+Hosted validation killed all 1542 explicit faults, including 53 SVX faults,
+but correctly rejected one compiler-invalid Gremlins pointer-bitwise mutation.
+A local row copy/writeback removes that invalid site without changing frozen
+SVX/report bytes or any operator. Named-failure replay closed two survivor gaps:
+canonical normalized report bearings for reversed heads and the exact 160-byte
+quoted comment boundary. The remaining four new survivors are equivalent
+singleton, Float32 threshold, zero-bearing and incomplete-argument checks.
+Independent review verifies those cases and exact correspondence of all earlier
+50 output, 33 processing and 24 Toporobot survivors with published P15 evidence.
+Fresh bounded ordinary/consumer checks and disjoint 2792-site discovery pass;
+the repaired SHA must repeat every hosted job before delivery.
 
 For both items, preserve P05–P15 and source/processing contracts. Follow all gates
 in DEVELOPMENT, retain mutation scopes/failure controls, obtain independent review

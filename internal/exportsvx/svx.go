@@ -90,7 +90,7 @@ func build(d source.Document, maxBytes int) (Result, error) {
 		}
 		r.Groups = append(r.Groups, Group{g.HeadIndex, g.Kind, members, g.Vector, g.Forward})
 		for _, member := range members {
-			v := &r.Measurements[member.RowIndex]
+			v := r.Measurements[member.RowIndex]
 			trip, decl := v.Trip, v.Correction
 			if first || trip != previousTrip {
 				r.Dates = append(r.Dates, Directive{w.line, trip, "YYYY-MM-DD"})
@@ -117,6 +117,7 @@ func build(d source.Document, maxBytes int) (Result, error) {
 			v.Emitted = [3]string{decimal(v.Values.Distance, 3), bearing(v.Values.Azimuth), decimal(v.Values.Inclination, 6)}
 			v.Line = w.line
 			w.write(strings.Join([]string{v.EmittedStations[0], v.EmittedStations[1], v.Emitted[0], v.Emitted[1], v.Emitted[2]}, "\t"))
+			r.Measurements[member.RowIndex] = v
 		}
 	}
 	w.write("*end")

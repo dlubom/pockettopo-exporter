@@ -234,3 +234,31 @@ func TestSVXPackageGoldens(t *testing.T) {
 		}
 	}
 }
+
+// A normalized output bearing alone cannot distinguish +180 from -180;
+// Survex accepts both after final wrapping, but report values must be canonical.
+func TestSVXReverseHeadReport(t *testing.T) {
+	r, e := Build(document(t, "../../exportsvx/testdata/reverse-head"))
+	if e != nil {
+		t.Fatal(e)
+	}
+	v := r.Report.Measurements[1]
+	if !v.Reversed || v.Head != 0 || v.Original.Azimuth != 90 || v.Original.Inclination != 45 || v.Values.Azimuth != 270 || v.Values.Inclination != -45 || v.EmittedStations != [2]string{"1.1", "1.0"} {
+		t.Fatal("canonical reversed report", v)
+	}
+	r, e = Build(document(t, "../../exportsvx/testdata/vertical-reverse"))
+	if e != nil {
+		t.Fatal(e)
+	}
+	v = r.Report.Measurements[1]
+	if v.Values.Azimuth != float64(65535)*360/65536 || v.Values.Inclination != 90 {
+		t.Fatal("vertical reverse report", v)
+	}
+}
+func TestSVXExactCommentChunk(t *testing.T) {
+	w := writer{max: 1000, line: 1}
+	w.comment(strings.Repeat("x", 158))
+	if strings.Count(w.b.String(), "\n") != 1 || len(w.b.String()) != 171 {
+		t.Fatal("exact comment chunk", w.b.String())
+	}
+}
