@@ -163,7 +163,7 @@ class DistributionControls(unittest.TestCase):
                 self.assertEqual(distribution.read_package(path, "a" * 40, target, "1.0.0"), payload)
                 with self.assertRaises(ValueError):
                     distribution.read_package(path, "a" * 40, target)
-                wrong_name = path.with_name("foreign.zip")
+                wrong_name = path.with_name("foreign-" + target + ".zip")
                 path.rename(wrong_name)
                 with self.assertRaises(ValueError):
                     distribution.read_package(wrong_name, "a" * 40, target, "1.0.0")

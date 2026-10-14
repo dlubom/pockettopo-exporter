@@ -1124,6 +1124,11 @@ release/menu reviews found two actionable issues: false-green post-publication
 filtering and Explorer executable-path placeholders. Both have tested fixes.
 Windows amd64 code/test compilation and vet passed; native registry/Explorer and
 all six actual release archives still require the final exact-SHA hosted run.
+The first hosted attempt found a Windows-only negative-fixture issue: repeated
+rename to the same foreign ZIP name relied on Unix replacement behavior. Each
+target now uses its own foreign filename, preserving the filename-rejection
+control without overwriting another fixture. Publication requires a fresh run
+for the corrected revision; earlier successful target packages are not reused.
 
 **Research references:** [GitHub release management](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository),
 [native runner labels](https://docs.github.com/en/actions/reference/runners/github-hosted-runners),
