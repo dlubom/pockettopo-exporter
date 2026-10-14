@@ -18,6 +18,7 @@ $script:currentCase = 'setup'
 $script:currentInputFile = ''
 $hiddenPrivacyWindows = [Collections.Generic.List[System.IntPtr]]::new()
 $hiddenPrivacyCoreWindows = [Collections.Generic.List[object]]::new()
+$hiddenPrivacyBackdrops = [Collections.Generic.List[object]]::new()
 
 Add-Type @'
 using System;
@@ -71,6 +72,12 @@ public static class ExplorerMenuProbe {
  public static void RestorePrivacyCoreWindow(IntPtr h,uint owner) {if(!IsWindow(h))return;if(!IsPrivacyCoreWindow(h,owner))throw new Exception("Privacy CoreWindow identity changed; refusing to show a foreign window");if(!ShowWindowAsync(h,8))throw new Exception("Cannot restore verified disposable-runner privacy CoreWindow: "+Marshal.GetLastWin32Error());}
  public static bool PrivacyCoreWindowHidden(IntPtr h,uint owner) {return !IsWindow(h)||(IsPrivacyCoreWindow(h,owner)&&!IsWindowVisible(h));}
  public static bool PrivacyCoreWindowRestored(IntPtr h,uint owner) {return !IsWindow(h)||(IsPrivacyCoreWindow(h,owner)&&IsWindowVisible(h));}
+ static bool IsPrivacyBackdrop(IntPtr h,uint expectedOwner) {uint shellOwner,owner;GetWindowThreadProcessId(GetShellWindow(),out shellOwner);GetWindowThreadProcessId(h,out owner);var text=new StringBuilder(256);GetWindowText(h,text,text.Capacity);return shellOwner!=0&&owner==shellOwner&&owner==expectedOwner&&Class(h)=="UserOOBEWindowClass"&&text.Length==0;}
+ public static IntPtr PrivacyBackdropAtPointer() {Point point;if(!GetCursorPos(out point))return IntPtr.Zero;IntPtr h=WindowFromPoint(point);uint owner;GetWindowThreadProcessId(h,out owner);return IsWindowVisible(h)&&IsPrivacyBackdrop(h,owner)?h:IntPtr.Zero;}
+ public static void HidePrivacyBackdrop(IntPtr h,uint owner) {if(!IsPrivacyBackdrop(h,owner))throw new Exception("Verified desktop OOBE backdrop identity changed before hide");if(!ShowWindowAsync(h,0))throw new Exception("Cannot hide verified disposable-runner OOBE backdrop: "+Marshal.GetLastWin32Error());}
+ public static void RestorePrivacyBackdrop(IntPtr h,uint owner) {if(!IsWindow(h))return;if(!IsPrivacyBackdrop(h,owner))throw new Exception("OOBE backdrop identity changed; refusing to show a foreign window");if(!ShowWindowAsync(h,8))throw new Exception("Cannot restore verified disposable-runner OOBE backdrop: "+Marshal.GetLastWin32Error());}
+ public static bool PrivacyBackdropHidden(IntPtr h,uint owner) {return !IsWindow(h)||(IsPrivacyBackdrop(h,owner)&&!IsWindowVisible(h));}
+ public static bool PrivacyBackdropRestored(IntPtr h,uint owner) {return !IsWindow(h)||(IsPrivacyBackdrop(h,owner)&&IsWindowVisible(h));}
  public static string CursorDescription() {Point point;if(!GetCursorPos(out point))return "Cursor unavailable";return "x="+point.x+" y="+point.y+" hit="+WindowDescription(WindowFromPoint(point));}
  public static string[] ChildWindows(IntPtr parent) {var a=new List<string>();EnumChildWindows(parent,(h,x)=>{a.Add(WindowDescription(h));return a.Count<512;},IntPtr.Zero);return a.ToArray();}
  public static IntPtr FileView(IntPtr explorer) {IntPtr view=IntPtr.Zero;EnumChildWindows(explorer,(h,x)=>{if(IsWindowVisible(h)&&Class(h)=="SHELLDLL_DefView"){view=h;return false;}return true;},IntPtr.Zero);if(view==IntPtr.Zero)throw new Exception("No visible native Explorer file view (SHELLDLL_DefView)");return view;}
@@ -317,6 +324,31 @@ function Prepare-HostedRunnerDesktop {
         $deadline=[DateTime]::UtcNow.AddSeconds(10)
         while ([DateTime]::UtcNow -lt $deadline -and ![ExplorerMenuProbe]::PrivacyCoreWindowHidden($entry.window,$entry.owner)) { Start-Sleep -Milliseconds 100 }
         if (![ExplorerMenuProbe]::PrivacyCoreWindowHidden($entry.window,$entry.owner)) { throw 'Verified CloudExperienceHost CoreWindow remains visible; actual Explorer UI acceptance is blocked' }
+    }
+    # The verified first-login renderer can leave an opaque desktop-owned OOBE
+    # backdrop. Discover only the exact window currently intercepting the cursor,
+    # and only after the contemporaneous proxy + packaged renderer were proved.
+    if ($hiddenPrivacyCoreWindows.Count -gt 0) {
+        $backdrop=[ExplorerMenuProbe]::PrivacyBackdropAtPointer()
+        if ($backdrop -ne [IntPtr]::Zero) {
+            [uint32]$backdropOwner=0
+            $null=[ExplorerMenuProbe]::GetWindowThreadProcessId($backdrop,[ref]$backdropOwner)
+            $owner=Get-Process -Id $backdropOwner
+            $backdropSid=Get-ProcessOwnerSid ([int]$backdropOwner)
+            $nativeOwner=Get-CimInstance Win32_Process -Filter "ProcessId=$backdropOwner"
+            $backdropIdentity=[ordered]@{window=[ExplorerMenuProbe]::WindowDescription($backdrop);relations=[ExplorerMenuProbe]::WindowRelations($backdrop);process_id=$backdropOwner;process_name=$owner.ProcessName;executable_path=$nativeOwner.ExecutablePath;session_id=$owner.SessionId;sid=$backdropSid;verified_cloud_experience_host_context=$true}
+            [IO.File]::WriteAllText((Join-Path $Output 'runner-privacy.backdrop-identity.json'),($backdropIdentity | ConvertTo-Json -Depth 8),[Text.Encoding]::UTF8)
+            if ($owner.ProcessName -ne 'explorer' -or $owner.SessionId -ne $currentSession -or $backdropSid -ne $currentSid) {
+                throw 'Refusing an OOBE backdrop outside the verified current desktop Explorer identity'
+            }
+            Save-ExplorerState 'runner-privacy.backdrop.before'
+            $script:hiddenPrivacyBackdrops.Add(@{window=$backdrop;owner=$backdropOwner})
+            [ExplorerMenuProbe]::HidePrivacyBackdrop($backdrop,$backdropOwner)
+            $deadline=[DateTime]::UtcNow.AddSeconds(10)
+            while ([DateTime]::UtcNow -lt $deadline -and ![ExplorerMenuProbe]::PrivacyBackdropHidden($backdrop,$backdropOwner)) { Start-Sleep -Milliseconds 100 }
+            if (![ExplorerMenuProbe]::PrivacyBackdropHidden($backdrop,$backdropOwner)) { throw 'Verified OOBE backdrop remains visible; actual Explorer UI acceptance is blocked' }
+            $script:evidence.runner_desktop_preparation.backdrop_identity=$backdropIdentity
+        }
     }
     $deadline=[DateTime]::UtcNow.AddSeconds(10)
     while ([DateTime]::UtcNow -lt $deadline -and @([ExplorerMenuProbe]::VisiblePrivacyWindows()).Count -gt 0) { Start-Sleep -Milliseconds 100 }
@@ -602,6 +634,14 @@ try {
             try { [ExplorerMenuProbe]::RestorePrivacyWindow($window) }
             catch { $restoreFailures.Add("Overlay $($window.ToInt64()): $($_.Exception.Message)") }
         }
+        foreach ($entry in $hiddenPrivacyBackdrops) {
+            try {
+                [ExplorerMenuProbe]::RestorePrivacyBackdrop($entry.window,$entry.owner)
+                $deadline=[DateTime]::UtcNow.AddSeconds(10)
+                while ([DateTime]::UtcNow -lt $deadline -and ![ExplorerMenuProbe]::PrivacyBackdropRestored($entry.window,$entry.owner)) { Start-Sleep -Milliseconds 100 }
+                if (![ExplorerMenuProbe]::PrivacyBackdropRestored($entry.window,$entry.owner)) { throw 'Verified OOBE backdrop did not regain its visibility' }
+            } catch { $restoreFailures.Add("Backdrop $($entry.window.ToInt64()): $($_.Exception.Message)") }
+        }
         foreach ($entry in $hiddenPrivacyCoreWindows) {
             try {
                 [ExplorerMenuProbe]::RestorePrivacyCoreWindow($entry.window,$entry.owner)
@@ -611,7 +651,7 @@ try {
             } catch { $restoreFailures.Add("Core overlay $($entry.window.ToInt64()): $($_.Exception.Message)") }
             finally { [ExplorerMenuProbe]::ReleaseProcess($entry.process_handle) }
         }
-        if ($hiddenPrivacyWindows.Count -gt 0 -or $hiddenPrivacyCoreWindows.Count -gt 0) {
+        if ($hiddenPrivacyWindows.Count -gt 0 -or $hiddenPrivacyCoreWindows.Count -gt 0 -or $hiddenPrivacyBackdrops.Count -gt 0) {
             try {
                 $deadline=[DateTime]::UtcNow.AddSeconds(10)
                 while ([DateTime]::UtcNow -lt $deadline -and ![ExplorerMenuProbe]::PrivacyWindowsRestored($hiddenPrivacyWindows.ToArray())) { Start-Sleep -Milliseconds 100 }
