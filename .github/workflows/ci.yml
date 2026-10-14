@@ -99,6 +99,44 @@ jobs:
             build/walls-native/
             build/walls-extraction.log
           if-no-files-found: error
+  survex-native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Build checksum-pinned Survex 1.4.22
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libproj-dev libgdal-dev libwxgtk3.2-dev libwxgtk-gl3.2-dev
+          mkdir -p build/survex-runtime
+          curl --fail --location --silent --show-error https://survex.com/software/1.4.22/survex-1.4.22.tar.gz -o build/survex-runtime/source.tar.gz
+          printf '%s  %s\n' a26962d888621cfd2043a7cc6a227fc905130dfbd14c450dc1c4c02fbfdd9dbc build/survex-runtime/source.tar.gz | sha256sum --check
+          tar -xzf build/survex-runtime/source.tar.gz -C build/survex-runtime
+          cd build/survex-runtime/survex-1.4.22
+          ./configure
+          make -C src -j2 cavern dump3d
+      - name: Verify SVX geometry, statistics, automatic templates and controls
+        env:
+          GOTOOLCHAIN: local
+        run: |
+          go build -o build/pockettopo-exporter ./cmd/pockettopo-exporter
+          export SURVEXLIB="$PWD/build/survex-runtime/survex-1.4.22/lib"
+          python3 scripts/validate-survex.py --binary build/pockettopo-exporter --cavern build/survex-runtime/survex-1.4.22/src/cavern --dump3d build/survex-runtime/survex-1.4.22/src/dump3d --output build/survex-native
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: original-survex-${{ github.sha }}
+          path: |
+            build/survex-native/
+            build/survex-runtime/survex-1.4.22/config.log
+          if-no-files-found: error
   mutation-plan:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -150,7 +188,7 @@ jobs:
   complete:
     name: CI complete
     if: always()
-    needs: [check, corpus, walls-native, mutation-plan, mutation]
+    needs: [check, corpus, walls-native, survex-native, mutation-plan, mutation]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -161,9 +199,10 @@ jobs:
           PLAN_RESULT: ${{ needs.mutation-plan.result }}
           MUTATION_RESULT: ${{ needs.mutation.result }}
           CORPUS_RESULT: ${{ needs.corpus.result }}
+          SURVEX_RESULT: ${{ needs.survex-native.result }}
           WALLS_RESULT: ${{ needs.walls-native.result }}
         run: |
-          if [[ "$CHECK_RESULT" != success || "$CORPUS_RESULT" != success || "$WALLS_RESULT" != success || "$PLAN_RESULT" != success || "$MUTATION_RESULT" != success ]]; then
-            printf 'CI incomplete: checks=%s corpus=%s Walls=%s plan=%s mutations=%s\n' "$CHECK_RESULT" "$CORPUS_RESULT" "$WALLS_RESULT" "$PLAN_RESULT" "$MUTATION_RESULT" >&2
+          if [[ "$CHECK_RESULT" != success || "$CORPUS_RESULT" != success || "$WALLS_RESULT" != success || "$SURVEX_RESULT" != success || "$PLAN_RESULT" != success || "$MUTATION_RESULT" != success ]]; then
+            printf 'CI incomplete: checks=%s corpus=%s Walls=%s Survex=%s plan=%s mutations=%s\n' "$CHECK_RESULT" "$CORPUS_RESULT" "$WALLS_RESULT" "$SURVEX_RESULT" "$PLAN_RESULT" "$MUTATION_RESULT" >&2
             exit 1
           fi

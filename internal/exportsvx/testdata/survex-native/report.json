@@ -1,0 +1,548 @@
+{
+  "schema_version": 1,
+  "consumer": {
+    "cavern": "cavern - Survex 1.4.22",
+    "dump3d": "dump3d - Survex 1.4.22"
+  },
+  "cases": [
+    {
+      "name": "features",
+      "source_sha256": "428ac2aa72396282e6ec47d6de32dd51607e4daf02059e0479d585c23f84dea2",
+      "svx_sha256": "37b500a5c1b52a60777d6b04a5d5d067d899dbb106d94961707a6370fa8b09bd",
+      "control_sha256": "3c7f77965a41bb088a9473644889714bccfb9a054e05d5bf6d35d7c9b6d5a3a4",
+      "statistics": [
+        7,
+        0,
+        21.0,
+        19.0,
+        2.0
+      ],
+      "splays": 1,
+      "geometry": {
+        "nodes": [
+          "NODE 0.00 0.00 0.00 [1.0] UNDERGROUND",
+          "NODE 10.00 0.00 0.00 [1.1] UNDERGROUND",
+          "NODE 10.00 2.50 0.00 [] UNDERGROUND ANON WALL",
+          "NODE 11.86 -2.05 2.00 [1.4] UNDERGROUND",
+          "NODE 11.86 -3.05 0.00 [0.0] UNDERGROUND",
+          "NODE 11.86 -3.05 2.00 [1.2] UNDERGROUND",
+          "NODE 11.86 -3.05 2.00 [1.3] UNDERGROUND",
+          "NODE 9.56 -4.98 0.00 [0] UNDERGROUND"
+        ],
+        "edges": [
+          [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              10.0,
+              0.0,
+              0.0
+            ],
+            " [] STYLE=NORMAL"
+          ],
+          [
+            [
+              9.56,
+              -4.98,
+              0.0
+            ],
+            [
+              11.86,
+              -3.05,
+              0.0
+            ],
+            " [] STYLE=NORMAL"
+          ],
+          [
+            [
+              10.0,
+              0.0,
+              0.0
+            ],
+            [
+              9.56,
+              -4.98,
+              0.0
+            ],
+            " [] STYLE=NORMAL"
+          ],
+          [
+            [
+              10.0,
+              0.0,
+              0.0
+            ],
+            [
+              10.0,
+              2.5,
+              0.0
+            ],
+            " [] STYLE=NORMAL SPLAY"
+          ],
+          [
+            [
+              11.86,
+              -3.05,
+              0.0
+            ],
+            [
+              11.86,
+              -3.05,
+              2.0
+            ],
+            " [] STYLE=NORMAL"
+          ],
+          [
+            [
+              11.86,
+              -3.05,
+              2.0
+            ],
+            [
+              11.86,
+              -3.05,
+              2.0
+            ],
+            " [] STYLE=NORMAL"
+          ],
+          [
+            [
+              11.86,
+              -3.05,
+              2.0
+            ],
+            [
+              11.86,
+              -2.05,
+              2.0
+            ],
+            " [] STYLE=NORMAL"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "mixed",
+      "source_sha256": "79cb2c4a0a57760c7c0a92ccd6d6f5ebab1ce5cd1b532be3d47a750645456e0b",
+      "svx_sha256": "393b8ebfc845a301f2aa2f47ad264e6db0c8763d2256a02d99c179bc856205d7",
+      "control_sha256": "7ad0ed53af2439d9c8b18866d62a6c99a80c28545ced34e4d5503ae3a7f4139c",
+      "statistics": [
+        3,
+        0,
+        9.96,
+        9.96,
+        0.0
+      ],
+      "splays": 1,
+      "geometry": {
+        "nodes": [
+          "NODE 0.00 0.00 0.00 [1.0] UNDERGROUND",
+          "NODE 0.61 10.94 0.00 [] UNDERGROUND ANON WALL",
+          "NODE 0.61 9.94 0.00 [1.1] UNDERGROUND",
+          "NODE 0.61 9.94 0.00 [1.2] UNDERGROUND"
+        ],
+        "edges": [
+          [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.61,
+              9.94,
+              0.0
+            ],
+            " [] STYLE=NORMAL"
+          ],
+          [
+            [
+              0.61,
+              9.94,
+              0.0
+            ],
+            [
+              0.61,
+              9.94,
+              0.0
+            ],
+            " [] STYLE=NORMAL"
+          ],
+          [
+            [
+              0.61,
+              9.94,
+              0.0
+            ],
+            [
+              0.61,
+              10.94,
+              0.0
+            ],
+            " [] STYLE=NORMAL SPLAY"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "ties",
+      "source_sha256": "0ed6349613f42004206392513ec34061576337e66753c5fa66ced6a39190e166",
+      "svx_sha256": "edca6e33e7f0d868ff3cb61d3fe66d3b424093aa9a340a9d7d3ddf50336694da",
+      "control_sha256": "372a8599bf03ed7b54be4686640664ce1297813c28327736ae915a7f032c6ca1",
+      "statistics": [
+        2,
+        0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "splays": 0,
+      "geometry": {
+        "nodes": [
+          "NODE 0.00 0.00 -1.00 [1.2] UNDERGROUND",
+          "NODE 0.00 0.00 0.00 [1.0] UNDERGROUND",
+          "NODE 0.00 0.00 0.00 [1.1] UNDERGROUND"
+        ],
+        "edges": [
+          [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              -1.0
+            ],
+            " [] STYLE=NORMAL"
+          ],
+          [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            " [] STYLE=NORMAL"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "aliases",
+      "source_sha256": "55af517458b94a01d58e6f3b29ae58383169ced99e11c146066410912df730ec",
+      "svx_sha256": "168fafcb6e0e2a0d3d045979618a42bcfc0ac9160f3728e2072b2ed2bd607b86",
+      "control_sha256": "2fb7b8e8d0002b3f2f193b5ed861946ef61a977d42189be0015ceb90a63cac34",
+      "statistics": [
+        2,
+        0,
+        2.5,
+        2.5,
+        0.0
+      ],
+      "splays": 0,
+      "geometry": {
+        "nodes": [
+          "NODE 0.00 0.00 0.00 [15.65535] UNDERGROUND",
+          "NODE 0.00 1.50 0.00 [1.0] UNDERGROUND",
+          "NODE 0.00 2.50 0.00 [p1z141z1] UNDERGROUND"
+        ],
+        "edges": [
+          [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.5,
+              0.0
+            ],
+            " [] STYLE=NORMAL"
+          ],
+          [
+            [
+              0.0,
+              1.5,
+              0.0
+            ],
+            [
+              0.0,
+              2.5,
+              0.0
+            ],
+            " [] STYLE=NORMAL"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "interrupted",
+      "source_sha256": "90c4b5bddf4b3ef326ac252fba96224bbb4703fb0ad94273e0588de3a288db12",
+      "svx_sha256": "b0c2ac76812e97113a0922f014cb524c593f70e17d9747d4b10dddf56ef7b382",
+      "control_sha256": "c66a5720a3363656c19f1f443072ea56ed91379d0f59ac99a75cb6e84b9737e0",
+      "statistics": [
+        5,
+        2,
+        32.0,
+        32.0,
+        0.0
+      ],
+      "splays": 1,
+      "geometry": {
+        "nodes": [
+          "NODE 0.00 0.00 0.00 [1.0] UNDERGROUND",
+          "NODE 0.00 2.00 0.00 [1.2] UNDERGROUND",
+          "NODE 10.00 0.00 0.00 [1.1] UNDERGROUND",
+          "NODE 10.00 1.00 0.00 [] UNDERGROUND ANON WALL"
+        ],
+        "edges": [
+          [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              2.0,
+              0.0
+            ],
+            " [] STYLE=NORMAL"
+          ],
+          [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              10.0,
+              0.0,
+              0.0
+            ],
+            " [] STYLE=NORMAL"
+          ],
+          [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              10.0,
+              0.0,
+              0.0
+            ],
+            " [] STYLE=NORMAL"
+          ],
+          [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              10.0,
+              0.0,
+              0.0
+            ],
+            " [] STYLE=NORMAL"
+          ],
+          [
+            [
+              10.0,
+              0.0,
+              0.0
+            ],
+            [
+              10.0,
+              1.0,
+              0.0
+            ],
+            " [] STYLE=NORMAL SPLAY"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "dates",
+      "source_sha256": "0252ed5639d3bddd72b09e870ed5eff680ae75170441b0e1ab040dd876182371",
+      "svx_sha256": "15369e960477601752ceb3f6fcf777cd58cda9fa3a6beb56a1248e26cdb875d0",
+      "control_sha256": "6c435bb3bb98e0be06c1c4f986124b31ad293d42ce48f75873e47b0315e9b3ee",
+      "statistics": [
+        1,
+        0,
+        10.0,
+        10.0,
+        0.0
+      ],
+      "splays": 0,
+      "geometry": {
+        "nodes": [
+          "NODE 0.00 0.00 0.00 [1.0] UNDERGROUND",
+          "NODE 10.00 0.00 0.00 [1.1] UNDERGROUND"
+        ],
+        "edges": [
+          [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              10.0,
+              0.0,
+              0.0
+            ],
+            " [] STYLE=NORMAL"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "vertical-reverse",
+      "source_sha256": "fcc94ff36f1bacdc66ed7f375c2dcce064ad449b737ff483969f2c620c63234a",
+      "svx_sha256": "44a2a50de7a173990d26ffea0dddbd6a6cf86f934ae66e4618e377b4a00a1acc",
+      "control_sha256": "a0ab3e4684a3fd7866a44e9c11b368bdddb0f665c3acd6a5297971a748b2a01d",
+      "statistics": [
+        3,
+        0,
+        3.0,
+        0.0,
+        3.0
+      ],
+      "splays": 1,
+      "geometry": {
+        "nodes": [
+          "NODE 0.00 0.00 0.00 [1.0] UNDERGROUND",
+          "NODE 0.00 0.00 1.00 [1.2] UNDERGROUND",
+          "NODE 0.00 0.00 1.00 [] UNDERGROUND ANON WALL",
+          "NODE 0.00 0.00 2.00 [1.1] UNDERGROUND"
+        ],
+        "edges": [
+          [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              2.0
+            ],
+            " [] STYLE=NORMAL"
+          ],
+          [
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            " [] STYLE=NORMAL SPLAY"
+          ],
+          [
+            [
+              0.0,
+              0.0,
+              2.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            " [] STYLE=NORMAL"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "reverse-head",
+      "source_sha256": "10cd8f64f5294c211c26b888c18b10720298c298608649b9a0be0cd248f780aa",
+      "svx_sha256": "9370ccdf2a965160ded51e6c8bdb55cdb0b7aeb092ce1e5b93e7fed760931c09",
+      "control_sha256": "1b032f034cbc4530d3e462d9f5fa8e1fbef0c293e28f729a9b5873463eef8b59",
+      "statistics": [
+        1,
+        0,
+        10.0,
+        7.07,
+        7.07
+      ],
+      "splays": 0,
+      "geometry": {
+        "nodes": [
+          "NODE -7.07 0.00 -7.07 [1.0] UNDERGROUND",
+          "NODE 0.00 0.00 0.00 [1.1] UNDERGROUND"
+        ],
+        "edges": [
+          [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -7.07,
+              0.0,
+              -7.07
+            ],
+            " [] STYLE=NORMAL"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "auto",
+      "source_sha256": "0252ed5639d3bddd72b09e870ed5eff680ae75170441b0e1ab040dd876182371",
+      "svx_sha256": "15369e960477601752ceb3f6fcf777cd58cda9fa3a6beb56a1248e26cdb875d0",
+      "control_sha256": "37774d418c217442f0cbb4886efbecdcfde609f7e4a559149401270d53074fae",
+      "statistics": [
+        1,
+        0,
+        10.0,
+        10.0,
+        0.0
+      ],
+      "splays": 0,
+      "geometry": {
+        "nodes": [
+          "NODE 400000.00 5450000.00 1000.00 [1.0] UNDERGROUND FIXED",
+          "NODE 400009.93 5449998.84 1000.00 [1.1] UNDERGROUND"
+        ],
+        "edges": [
+          [
+            [
+              400000.0,
+              5450000.0,
+              1000.0
+            ],
+            [
+              400009.93,
+              5449998.84,
+              1000.0
+            ],
+            " [] STYLE=NORMAL"
+          ]
+        ]
+      }
+    }
+  ],
+  "inherited_settings_verified": true,
+  "negative_control_verified": true
+}

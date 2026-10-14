@@ -65,7 +65,7 @@ gates alongside all existing ordinary/mutation/control jobs.
 
 ## Walls SRV and Survex SVX design (P15/P16)
 
-**Status:** P15 implemented; P16 remains planned. P15 exports `survey.srv`,
+**Status:** P15 and P16 implemented. P15 exports `survey.srv`,
 P16 exports `survey.svx`; both include `report.json`. Commands use
 `export <input.top> --format srv|svx --output <new-directory>`.
 One isolated TOP v3 input, measurement data only, without prior loop closure,
@@ -104,8 +104,9 @@ template context, drawings, derived LRUD or inferred geographic fixes.
 - All-zero named groups remain ties. Reject mixed zero/nonzero groups, nonzero
   cancellation, undefined From, name collisions, negative distances, raw
   inclinations outside ±90 and unsupported/non-finite results before publication.
-  SRV also rejects all native-identical endpoints, including zero self-legs: Walls
-  rejects these as duplicate names. Distinct-name all-zero ties remain supported.
+  Both formats reject native-identical endpoints, including zero self-legs:
+  Walls rejects duplicate names and Survex rejects self-legs with the declared
+  inference profile. Distinct-name all-zero ties remain supported.
 - The report retains source hashes, raw IDs/aliases, rows/spans, original/emitted
   values, grouping, corrections and omissions. Reuse existing safe publication
   and destination defaults; no guessed accuracy, team, entrance or flag semantics.
@@ -207,6 +208,34 @@ compilation/database validation are separate from the project SRV/report byte
 regressions. The native gate uses manual correction, commented dates and no
 geographic reference, and compares unadjusted NTV vectors and named lengths.
 See [P15 provenance](../internal/top/testdata/README.md#p15-walls-srv).
+
+P16 uses `internal/exportsvx.Build` and the same report-last no-replace
+publication and inclusive 128 MiB output ceiling. Its deterministic schema-1
+report retains raw measurements/trips/omitted references and record spans,
+raw/native/display/emitted identities, original polar values, separately
+normalized values, each emitted row and line, P06 members/reversals and native
+summary vectors/directions, correction sources and directive line ownership.
+P06 summaries validate the agreed failure boundaries and provide provenance;
+they do not replace individual readings or control Survex's averaging.
+
+The anonymous SVX scope resets units, calibration, accuracy, all three leg
+flags and inference before data. It preserves literal dots and disables
+truncation. Source comments are ASCII-escaped on bounded comment lines within
+the UTF-8 file; the report preserves original Unicode. Manual correction is
+emitted initially/change-only per row; date templates track every trip change,
+including inside repeat groups. Geographic/automatic templates stay commented.
+Empty inputs produce a metadata-only package; cavern rejects it with `No survey
+data`, so empty packages are outside the consumer acceptance claim.
+
+Pinned cavern/dump3d 1.4.22 compares nine compiled geometry/statistics cases with
+independently authored literal SVX controls. These cover repetitions, reversed
+heads/members, interrupted pairs, changed corrections/active dates, zero ties,
+verticals, zero splays, aliases and an explicitly edited automatic profile.
+Known synthetic UTM coordinates and test dates are supplied only in the consumer
+test, never inferred by the exporter. A hostile include verifies resets and
+scope restoration; an actual self-leg compiler failure is a negative control.
+The checked `.3d` graph and length statistics are Survex results, distinct from
+native integer P06 geometry. See [P16 provenance](../internal/top/testdata/README.md#p16-survex-svx).
 
 Acceptance and implementation boundaries: [P15](PLAN.md#p15--walls-srv),
 [P16](PLAN.md#p16--survex-svx).
@@ -491,7 +520,8 @@ for commands, hashes, controlled context and independent goldens.
 ## CLI behavior
 
 `inspect` and the isolated P05 text `export` are implemented as specified above,
-including their arguments and exit semantics. Other exporters remain planned.
+including their arguments and exit semantics. P09–P16 exporters below are also
+implemented; optional P17–P19 remain planned.
 
 Accept explicit paths and formats. Preserve inputs; reject input/output
 collisions and accidental overwrites. Write temporary output and publish only
@@ -885,7 +915,7 @@ sync/close each artifact, no-replace links and ownership anchors, report last.
 Errors return no Build result and publish nothing; notification failures preserve
 a completed package. Existing text/Therion artifact names and behavior remain.
 See [native evidence](../internal/top/testdata/README.md#p10-native-graphics-dxf).
-P12 and later native exporters are planned only.
+P11–P16 are implemented in their respective sections.
 
 ## Native VisualTopo and passage dimensions (P11)
 

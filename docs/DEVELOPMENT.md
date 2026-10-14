@@ -46,7 +46,7 @@ dependencies. The document group covers P04d source/accounting/inspect faults al
 unchanged earlier groups. The native-text group covers text, Therion, graphics DXF, VisualTopo, Toporobot and 3D DXF serialization, decimal
 formatting, provenance and safe CLI publication. The weak-suite negative control deliberately stubs
 inspection/export/processing/geometry/context and exercises version, inspect, process, geometry, context and text/Therion/DXF/VisualTopo/Toporobot/3D DXF export arguments without assertions;
-all 62 generated mutants must live and the quality gate must reject them.
+all 66 generated mutants must live and the quality gate must reject them.
 Run one sequential campaign or one parallel coordinator at a time. The parallel
 runner snapshots only source/scripts/pinned tools into a private checkout per
 group with private caches/reports. It limits active groups, collects reports and
@@ -183,7 +183,7 @@ prior scope, all five shards, operators, >=90% gate and failure controls.
 `GOMAXPROCS=2 GOFLAGS=-p=1 bash scripts/mutation-dxf3d.sh --preflight` checks that
 all new faults compile without running a local mutation campaign or producing
 a KILLED report. The actual full campaign and negative control run in Actions.
-The native weak-suite control requires exactly 62 live mutants after P15.
+The native weak-suite control requires exactly 66 live mutants after P16.
 
 ## P14 corpus and offline distributions
 
@@ -229,8 +229,8 @@ mutation matrix and failure controls.
 
 P15 keeps every P05–P14 scope, operator, threshold and failure control. The
 `walls` explicit campaign adds 58 faults to `native-text`; `exportwalls` is in
-the existing output Gremlins shard. The native weak-suite still requires exact
-cardinality: 62 live mutants. Setup/compiler/timeouts/incomplete outcomes never
+the existing output Gremlins shard. At P15 delivery, the native weak-suite required exact
+cardinality: 62 live mutants; P16 extends that control to 66 below. Setup/compiler/timeouts/incomplete outcomes never
 count as kills. Native compile-only preflight is available as
 `GOMAXPROCS=2 GOFLAGS=-p=1 bash scripts/mutation-walls.sh --preflight`; it does not
 produce a mutation score. Prefer the full Actions campaign after local disk or
@@ -261,3 +261,41 @@ Offline distribution validation adds one SRV package regression through a separa
 P15 manifest. The six frozen P14 native byte cases and their hashes are unchanged.
 The existing 262-input/25-profile native corpus baseline remains unchanged; P15
 uses small independently read semantic cases and the original destination gate.
+
+## P16 Survex validation
+
+P16 preserves every P05–P15 scope/operator/threshold/control. Its 53-fault `svx`
+campaign joins `native-text`; `exportsvx` joins the existing output Gremlins
+shard. The measured weak inventory is 66 live sites: all 62 earlier sites plus
+exactly four SVX dispatch sites. Compilation/setup/timeout/incomplete outcomes
+fail closed. A compile-only preflight is available; it is not a mutation score.
+Full mutations remain hosted, with bounded local ordinary checks.
+
+```sh
+GOMAXPROCS=2 GOFLAGS=-p=1 bash scripts/check.sh
+GOMAXPROCS=2 GOFLAGS=-p=1 bash scripts/mutation-svx.sh --preflight
+GOMAXPROCS=2 GOFLAGS=-p=1 bash scripts/mutation-trial.sh
+bash scripts/mutation-dispatch-trial.sh
+python3 scripts/validate-survex.py --binary build/pockettopo-exporter --output build/survex-native
+```
+
+`validate-survex.py` requires both cavern and dump3d **1.4.22**; custom absolute
+paths use `--cavern` and `--dump3d`. It exports nine semantic cases, compiles them
+and independently authored controls, compares `.3d` nodes/edges/flags at consumer
+precision and exact leg/loop/length/plan/vertical statistics, and verifies source
+immutability and package hashes. Active dates and a complete automatic profile
+are deliberate edits using known synthetic test dates/coordinates. The default
+export retains commented templates. A hostile include checks reset/restoration;
+an actual same-station error checks compiler failure. Parser tests reject
+missing/nonfinite/malformed results and incomplete template editing.
+
+The required Linux `survex-native` job builds official source archive
+`https://survex.com/software/1.4.22/survex-1.4.22.tar.gz`, SHA-256
+`a26962d888621cfd2043a7cc6a227fc905130dfbd14c450dc1c4c02fbfdd9dbc`.
+It installs runner-only build dependencies and uploads raw SVX/report inputs,
+`.3d`, logs/dumps, controls and structured comparisons as `original-survex-<SHA>`.
+CI complete additionally requires this job. Local original consumer snapshots are
+frozen in `internal/exportsvx/testdata/survex-native`; hash verification includes
+`validation/p16-evidence.json`. P14 native goldens/corpus and P15 original Walls
+evidence remain unchanged. Offline distributions add one SVX destination case
+without changing the six P14 native cases or their hashes.

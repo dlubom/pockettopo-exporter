@@ -32,7 +32,7 @@ gremlins_shard() {
     internal/source/*|internal/top/prefix.go|internal/top/measurements.go|internal/top/references.go) printf tables ;;
     internal/top/*) printf drawings ;;
     internal/exporttoporobot/*|internal/cli/toporobot.go) printf toporobot ;;
-    internal/cli/*|internal/exporttext/*|internal/exporttherion/*|internal/exportdxf/*|internal/exportdxf3d/*|internal/exportvisualtopo/*|internal/exportwalls/*|internal/nativefmt/*) printf output ;;
+    internal/cli/*|internal/exporttext/*|internal/exporttherion/*|internal/exportdxf/*|internal/exportdxf3d/*|internal/exportvisualtopo/*|internal/exportwalls/*|internal/exportsvx/*|internal/nativefmt/*) printf output ;;
     internal/processing/*) printf processing ;;
     *) printf 'Unassigned Gremlins source file: %s\n' "$1" >&2; return 2 ;;
   esac
@@ -100,7 +100,7 @@ run_group() {
     side-mapping) scopes=(side-mapping) ;;
     side-marker) scopes=(side-marker) ;;
     document) scopes=(document) ;;
-    native-text) scopes=(text therion dxf visualtopo toporobot dxf3d walls) ;;
+    native-text) scopes=(text therion dxf visualtopo toporobot dxf3d walls svx) ;;
     processing) scopes=(processing geometry context) ;;
     next-markers) scopes=(plan-next-marker plan-following-marker) ;;
     third-count) scopes=(plan-third-polygon-count) ;;

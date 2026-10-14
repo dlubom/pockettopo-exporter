@@ -20,6 +20,7 @@ func runTherion(_ []string, _, _ io.Writer) int { return 1 }
 func runToporobot(_ []string, _, _ io.Writer) int { return 1 }
 func runVisualTopo(_ []string, _, _ io.Writer) int { return 1 }
 func runDXF3D(_ []string, _, _ io.Writer) int { return 1 }
+func runSVX(_ []string, _, _ io.Writer) int { return 1 }
 func runWalls(_ []string, _, _ io.Writer) int { return 1 }
 func runDXF(_ []string, _, _ io.Writer) int { return 1 }
 func process(_ string, _, _ io.Writer) int { return 1 }
@@ -46,6 +47,7 @@ func TestWithoutAssertions(t *testing.T) {
     cli.Run([]string{"context", "input.top", "--template-directory", ".", "--json"}, io.Discard, io.Discard)
     cli.Run([]string{"export", "input.top", "--format", "therion", "--output", "out"}, io.Discard, io.Discard)
     cli.Run([]string{"export", "input.top", "--format", "dxf3d", "--output", "out"}, io.Discard, io.Discard)
+    cli.Run([]string{"export", "input.top", "--format", "svx", "--output", "out"}, io.Discard, io.Discard)
     cli.Run([]string{"export", "input.top", "--format", "srv", "--output", "out"}, io.Discard, io.Discard)
     cli.Run([]string{"export", "input.top", "--format", "dxf", "--output", "out"}, io.Discard, io.Discard)
     cli.Run([]string{"export", "input.top", "--format", "visualtopo", "--output", "out"}, io.Discard, io.Discard)
@@ -70,9 +72,15 @@ if [[ ! "$walls_dispatch_line" =~ ^[0-9]+$ ]]; then
   printf 'Missing or ambiguous Walls dispatch source line.\n' >&2
   exit 1
 fi
-# Measured inventory: all 58 prior sites plus four Walls dispatch sites.
-jq -e --argjson dispatch_line "$walls_dispatch_line" '.mutants_total == 62 and .mutants_lived == .mutants_total and .mutants_killed == 0
+svx_dispatch_line=$(awk '/len\(args\).*args\[3\].*"svx"/ {print NR}' internal/cli/run.go)
+if [[ ! "$svx_dispatch_line" =~ ^[0-9]+$ ]]; then
+  printf 'Missing or ambiguous SVX dispatch source line.\n' >&2
+  exit 1
+fi
+# Measured inventory: all 62 prior sites plus four SVX dispatch sites.
+jq -e --argjson svx_line "$svx_dispatch_line" --argjson dispatch_line "$walls_dispatch_line" '.mutants_total == 66 and .mutants_lived == .mutants_total and .mutants_killed == 0
   and ([.files[].mutations[] | select(.line == $dispatch_line)] | length) == 4
+  and ([.files[].mutations[] | select(.line == $svx_line)] | length) == 4
   and ([.files[].mutations[]] | length) == .mutants_total
   and all(.files[].mutations[]; .status == "LIVED")' "$root/build/mutation-weak.json"
 gate_status=0

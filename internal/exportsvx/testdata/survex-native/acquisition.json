@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "acquired": "2026-10-14",
+  "platform": "darwin-arm64",
+  "cavern_version": "1.4.22",
+  "source_url": "https://survex.com/software/1.4.22/survex-1.4.22.tar.gz",
+  "source_archive_sha256": "a26962d888621cfd2043a7cc6a227fc905130dfbd14c450dc1c4c02fbfdd9dbc",
+  "cli_base_revision": "17c5960338ec94203dd2874dcdbd745b0c5df512",
+  "cli_state": "uncommitted P16; final exact-SHA consumer gate runs in Actions",
+  "cavern_binary_sha256": "444983374f5a86390aa2eecf36bd7cf98292432e032678bfcf25b8b394f31c24",
+  "dump3d_binary_sha256": "fe66da83a23c94d55e3119db6641494be519746431fba8acfd263b2a564a33fe"
+}

@@ -138,7 +138,21 @@ Original rows, corrections, native directions and output rounding remain in the
 report. The measurement-only profile omits fixes and drawings. See the
 [SRV contract](docs/SPEC.md#walls-srv-and-survex-svx-design-p15p16) and
 [fixture provenance](internal/top/testdata/README.md#p15-walls-srv).
-The next planned increment is **P16: Survex SVX**.
+P16 adds Survex individual-reading export:
+
+```sh
+go run ./cmd/pockettopo-exporter export internal/exportwalls/testdata/features.top --format svx --output build/survex
+```
+
+It publishes `survey.svx` and `report.json`, preserving every reading in source
+order and normalizing reversed P06 members to the head direction. Survex owns
+averaging and loop adjustment; literal station dots and individual splays remain.
+Manual declination is initial/change-only; date and automatic/geographic
+configuration are editable commented templates. The report separates originals,
+normalized/emitted values, source lineage, corrections and omissions. See the
+[SVX contract](docs/SPEC.md#walls-srv-and-survex-svx-design-p15p16) and
+[P16 provenance](internal/top/testdata/README.md#p16-survex-svx).
+P16 completes the requested scope. **P17: optional layered SVG** remains planned.
 
 ## Documentation
 

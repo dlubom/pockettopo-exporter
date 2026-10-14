@@ -1,0 +1,2 @@
+*data normal from to tape compass clino
+0 0 1 0 0

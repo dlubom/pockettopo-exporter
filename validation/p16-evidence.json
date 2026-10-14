@@ -1,0 +1,602 @@
+[
+  {
+    "path": "internal/exportsvx/testdata/aliases.control.svx",
+    "sha256": "2fb7b8e8d0002b3f2f193b5ed861946ef61a977d42189be0015ceb90a63cac34"
+  },
+  {
+    "path": "internal/exportsvx/testdata/aliases.json",
+    "sha256": "56a3481cb0967c725b00cf8c9d8c7c1a1ba7ba05027f72c8e04dfa7a8ab70061"
+  },
+  {
+    "path": "internal/exportsvx/testdata/aliases.svx",
+    "sha256": "168fafcb6e0e2a0d3d045979618a42bcfc0ac9160f3728e2072b2ed2bd607b86"
+  },
+  {
+    "path": "internal/exportsvx/testdata/auto.control.svx",
+    "sha256": "37774d418c217442f0cbb4886efbecdcfde609f7e4a559149401270d53074fae"
+  },
+  {
+    "path": "internal/exportsvx/testdata/dates.control.svx",
+    "sha256": "6c435bb3bb98e0be06c1c4f986124b31ad293d42ce48f75873e47b0315e9b3ee"
+  },
+  {
+    "path": "internal/exportsvx/testdata/dates.top",
+    "sha256": "0252ed5639d3bddd72b09e870ed5eff680ae75170441b0e1ab040dd876182371"
+  },
+  {
+    "path": "internal/exportsvx/testdata/dates.tsv",
+    "sha256": "3a43654af375c91f67e9abd35e5020c093b9193e607f349a718d122963a3a4cb"
+  },
+  {
+    "path": "internal/exportsvx/testdata/features.control.svx",
+    "sha256": "3c7f77965a41bb088a9473644889714bccfb9a054e05d5bf6d35d7c9b6d5a3a4"
+  },
+  {
+    "path": "internal/exportsvx/testdata/features.json",
+    "sha256": "6ecb55f7d8b042085d52859a4a8c85afc638305fac345b543449053f5a9a31ac"
+  },
+  {
+    "path": "internal/exportsvx/testdata/features.svx",
+    "sha256": "37b500a5c1b52a60777d6b04a5d5d067d899dbb106d94961707a6370fa8b09bd"
+  },
+  {
+    "path": "internal/exportsvx/testdata/interrupted.control.svx",
+    "sha256": "c66a5720a3363656c19f1f443072ea56ed91379d0f59ac99a75cb6e84b9737e0"
+  },
+  {
+    "path": "internal/exportsvx/testdata/interrupted.top",
+    "sha256": "90c4b5bddf4b3ef326ac252fba96224bbb4703fb0ad94273e0588de3a288db12"
+  },
+  {
+    "path": "internal/exportsvx/testdata/interrupted.tsv",
+    "sha256": "94fc7ce4f9f2a14d50875aa7a601ae7c533e6804999a04d9fccebec1fa574bed"
+  },
+  {
+    "path": "internal/exportsvx/testdata/mixed.control.svx",
+    "sha256": "7ad0ed53af2439d9c8b18866d62a6c99a80c28545ced34e4d5503ae3a7f4139c"
+  },
+  {
+    "path": "internal/exportsvx/testdata/mixed.json",
+    "sha256": "232b559f0f7d1da3377992da8e6cf85a2af772797cac08baad020f1c229975a5"
+  },
+  {
+    "path": "internal/exportsvx/testdata/mixed.svx",
+    "sha256": "393b8ebfc845a301f2aa2f47ad264e6db0c8763d2256a02d99c179bc856205d7"
+  },
+  {
+    "path": "internal/exportsvx/testdata/native.txt",
+    "sha256": "3e0465de328f692570ea2584d84ef4ac88a9dffc0ff9cb69d3510611234ea698"
+  },
+  {
+    "path": "internal/exportsvx/testdata/reverse-head.control.svx",
+    "sha256": "1b032f034cbc4530d3e462d9f5fa8e1fbef0c293e28f729a9b5873463eef8b59"
+  },
+  {
+    "path": "internal/exportsvx/testdata/reverse-head.top",
+    "sha256": "10cd8f64f5294c211c26b888c18b10720298c298608649b9a0be0cd248f780aa"
+  },
+  {
+    "path": "internal/exportsvx/testdata/reverse-head.tsv",
+    "sha256": "3a1650d29b82553927586902faf6a77dd68dc501877fdc92439857085cdf6082"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/acquisition.json",
+    "sha256": "dfc1f011fa1d5e9507a919f45ea1e3d3343bfde61c78036490178cae6c176f47"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/aliases/actual.3d",
+    "sha256": "85b11a12d123c813491f822626da2000ba3e806f1f60c09768201afa2e29ba91"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/aliases/actual.dump",
+    "sha256": "39899197606e254887e0d0e81a257232b6f5610ebed521a527223d11a940600b"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/aliases/actual.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/aliases/actual.log",
+    "sha256": "dfc837aff38a7e95cc0b8c7db7c2c94138a5a08eba93b3055f5a648c55652c3d"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/aliases/actual.svx",
+    "sha256": "168fafcb6e0e2a0d3d045979618a42bcfc0ac9160f3728e2072b2ed2bd607b86"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/aliases/control.3d",
+    "sha256": "b3cc665bc439752ea7733097a9da0275e8dbb2546c315f7e28fb1166b7fd7aa4"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/aliases/control.dump",
+    "sha256": "88c4bf0c788aca45fcf06b5aa202174e37e8cf6b1ef030e93b859658d3c844eb"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/aliases/control.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/aliases/control.log",
+    "sha256": "1ac834851fd7d22c0bda951a15b70d5ed14c6c6b99c283fd1ea24a93f3ccc6b6"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/aliases/control.svx",
+    "sha256": "2fb7b8e8d0002b3f2f193b5ed861946ef61a977d42189be0015ceb90a63cac34"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/aliases/export/report.json",
+    "sha256": "56a3481cb0967c725b00cf8c9d8c7c1a1ba7ba05027f72c8e04dfa7a8ab70061"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/aliases/export/survey.svx",
+    "sha256": "168fafcb6e0e2a0d3d045979618a42bcfc0ac9160f3728e2072b2ed2bd607b86"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/auto/actual.3d",
+    "sha256": "3187a2df5f528ae97b425941b85da228b3793385d70122fc7d84fc84c3ac8ba5"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/auto/actual.dump",
+    "sha256": "b04bf9b32449eb5e9380905cb1cbf00712534ca3ecec310ac1989587522770e5"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/auto/actual.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/auto/actual.log",
+    "sha256": "9259b7d1767dcb07b6b8f5317903a3d8971e04f7bbb9f5344c8e4c68520c635c"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/auto/actual.svx",
+    "sha256": "b6fcd9d58a6f9de18e37f1235bdd6dc82b1daafcda11050f9c8820e8294492fc"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/auto/control.3d",
+    "sha256": "02a7a332764d02529057f6317402527012aa46aab100d79215b2ab704cb19875"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/auto/control.dump",
+    "sha256": "e8b232e180b066085a67c9fcd1295354dafc5d25fdd3721785bec2c71c700318"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/auto/control.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/auto/control.log",
+    "sha256": "4cbde2387409e081b41d08bad65f7efe31ea8fea914aaa102eef7625354bebb5"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/auto/control.svx",
+    "sha256": "37774d418c217442f0cbb4886efbecdcfde609f7e4a559149401270d53074fae"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/auto/export/report.json",
+    "sha256": "a54ba2a5b56b0930a0a0d0c84c77d5863a3bd46f29fc289f714f473274fa1b7d"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/auto/export/survey.svx",
+    "sha256": "15369e960477601752ceb3f6fcf777cd58cda9fa3a6beb56a1248e26cdb875d0"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/dates/actual.3d",
+    "sha256": "3c534aa21f6a69e562f8e4a5d2fc3340a9fd6c518f8b9b54d5447180c3bd9eb9"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/dates/actual.dump",
+    "sha256": "812f25e4cee6ee3911e6f6eb5fa8b38e98e013f882ef112d1cbaececd9f2b766"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/dates/actual.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/dates/actual.log",
+    "sha256": "e37f85d12441b0d11c6f1b1f5d7787a77fd705f1dbb9b1b52a144b201d6bb09d"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/dates/actual.svx",
+    "sha256": "bfb577beb52c88a4e19c2d6d46341ea1972d03f5390ee4abbd1f187b27926025"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/dates/control.3d",
+    "sha256": "82e168cf0c738818d7d07fecdcd2ab89e9c4b6e8e477e43b5dcd2698d759cd3f"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/dates/control.dump",
+    "sha256": "c1dcf204e8a5fe41320adce7af3d0e688125b4a1107319951c6f21c2621045ea"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/dates/control.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/dates/control.log",
+    "sha256": "f96806af5672ddedbd9ccc880ed55d5d7f0278ec893fc43610e544a943059f26"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/dates/control.svx",
+    "sha256": "6c435bb3bb98e0be06c1c4f986124b31ad293d42ce48f75873e47b0315e9b3ee"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/dates/export/report.json",
+    "sha256": "a54ba2a5b56b0930a0a0d0c84c77d5863a3bd46f29fc289f714f473274fa1b7d"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/dates/export/survey.svx",
+    "sha256": "15369e960477601752ceb3f6fcf777cd58cda9fa3a6beb56a1248e26cdb875d0"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/features/actual.3d",
+    "sha256": "61099f4fdbee6d7d024f6e5282c1fd55379c2416065b75295515c9b0fcae1673"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/features/actual.dump",
+    "sha256": "9f26c621966fa485af2e927532788d76021e4642f2e0f3ac858b42b8b0e96d67"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/features/actual.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/features/actual.log",
+    "sha256": "9062f7cb50c3512eb16d698bea850abe0b92b307de3f10ccbbe7dc94c153cb32"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/features/actual.svx",
+    "sha256": "37b500a5c1b52a60777d6b04a5d5d067d899dbb106d94961707a6370fa8b09bd"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/features/control.3d",
+    "sha256": "0a122bfa227cfe4007878ee3e6e4bc81750cd7d7eade6b8b40df7433709611a8"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/features/control.dump",
+    "sha256": "fd67426b969989966d632afb43691841d08822015dba6349167420a144dc7128"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/features/control.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/features/control.log",
+    "sha256": "779003060f2f244f8a9dda09f98287d24156da2953798b17cbc555d72be079cb"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/features/control.svx",
+    "sha256": "3c7f77965a41bb088a9473644889714bccfb9a054e05d5bf6d35d7c9b6d5a3a4"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/features/export/report.json",
+    "sha256": "6ecb55f7d8b042085d52859a4a8c85afc638305fac345b543449053f5a9a31ac"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/features/export/survey.svx",
+    "sha256": "37b500a5c1b52a60777d6b04a5d5d067d899dbb106d94961707a6370fa8b09bd"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/inherited/actual-include.svx",
+    "sha256": "37b500a5c1b52a60777d6b04a5d5d067d899dbb106d94961707a6370fa8b09bd"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/inherited/actual.3d",
+    "sha256": "7fd663aaf43e8cd70b6ccbd6b4c227f526c0004a93f5f42a1c544ecec4dad73d"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/inherited/actual.dump",
+    "sha256": "5401983e4fddef89593a007bc55dceb458e38eaf06fcf8d5008d4d2dccd769b1"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/inherited/actual.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/inherited/actual.log",
+    "sha256": "cc6170691f695f515ee2afe1dfa61783f039df281cc718690d8a5ae85c9434c6"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/inherited/actual.svx",
+    "sha256": "e3daf4073b7542b16d030e7394591593577c067a68da9d6a66d91eda1e10d64b"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/inherited/control-include.svx",
+    "sha256": "3c7f77965a41bb088a9473644889714bccfb9a054e05d5bf6d35d7c9b6d5a3a4"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/inherited/control.3d",
+    "sha256": "eb7d0f3dbb3288f77c40d3ee2714996bdc0aff676e3956e9cbac881565a72526"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/inherited/control.dump",
+    "sha256": "88806fc8a89a385f5cd843177bb50853526d807c43f901f46070ab698f1d109e"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/inherited/control.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/inherited/control.log",
+    "sha256": "d78b12dd153370eec816d238434ff5462ae4077fc88eb2604c1eab160e032711"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/inherited/control.svx",
+    "sha256": "561d322bf568ca14041756fd527e0de3fd9197b80d6e5472f97c1ac5e74e7727"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/interrupted/actual.3d",
+    "sha256": "3c662e7e6edb245d8c078f40ac70d60421d476a80c4e83e5b735c890f494579a"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/interrupted/actual.dump",
+    "sha256": "8d623fd33e3aa06e1ae7ab7ebd9b813b143ff4ffa59cef4da76a5c60bebc3f74"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/interrupted/actual.err",
+    "sha256": "a85eb5acad3206f962190587e22a6afbc28501dae61117ad274c32a096d50f73"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/interrupted/actual.log",
+    "sha256": "283b28d9dde6e93d3cafcca11aeea99e7b29667f48517542644b4f580bf59d53"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/interrupted/actual.svx",
+    "sha256": "b0c2ac76812e97113a0922f014cb524c593f70e17d9747d4b10dddf56ef7b382"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/interrupted/control.3d",
+    "sha256": "c17a0c611b0326f8032ea4eaf0d6faa637b7782432b8a5f9ad1671280c9db306"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/interrupted/control.dump",
+    "sha256": "f8013348f5ac925fafd33bde914af2f4cc8744c38ef1baf46e8f3912f4c27733"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/interrupted/control.err",
+    "sha256": "a85eb5acad3206f962190587e22a6afbc28501dae61117ad274c32a096d50f73"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/interrupted/control.log",
+    "sha256": "eba360628e9964a7c0c56c00d0ae1b9152dc0685de22dc6baa775dae1248ff26"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/interrupted/control.svx",
+    "sha256": "c66a5720a3363656c19f1f443072ea56ed91379d0f59ac99a75cb6e84b9737e0"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/interrupted/export/report.json",
+    "sha256": "7986e20c48dc7ee6edf8d1573c8f40f66c364c9d0676d704827c26726c36de06"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/interrupted/export/survey.svx",
+    "sha256": "b0c2ac76812e97113a0922f014cb524c593f70e17d9747d4b10dddf56ef7b382"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/invalid.log",
+    "sha256": "7d9f92e9647e6fbadf3fff72f9ac045bbfa579c2abf91c29293f03e144a7b0d3"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/invalid.svx",
+    "sha256": "b02aa7a2217d1329af6a9cd18c6e6b847277bb56c5ca00fca4e3eb287da8d276"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/mixed/actual.3d",
+    "sha256": "46f2ef194463291345c2226a90385ef5f7a6340ce9ae9efbe3ce60e4e1fc910c"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/mixed/actual.dump",
+    "sha256": "bb9e30fd08d85a492b6c9506c7fb1adf3d1fd2cad1147aeb4f2fef71ce125149"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/mixed/actual.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/mixed/actual.log",
+    "sha256": "7834f6fbc35219ced8efbf27f93aa7a12190b40798ebecb7041744eb20df5f7f"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/mixed/actual.svx",
+    "sha256": "393b8ebfc845a301f2aa2f47ad264e6db0c8763d2256a02d99c179bc856205d7"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/mixed/control.3d",
+    "sha256": "b145f137d6bd4c56f73bb9029f67f0a612078c4620aad75ae15c46790979d609"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/mixed/control.dump",
+    "sha256": "e6139dfc4c3e1fa607d5f5e815f8c171a22324c243862c132281b17e498beaf0"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/mixed/control.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/mixed/control.log",
+    "sha256": "432f3149349cd2890b3ea511699fc149ba3f662a233a5f1379d3136cf87ca5bc"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/mixed/control.svx",
+    "sha256": "7ad0ed53af2439d9c8b18866d62a6c99a80c28545ced34e4d5503ae3a7f4139c"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/mixed/export/report.json",
+    "sha256": "232b559f0f7d1da3377992da8e6cf85a2af772797cac08baad020f1c229975a5"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/mixed/export/survey.svx",
+    "sha256": "393b8ebfc845a301f2aa2f47ad264e6db0c8763d2256a02d99c179bc856205d7"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/report.json",
+    "sha256": "72d7d5cb8bbbb610c8120d5132b8e58e9412ee8b96d759633445eb0c6b02bb16"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/reverse-head/actual.3d",
+    "sha256": "55180b96f8def368fc5b08ee8b5d127ed5b3432727a6fa8515bcff68317c1605"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/reverse-head/actual.dump",
+    "sha256": "7727f2b6a658ee679ac50867c1c2b053eb064793c9fc58a2836cb0201d9ad854"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/reverse-head/actual.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/reverse-head/actual.log",
+    "sha256": "1449580d516b5fed9c1651fc4916650fd89d03489e2613f8f07f018a696d8093"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/reverse-head/actual.svx",
+    "sha256": "9370ccdf2a965160ded51e6c8bdb55cdb0b7aeb092ce1e5b93e7fed760931c09"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/reverse-head/control.3d",
+    "sha256": "6a0d1c14197f5aace0817ba7c8765094b69f7285ecb50d3ebd04a455893e9e52"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/reverse-head/control.dump",
+    "sha256": "baa5273c809c60d7892af26aa4c7de9915740072a1a8339dc2fd8c6c08b39545"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/reverse-head/control.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/reverse-head/control.log",
+    "sha256": "ddc5c541b98534090b31f82434aec55c63d57304f5ff5b90b54272f06ae30eac"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/reverse-head/control.svx",
+    "sha256": "1b032f034cbc4530d3e462d9f5fa8e1fbef0c293e28f729a9b5873463eef8b59"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/reverse-head/export/report.json",
+    "sha256": "d14fe58263a1dc1de2ff09d6a78dd70f1f26d80df8e28a07fe3a34581bad228e"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/reverse-head/export/survey.svx",
+    "sha256": "9370ccdf2a965160ded51e6c8bdb55cdb0b7aeb092ce1e5b93e7fed760931c09"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/ties/actual.3d",
+    "sha256": "344b844d085d1b36dc742fcd9984b391c2b04db2ec61c7f40df228ab367a6a72"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/ties/actual.dump",
+    "sha256": "62341be411fe1819f8eacca8f5e5bf8a3c9394c5062bb6a9363eba6bba04da4a"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/ties/actual.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/ties/actual.log",
+    "sha256": "e378a13041215640ed0ef61db96ba9adedff3051abbbb06e7712cc5af9626591"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/ties/actual.svx",
+    "sha256": "edca6e33e7f0d868ff3cb61d3fe66d3b424093aa9a340a9d7d3ddf50336694da"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/ties/control.3d",
+    "sha256": "acf94470cd8ea96469ba97b6f51a623936420f98eb931b4d1920fc41b16e84de"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/ties/control.dump",
+    "sha256": "511046423a0e588da49400744f347c9ab478080869f67cc1994516a86615adb2"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/ties/control.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/ties/control.log",
+    "sha256": "677f28ab23bad901b4c75f2df64bb0c311f3d13a665dd55ac01178e500a8bc56"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/ties/control.svx",
+    "sha256": "372a8599bf03ed7b54be4686640664ce1297813c28327736ae915a7f032c6ca1"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/ties/export/report.json",
+    "sha256": "9e6bc0ec9f8bee24da8304077b06bf83733ccddde23809e18f3bac7d3d8d8895"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/ties/export/survey.svx",
+    "sha256": "edca6e33e7f0d868ff3cb61d3fe66d3b424093aa9a340a9d7d3ddf50336694da"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/vertical-reverse/actual.3d",
+    "sha256": "2fdf2434ca0af019212b87e703515919027a47fed53d3c44c74b9b4c2c77ef27"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/vertical-reverse/actual.dump",
+    "sha256": "56f9dc1303102b96f19230434aa9984a3fe6524c7a3065c37ee526c661d0ae11"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/vertical-reverse/actual.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/vertical-reverse/actual.log",
+    "sha256": "1772fdb65a085c9d43388616a25b0efb05c9fa9d2a9a4a20e3fd6642eef09240"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/vertical-reverse/actual.svx",
+    "sha256": "44a2a50de7a173990d26ffea0dddbd6a6cf86f934ae66e4618e377b4a00a1acc"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/vertical-reverse/control.3d",
+    "sha256": "c124e983935dd3d5ab660e1dd1c64aec216eb851ef1d437ee7becdbb7aa28b22"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/vertical-reverse/control.dump",
+    "sha256": "36f035182892307e4b210e8fb080579cf443d7606169d7012d2d5e9f6820a428"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/vertical-reverse/control.err",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/vertical-reverse/control.log",
+    "sha256": "07a63b2f58452b3f650dd9bf39beb3b62535d616359e9378c6d86636516e65cd"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/vertical-reverse/control.svx",
+    "sha256": "a0ab3e4684a3fd7866a44e9c11b368bdddb0f665c3acd6a5297971a748b2a01d"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/vertical-reverse/export/report.json",
+    "sha256": "79934d33c256ec8ca51324c691c8a5e2e5849bf96ef5a7b6349955b4cca64ec7"
+  },
+  {
+    "path": "internal/exportsvx/testdata/survex-native/vertical-reverse/export/survey.svx",
+    "sha256": "44a2a50de7a173990d26ffea0dddbd6a6cf86f934ae66e4618e377b4a00a1acc"
+  },
+  {
+    "path": "internal/exportsvx/testdata/ties.control.svx",
+    "sha256": "372a8599bf03ed7b54be4686640664ce1297813c28327736ae915a7f032c6ca1"
+  },
+  {
+    "path": "internal/exportsvx/testdata/ties.json",
+    "sha256": "9e6bc0ec9f8bee24da8304077b06bf83733ccddde23809e18f3bac7d3d8d8895"
+  },
+  {
+    "path": "internal/exportsvx/testdata/ties.svx",
+    "sha256": "edca6e33e7f0d868ff3cb61d3fe66d3b424093aa9a340a9d7d3ddf50336694da"
+  },
+  {
+    "path": "internal/exportsvx/testdata/vertical-reverse.control.svx",
+    "sha256": "a0ab3e4684a3fd7866a44e9c11b368bdddb0f665c3acd6a5297971a748b2a01d"
+  },
+  {
+    "path": "internal/exportsvx/testdata/vertical-reverse.top",
+    "sha256": "fcc94ff36f1bacdc66ed7f375c2dcce064ad449b737ff483969f2c620c63234a"
+  },
+  {
+    "path": "internal/exportsvx/testdata/vertical-reverse.tsv",
+    "sha256": "cf2c922ab34b87b8d5e7e525488b7f832cfd333225240c121d0ab5e0cbb8906f"
+  }
+]

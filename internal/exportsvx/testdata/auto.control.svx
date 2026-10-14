@@ -1,0 +1,25 @@
+*require 1.4.22
+*begin
+*case preserve
+*truncate off
+*set separator :
+*set names ._-
+*units default
+*calibrate default
+*sd default
+*flags not duplicate not splay not surface
+*infer equates off
+*infer plumbs off
+*infer exports off
+*data normal from to tape compass clino
+*cs EPSG:32634
+*cs out EPSG:32634
+*fix 1.0 400000 5450000 1000
+*declination auto 400000 5450000 1000
+*date 2020-01-01
+1.0 1.1 10.020 90 0
+*date 2022-01-01
+1.0 1.1 10.000 90 0
+*date 2024-01-01
+1.0 1.1 9.980 90 0
+*end

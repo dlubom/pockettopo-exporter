@@ -86,3 +86,7 @@ internal/exportwalls/testdata/native.txt -text whitespace=cr-at-eol
 internal/exportwalls/testdata/native-raw-boundaries.txt -text whitespace=cr-at-eol
 internal/exportwalls/testdata/walls-native/** binary
 internal/top/testdata/native-corpus-text-read.txt -text whitespace=cr-at-eol
+internal/exportsvx/testdata/survex-native/**/*.3d -text
+internal/exportsvx/testdata/*.tsv -text whitespace=cr-at-eol
+internal/exportsvx/testdata/native.txt -text whitespace=cr-at-eol
+internal/exportsvx/testdata/survex-native/**/*.err -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof

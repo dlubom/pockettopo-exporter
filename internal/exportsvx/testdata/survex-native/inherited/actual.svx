@@ -1,0 +1,16 @@
+*units tape feet
+*units compass clino grads
+*case toupper
+*truncate 1
+*calibrate tape 2 2
+*calibrate compass clino 3 2
+*flags duplicate surface splay
+*infer equates on
+*infer plumbs on
+*infer exports on
+*sd tape 8 metres
+*sd compass clino 30 degrees
+*declination 30 degrees
+*include actual-include.svx
+0 xx 10 100 0
+*units default

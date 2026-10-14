@@ -1,0 +1,31 @@
+; PocketTopo to Survex SVX; P16 individual-reading profile.
+; Dates are unverified. Fill/uncomment templates only after verification.
+; For date-derived declination, comment ALL manual declination lines, fill dates
+; and geographic templates with a real location and known fixed station.
+*require 1.4.22
+*begin
+*case preserve
+*truncate off
+*set separator :
+*set names ._-
+*units default
+*units tape metres
+*units compass clino declination degrees
+*calibrate default
+*sd default
+*flags not duplicate not splay not surface
+*infer equates off
+*infer plumbs off
+*infer exports off
+;*cs <CRS>
+;*cs out <OUTPUT_CRS>
+;*fix <STATION> <X> <Y> <Z>
+;*declination auto <X> <Y> <Z>
+*data normal from to tape compass clino
+;*date YYYY-MM-DD
+*declination 0.000000 degrees
+1.0	1.1	2.000	359.994507	90.000000
+1.0	1.1	2.000	359.994507	90.000000
+1.1	1.2	1.000	0.000000	-90.000000
+1.2	::	0.000	0.000000	0.000000
+*end

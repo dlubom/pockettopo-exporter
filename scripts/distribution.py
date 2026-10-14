@@ -78,6 +78,7 @@ def smoke(payload, target, revision):
             raise ValueError("distributed CLI help/version failed")
         cases = json.loads((REPO / "validation/distribution-cases.json").read_text())
         cases += json.loads((REPO / "validation/p15-distribution-cases.json").read_text())
+        cases += json.loads((REPO / "validation/p16-distribution-cases.json").read_text())
         for index, case in enumerate(cases):
             source = scratch / Path(case["input"]).name
             shutil.copyfile(REPO / case["input"], source)
@@ -98,8 +99,8 @@ def smoke(payload, target, revision):
             if result.returncode != 1 or result.stdout or not result.stderr or output.exists():
                 raise ValueError("distributed CLI malformed-input contract failed")
     return {"source_revision": revision, "target": target,
-            "native_byte_cases": sum(x["format"] != "srv" for x in cases),
-            "destination_byte_cases": sum(x["format"] == "srv" for x in cases),
+            "native_byte_cases": sum(x["format"] not in ("srv", "svx") for x in cases),
+            "destination_byte_cases": sum(x["format"] in ("srv", "svx") for x in cases),
             "offline": True, "no_replace": True, "malformed_input": True}
 
 

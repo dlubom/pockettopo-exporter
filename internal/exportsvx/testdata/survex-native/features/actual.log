@@ -1,0 +1,28 @@
+Survex 1.4.22
+Copyright (C) 1990-2026 Olly Betts
+build/p16-survex-final/features/actual.svx:28:1: info: Survey has no fixed points. Therefore I've fixed 1.0 at (0,0,0)
+
+Removing trailing traverses...
+
+Concatenating traverses...
+
+Simplifying network...
+
+Calculating network...
+
+Calculating traverses...
+
+Calculating trailing traverses...
+
+Calculating statistics...
+
+Survey contains 8 survey stations, joined by 7 legs.
+There are 0 loops.
+Total length of survey legs =   21.00m (  21.00m adjusted)
+Total plan length of survey legs =   19.00m
+Total vertical length of survey legs =    2.00m
+Vertical range = 2.00m (from 1.4 at 2.00m to 0.0 at 0.00m)
+North-South range = 7.48m (from anonymous station at 2.50m to 0 at -4.98m)
+North-South range = 4.98m (from 1.1 at 0.00m to 0 at -4.98m)
+East-West range = 11.86m (from 1.4 at 11.86m to 1.0 at 0.00m)
+CPU time used  0.00s

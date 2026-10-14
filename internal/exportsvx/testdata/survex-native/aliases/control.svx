@@ -1,0 +1,19 @@
+*require 1.4.22
+*begin
+*case preserve
+*truncate off
+*set separator :
+*set names ._-
+*units default
+*calibrate default
+*sd default
+*flags not duplicate not splay not surface
+*infer equates off
+*infer plumbs off
+*infer exports off
+*data normal from to tape compass clino
+*declination 0 degrees
+15.65535 1.0 1.000 0 0
+15.65535 1.0 2.000 0 0
+1.0 p1z141z1 1.000 0 0
+*end

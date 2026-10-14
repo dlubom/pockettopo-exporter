@@ -1,0 +1,29 @@
+Survex 1.4.22
+Copyright (C) 1990-2026 Olly Betts
+build/p16-survex-final/auto/control.svx:18: info: Declination: 5.4dg @ 2020-01-01 / 5.9dg @ 2024-01-01, grid convergence: -1.0dg
+ *declination auto 400000 5450000 1000
+
+Removing trailing traverses...
+
+Concatenating traverses...
+
+Simplifying network...
+
+Calculating network...
+
+Calculating traverses...
+
+Calculating trailing traverses...
+
+Calculating statistics...
+
+Approximate full range of grid convergence: -1.0dg at 1.0 to -1.0dg at 1.1
+Survey contains 2 survey stations, joined by 1 leg.
+There are 0 loops.
+Total length of survey legs =   10.00m (  10.00m adjusted)
+Total plan length of survey legs =   10.00m
+Total vertical length of survey legs =    0.00m
+Vertical range = 0.00m (from 1.1 at 1000.00m to 1.1 at 1000.00m)
+North-South range = 1.16m (from 1.0 at 5450000.00m to 1.1 at 5449998.84m)
+East-West range = 9.93m (from 1.1 at 400009.93m to 1.0 at 400000.00m)
+CPU time used  0.02s

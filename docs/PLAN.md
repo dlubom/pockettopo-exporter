@@ -4,7 +4,7 @@ This is the single current backlog and handoff. [SPEC](SPEC.md) defines product
 contracts; [DEVELOPMENT](DEVELOPMENT.md) defines verification and delivery.
 Historical PBI numbers remain traceable; they do not imply equal-sized outcomes.
 
-## Current implementation — 2026-10-13
+## Current implementation — 2026-10-14
 
 P04d started from P04c17 (`bfa73944e3d3baad00b07e2b6dd5a8c9f9a3682b`) plus
 the documentation reset (`94a3f2e`). P05 builds on verified P04d
@@ -32,8 +32,8 @@ P05–P08 and existing prefix contracts remain unchanged.
 | P12 | Native Toporobot and dialog options, bounded existing-file merge and provenance | Implemented; exact-SHA hosted gates required |
 | P13 | Native 3D DXF, source-linked points/entities and bounded native hulls | Implemented; exact-SHA hosted gates required |
 | P14 | Native capability inventory, corpus validation and offline distributions | Implemented; exact-SHA hosted gates required |
-| P15 | Walls SRV measurement export with P06 averages and individual splays | Implemented; exact-SHA hosted gates required |
-| P16 | Survex SVX individual-reading export | Agreed contract; planned |
+| P15 | Walls SRV measurement export with P06 averages and individual splays | Delivered at `17c5960`; all 30 exact-SHA jobs passed |
+| P16 | Survex SVX individual-reading export | Implemented; final exact-SHA hosted gates required |
 
 ### Verification and publication
 
@@ -690,7 +690,7 @@ review survivors and verify every CI job for the exact delivered SHA.
 and native sort overflow; zero-distance ancestors and template splays; arithmetic
 wrap and negative quantization; work/entity/byte limits and report line ownership.
 Native hulls are compatibility output, not an inferred watertight cave surface.
-P14 and P15 are implemented below; P16 remains planned.
+P14–P16 are implemented below.
 
 Original-assembly evidence has 135 complete byte goldens, 24 generic-sort cases
 and 7 native failures; all 1,200 pre-existing evidence files match the baseline.
@@ -757,7 +757,7 @@ remains the P05 metres/360 isolated profile; native text feet/grads and arbitrar
 machine code pages are explicitly outside current compatibility. Destination
 application acceptance and optional drawing research remain separate results.
 At P14 delivery, work stopped there and P15/P16 remained planned. P15 is now
-implemented below; P16 remains planned.
+implemented below; P16 is implemented after its separate request.
 
 The local complete corpus run has 6550 profile outcomes: **6504 successful**
 packages and **46 explicit failures**, each repeated with identical outcomes.
@@ -844,14 +844,34 @@ mutations run in Actions. Incomplete local preflight stopped on disk exhaustion
 and is not counted as mutation evidence.
 See [provenance](../internal/top/testdata/README.md#p15-walls-srv) and DEVELOPMENT.
 
-Stop after P15. P16 remains planned and requires its own request.
+P15 delivery ended at `17c5960338ec94203dd2874dcdbd745b0c5df512`;
+[CI 38460204713](https://github.com/dlubom/pockettopo-exporter/actions/runs/38460204713)
+passed all 30 jobs including original Walls, every mutation and CI complete.
+P16 follows the separately authorized request below.
 
 ## P16 — Survex SVX
 
-**Status:** planned; contract agreed, not implemented.
+**Status:** implemented and independently reviewed; final exact-SHA hosted gates
+remain the publication requirement.
 **Dependencies:** P04d, P15's shared policy and existing export/report publication.
-**Scope:** implement only P16 after a separate request, following the same
+**Scope:** only P16, following the same
 [contract](SPEC.md#walls-srv-and-survex-svx-design-p15p16).
+
+Implementation plan (inline on main; accepted SPEC is authoritative):
+- [x] Add failing CLI/writer tests for ordered individual rows, reversal, stateful
+  correction/date templates, literal identities, invalid input and report lineage.
+- [x] Implement `internal/exportsvx.Build(source.Document) (Result, error)` and
+  `internal/cli/svx.go`, retaining P06 and checked report-last publication.
+- [x] Validate actual cavern/dump3d 1.4.22 geometry, counts, lengths and flags;
+  cover interrupted pairs, changed corrections/dates, ties, verticals and edited
+  automatic templates. Preserve inputs and record consumer provenance.
+- [x] Extend complete mutation/dispatch/weak controls and offline packages, run
+  bounded ordinary checks and independent review, publication requires commit/push and confirmation of every exact-SHA CI job.
+  Stop after P16.
+
+Review focus: raw aliases versus emitted identity; trip changes within repeat
+runs; inherited calibration/flags/inference/accuracy; invalid raw rows hidden by
+P06 averages; escaped comments and inclusive output budget.
 
 **Acceptance:**
 
@@ -862,7 +882,32 @@ Stop after P15. P16 remains planned and requires its own request.
 - Verify manual declination transitions, commented date/auto templates, zero ties,
   vertical angles, strict failures and original/emitted-row lineage.
 
-For both items, preserve P05–P14 and source/processing contracts. Follow all gates
+Delivered implementation: `export --format svx` emits individual source-order
+rows with native-identity P06 reversal normalization, per-row correction/date
+transitions, literal station dots, anonymous splays and original/normalized/
+emitted report lineage. Processing/parser/P05–P15 behavior and frozen evidence
+remain unchanged. Both destination formats reject zero/self native identities;
+distinct-name zero ties remain supported. Empty SVX packages preserve metadata
+but are explicitly outside cavern acceptance (`No survey data`).
+
+The original PocketTopo reads all four new cases; eight exact native vector/
+Float32 snapshots pass. Actual cavern/dump3d 1.4.22 validates nine independent
+control graphs, counts and length statistics, plus inherited setting reset/
+restoration, active dates/IGRF and an actual semantic compiler failure. All 150
+new evidence files are frozen separately. Bounded check.sh passed with race,
+vet, Staticcheck, build and 98.0% total statement coverage; parser/P14 controls,
+53-fault compile-only preflight, complete dispatch and measured weak66 controls
+passed. Full Gremlins discovery has 2793 RUNNABLE sites, no uncovered sites and
+an exact disjoint five-shard union. Full mutation scores remain hosted.
+
+Independent core/final reviews confirmed raw/source/report fidelity and actual
+consumer behavior. Review identified and verified explicit zero-self rejection,
+the empty-input consumer limitation, and the required GDAL build dependency in
+the pinned-source Actions job. No substantive finding remains. Publication must
+verify every platform, corpus, original Walls, new Survex, mutation/control job
+and CI complete for the exact pushed SHA. P17 is not started.
+
+For both items, preserve P05–P15 and source/processing contracts. Follow all gates
 in DEVELOPMENT, retain mutation scopes/failure controls, obtain independent review
 and update fixture provenance. Changes to grouping or magnetic policy require
 refining the contract. Commit/push needs authorization and exact-SHA hosted CI.
@@ -896,7 +941,7 @@ routine documentation and individual mutation groups are not separate PBIs.
 | P13 | Native 3D DXF | Implemented above; degenerate and bounded-failure cases |
 | P14 | Close native capability matrix and validate distribution | Implemented above; exact-SHA hosted gates required |
 | P15 | Walls SRV with averaged repeated legs | Implemented above; original Walls gate and exact-SHA CI required |
-| P16 | Survex SVX retaining individual readings | Contract above; follows P15; Survex performs adjacent-repeat averaging |
+| P16 | Survex SVX retaining individual readings | Implemented above; pinned Survex consumer and exact-SHA CI required |
 | P17 | Optional layered SVG | Accepted R03 contract; can follow native drawings before SRV/SVX |
 | P18 | Optional XVI | Accepted R04 contract and native drawing semantics |
 | P19 | Conditional TH2, PNG or PDF | Separate behavior-sized items only after the corresponding research decision |

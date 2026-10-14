@@ -94,6 +94,8 @@ Byte compatibility, corpus regression, CAD/VisualTopo/Toporobot import acceptanc
 and rendered drawing fidelity are separate results. Optional R01/R02 consumer
 checks and older TOP versions remain future scope. P15 now implements the
 additional [Walls SRV measurement profile](SPEC.md#walls-srv-and-survex-svx-design-p15p16),
-with P06 averages and original Walls validation; Survex/SVX remains planned.
+with P06 averages and original Walls validation. P16 implements individual-reading
+SVX with pinned Survex 1.4.22 geometry/statistics validation. These destination
+profiles are additional to native PocketTopo exporter parity.
 The native milestone means the bounded profiles inventoried here, with these
 limitations retained visibly.

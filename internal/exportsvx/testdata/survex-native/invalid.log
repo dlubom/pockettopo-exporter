@@ -1,0 +1,5 @@
+Survex 1.4.22
+Copyright (C) 1990-2026 Olly Betts
+build/p16-survex-final/invalid.svx:1: error: Survey leg with same station ("0") at both ends - typing error?
+ *data normal from to tape compass clino
+cavern: error: No survey data

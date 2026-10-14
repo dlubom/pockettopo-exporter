@@ -11,6 +11,7 @@ const help = `Usage: pockettopo-exporter --help | --version
   pockettopo-exporter inspect <input.top> --json
   pockettopo-exporter geometry <input.top> --json [--close-loops]
   pockettopo-exporter process <input.top> --json
+  pockettopo-exporter export <input.top> --format svx --output <new-directory>
   pockettopo-exporter export <input.top> --format srv --output <new-directory>
   pockettopo-exporter export <input.top> --format dxf3d --output <new-directory> [--template-directory <dir>] [--close-loops]
   pockettopo-exporter export <input.top> --format text --output <new-directory>
@@ -33,6 +34,9 @@ func Run(args []string, stdout, stderr io.Writer) int {
 		return runContext(args, stdout, stderr)
 	}
 	if len(args) > 0 && args[0] == "export" {
+		if len(args) >= 4 && args[2] == "--format" && args[3] == "svx" {
+			return runSVX(args, stdout, stderr)
+		}
 		if len(args) >= 4 && args[2] == "--format" && args[3] == "srv" {
 			return runWalls(args, stdout, stderr)
 		}
