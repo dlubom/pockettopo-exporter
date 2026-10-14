@@ -16,6 +16,7 @@ $explorerWindow = $null
 $ownedProcesses = [Collections.Generic.List[int]]::new()
 $script:currentCase = 'setup'
 $script:currentInputFile = ''
+$hiddenPrivacyWindows = [Collections.Generic.List[System.IntPtr]]::new()
 
 Add-Type @'
 using System;
@@ -29,6 +30,10 @@ public static class ExplorerMenuProbe {
  [DllImport("user32.dll", CharSet=CharSet.Unicode)] static extern int GetClassName(IntPtr h, StringBuilder b, int n);
  [DllImport("user32.dll", CharSet=CharSet.Unicode)] static extern int GetWindowText(IntPtr h, StringBuilder b, int n);
  [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
+ [DllImport("user32.dll")] static extern bool IsWindow(IntPtr h);
+ [DllImport("user32.dll")] static extern bool IsIconic(IntPtr h);
+ [DllImport("user32.dll")] static extern IntPtr GetShellWindow();
+ [DllImport("user32.dll", SetLastError=true)] static extern bool ShowWindowAsync(IntPtr h,int command);
  [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
  [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
  [DllImport("user32.dll")] public static extern int GetSystemMetrics(int index);
@@ -39,6 +44,10 @@ public static class ExplorerMenuProbe {
  [DllImport("user32.dll", CharSet=CharSet.Unicode)] static extern int GetMenuString(IntPtr h, uint item, StringBuilder b, int n, uint flags);
  [DllImport("user32.dll")] public static extern IntPtr GetSubMenu(IntPtr h, int item);
  [StructLayout(LayoutKind.Sequential)] public struct Rect { public int left,top,right,bottom; }
+ [StructLayout(LayoutKind.Sequential)] struct Point {public int x,y;public Point(int a,int b){x=a;y=b;}}
+ [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(Point point);
+ [DllImport("user32.dll")] static extern bool GetCursorPos(out Point point);
+ [DllImport("user32.dll", SetLastError=true)] static extern IntPtr SetThreadDpiAwarenessContext(IntPtr context);
  [DllImport("user32.dll")] static extern bool GetMenuItemRect(IntPtr window, IntPtr menu, uint item, out Rect r);
  [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
  [DllImport("user32.dll")] static extern void mouse_event(uint flags,uint x,uint y,uint data,UIntPtr extra);
@@ -46,6 +55,12 @@ public static class ExplorerMenuProbe {
  public static string Class(IntPtr h) {var b=new StringBuilder(256);GetClassName(h,b,b.Capacity);return b.ToString();}
  public static string WindowDescription(IntPtr h) {uint pid;uint tid=GetWindowThreadProcessId(h,out pid);var b=new StringBuilder(2048);GetWindowText(h,b,b.Capacity);return "hwnd="+h.ToInt64()+" class="+Class(h)+" pid="+pid+" tid="+tid+" visible="+IsWindowVisible(h)+" title="+b.ToString();}
  public static string[] VisibleWindows() {var a=new List<string>();EnumWindows((h,x)=>{if(IsWindowVisible(h))a.Add(WindowDescription(h));return true;},IntPtr.Zero);return a.ToArray();}
+ static bool IsDesktopPrivacyWindow(IntPtr h) {uint shellOwner,owner;GetWindowThreadProcessId(GetShellWindow(),out shellOwner);GetWindowThreadProcessId(h,out owner);return shellOwner!=0&&owner==shellOwner&&Class(h)=="Shell_OOBEProxy";}
+ public static IntPtr[] VisiblePrivacyWindows() {var a=new List<IntPtr>();EnumWindows((h,x)=>{if(IsDesktopPrivacyWindow(h)&&IsWindowVisible(h)&&!IsIconic(h))a.Add(h);return true;},IntPtr.Zero);return a.ToArray();}
+ public static void HidePrivacyWindow(IntPtr h) {if(!IsDesktopPrivacyWindow(h))throw new Exception("Refusing to hide any window other than current desktop Explorer Shell_OOBEProxy");if(!ShowWindowAsync(h,0))throw new Exception("Cannot hide disposable-runner privacy overlay: "+Marshal.GetLastWin32Error());}
+ public static void RestorePrivacyWindow(IntPtr h) {if(!IsWindow(h))return;if(!IsDesktopPrivacyWindow(h))throw new Exception("Privacy overlay handle changed; refusing to show a foreign window");if(!ShowWindowAsync(h,8))throw new Exception("Cannot restore disposable-runner privacy overlay visibility: "+Marshal.GetLastWin32Error());}
+ public static bool PrivacyWindowsRestored(IntPtr[] windows) {foreach(var h in windows){if(IsWindow(h)&&(!IsDesktopPrivacyWindow(h)||!IsWindowVisible(h)))return false;}return true;}
+ public static string CursorDescription() {Point point;if(!GetCursorPos(out point))return "Cursor unavailable";return "x="+point.x+" y="+point.y+" hit="+WindowDescription(WindowFromPoint(point));}
  public static string[] ChildWindows(IntPtr parent) {var a=new List<string>();EnumChildWindows(parent,(h,x)=>{a.Add(WindowDescription(h));return a.Count<512;},IntPtr.Zero);return a.ToArray();}
  public static IntPtr FileView(IntPtr explorer) {IntPtr view=IntPtr.Zero;EnumChildWindows(explorer,(h,x)=>{if(IsWindowVisible(h)&&Class(h)=="SHELLDLL_DefView"){view=h;return false;}return true;},IntPtr.Zero);if(view==IntPtr.Zero)throw new Exception("No visible native Explorer file view (SHELLDLL_DefView)");return view;}
  [StructLayout(LayoutKind.Sequential)] struct GuiInfo {public uint size,flags;public IntPtr active,focus,capture,menuOwner,moveSize,caret;public Rect caretRect;}
@@ -71,7 +86,20 @@ public static class ExplorerMenuProbe {
   keybd_event(0x57,0,0,UIntPtr.Zero);keybd_event(0x57,0,2,UIntPtr.Zero);
  }
  public static string MenuText(IntPtr menu,int item) {var b=new StringBuilder(2048);GetMenuString(menu,(uint)item,b,b.Capacity,0x400);return b.ToString().Replace("&","");}
- public static void Hover(IntPtr menu,int item,bool click) {Rect r;if(!GetMenuItemRect(IntPtr.Zero,menu,(uint)item,out r))throw new Exception("Cannot locate actual popup item");if(!SetCursorPos((r.left+r.right)/2,(r.top+r.bottom)/2))throw new Exception("Cannot move pointer on interactive desktop");if(click){mouse_event(2,0,0,0,UIntPtr.Zero);mouse_event(4,0,0,0,UIntPtr.Zero);}}
+ public static string Hover(IntPtr popup,IntPtr menu,int item,bool click) {
+  IntPtr previous=SetThreadDpiAwarenessContext(new IntPtr(-4));
+  if(previous==IntPtr.Zero)throw new Exception("Cannot use physical screen coordinates for menu pointer: "+Marshal.GetLastWin32Error());
+  try {
+   Rect r;if(!GetMenuItemRect(IntPtr.Zero,menu,(uint)item,out r))throw new Exception("Cannot locate actual popup item");
+   var point=new Point((r.left+r.right)/2,(r.top+r.bottom)/2);
+   if(!SetCursorPos(point.x,point.y))throw new Exception("Cannot move pointer on interactive desktop");
+   IntPtr hit=WindowFromPoint(point);
+   string evidence="item="+item+" rect="+r.left+","+r.top+","+r.right+","+r.bottom+" target="+point.x+","+point.y+" | "+CursorDescription();
+   if(hit!=popup)throw new Exception("Actual popup is covered at its menu item; "+evidence+" expected="+WindowDescription(popup));
+   if(click){mouse_event(2,0,0,0,UIntPtr.Zero);mouse_event(4,0,0,0,UIntPtr.Zero);}
+   return evidence;
+  } finally {SetThreadDpiAwarenessContext(previous);}
+ }
  [DllImport("kernel32.dll")] static extern bool FreeConsole();
  [DllImport("kernel32.dll")] static extern bool AttachConsole(uint pid);
  [DllImport("kernel32.dll", CharSet=CharSet.Unicode, SetLastError=true)] static extern IntPtr CreateFile(string name,uint access,uint share,IntPtr sec,uint mode,uint flags,IntPtr template);
@@ -167,7 +195,7 @@ function Get-ExplorerSelection {
 }
 
 function Save-ExplorerState([string]$Name) {
-    $state=[ordered]@{utc=[DateTime]::UtcNow.ToString('o');expected_input=$script:currentInputFile;session_id=(Get-Process -Id $PID).SessionId;pwsh_sid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value;user_interactive=[Environment]::UserInteractive;desktop=[ExplorerMenuProbe]::DesktopDescription();foreground=[ExplorerMenuProbe]::WindowDescription([ExplorerMenuProbe]::GetForegroundWindow());visible_windows=@([ExplorerMenuProbe]::VisibleWindows());popups=@();diagnostic_errors=@()}
+    $state=[ordered]@{utc=[DateTime]::UtcNow.ToString('o');expected_input=$script:currentInputFile;session_id=(Get-Process -Id $PID).SessionId;pwsh_sid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value;user_interactive=[Environment]::UserInteractive;desktop=[ExplorerMenuProbe]::DesktopDescription();foreground=[ExplorerMenuProbe]::WindowDescription([ExplorerMenuProbe]::GetForegroundWindow());cursor=[ExplorerMenuProbe]::CursorDescription();visible_windows=@([ExplorerMenuProbe]::VisibleWindows());popups=@();diagnostic_errors=@()}
     if ($null -ne $script:explorerWindow) {
         $window=[IntPtr]$script:explorerWindow.HWND
         [uint32]$ownerId=0
@@ -212,6 +240,37 @@ function Save-ExplorerState([string]$Name) {
         if ($null -ne $bitmap) { $bitmap.Dispose() }
     }
     [IO.File]::WriteAllText((Join-Path $Output "$Name.state.json"),($state | ConvertTo-Json -Depth 20),[Text.Encoding]::UTF8)
+}
+
+function Prepare-HostedRunnerDesktop {
+    $overlays=@([ExplorerMenuProbe]::VisiblePrivacyWindows())
+    $script:evidence.runner_desktop_preparation=@{applied=$false;overlay_count=$overlays.Count;visibility_restored=$false}
+    if ($overlays.Count -eq 0) { return }
+    Save-ExplorerState 'runner-privacy.before'
+    # This is isolated hosted-runner preparation, never an installer action.
+    # Temporarily hide only the known first-login overlay; do not accept privacy
+    # choices, modify policies, close applications or terminate shell processes.
+    if ($env:GITHUB_ACTIONS -ne 'true' -or $env:RUNNER_ENVIRONMENT -ne 'github-hosted') {
+        throw 'First-login privacy overlay blocks actual Explorer UI; automatic preparation is restricted to GitHub-hosted disposable runners'
+    }
+    $currentSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+    $currentSession=(Get-Process -Id $PID).SessionId
+    foreach ($window in $overlays) {
+        [uint32]$ownerId=0
+        $null=[ExplorerMenuProbe]::GetWindowThreadProcessId($window,[ref]$ownerId)
+        $owner=Get-Process -Id $ownerId
+        if ($owner.ProcessName -ne 'explorer' -or $owner.SessionId -ne $currentSession -or
+            (Get-ProcessOwnerSid ([int]$ownerId)) -ne $currentSid) {
+            throw 'Refusing preparation of a privacy overlay outside the current hosted-runner desktop identity'
+        }
+        $script:hiddenPrivacyWindows.Add($window)
+        [ExplorerMenuProbe]::HidePrivacyWindow($window)
+    }
+    $deadline=[DateTime]::UtcNow.AddSeconds(10)
+    while ([DateTime]::UtcNow -lt $deadline -and @([ExplorerMenuProbe]::VisiblePrivacyWindows()).Count -gt 0) { Start-Sleep -Milliseconds 100 }
+    Save-ExplorerState 'runner-privacy.after'
+    if (@([ExplorerMenuProbe]::VisiblePrivacyWindows()).Count -gt 0) { throw 'Hosted-runner privacy overlay remains visible; actual Explorer UI acceptance is blocked' }
+    $script:evidence.runner_desktop_preparation.applied=$true
 }
 
 function Invoke-CLI([string[]]$Arguments, [string]$Name, [int]$Expected=0) {
@@ -321,7 +380,8 @@ function Invoke-ExplorerExport([string]$InputFile,[string]$Name,[string]$Expecte
         if (@([ExplorerMenuProbe]::VisibleMenus()).Count -eq 0) { throw 'Explorer produced no visible native classic popup; diagnostic state and screenshot were captured' }
         throw "PocketTopo Exporter absent from actual Explorer classic popup; all popup labels captured"
     }
-    [ExplorerMenuProbe]::Hover($root.menu,$root.index,$false)
+    $hoverEvidence=[ExplorerMenuProbe]::Hover($root.window,$root.menu,$root.index,$false)
+    [IO.File]::WriteAllText((Join-Path $Output "$Name.hover.txt"),$hoverEvidence,[Text.Encoding]::UTF8)
     $deadline=[DateTime]::UtcNow.AddSeconds(10)
     $action=$null
     while ([DateTime]::UtcNow -lt $deadline -and $null -eq $action) { $action=Find-PopupItem 'Export as Text'; Start-Sleep -Milliseconds 100 }
@@ -333,7 +393,8 @@ function Invoke-ExplorerExport([string]$InputFile,[string]$Name,[string]$Expecte
     if (@(Compare-Object $expected $labels).Count -ne 0 -or $labels.Count -ne 9) { throw "Actual Explorer submenu differs from all nine required entries: $labels" }
     $script:evidence.menu_entries=$labels
     [IO.File]::WriteAllText((Join-Path $Output "$Name.menu.txt"),($labels -join "`n"),[Text.Encoding]::UTF8)
-    [ExplorerMenuProbe]::Hover($action.menu,$action.index,$true)
+    $clickEvidence=[ExplorerMenuProbe]::Hover($action.window,$action.menu,$action.index,$true)
+    [IO.File]::WriteAllText((Join-Path $Output "$Name.click.txt"),$clickEvidence,[Text.Encoding]::UTF8)
     $process=$null
     $deadline=[DateTime]::UtcNow.AddSeconds(15)
     while ([DateTime]::UtcNow -lt $deadline -and $null -eq $process) {
@@ -423,6 +484,7 @@ try {
     $key=[Microsoft.Win32.Registry]::CurrentUser.OpenSubKey($menuKey)
     if ($null -eq $key -or $key.GetValue('PocketTopoExporterExecutable') -ne $script:portableBinary -or $key.GetValueKind('Icon') -ne [Microsoft.Win32.RegistryValueKind]::String) { throw "Registry identity/string readback failed" }
     $key.Dispose()
+    Prepare-HostedRunnerDesktop
     $script:explorerWindow=Open-ExplorerFolder $sourceDirectory
     $evidence.explorer_session=$true
     Invoke-ExplorerExport $inputFile 'first-export' $base $false
@@ -462,8 +524,47 @@ try {
     try { Save-ExplorerState "$script:currentCase.failure" } catch { $evidence.diagnostic_failure=$_.Exception.Message }
     throw
 } finally {
-    foreach ($processId in $ownedProcesses) { $p=Get-Process -Id $processId -ErrorAction SilentlyContinue; if ($null -ne $p -and !$p.HasExited) { Stop-Process -Id $processId -Force } }
-    if ($null -ne $explorerWindow) { $explorerWindow.Quit() }
-    if ($installed) { try { Invoke-CLI @('windows-menu','uninstall') 'cleanup-uninstall' } catch { $evidence.cleanup_failure=$_.Exception.Message } }
+    $cleanupFailures=[Collections.Generic.List[string]]::new()
+    $restoreFailures=[Collections.Generic.List[string]]::new()
+    try {
+        foreach ($processId in $ownedProcesses) {
+            try {
+                $p=Get-Process -Id $processId -ErrorAction SilentlyContinue
+                if ($null -ne $p -and !$p.HasExited) { Stop-Process -Id $processId -Force }
+            } catch { $cleanupFailures.Add("Owned process ${processId}: $($_.Exception.Message)") }
+        }
+        if ($null -ne $explorerWindow) {
+            try { $explorerWindow.Quit() }
+            catch { $cleanupFailures.Add("Owned Explorer window: $($_.Exception.Message)") }
+            finally { $script:explorerWindow=$null }
+        }
+        if ($installed) {
+            try { Invoke-CLI @('windows-menu','uninstall') 'cleanup-uninstall' }
+            catch { $cleanupFailures.Add("Menu uninstall: $($_.Exception.Message)") }
+        }
+    } finally {
+        # Always attempt every tracked overlay, even if an unrelated cleanup or
+        # another window's restoration fails. An asynchronous show request is
+        # insufficient: verify visibility before claiming restoration.
+        foreach ($window in $hiddenPrivacyWindows) {
+            try { [ExplorerMenuProbe]::RestorePrivacyWindow($window) }
+            catch { $restoreFailures.Add("Overlay $($window.ToInt64()): $($_.Exception.Message)") }
+        }
+        if ($hiddenPrivacyWindows.Count -gt 0) {
+            try {
+                $deadline=[DateTime]::UtcNow.AddSeconds(10)
+                while ([DateTime]::UtcNow -lt $deadline -and ![ExplorerMenuProbe]::PrivacyWindowsRestored($hiddenPrivacyWindows.ToArray())) { Start-Sleep -Milliseconds 100 }
+                if (![ExplorerMenuProbe]::PrivacyWindowsRestored($hiddenPrivacyWindows.ToArray())) { throw 'Original privacy-overlay windows did not regain their visibility' }
+                if ($restoreFailures.Count -eq 0) { $evidence.runner_desktop_preparation.visibility_restored=$true }
+                Save-ExplorerState 'runner-privacy.restored'
+            } catch { $restoreFailures.Add($_.Exception.Message) }
+        }
+    }
+    if ($cleanupFailures.Count -gt 0 -or $restoreFailures.Count -gt 0) {
+        $evidence.cleanup_failures=$cleanupFailures.ToArray()
+        $evidence.runner_desktop_restore_failures=$restoreFailures.ToArray()
+        $evidence.validation_ok=$false
+    }
     [IO.File]::WriteAllText((Join-Path $Output 'report.json'),($evidence | ConvertTo-Json -Depth 8),[Text.Encoding]::UTF8)
+    if ($cleanupFailures.Count -gt 0 -or $restoreFailures.Count -gt 0) { throw 'Windows menu validation cleanup failed; see report.json for every recorded failure' }
 }
