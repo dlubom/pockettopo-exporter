@@ -17,6 +17,7 @@ $ownedProcesses = [Collections.Generic.List[int]]::new()
 $script:currentCase = 'setup'
 $script:currentInputFile = ''
 $hiddenPrivacyWindows = [Collections.Generic.List[System.IntPtr]]::new()
+$hiddenPrivacyCoreWindows = [Collections.Generic.List[object]]::new()
 
 Add-Type @'
 using System;
@@ -33,6 +34,9 @@ public static class ExplorerMenuProbe {
  [DllImport("user32.dll")] static extern bool IsWindow(IntPtr h);
  [DllImport("user32.dll")] static extern bool IsIconic(IntPtr h);
  [DllImport("user32.dll")] static extern IntPtr GetShellWindow();
+ [DllImport("user32.dll")] static extern IntPtr GetAncestor(IntPtr h,uint flags);
+ [DllImport("user32.dll")] static extern IntPtr GetWindow(IntPtr h,uint command);
+ [DllImport("user32.dll")] static extern IntPtr GetParent(IntPtr h);
  [DllImport("user32.dll", SetLastError=true)] static extern bool ShowWindowAsync(IntPtr h,int command);
  [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
  [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
@@ -54,12 +58,19 @@ public static class ExplorerMenuProbe {
  [DllImport("user32.dll")] static extern void keybd_event(byte key,byte scan,uint flags,UIntPtr extra);
  public static string Class(IntPtr h) {var b=new StringBuilder(256);GetClassName(h,b,b.Capacity);return b.ToString();}
  public static string WindowDescription(IntPtr h) {uint pid;uint tid=GetWindowThreadProcessId(h,out pid);var b=new StringBuilder(2048);GetWindowText(h,b,b.Capacity);return "hwnd="+h.ToInt64()+" class="+Class(h)+" pid="+pid+" tid="+tid+" visible="+IsWindowVisible(h)+" title="+b.ToString();}
+ public static string WindowRelations(IntPtr h) {return "parent="+WindowDescription(GetParent(h))+" | owner="+WindowDescription(GetWindow(h,4))+" | root="+WindowDescription(GetAncestor(h,2))+" | root_owner="+WindowDescription(GetAncestor(h,3));}
  public static string[] VisibleWindows() {var a=new List<string>();EnumWindows((h,x)=>{if(IsWindowVisible(h))a.Add(WindowDescription(h));return true;},IntPtr.Zero);return a.ToArray();}
  static bool IsDesktopPrivacyWindow(IntPtr h) {uint shellOwner,owner;GetWindowThreadProcessId(GetShellWindow(),out shellOwner);GetWindowThreadProcessId(h,out owner);return shellOwner!=0&&owner==shellOwner&&Class(h)=="Shell_OOBEProxy";}
  public static IntPtr[] VisiblePrivacyWindows() {var a=new List<IntPtr>();EnumWindows((h,x)=>{if(IsDesktopPrivacyWindow(h)&&IsWindowVisible(h)&&!IsIconic(h))a.Add(h);return true;},IntPtr.Zero);return a.ToArray();}
  public static void HidePrivacyWindow(IntPtr h) {if(!IsDesktopPrivacyWindow(h))throw new Exception("Refusing to hide any window other than current desktop Explorer Shell_OOBEProxy");if(!ShowWindowAsync(h,0))throw new Exception("Cannot hide disposable-runner privacy overlay: "+Marshal.GetLastWin32Error());}
  public static void RestorePrivacyWindow(IntPtr h) {if(!IsWindow(h))return;if(!IsDesktopPrivacyWindow(h))throw new Exception("Privacy overlay handle changed; refusing to show a foreign window");if(!ShowWindowAsync(h,8))throw new Exception("Cannot restore disposable-runner privacy overlay visibility: "+Marshal.GetLastWin32Error());}
  public static bool PrivacyWindowsRestored(IntPtr[] windows) {foreach(var h in windows){if(IsWindow(h)&&(!IsDesktopPrivacyWindow(h)||!IsWindowVisible(h)))return false;}return true;}
+ static bool IsPrivacyCoreWindow(IntPtr h,uint expectedOwner) {uint owner;GetWindowThreadProcessId(h,out owner);var text=new StringBuilder(256);GetWindowText(h,text,text.Capacity);return owner==expectedOwner&&Class(h)=="Windows.UI.Core.CoreWindow"&&text.ToString()=="Microsoft account";}
+ public static IntPtr ForegroundPrivacyCoreWindow() {IntPtr h=GetForegroundWindow();uint owner;GetWindowThreadProcessId(h,out owner);return IsWindowVisible(h)&&IsPrivacyCoreWindow(h,owner)?h:IntPtr.Zero;}
+ public static void HidePrivacyCoreWindow(IntPtr h,uint owner) {if(!IsPrivacyCoreWindow(h,owner))throw new Exception("Verified privacy CoreWindow identity changed before hide");if(!ShowWindowAsync(h,0))throw new Exception("Cannot hide verified disposable-runner privacy CoreWindow: "+Marshal.GetLastWin32Error());}
+ public static void RestorePrivacyCoreWindow(IntPtr h,uint owner) {if(!IsWindow(h))return;if(!IsPrivacyCoreWindow(h,owner))throw new Exception("Privacy CoreWindow identity changed; refusing to show a foreign window");if(!ShowWindowAsync(h,8))throw new Exception("Cannot restore verified disposable-runner privacy CoreWindow: "+Marshal.GetLastWin32Error());}
+ public static bool PrivacyCoreWindowHidden(IntPtr h,uint owner) {return !IsWindow(h)||(IsPrivacyCoreWindow(h,owner)&&!IsWindowVisible(h));}
+ public static bool PrivacyCoreWindowRestored(IntPtr h,uint owner) {return !IsWindow(h)||(IsPrivacyCoreWindow(h,owner)&&IsWindowVisible(h));}
  public static string CursorDescription() {Point point;if(!GetCursorPos(out point))return "Cursor unavailable";return "x="+point.x+" y="+point.y+" hit="+WindowDescription(WindowFromPoint(point));}
  public static string[] ChildWindows(IntPtr parent) {var a=new List<string>();EnumChildWindows(parent,(h,x)=>{a.Add(WindowDescription(h));return a.Count<512;},IntPtr.Zero);return a.ToArray();}
  public static IntPtr FileView(IntPtr explorer) {IntPtr view=IntPtr.Zero;EnumChildWindows(explorer,(h,x)=>{if(IsWindowVisible(h)&&Class(h)=="SHELLDLL_DefView"){view=h;return false;}return true;},IntPtr.Zero);if(view==IntPtr.Zero)throw new Exception("No visible native Explorer file view (SHELLDLL_DefView)");return view;}
@@ -107,6 +118,12 @@ public static class ExplorerMenuProbe {
  [DllImport("kernel32.dll", SetLastError=true)] static extern IntPtr OpenProcess(uint access,bool inherit,uint pid);
  [DllImport("kernel32.dll", SetLastError=true)] static extern uint WaitForSingleObject(IntPtr h,uint milliseconds);
  [DllImport("kernel32.dll", SetLastError=true)] static extern bool GetExitCodeProcess(IntPtr h,out uint code);
+ [DllImport("kernel32.dll", CharSet=CharSet.Unicode, ExactSpelling=true)] static extern int GetPackageFamilyName(IntPtr process,ref uint length,StringBuilder name);
+ [DllImport("kernel32.dll", CharSet=CharSet.Unicode, ExactSpelling=true)] static extern int GetApplicationUserModelId(IntPtr process,ref uint length,StringBuilder name);
+ delegate int PackageQuery(IntPtr process,ref uint length,StringBuilder name);
+ static string QueryPackageString(IntPtr process,PackageQuery query) {uint length=0;int code=query(process,ref length,null);if(code!=122)return "unavailable: native code "+code;if(length==0||length>4096)throw new Exception("Unexpected packaged process identity length");var name=new StringBuilder((int)length);code=query(process,ref length,name);return code==0?name.ToString():"unavailable: native code "+code;}
+ public static string ProcessPackageFamily(IntPtr process) {return QueryPackageString(process,GetPackageFamilyName);}
+ public static string ProcessApplicationId(IntPtr process) {return QueryPackageString(process,GetApplicationUserModelId);}
  public static IntPtr PinProcess(uint pid) {var handle=OpenProcess(0x00101000,false,pid);if(handle==IntPtr.Zero)throw new Exception("Cannot retain launched process handle: "+Marshal.GetLastWin32Error());return handle;}
  public static uint ProcessExitCode(IntPtr handle) {uint code;if(!GetExitCodeProcess(handle,out code))throw new Exception("Cannot read native process exit code: "+Marshal.GetLastWin32Error());return code;}
  public static void ReleaseProcess(IntPtr handle) {CloseHandle(handle);}
@@ -255,6 +272,35 @@ function Prepare-HostedRunnerDesktop {
     }
     $currentSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value
     $currentSession=(Get-Process -Id $PID).SessionId
+    # EnumWindows deliberately omits some packaged-app windows. The actual
+    # foreground privacy CoreWindow can therefore survive hiding its shell
+    # proxy. Prove the exact Windows package and desktop identity before touching
+    # it; a Microsoft account title or CoreWindow class alone is insufficient.
+    $coreWindow=[ExplorerMenuProbe]::ForegroundPrivacyCoreWindow()
+    if ($coreWindow -ne [IntPtr]::Zero) {
+        [uint32]$coreOwner=0
+        $null=[ExplorerMenuProbe]::GetWindowThreadProcessId($coreWindow,[ref]$coreOwner)
+        $coreHandle=[ExplorerMenuProbe]::PinProcess($coreOwner)
+        $keepHandle=$false
+        try {
+            $nativeProcess=Get-CimInstance Win32_Process -Filter "ProcessId=$coreOwner"
+            if ($null -eq $nativeProcess) { throw 'Privacy CoreWindow process disappeared before identity verification' }
+            $packageFamily=[ExplorerMenuProbe]::ProcessPackageFamily($coreHandle)
+            $applicationId=[ExplorerMenuProbe]::ProcessApplicationId($coreHandle)
+            $coreSid=Get-ProcessOwnerSid ([int]$coreOwner)
+            $coreIdentity=[ordered]@{window=[ExplorerMenuProbe]::WindowDescription($coreWindow);relations=[ExplorerMenuProbe]::WindowRelations($coreWindow);process_id=$coreOwner;process_name=$nativeProcess.Name;executable_path=$nativeProcess.ExecutablePath;parent_process_id=$nativeProcess.ParentProcessId;session_id=$nativeProcess.SessionId;sid=$coreSid;package_family=$packageFamily;application_user_model_id=$applicationId;contemporaneous_desktop_privacy_proxies=@($overlays | ForEach-Object { [ExplorerMenuProbe]::WindowDescription($_) })}
+            [IO.File]::WriteAllText((Join-Path $Output 'runner-privacy.core-identity.json'),($coreIdentity | ConvertTo-Json -Depth 8),[Text.Encoding]::UTF8)
+            if ($packageFamily -ne 'Microsoft.Windows.CloudExperienceHost_cw5n1h2txyewy' -or
+                $nativeProcess.SessionId -ne $currentSession -or $coreSid -ne $currentSid) {
+                throw "Refusing privacy CoreWindow without exact CloudExperienceHost package and current desktop identity: $packageFamily"
+            }
+            $script:hiddenPrivacyCoreWindows.Add(@{window=$coreWindow;owner=$coreOwner;process_handle=$coreHandle})
+            $keepHandle=$true
+            $script:evidence.runner_desktop_preparation.core_identity=$coreIdentity
+        } finally {
+            if (!$keepHandle) { [ExplorerMenuProbe]::ReleaseProcess($coreHandle) }
+        }
+    }
     foreach ($window in $overlays) {
         [uint32]$ownerId=0
         $null=[ExplorerMenuProbe]::GetWindowThreadProcessId($window,[ref]$ownerId)
@@ -265,6 +311,12 @@ function Prepare-HostedRunnerDesktop {
         }
         $script:hiddenPrivacyWindows.Add($window)
         [ExplorerMenuProbe]::HidePrivacyWindow($window)
+    }
+    foreach ($entry in $hiddenPrivacyCoreWindows) {
+        [ExplorerMenuProbe]::HidePrivacyCoreWindow($entry.window,$entry.owner)
+        $deadline=[DateTime]::UtcNow.AddSeconds(10)
+        while ([DateTime]::UtcNow -lt $deadline -and ![ExplorerMenuProbe]::PrivacyCoreWindowHidden($entry.window,$entry.owner)) { Start-Sleep -Milliseconds 100 }
+        if (![ExplorerMenuProbe]::PrivacyCoreWindowHidden($entry.window,$entry.owner)) { throw 'Verified CloudExperienceHost CoreWindow remains visible; actual Explorer UI acceptance is blocked' }
     }
     $deadline=[DateTime]::UtcNow.AddSeconds(10)
     while ([DateTime]::UtcNow -lt $deadline -and @([ExplorerMenuProbe]::VisiblePrivacyWindows()).Count -gt 0) { Start-Sleep -Milliseconds 100 }
@@ -550,7 +602,16 @@ try {
             try { [ExplorerMenuProbe]::RestorePrivacyWindow($window) }
             catch { $restoreFailures.Add("Overlay $($window.ToInt64()): $($_.Exception.Message)") }
         }
-        if ($hiddenPrivacyWindows.Count -gt 0) {
+        foreach ($entry in $hiddenPrivacyCoreWindows) {
+            try {
+                [ExplorerMenuProbe]::RestorePrivacyCoreWindow($entry.window,$entry.owner)
+                $deadline=[DateTime]::UtcNow.AddSeconds(10)
+                while ([DateTime]::UtcNow -lt $deadline -and ![ExplorerMenuProbe]::PrivacyCoreWindowRestored($entry.window,$entry.owner)) { Start-Sleep -Milliseconds 100 }
+                if (![ExplorerMenuProbe]::PrivacyCoreWindowRestored($entry.window,$entry.owner)) { throw 'Verified privacy CoreWindow did not regain its visibility' }
+            } catch { $restoreFailures.Add("Core overlay $($entry.window.ToInt64()): $($_.Exception.Message)") }
+            finally { [ExplorerMenuProbe]::ReleaseProcess($entry.process_handle) }
+        }
+        if ($hiddenPrivacyWindows.Count -gt 0 -or $hiddenPrivacyCoreWindows.Count -gt 0) {
             try {
                 $deadline=[DateTime]::UtcNow.AddSeconds(10)
                 while ([DateTime]::UtcNow -lt $deadline -and ![ExplorerMenuProbe]::PrivacyWindowsRestored($hiddenPrivacyWindows.ToArray())) { Start-Sleep -Milliseconds 100 }
