@@ -76,6 +76,12 @@ public static class ExplorerMenuProbe {
  [DllImport("kernel32.dll")] static extern bool AttachConsole(uint pid);
  [DllImport("kernel32.dll", CharSet=CharSet.Unicode, SetLastError=true)] static extern IntPtr CreateFile(string name,uint access,uint share,IntPtr sec,uint mode,uint flags,IntPtr template);
  [DllImport("kernel32.dll")] static extern bool CloseHandle(IntPtr h);
+ [DllImport("kernel32.dll", SetLastError=true)] static extern IntPtr OpenProcess(uint access,bool inherit,uint pid);
+ [DllImport("kernel32.dll", SetLastError=true)] static extern uint WaitForSingleObject(IntPtr h,uint milliseconds);
+ [DllImport("kernel32.dll", SetLastError=true)] static extern bool GetExitCodeProcess(IntPtr h,out uint code);
+ public static IntPtr PinProcess(uint pid) {var handle=OpenProcess(0x00101000,false,pid);if(handle==IntPtr.Zero)throw new Exception("Cannot retain launched process handle: "+Marshal.GetLastWin32Error());return handle;}
+ public static uint ProcessExitCode(IntPtr handle) {uint code;if(!GetExitCodeProcess(handle,out code))throw new Exception("Cannot read native process exit code: "+Marshal.GetLastWin32Error());return code;}
+ public static void ReleaseProcess(IntPtr handle) {CloseHandle(handle);}
  [StructLayout(LayoutKind.Sequential)] struct Coord {public short x,y; public Coord(short a,short b){x=a;y=b;}}
  [StructLayout(LayoutKind.Sequential)] struct ConsoleInfo {public Coord size,cursor;public ushort attributes;public short left,top,right,bottom;public Coord maximum;}
  [DllImport("kernel32.dll")] static extern bool GetConsoleScreenBufferInfo(IntPtr h,out ConsoleInfo info);
@@ -84,17 +90,33 @@ public static class ExplorerMenuProbe {
   [FieldOffset(0)] public ushort type; [FieldOffset(4)] public int down; [FieldOffset(8)] public ushort repeat; [FieldOffset(10)] public ushort key; [FieldOffset(12)] public ushort scan; [FieldOffset(14)] public char character; [FieldOffset(16)] public uint control;
  }
  [DllImport("kernel32.dll", CharSet=CharSet.Unicode)] static extern bool WriteConsoleInput(IntPtr h,InputRecord[] inputs,uint n,out uint written);
+ static string ReadConsoleBuffer(IntPtr output) {ConsoleInfo info;if(!GetConsoleScreenBufferInfo(output,out info))throw new Exception("No readable native console buffer");uint n=(uint)(info.size.x*(info.cursor.y+1));if(n>1000000)throw new Exception("Unexpected console output size");var b=new StringBuilder((int)n);uint read;if(!ReadConsoleOutputCharacter(output,b,n,new Coord(0,0),out read))throw new Exception("Cannot read visible console status");return b.ToString();}
+ static void EnterConsole(IntPtr input) {var records=new InputRecord[]{new InputRecord{type=1,down=1,repeat=1,key=13,character='\r'},new InputRecord{type=1,down=0,repeat=1,key=13,character='\r'}};uint written;if(!WriteConsoleInput(input,records,2,out written)||written!=2)throw new Exception("Cannot deliver Enter to native console");}
+ public class ExitObservation {public uint WaitResult {get;set;}public uint ExitCode {get;set;}public string ConsoleAfterEnter {get;set;}}
+ public static ExitObservation EnterAndObserveExit(uint pid,IntPtr process,uint milliseconds) {
+  FreeConsole();
+  if(!AttachConsole(pid)){AttachConsole(0xffffffff);throw new Exception("Cannot attach to Explorer-launched console before Enter");}
+  IntPtr output=IntPtr.Zero,input=IntPtr.Zero;
+  try {
+   output=CreateFile("CONOUT$",0x80000000,3,IntPtr.Zero,3,0,IntPtr.Zero);
+   input=CreateFile("CONIN$",0x40000000,3,IntPtr.Zero,3,0,IntPtr.Zero);
+   EnterConsole(input);
+   uint wait=WaitForSingleObject(process,milliseconds);
+   if(wait==0xffffffff)throw new Exception("Native process wait failed: "+Marshal.GetLastWin32Error());
+   // This probe remains attached until after the process ends, preserving the
+   // console buffer so any final input/read failure stays available as evidence.
+   return new ExitObservation{WaitResult=wait,ExitCode=ProcessExitCode(process),ConsoleAfterEnter=ReadConsoleBuffer(output)};
+  } finally {if(output!=IntPtr.Zero)CloseHandle(output);if(input!=IntPtr.Zero)CloseHandle(input);FreeConsole();AttachConsole(0xffffffff);}
+ }
  public static string ConsoleText(uint pid,bool enter) {
   FreeConsole();
   if(!AttachConsole(pid)){AttachConsole(0xffffffff);throw new Exception("Cannot attach to Explorer-launched console");}
   IntPtr output=IntPtr.Zero,input=IntPtr.Zero;
   try {
    output=CreateFile("CONOUT$",0x80000000,3,IntPtr.Zero,3,0,IntPtr.Zero);
-   ConsoleInfo info;if(!GetConsoleScreenBufferInfo(output,out info))throw new Exception("No readable native console buffer");
-   uint n=(uint)(info.size.x*(info.cursor.y+1));if(n>1000000)throw new Exception("Unexpected console output size");
-   var b=new StringBuilder((int)n);uint read;if(!ReadConsoleOutputCharacter(output,b,n,new Coord(0,0),out read))throw new Exception("Cannot read visible console status");
-   if(enter){input=CreateFile("CONIN$",0x40000000,3,IntPtr.Zero,3,0,IntPtr.Zero);var records=new InputRecord[]{new InputRecord{type=1,down=1,repeat=1,key=13,character='\r'},new InputRecord{type=1,down=0,repeat=1,key=13,character='\r'}};uint written;if(!WriteConsoleInput(input,records,2,out written)||written!=2)throw new Exception("Cannot deliver Enter to native console");}
-   return b.ToString();
+   string text=ReadConsoleBuffer(output);
+   if(enter){input=CreateFile("CONIN$",0x40000000,3,IntPtr.Zero,3,0,IntPtr.Zero);EnterConsole(input);}
+   return text;
   } finally {if(output!=IntPtr.Zero)CloseHandle(output);if(input!=IntPtr.Zero)CloseHandle(input);FreeConsole();AttachConsole(0xffffffff);}
  }
 }
@@ -342,12 +364,43 @@ function Invoke-ExplorerExport([string]$InputFile,[string]$Name,[string]$Expecte
     Start-Sleep -Milliseconds 300
     $process.Refresh()
     if ($process.HasExited) { throw "Console did not remain open before Enter" }
-    $null=[ExplorerMenuProbe]::ConsoleText([uint32]$process.Id,$true)
-    if (!$process.WaitForExit(10000)) { throw "Console did not close after Enter" }
     $expectedCode=0
     if ($Reject) { $expectedCode=1 }
-    if ($process.ExitCode -ne $expectedCode) { throw "Explorer command returned incorrect status" }
-    $script:evidence.cases += @{ name=$Name; actual_explorer_menu=$true; show_more_options_used=$modern; exit_code=$process.ExitCode; console_stayed_until_enter=$true; output=$ExpectedOutput }
+    # Get-Process attaches to an existing process. Its ExitCode can be unavailable
+    # after the process exits unless a live handle was retained. Keep a native
+    # QUERY_LIMITED_INFORMATION|SYNCHRONIZE handle before delivering Enter.
+    $nativeHandle=[ExplorerMenuProbe]::PinProcess([uint32]$process.Id)
+    $exitState=[ordered]@{name=$Name;process_id=$process.Id;retained_handle=$nativeHandle.ToInt64();expected_exit_code=$expectedCode;wait_timeout_ms=10000}
+    try {
+        $exitState.native_code_before_enter=[ExplorerMenuProbe]::ProcessExitCode($nativeHandle)
+        if ($exitState.native_code_before_enter -ne 259) { throw 'Native process ended before Enter' }
+        $observation=[ExplorerMenuProbe]::EnterAndObserveExit([uint32]$process.Id,$nativeHandle,10000)
+        $exitState.native_wait_result=$observation.WaitResult
+        $exitState.native_exit_code=$observation.ExitCode
+        $exitState.native_exit_code_type=$observation.ExitCode.GetType().FullName
+        [IO.File]::WriteAllText((Join-Path $Output "$Name.after-enter.console.txt"),$observation.ConsoleAfterEnter,[Text.Encoding]::UTF8)
+        try {
+            $process.Refresh()
+            $exitState.powershell_has_exited=$process.HasExited
+            $cachedCode=$process.ExitCode
+            $exitState.powershell_exit_code=$cachedCode
+            $exitState.powershell_exit_code_type='null'
+            if ($null -ne $cachedCode) { $exitState.powershell_exit_code_type=$cachedCode.GetType().FullName }
+        } catch { $exitState.powershell_status_unavailable=$_.Exception.Message }
+        if ($observation.WaitResult -ne 0 -or $observation.ExitCode -eq 259) {
+            throw "Console did not close after Enter: native wait=$($observation.WaitResult), exit=$($observation.ExitCode)"
+        }
+        if ($observation.ExitCode -ne $expectedCode) {
+            throw "Explorer command returned native exit $($observation.ExitCode) ($($exitState.native_exit_code_type)), expected $expectedCode"
+        }
+        $script:evidence.cases += @{ name=$Name; actual_explorer_menu=$true; show_more_options_used=$modern; exit_code=$observation.ExitCode; exit_code_source='GetExitCodeProcess retained native handle'; console_stayed_until_enter=$true; output=$ExpectedOutput }
+    } catch {
+        $exitState.failure=$_.Exception.Message
+        throw
+    } finally {
+        [ExplorerMenuProbe]::ReleaseProcess($nativeHandle)
+        [IO.File]::WriteAllText((Join-Path $Output "$Name.exit.json"),($exitState | ConvertTo-Json -Depth 8),[Text.Encoding]::UTF8)
+    }
 }
 
 try {
