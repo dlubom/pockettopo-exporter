@@ -9,6 +9,8 @@ Historical PBI numbers remain traceable; they do not imply equal-sized outcomes.
 Implemented on `main`: all export reports use the CLI build version.
 Focused version/byte regressions and distribution controls pass; no full local
 suite or mutation campaign was run. Exact-SHA hosted CI is required for delivery.
+Release `v1.0.1` requires six validated native packages, exact-SHA CI and uploaded
+asset readback before publication.
 
 ## Current implementation — 2026-10-14
 

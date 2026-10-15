@@ -6,7 +6,7 @@ on:
       tag:
         description: Existing annotated release tag
         required: true
-        default: v1.0.0
+        default: v1.0.1
       ci_run_id:
         description: Successful main CI run for exactly the tagged commit
         required: true
@@ -35,24 +35,24 @@ jobs:
           fetch-depth: 0
       - name: Verify exact-SHA CI and annotated tag
         run: |
-          test "$RELEASE_TAG" = v1.0.0
+          test "$RELEASE_TAG" = v1.0.1
           python3 scripts/release_gate.py --repo "$GH_REPO" --run-id "$CI_RUN_ID" --revision "$(git rev-parse HEAD)" --tag "$RELEASE_TAG" --output build/release-ci.json
       - name: Download and assemble all six validated native packages
         run: |
           gh run download "$CI_RUN_ID" --pattern 'release-*' --dir build/downloaded-packages
-          python3 scripts/assemble-release.py --input build/downloaded-packages --output build/release --revision "$(git rev-parse HEAD)" --version 1.0.0
+          python3 scripts/assemble-release.py --input build/downloaded-packages --output build/release --revision "$(git rev-parse HEAD)" --version 1.0.1
       - name: Create complete draft release
         run: |
           python3 - <<'PY'
           import json
           from pathlib import Path
           evidence = json.loads(Path('build/release-ci.json').read_text())
-          notes = Path('docs/releases/1.0.0.md').read_text()
+          notes = Path('docs/releases/1.0.1.md').read_text()
           notes += '\nSource revision: `' + evidence['source_revision'] + '`.\n'
           notes += '[Verified exact-SHA CI](' + evidence['run_url'] + '). All required jobs passed.\n'
           Path('build/release-notes.md').write_text(notes)
           PY
-          gh release create "$RELEASE_TAG" --verify-tag --draft --title 'PocketTopo Exporter 1.0.0' --notes-file build/release-notes.md build/release/*.zip build/release/SHA256SUMS build/release/release-validation.json
+          gh release create "$RELEASE_TAG" --verify-tag --draft --title 'PocketTopo Exporter 1.0.1' --notes-file build/release-notes.md build/release/*.zip build/release/SHA256SUMS build/release/release-validation.json
       - name: Verify uploaded asset bytes before publication
         run: |
           gh release download "$RELEASE_TAG" --dir build/release-readback

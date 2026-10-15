@@ -104,8 +104,8 @@ jobs:
           python3 scripts/test_validation.py
           python3 scripts/test_assemble_release.py
           python3 scripts/test_release_gate.py
-      - name: Build and verify the native 1.0.0 archive
-        run: python3 scripts/distribution.py --version 1.0.0 --output build/release-package
+      - name: Build and verify the native 1.0.1 archive
+        run: python3 scripts/distribution.py --version 1.0.1 --output build/release-package
       - name: Validate optional Windows menu in Explorer
         if: startsWith(matrix.target, 'windows-')
         shell: pwsh

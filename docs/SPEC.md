@@ -60,8 +60,8 @@ target, Go toolchain, CLI version and payload hashes; SHA256SUMS covers every
 other member including BUILD.json, and an adjacent checksum covers the ZIP.
 Validation requires regular-file archive members, exact membership, byte hashes, executable mode and
 matching embedded Go VCS revision, followed by offline native-byte CLI tests
-from an unrelated directory. Release linker injection sets `cli.Version` to
-`1.0.0`; `--version`, inspection and export report `tool_version` use it without changing JSON
+from an unrelated directory. Release linker injection sets `cli.Version` to the
+package version; `--version`, inspection and export report `tool_version` use it without changing JSON
 schemas. Ordinary unversioned builds retain `dev`. Release manifests bind
 version, target, SHA and `CGO_ENABLED=0`; native validation binds those fields to
 the archive checksum and actual runtime tests. These CI packages become public

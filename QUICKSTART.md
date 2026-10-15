@@ -1,4 +1,4 @@
-# PocketTopo Exporter 1.0.0
+# PocketTopo Exporter
 
 Convert PocketTopo **TOP v3** files offline. Your original TOP file is preserved.
 No Go, Python, Wine or PocketTopo installation is needed.
@@ -109,7 +109,7 @@ Advanced settings, template context and loop closure use the command line.
 - **Windows menu missing:** use **Show more options**, and re-run install from
   the current program folder. Installation/removal errors remain explicit.
 
-1.0.0 packages are unsigned: no Windows publisher certificate or Apple Developer
+Release packages are unsigned: no Windows publisher certificate or Apple Developer
 ID/notarization is supplied. A downloaded program may need explicit OS approval
 before it can run. Verify the release ZIP against `SHA256SUMS`; use the OS's
 per-program approval controls if blocked. Do not disable system-wide protection.

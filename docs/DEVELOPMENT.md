@@ -222,14 +222,14 @@ Distribution validation builds its own binary, verifies VCS identity and payload
 readback, extracts to a temporary unrelated directory, clears PATH and checks
 six exact native byte cases, no-replace behavior and malformed input failures.
 The package BUILD.json distinguishes the source SHA while preserving existing
-report schemas. Ordinary packages retain `dev`; `--version 1.0.0` injects the
+report schemas. Ordinary packages retain `dev`; `--version 1.0.1` injects the
 release version and validates it in help/version/inspection/build metadata.
 No tag or GitHub Release is created by this builder.
 CI complete explicitly requires the new corpus job and all three platform
 checks (each containing distribution verification), alongside the unchanged
 mutation matrix and failure controls.
 
-## Release 1.0.0
+## Release 1.0.1
 
 The accepted release uses the current Go toolchain and six native targets.
 `CGO_ENABLED=0` archives require no development runtime. Windows menu registration
@@ -241,7 +241,7 @@ run without the unsupported race detector.
 python3 scripts/test_validation.py
 python3 scripts/test_assemble_release.py
 python3 scripts/test_release_gate.py
-GOTOOLCHAIN=local GOMAXPROCS=2 GOFLAGS=-p=1 python3 scripts/distribution.py --version 1.0.0 --output build/release-package
+GOTOOLCHAIN=local GOMAXPROCS=2 GOFLAGS=-p=1 python3 scripts/distribution.py --version 1.0.1 --output build/release-package
 ```
 
 Distribution builds require clean committed sources. CI uploads
@@ -255,11 +255,11 @@ command tests and the same actual Explorer acceptance on x64 and ARM64, retainin
 popup/focus/selection/session/registry JSON and screenshots when available. This
 diagnostic workflow never substitutes for the full exact-SHA CI publication gate.
 
-Publication is explicitly dispatched with an existing annotated `v1.0.0` and
+Publication is explicitly dispatched with an existing annotated `v1.0.1` and
 the successful **main push CI run ID for that exact revision**:
 
 ```sh
-gh workflow run release.yml -f tag=v1.0.0 -f ci_run_id=<verified-run-id>
+gh workflow run release.yml -f tag=v1.0.1 -f ci_run_id=<verified-run-id>
 ```
 
 The workflow checks every job, including the dynamic mutation inventory and six
@@ -268,7 +268,7 @@ It verifies the tag, downloads that run's archives, assembles all six packages,
 creates a complete draft, downloads its assets and compares exact membership and
 hashes, then publishes as latest. Failure leaves publication incomplete; never
 replace a published version's artifacts or force-move its tag. Publication records
-are uploaded as `release-publication-v1.0.0`. No signing credentials are used;
+are uploaded as `release-publication-v1.0.1`. No signing credentials are used;
 packages have no Windows publisher signature or Apple Developer ID/notarization.
 
 ## P15 original Walls validation

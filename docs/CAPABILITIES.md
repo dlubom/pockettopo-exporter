@@ -87,7 +87,7 @@ checksums, executable mode and embedded Go VCS identity, then extracts to an
 unrelated directory and runs with empty PATH: help/version, six exact native
 byte cases, no-replace publication and malformed input failures. Go, Wine and
 PocketTopo are development tools, not CLI runtime dependencies. Release builds
-report version `1.0.0`; unversioned developer builds remain `dev`. BUILD.json and
+report the package version; unversioned developer builds remain `dev`. BUILD.json and
 native validation bind version, target, source revision, toolchain and archive
 hash. Six native release jobs and optional Windows menu acceptance are required
 by `CI complete`; publication additionally validates all six artifact sets and
