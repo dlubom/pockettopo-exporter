@@ -120,6 +120,7 @@ func runToporobot(args []string, stdout, stderr io.Writer) int {
 	if existing != "" {
 		r.Report.Inputs = append(r.Report.Inputs, exporttoporobot.InputInfo{Name: filepath.Base(existing), Role: "existing-toporobot", SHA256: r.Report.ExistingHash, Size: len(opt.Existing), Consumed: len(opt.Existing)})
 	}
+	r.Report.Tool = Version
 	if e = publishNamedResult(args[5], publicationResult{r.Text, r.Report}, "survey.text"); e != nil {
 		return exportError(stderr, e)
 	}

@@ -4,6 +4,12 @@ This is the single current backlog and handoff. [SPEC](SPEC.md) defines product
 contracts; [DEVELOPMENT](DEVELOPMENT.md) defines verification and delivery.
 Historical PBI numbers remain traceable; they do not imply equal-sized outcomes.
 
+## Issue #2 — export report version
+
+Implemented on `main`: all export reports use the CLI build version.
+Focused version/byte regressions and distribution controls pass; no full local
+suite or mutation campaign was run. Exact-SHA hosted CI is required for delivery.
+
 ## Current implementation — 2026-10-14
 
 P04d started from P04c17 (`bfa73944e3d3baad00b07e2b6dd5a8c9f9a3682b`) plus

@@ -160,10 +160,17 @@ def smoke(payload, target, revision, version="dev"):
             record = corpus.export_result(output, result.returncode, result.stderr, case["format"], digest(source.read_bytes()), source.stat().st_size)
             if record["status"] != "supported" or (output / corpus.ARTIFACTS[case["format"]]).read_bytes() != (REPO / case["golden"]).read_bytes():
                 raise ValueError("distributed CLI native bytes differ: " + case["format"])
+            if read_json((output / "report.json").read_bytes()).get("tool_version") != version:
+                raise ValueError("distributed export report version differs: " + case["format"])
             saved = {p.name: p.read_bytes() for p in output.iterdir()}
             again = invoke(["export", source, "--format", case["format"], "--output", output, *case["options"]])
             if again.returncode != 1 or again.stdout or saved != {p.name: p.read_bytes() for p in output.iterdir()}:
                 raise ValueError("distributed CLI replaced existing output")
+            if case["format"] == "dxf":
+                side = scratch / "export-dxf-side"
+                result = invoke(["export", source, "--format", "dxf", "--output", side, "--view", "side"])
+                if result.returncode != 0 or result.stderr or read_json((side / "report.json").read_bytes()).get("tool_version") != version:
+                    raise ValueError("distributed export report version differs: dxf side")
         bad = scratch / "bad.top"
         bad.write_bytes(b"Top\x03")
         for fmt in corpus.ARTIFACTS:

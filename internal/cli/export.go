@@ -39,6 +39,7 @@ func export(input, output string, stdout, stderr io.Writer) int {
 	if err != nil {
 		return exportError(stderr, err)
 	}
+	result.Report.Tool = Version
 	if err = publish(output, result); err != nil {
 		return exportError(stderr, err)
 	}

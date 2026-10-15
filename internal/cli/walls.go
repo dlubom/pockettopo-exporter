@@ -25,6 +25,7 @@ func runWalls(args []string, stdout, stderr io.Writer) int {
 	if e != nil {
 		return exportError(stderr, e)
 	}
+	r.Report.Tool = Version
 	if e = publishNamedResult(args[5], publicationResult{r.Text, r.Report}, "survey.srv"); e != nil {
 		return exportError(stderr, e)
 	}

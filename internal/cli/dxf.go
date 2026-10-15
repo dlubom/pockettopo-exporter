@@ -94,6 +94,7 @@ func runDXF(args []string, stdout, stderr io.Writer) int {
 	for _, s := range input.inventory {
 		r.Report.Inputs = append(r.Report.Inputs, exportdxf.InputInfo{Name: s.Name, Role: s.Role, SHA256: s.SHA256, Size: s.Size, Consumed: s.Consumed, Ignored: s.Ignored})
 	}
+	r.Report.Tool = Version
 	if e = publishNamedResult(args[5], publicationResult{r.DXF, r.Report}, "survey.dxf"); e != nil {
 		return exportError(stderr, e)
 	}

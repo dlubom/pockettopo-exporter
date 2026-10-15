@@ -246,6 +246,59 @@ class DistributionControls(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "executable mode"):
                 distribution.read_package(path, "a" * 40, "linux-amd64", "1.0.0")
 
+    def test_native_smoke_checks_every_export_report_version(self):
+        distribution = module("distribution")
+        corpus = module("validate-corpus")
+        cases = []
+        for filename in ("distribution-cases.json", "p15-distribution-cases.json", "p16-distribution-cases.json"):
+            cases += json.loads((distribution.REPO / "validation" / filename).read_text())
+        cases.append({"format": "dxf", "golden": "internal/exportdxf/testdata/features-o1.dxf"})
+        self.assertEqual(len(cases), 9)
+        build_info = "binary: go1.26.3\n" + "\n".join("\tbuild\t" + x for x in [
+            "GOOS=linux", "GOARCH=amd64", "CGO_ENABLED=0", "vcs.revision=" + "a" * 40, "vcs.modified=false"])
+
+        def smoke(version, bad_index=None, bad_version=None):
+            def invoke(args, **kwargs):
+                if args[1:] == ["--version"]:
+                    return subprocess.CompletedProcess(args, 0, ("pockettopo-exporter " + version + "\n").encode(), b"")
+                if args[1:] == ["--help"]:
+                    return subprocess.CompletedProcess(args, 0, b"help", b"")
+                if args[1] == "inspect":
+                    return subprocess.CompletedProcess(args, 0, json.dumps({"tool_version": version}).encode(), b"")
+                self.assertEqual(args[1], "export")
+                self.assertEqual(args[3:6:2], ["--format", "--output"])
+                output = Path(args[args.index("--output") + 1])
+                if output.exists() or Path(args[2]).name == "bad.top":
+                    return subprocess.CompletedProcess(args, 1, b"", b"Cannot export: rejected")
+                index = len(cases) - 1 if output.name == "export-dxf-side" else int(output.name.removeprefix("export-"))
+                case = cases[index]
+                raw = (distribution.REPO / case["golden"]).read_bytes()
+                source = Path(args[2]).read_bytes()
+                prefix = corpus.HASH_FIELDS[case["format"]]
+                report = {"schema_version": 1, "source_sha256": hashlib.sha256(source).hexdigest(),
+                          "source_size_bytes": len(source), prefix + "_sha256": hashlib.sha256(raw).hexdigest(),
+                          prefix + "_size_bytes": len(raw)}
+                tool_version = bad_version if index == bad_index else version
+                if tool_version is not None:
+                    report["tool_version"] = tool_version
+                output.mkdir()
+                (output / corpus.ARTIFACTS[case["format"]]).write_bytes(raw)
+                (output / "report.json").write_text(json.dumps(report))
+                return subprocess.CompletedProcess(args, 0, b"Exported", b"")
+
+            payload = package_payload(distribution, "a" * 40, "linux-amd64", version)
+            with patch.object(distribution, "run", side_effect=["linux\namd64", build_info]), \
+                 patch.object(distribution.subprocess, "run", side_effect=invoke):
+                return distribution.smoke(payload, "linux-amd64", "a" * 40, version)
+
+        for version in ("dev", "1.0.0", "2.3.4-rc.1+issue2"):
+            with self.subTest(version=version):
+                self.assertEqual(smoke(version)["cli_version"], version)
+        for index, case in enumerate(cases):
+            for wrong in (None, "dev", "0.9.0"):
+                with self.subTest(profile=case, wrong=wrong), self.assertRaisesRegex(ValueError, "export report version"):
+                    smoke("1.0.0", index, wrong)
+
     def test_builder_rejects_dirty_checkout_and_cross_target_before_build(self):
         distribution = module("distribution")
         with patch.object(distribution, "run", return_value=" M changed.go") as run, self.assertRaisesRegex(ValueError, "clean committed"):

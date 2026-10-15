@@ -83,6 +83,7 @@ func runVisualTopo(args []string, stdout, stderr io.Writer) int {
 	for _, s := range input.inventory {
 		r.Report.Inputs = append(r.Report.Inputs, exportvisualtopo.InputInfo{Name: s.Name, Role: s.Role, SHA256: s.SHA256, Size: s.Size, Consumed: s.Consumed, Ignored: s.Ignored})
 	}
+	r.Report.Tool = Version
 	if e = publishNamedResult(args[5], publicationResult{r.Text, r.Report}, "survey.tro"); e != nil {
 		return exportError(stderr, e)
 	}

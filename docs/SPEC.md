@@ -61,7 +61,7 @@ other member including BUILD.json, and an adjacent checksum covers the ZIP.
 Validation requires regular-file archive members, exact membership, byte hashes, executable mode and
 matching embedded Go VCS revision, followed by offline native-byte CLI tests
 from an unrelated directory. Release linker injection sets `cli.Version` to
-`1.0.0`; `--version` and inspection `tool_version` use it without changing JSON
+`1.0.0`; `--version`, inspection and export report `tool_version` use it without changing JSON
 schemas. Ordinary unversioned builds retain `dev`. Release manifests bind
 version, target, SHA and `CGO_ENABLED=0`; native validation binds those fields to
 the archive checksum and actual runtime tests. These CI packages become public
@@ -395,7 +395,7 @@ one detection byte. No neighboring-file scan, geometry, or vertex dump is done.
 `--help`, `-h` and `--version` keep their existing success/exit behavior; help now
 lists inspection. Help also lists native text export.
 
-The deterministic JSON object contains `schema_version: 1`, `tool_version: "dev"`,
+The deterministic JSON object contains `schema_version: 1`, `tool_version` (build version, or `"dev"` for unversioned builds),
 `source` (`sha256`, `size_bytes`, `top_version`), `status` (`supported`,
 `unsupported`, `malformed`), `complete`, `supported`, `counts` (trip/measurement/
 reference totals), `plan` and `side` (element/Polygon/XSection/point totals, stop
